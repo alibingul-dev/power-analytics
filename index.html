@@ -210,11 +210,11 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
 <section class="view" id="tr-archive">
   <div class="eyebrow">Archive</div>
   <h1>Published analysis</h1>
-  <p class="sub">Every daily post, indexed by the day it analyses. Written from tool output and checked number by number before publication.</p>
+  <p class="sub">Indexed by the day each post analyses. The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date.</p>
   <div class="panel">
     <table>
-      <thead><tr><th>Day analysed</th><th>Type</th><th class="num">Post</th></tr></thead>
-      <tbody id="a-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
+      <thead><tr><th>Day analysed</th><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead>
+      <tbody id="a-rows"><tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -336,13 +336,15 @@ function renderDaily(d){
 
 function renderArchive(rows){
   const body=document.getElementById("a-rows");
-  if(!rows.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted)">Nothing published yet.</td></tr>';return}
+  if(!rows.length){body.innerHTML='<tr><td colspan="4" style="color:var(--muted)">Nothing published yet.</td></tr>';return}
+  const short=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
   body.innerHTML=rows.map(r=>{
     const id=(r.post_id||"").replace("urn:li:share:","");
     const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
     const kind=r.kind==="post2"?"Net load outlook":"Market analysis";
-    const day=new Date(r.analysis_date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-    return `<tr><td class="mono">${day}</td><td><span class="tag">${kind}</span></td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
+    const day=short(new Date(r.analysis_date+"T00:00:00"));
+    const pub=r.at?short(new Date(r.at)):"—";
+    return `<tr><td class="mono">${day}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${pub}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
   }).join("");
 }
 
@@ -368,7 +370,7 @@ go(location.hash.slice(1)||"tr-netload");
 /* data */
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
 fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
- .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>b.analysis_date.localeCompare(a.analysis_date))))
+ .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
    {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968"},
    {analysis_date:"2026-08-26",kind:"post1",post_id:"urn:li:share:7498722107460120576"},
