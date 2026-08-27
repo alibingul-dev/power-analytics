@@ -4,73 +4,84 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ali Bingül — Power Market Analytics</title>
-<meta name="description" content="Daily analysis of the Turkish power market from EPİAŞ open data, and imbalance work on the GB wind fleet from Elexon open data.">
+<meta name="description" content="Daily net load analysis of the Turkish power market from EPİAŞ open data, and imbalance work on the GB wind fleet from Elexon open data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0E1520; --surface:#16202E; --surface-2:#1D2A3B; --line:#26364B;
-  --text:#E6EDF5; --muted:#8A9BB0;
-  --b1:#38BDF8; --b2:#34D399; --b3:#FBBF24; --b4:#FB923C; --b5:#F43F5E;
-  --rail:264px;
+  --bg:#0E1520;--surface:#16202E;--surface-2:#1D2A3B;--line:#26364B;
+  --text:#E6EDF5;--muted:#8A9BB0;
+  --b1:#38BDF8;--b2:#34D399;--b3:#FBBF24;--b4:#FB923C;--b5:#F43F5E;
+  --rail:270px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:"Source Sans 3",system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:"Source Sans 3",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 h1,h2,h3{font-family:Archivo,system-ui,sans-serif;letter-spacing:-.02em;margin:0}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 
 /* ---------- rail ---------- */
 .rail{position:fixed;inset:0 auto 0 0;width:var(--rail);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20;overflow-y:auto}
-.brand{padding:26px 20px 20px;border-bottom:1px solid var(--line)}
+.brand{padding:24px 20px 18px;border-bottom:1px solid var(--line)}
 .brand .name{font-family:Archivo;font-weight:800;font-size:17px;line-height:1.2}
-.brand .role{font-size:12.5px;color:var(--muted);margin-top:5px}
-.nav{padding:10px 0;flex:1}
+.brand .role{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+.nav{padding:8px 0;flex:1}
 
 .grp{border:0;background:none;width:100%;display:flex;align-items:center;justify-content:space-between;
-     padding:12px 20px 10px;color:var(--text);font-family:Archivo;font-weight:600;font-size:13px;
-     letter-spacing:.1em;text-transform:none;cursor:pointer}
+     padding:12px 20px 9px;color:var(--text);font-family:Archivo;font-weight:600;font-size:12.5px;
+     letter-spacing:.11em;text-transform:none;cursor:pointer}
 .grp:hover{background:var(--surface-2)}
 .grp:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
-.chev{width:9px;height:9px;border-right:1.8px solid var(--muted);border-bottom:1.8px solid var(--muted);
-      transform:rotate(45deg);transition:transform .18s ease;margin-right:2px}
+.chev{width:8px;height:8px;border-right:1.8px solid var(--muted);border-bottom:1.8px solid var(--muted);
+      transform:rotate(45deg);transition:transform .18s ease;margin-right:2px;flex:none}
 .grp[aria-expanded="false"] .chev{transform:rotate(-45deg)}
-.items{overflow:hidden}
 .grp[aria-expanded="false"]+.items{display:none}
 
-.items a{display:flex;align-items:center;gap:11px;padding:9px 20px 9px 22px;color:var(--muted);
-         text-decoration:none;font-size:14.5px;font-weight:600}
-.items a .bar{width:3px;height:18px;border-radius:2px;background:var(--c);opacity:.4;flex:none}
-.items a:hover{color:var(--text);background:var(--surface-2)}
-.items a[aria-current="page"]{color:var(--text);background:var(--surface-2)}
-.items a[aria-current="page"] .bar{opacity:1;box-shadow:0 0 10px var(--c)}
-.items a:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
+.sub{border:0;background:none;width:100%;display:flex;align-items:center;justify-content:space-between;
+     padding:8px 20px 8px 22px;color:var(--muted);font-family:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.sub:hover{background:var(--surface-2);color:var(--text)}
+.sub:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
+.sub .chev{width:7px;height:7px}
+.sub[aria-expanded="false"]+.leaves{display:none}
+.leaves a{padding-left:36px}
 
-.ladder{display:flex;gap:3px;padding:16px 20px 18px}
+.items a,.leaves a{display:flex;align-items:center;gap:10px;padding:8px 20px 8px 22px;color:var(--muted);
+  text-decoration:none;font-size:14px;font-weight:600}
+.items a .bar,.leaves a .bar{width:3px;height:16px;border-radius:2px;background:var(--c,var(--muted));opacity:.4;flex:none}
+.items a:hover,.leaves a:hover{color:var(--text);background:var(--surface-2)}
+.items a[aria-current="page"],.leaves a[aria-current="page"]{color:var(--text);background:var(--surface-2)}
+.items a[aria-current="page"] .bar,.leaves a[aria-current="page"] .bar{opacity:1;box-shadow:0 0 10px var(--c)}
+.items a:focus-visible,.leaves a:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
+
+.ladder{display:flex;gap:3px;padding:14px 20px 16px}
 .ladder span{height:4px;flex:1;border-radius:2px}
 .ladder span:nth-child(1){background:var(--b1)}.ladder span:nth-child(2){background:var(--b2)}
 .ladder span:nth-child(3){background:var(--b3)}.ladder span:nth-child(4){background:var(--b4)}
 .ladder span:nth-child(5){background:var(--b5)}
-.rail-foot{padding:14px 20px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.rail-foot{padding:13px 20px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.5}
 .rail-foot a{color:var(--muted)}
 
 /* ---------- main ---------- */
-main{margin-left:var(--rail);padding:44px 40px 80px;max-width:1080px}
+main{margin-left:var(--rail);padding:44px 44px 90px;max-width:1060px}
 .view{display:none}.view.on{display:block}
 .eyebrow{font-family:"IBM Plex Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-h1{font-size:clamp(27px,3.3vw,38px);font-weight:800;margin:10px 0 6px}
-.sub{color:var(--muted);max-width:64ch;margin-bottom:32px}
+h1{font-size:clamp(27px,3.2vw,37px);font-weight:800;margin:10px 0 14px}
+.lede{color:var(--text);font-size:18px;line-height:1.6;max-width:64ch;margin:0 0 12px}
+.note-p{color:var(--muted);max-width:66ch;margin:0 0 30px}
+p.body{color:var(--muted);max-width:66ch;margin:0 0 14px}
+p.body:last-child{margin-bottom:0}
+p.body strong{color:var(--text);font-weight:600}
 
-.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:28px}
-.fig{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:26px}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
 .fig .k{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-family:"IBM Plex Mono"}
-.fig .v{font-family:"IBM Plex Mono";font-size:23px;font-weight:500;margin-top:7px}
-.fig .n{font-size:12.5px;color:var(--muted);margin-top:3px}
+.fig .v{font-family:"IBM Plex Mono";font-size:23px;font-weight:500;margin-top:6px}
+.fig .n{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
 
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:22px}
-.panel h2{font-size:17px;font-weight:600;margin-bottom:4px}
-.panel .note{font-size:13px;color:var(--muted);margin-bottom:18px}
+.panel h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.panel .note{font-size:13.5px;color:var(--muted);margin:0 0 18px;max-width:70ch}
 svg.chart{width:100%;height:auto;display:block}
 .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:12.5px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
@@ -84,6 +95,7 @@ tr:last-child td{border-bottom:0}
 a.post{color:var(--b1);text-decoration:none}
 a.post:hover{text-decoration:underline}
 .tag{font-family:"IBM Plex Mono";font-size:11px;padding:2px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.ok{color:var(--b2)} .bad{color:var(--b5)}
 
 .mix{display:grid;gap:8px}
 .mix .row{display:grid;grid-template-columns:120px 1fr 54px;align-items:center;gap:12px;font-size:14px}
@@ -91,64 +103,45 @@ a.post:hover{text-decoration:underline}
 .mix .fill{display:block;height:100%;border-radius:5px}
 .mix .pc{font-family:"IBM Plex Mono";text-align:right;color:var(--muted);font-size:13px}
 
-.empty{border:1px dashed var(--line);border-radius:12px;padding:32px;text-align:center;color:var(--muted)}
-.empty strong{display:block;color:var(--text);font-family:Archivo;font-weight:600;margin-bottom:6px}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:28px;color:var(--muted);max-width:68ch}
+.empty strong{display:block;color:var(--text);font-family:Archivo;font-weight:600;margin-bottom:8px;font-size:16px}
 dl.method{margin:0}
 dl.method dt{font-family:"IBM Plex Mono";font-size:12px;color:var(--b1);letter-spacing:.06em;margin-top:16px}
 dl.method dt:first-child{margin-top:0}
-dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
+dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
 
 /* ---------- mobile ---------- */
-.topbar{display:none}
-.scrim{display:none}
-@media (max-width:860px){
-  .topbar{
-    display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:40;
-    height:56px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--line);
-  }
+.topbar{display:none}.scrim{display:none}
+@media (max-width:880px){
+  .topbar{display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:40;height:56px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--line)}
   .topbar-t{display:flex;flex-direction:column;line-height:1.2;min-width:0}
   .topbar-t strong{font-family:Archivo;font-weight:800;font-size:15px}
   .topbar-t em{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .burger{width:38px;height:38px;flex:none;border:1px solid var(--line);border-radius:9px;
-          background:var(--surface-2);display:grid;place-content:center;gap:4px;cursor:pointer;padding:0}
+  .burger{width:38px;height:38px;flex:none;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);display:grid;place-content:center;gap:4px;cursor:pointer;padding:0}
   .burger span{display:block;width:16px;height:2px;border-radius:1px;background:var(--text)}
   .burger:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
-
-  .rail{
-    position:fixed;inset:0 auto 0 0;width:min(86vw,300px);
-    transform:translateX(-102%);transition:transform .22s ease;
-    box-shadow:0 0 40px rgba(0,0,0,.5);z-index:50;
-  }
+  .rail{position:fixed;inset:0 auto 0 0;width:min(86vw,300px);transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.5);z-index:50}
   .rail.open{transform:none}
   .scrim{display:block;position:fixed;inset:0;background:rgba(6,11,18,.62);z-index:45}
   .scrim[hidden]{display:none}
-  .ladder{display:flex}
-  .rail-foot{display:block}
   main{margin-left:0;padding:24px 18px 64px}
-  h1{font-size:26px}
-  .sub{margin-bottom:24px}
+  h1{font-size:25px}
+  .lede{font-size:16.5px}
   .figs{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-  .fig{padding:13px 14px}
-  .fig .v{font-size:20px}
+  .fig{padding:13px 14px}.fig .v{font-size:20px}
   .panel{padding:16px 14px;border-radius:10px}
-  .mix .row{grid-template-columns:88px 1fr 46px;gap:9px;font-size:13px}
+  .mix .row{grid-template-columns:86px 1fr 46px;gap:9px;font-size:13px}
   table{font-size:13px}
-  td,th{padding-right:8px}
 }
-@media (max-width:520px){
-  .figs{grid-template-columns:1fr 1fr}
-  .fig .v{font-size:19px}
-}
+@media (max-width:520px){.figs{grid-template-columns:1fr 1fr}.fig .v{font-size:19px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
   <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Net load outlook</em></div>
 </header>
 <div class="scrim" id="scrim" hidden></div>
@@ -160,17 +153,24 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
   </div>
 
   <div class="nav">
-    <button class="grp" aria-expanded="true" data-grp="tr">TÜRKİYE<span class="chev"></span></button>
+    <button class="grp" aria-expanded="true">TÜRKİYE<span class="chev"></span></button>
     <div class="items">
-      <a href="#tr-netload"  data-view="tr-netload"  style="--c:var(--b1)"><span class="bar"></span>Net load outlook</a>
-      <a href="#tr-daily"    data-view="tr-daily"    style="--c:var(--b2)"><span class="bar"></span>Daily market analysis</a>
-      <a href="#tr-archive"  data-view="tr-archive"  style="--c:var(--b3)"><span class="bar"></span>Published archive</a>
+      <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
+      <div class="leaves">
+        <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Net load outlook</a>
+        <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
+        <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
+      </div>
+      <a href="#tr-weekly"  data-view="tr-weekly"  style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
+      <a href="#tr-monthly" data-view="tr-monthly" style="--c:var(--b3)"><span class="bar"></span>Monthly</a>
+      <a href="#tr-yearly"  data-view="tr-yearly"  style="--c:var(--b4)"><span class="bar"></span>Yearly</a>
+      <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
     </div>
 
-    <button class="grp" aria-expanded="true" data-grp="gb">GREAT BRITAIN<span class="chev"></span></button>
+    <button class="grp" aria-expanded="true">GREAT BRITAIN<span class="chev"></span></button>
     <div class="items">
-      <a href="#gb-scorecard" data-view="gb-scorecard" style="--c:var(--b4)"><span class="bar"></span>Wind imbalance scorecard</a>
-      <a href="#gb-structure" data-view="gb-structure" style="--c:var(--b5)"><span class="bar"></span>Market structure</a>
+      <a href="#gb-scorecard" data-view="gb-scorecard" style="--c:var(--b3)"><span class="bar"></span>Wind imbalance scorecard</a>
+      <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
   </div>
 
@@ -180,12 +180,15 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
 
 <main>
 
-<!-- ===== TR · NET LOAD ===== -->
+<!-- ===== NET LOAD OUTLOOK ===== -->
 <section class="view on" id="tr-netload">
-  <div class="eyebrow">Türkiye · published before the day-ahead result</div>
+  <div class="eyebrow">Türkiye · daily · published before the day-ahead result</div>
   <h1 id="d-title">Loading…</h1>
-  <p class="sub">Net load is the load plan with wind and solar taken out: what dispatchable plant actually has to cover. Bands are quintiles of the last thirty days, so days can be compared with each other.</p>
+  <p class="lede">Net load is the load plan with wind and solar taken out. It is what dispatchable plant actually has to cover, and it is the curve that decides which hours are tight.</p>
+  <p class="note-p">Two series are published while the day-ahead market is still open: the load plan and the wind forecast. EPİAŞ publishes no solar forecast, so solar is shaped from the mean realised profile of the seven preceding days. Bands are quintiles of the last thirty days rather than of the target day, so a flat day reads as flat instead of being rescaled to look dramatic.</p>
+
   <div class="figs" id="d-figs"></div>
+
   <div class="panel">
     <h2>Hour by hour</h2>
     <p class="note" id="d-note"></p>
@@ -196,22 +199,59 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
       <span><i style="background:var(--text)"></i>Net load</span>
     </div>
   </div>
+
+  <div class="panel">
+    <h2>Why this curve and not demand</h2>
+    <p class="body">Demand peaks in the early afternoon in Türkiye through the summer. Net load usually does not: solar is at its strongest in exactly those hours, so the system is at its most comfortable when the meter reads highest. The tight hours arrive after sunset, when solar leaves in about an hour and demand is still near its plateau.</p>
+    <p class="body">That gap is the whole scheduling problem. On a typical August day the load plan peaks around 14:00 while net load peaks around 20:00, and between those two points the system has to climb roughly 2,400 MWh every hour for eight hours. Reading demand alone hides that climb entirely.</p>
+  </div>
+
   <div class="panel">
     <h2>Method</h2>
     <dl class="method">
       <dt>NET LOAD</dt><dd>Load plan minus wind forecast minus solar.</dd>
-      <dt>SOLAR</dt><dd>EPİAŞ publishes no solar forecast. Shaped from the mean realised profile of the seven preceding days.</dd>
+      <dt>SOLAR</dt><dd>No EPİAŞ forecast exists. Shaped from the mean realised profile of the seven preceding days, which includes distributed rooftop output derived as consumption minus metered generation.</dd>
       <dt>BANDS</dt><dd>Quintiles of the last thirty days, not of the target day.</dd>
       <dt>SCOPE</dt><dd>Descriptive analysis of published data. Not advice, not a forecast, not a trading recommendation.</dd>
     </dl>
   </div>
 </section>
 
-<!-- ===== TR · DAILY ANALYSIS ===== -->
+<!-- ===== ACTUAL VS OUTLOOK ===== -->
+<section class="view" id="tr-actual">
+  <div class="eyebrow">Türkiye · daily · ex-post check</div>
+  <h1>Actual vs outlook</h1>
+  <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours can be checked against what actually cleared, which is the only honest way to know whether the method is worth anything.</p>
+  <p class="note-p">The outlook never forecasts price. What it claims is structural: which hours sit at the bottom of the range, which sit at the top, and where the ramp runs. Those claims either hold or they do not.</p>
+
+  <div class="panel">
+    <h2>13 August 2026, checked against outturn</h2>
+    <p class="note">The first outlook to be verified after publication. All four structural claims held.</p>
+    <table>
+      <thead><tr><th>Claim made the day before</th><th>What happened</th><th class="num">Result</th></tr></thead>
+      <tbody>
+        <tr><td>Net load bottoms twice, at 07:00 and 12:00</td><td>Price bottomed in those two hours: 1,500 and 1,000 TL/MWh, the day's two cheapest</td><td class="num ok">held</td></tr>
+        <tr><td>Deepest window 10:00–13:59</td><td>Cleared at 1,771 TL/MWh average, the cheapest four consecutive hours of the day</td><td class="num ok">held</td></tr>
+        <tr><td>Tightest window 18:00–21:59</td><td>Cleared at 3,684 TL/MWh average, the most expensive four consecutive hours</td><td class="num ok">held</td></tr>
+        <tr><td>Peak inside the top band</td><td>4,000 TL/MWh at 20:00, the same hour net load peaked</td><td class="num ok">held</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin:16px 0 0">Spread between the two windows: 1,913 TL/MWh.</p>
+  </div>
+
+  <div class="panel">
+    <h2>What a failed check would look like</h2>
+    <p class="body">The method has three ways to be wrong, and each points somewhere different. If the deep window lands in the right hours but the price does not follow, the bid stack is doing the work rather than the fundamentals. If the window itself lands in the wrong hours, the solar shaping is off, which is the weakest input because no forecast is published. If the evening block is right but the ramp is not, the wind forecast missed.</p>
+    <p class="body">Recording which of the three fails is more useful than recording whether the day was right. A single check proves nothing; a run of them tells you which input to fix.</p>
+  </div>
+</section>
+
+<!-- ===== DAILY MARKET ANALYSIS ===== -->
 <section class="view" id="tr-daily">
-  <div class="eyebrow">Türkiye · closed day</div>
+  <div class="eyebrow">Türkiye · daily · closed day</div>
   <h1>26 August 2026</h1>
-  <p class="sub">The day-ahead market spent four hours at the 4,500 TL/MWh cap. Real time agreed with it for one of them.</p>
+  <p class="lede">The day-ahead market spent four hours at the 4,500 TL/MWh cap. Real time agreed with it for one of them.</p>
+  <p class="note-p">Published every day after settlement data lands, from EPİAŞ open data. Each number is read from tool output rather than typed from memory, and the balancing figures separate market imbalance from grid constraints.</p>
 
   <div class="figs">
     <div class="fig"><div class="k">Daily average</div><div class="v">3,635</div><div class="n">TL/MWh</div></div>
@@ -243,17 +283,49 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
         <tr><td class="mono">21:00</td><td class="num">4,500</td><td class="num">3,000</td><td class="num">1,087 MWh</td><td class="num">761k TL</td></tr>
       </tbody>
     </table>
-    <p class="note" style="margin:16px 0 0">Of the day's instructions, 1,135 MWh carried a grid-constraint code, so not all of this was market imbalance.</p>
+    <p class="body" style="margin:18px 0 0">The day-ahead priced the evening as if the system would be short. It was long instead, and unwinding that cost 5.3 million TL in down-regulation. Of the day's instructions, 1,135 MWh carried a grid-constraint code, so not all of this was market imbalance.</p>
   </div>
-
-  <div class="empty">A new analysis is published every day. The full archive is under Published archive.</div>
 </section>
 
-<!-- ===== TR · ARCHIVE ===== -->
+<!-- ===== WEEKLY ===== -->
+<section class="view" id="tr-weekly">
+  <div class="eyebrow">Türkiye · weekly</div>
+  <h1>Weekly review</h1>
+  <p class="lede">Seven days is the shortest window where the difference between weather and structure starts to show.</p>
+  <div class="empty">
+    <strong>In preparation</strong>
+    The weekly view will carry three things the daily posts cannot: how the trough and the peak moved across the week rather than day to day, how much of the week's balancing bill fell on which hours, and whether the hours that ran short kept running short. A single day tells you the weather. A week starts to tell you the market.
+  </div>
+</section>
+
+<!-- ===== MONTHLY ===== -->
+<section class="view" id="tr-monthly">
+  <div class="eyebrow">Türkiye · monthly</div>
+  <h1>Monthly review</h1>
+  <p class="lede">A month is long enough to measure what a forecast error actually costs, plant by plant.</p>
+  <div class="empty">
+    <strong>In preparation</strong>
+    The monthly view will hold the imbalance work: the spread between day-ahead and balancing prices by hour of day, how often the settlement rules pushed a generator into the penalty branch, and the cost of that in lira per MWh. This is the same engine that produced the plant-level imbalance analysis for a 60 MW wind portfolio, applied to the market as a whole.
+  </div>
+</section>
+
+<!-- ===== YEARLY ===== -->
+<section class="view" id="tr-yearly">
+  <div class="eyebrow">Türkiye · yearly</div>
+  <h1>Yearly review</h1>
+  <p class="lede">Structural change is only visible at a year, and it is the only horizon where an investment decision lives.</p>
+  <div class="empty">
+    <strong>In preparation</strong>
+    The yearly view will track what changed rather than what happened: how the midday trough deepened as distributed solar grew, how many hours cleared below the penalty threshold, how the evening ramp steepened, and where the flexibility gap sits. These are the numbers that decide whether storage is worth building, and none of them can be read from a single day.
+  </div>
+</section>
+
+<!-- ===== ARCHIVE ===== -->
 <section class="view" id="tr-archive">
   <div class="eyebrow">Archive</div>
   <h1>Published analysis</h1>
-  <p class="sub">Indexed by the day each post analyses. The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date.</p>
+  <p class="lede">Every post, indexed by the day it analyses.</p>
+  <p class="note-p">The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date. Market analysis covers a closed day.</p>
   <div class="panel">
     <table>
       <thead><tr><th>Day analysed</th><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead>
@@ -262,21 +334,30 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
   </div>
 </section>
 
-<!-- ===== GB · SCORECARD ===== -->
+<!-- ===== GB SCORECARD ===== -->
 <section class="view" id="gb-scorecard">
   <div class="eyebrow">Great Britain · monthly</div>
   <h1>Wind Imbalance Scorecard</h1>
-  <p class="sub">Deviation from final physical notification, imbalance cost per MWh, and directional accuracy for every transmission-connected wind BMU, built from Elexon Insights open data.</p>
+  <p class="lede">Deviation from final physical notification, imbalance cost per MWh, and directional accuracy for every transmission-connected wind BMU in Great Britain.</p>
+  <p class="note-p">Built from Elexon Insights open data. The GB fleet publishes physical notifications and metered volumes per unit, which makes something possible that cannot be done in Türkiye: ranking generators by how well they manage their own imbalance, and separating the size of a forecast error from its direction.</p>
+
   <div class="empty">
     <strong>First report: September 2026</strong>
     B1610 metered volumes publish five days after delivery, so the August scorecard runs in the second week of September.
   </div>
+
   <div class="panel" style="margin-top:22px">
-    <h2>What it measures</h2>
+    <h2>Why direction matters more than accuracy</h2>
+    <p class="body">GB settles imbalance at a single price. A generator that comes in short when the system is short pays that price; a generator that comes in short when the system is long is paid. The same 2% deviation can therefore cost several times more for one unit than another, and the ranking by deviation size is not the ranking by cost.</p>
+    <p class="body">Türkiye settles at a dual price, where a deviation is valued at whichever of the day-ahead and balancing prices is worse for the generator. Direction carries no reward there, only the size of the error matters. That is the single largest difference between managing a portfolio on each side, and it is why the GB scorecard reports a column that has no Turkish equivalent.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Method</h2>
     <dl class="method">
       <dt>DEVIATION</dt><dd>Metered volume minus FPN energy, per settlement period. FPN is a MW level, so energy is (levelFrom + levelTo) ÷ 2 × 0.5 h.</dd>
-      <dt>COST</dt><dd>Deviation × system price, summed over the month. GB settles imbalance at a single price, so the direction of a miss decides whether it earns or costs.</dd>
-      <dt>DIRECTION</dt><dd>A deviation is helpful when its sign is opposite to net imbalance volume: short when the system is short, long when it is long.</dd>
+      <dt>COST</dt><dd>Deviation × system price, summed over the month.</dd>
+      <dt>DIRECTION</dt><dd>A deviation is helpful when its sign is opposite to net imbalance volume.</dd>
       <dt>SCOPE</dt><dd>Transmission-connected BMUs with fuel type WIND. Embedded wind sits outside the balancing mechanism. Units, not sites — Hornsea 2 reports as three BMUs.</dd>
       <dt>TIMING</dt><dd>FPN is submitted at gate closure, one hour before delivery, so a low deviation reflects notification accuracy at gate closure rather than day-ahead forecast skill.</dd>
       <dt>RUN TYPE</dt><dd>Interim settlement. Final reconciliation can move these figures.</dd>
@@ -284,15 +365,16 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
   </div>
 </section>
 
-<!-- ===== GB · STRUCTURE ===== -->
+<!-- ===== GB STRUCTURE ===== -->
 <section class="view" id="gb-structure">
   <div class="eyebrow">Great Britain · market structure</div>
   <h1>Two markets, four differences</h1>
-  <p class="sub">GB and Türkiye run the same sequence — day-ahead, intraday, balancing — but the mechanics diverge in ways that change what an imbalance actually costs.</p>
+  <p class="lede">GB and Türkiye run the same sequence — day-ahead, intraday, balancing — but the mechanics diverge in ways that change what an imbalance actually costs.</p>
+  <p class="note-p">Written for people who know one of these markets well and need the other quickly. Times are from the exchanges' own published schedules.</p>
 
   <div class="panel">
     <h2>Where the day is decided</h2>
-    <p class="note">All times local. GB closes its day-ahead auctions almost three hours earlier than Türkiye.</p>
+    <p class="note">GB closes its day-ahead auctions almost three hours earlier than Türkiye, which means a British generator commits to a position while its weather forecast is that much less mature.</p>
     <table>
       <thead><tr><th>Time</th><th>Türkiye</th><th>Great Britain</th></tr></thead>
       <tbody>
@@ -320,12 +402,13 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
         <tr><td>Price cap</td><td>4,500 TL/MWh ceiling</td><td>No equivalent ceiling; negative prices occur</td></tr>
       </tbody>
     </table>
-    <p class="note" style="margin:16px 0 0">GB did not move to 15-minute market time units in October 2025; the change covered eleven coupled markets and excluded Great Britain and Switzerland.</p>
+    <p class="body" style="margin:18px 0 0">GB did not move to 15-minute market time units in October 2025. That change covered eleven coupled markets and excluded Great Britain and Switzerland, so the half-hourly settlement period stays.</p>
   </div>
 
   <div class="panel">
-    <h2>Why the last row matters most</h2>
-    <p class="note" style="margin:0">Under dual pricing, a generator that deviates is settled at whichever of the two prices is worse for it, so any deviation is a loss. Under a single price, deviating in the direction the system needs is paid. The same forecast error produces a penalty in one market and a payment in the other, which is why the same portfolio has to be managed differently on each side.</p>
+    <h2>Why the last two rows matter most</h2>
+    <p class="body">Under dual pricing every deviation is a loss, so the objective is simply to be accurate. Under a single price, being wrong in the direction the system needs is paid, so the objective changes: a portfolio can be deliberately short into a short system and earn from it. The same forecast error produces a penalty in one market and a payment in the other.</p>
+    <p class="body">The price cap works the same way in reverse. A ceiling means scarcity stops being priced past a point, so the day-ahead market can clear at the cap for hours while real time settles far lower, which is exactly what happened in Türkiye on 26 August. Without a ceiling, GB lets the price go where the last accepted offer sits, and lets it go negative when there is too much.</p>
   </div>
 </section>
 
@@ -336,7 +419,7 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
 const FALLBACK={
   date:"2026-08-28",
   netLoad:[38391,36347,34691,33505,32626,32405,30968,28471,28595,27473,26145,25544,23450,24230,26951,28871,32414,36959,40442,42406,42791,41488,39734,37587],
-  lowBlock:[9,14], topBlock:[18,21],
+  lowBlock:[9,14],topBlock:[18,21],
   figures:[
     {k:"Trough",v:"23,450",n:"MWh at 12:00"},
     {k:"Peak",v:"42,791",n:"MWh at 20:00"},
@@ -351,22 +434,22 @@ function drawChart(d){
   const W=900,H=320,L=54,R=14,T=16,B=30;
   const v=d.netLoad,n=v.length;
   const lo=Math.min(...v),hi=Math.max(...v);
-  const pad=(hi-lo)*0.14||1, y0=lo-pad, y1=hi+pad;
+  const pad=(hi-lo)*0.14||1,y0=lo-pad,y1=hi+pad;
   const step=(W-L-R)/(n-1);
-  const X=i=>L+step*i, Y=q=>T+(H-T-B)*(1-(q-y0)/(y1-y0));
+  const X=i=>L+step*i,Y=q=>T+(H-T-B)*(1-(q-y0)/(y1-y0));
   let s="";
   const band=(a,b,c)=>`<rect x="${X(a)-step/2}" y="${T}" width="${(b-a)*step+step}" height="${H-T-B}" fill="${c}" opacity=".14" rx="4"/>`;
-  if(d.lowBlock) s+=band(d.lowBlock[0],d.lowBlock[1],"#38BDF8");
-  if(d.topBlock) s+=band(d.topBlock[0],d.topBlock[1],"#F43F5E");
+  if(d.lowBlock)s+=band(d.lowBlock[0],d.lowBlock[1],"#38BDF8");
+  if(d.topBlock)s+=band(d.topBlock[0],d.topBlock[1],"#F43F5E");
   for(let g=0;g<=3;g++){
     const q=y0+(y1-y0)*g/3;
     s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/>`;
     s+=`<text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${Math.round(q/1000)}k</text>`;
   }
   s+=`<polyline fill="none" stroke="#E6EDF5" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" points="${v.map((q,i)=>X(i)+","+Y(q)).join(" ")}"/>`;
-  const iLo=v.indexOf(lo), iHi=v.indexOf(hi);
+  const iLo=v.indexOf(lo),iHi=v.indexOf(hi);
   s+=`<circle cx="${X(iLo)}" cy="${Y(lo)}" r="4.5" fill="#38BDF8"/><circle cx="${X(iHi)}" cy="${Y(hi)}" r="4.5" fill="#F43F5E"/>`;
-  for(let i=0;i<n;i+=3) s+=`<text x="${X(i)}" y="${H-9}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${String(i).padStart(2,"0")}</text>`;
+  for(let i=0;i<n;i+=3)s+=`<text x="${X(i)}" y="${H-9}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${String(i).padStart(2,"0")}</text>`;
   svg.innerHTML=svg.querySelector("title").outerHTML+s;
 }
 
@@ -385,31 +468,16 @@ function renderArchive(rows){
     const id=(r.post_id||"").replace("urn:li:share:","");
     const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
     const kind=r.kind==="post2"?"Net load outlook":"Market analysis";
-    const day=short(new Date(r.analysis_date+"T00:00:00"));
-    const pub=r.at?short(new Date(r.at)):"—";
-    return `<tr><td class="mono">${day}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${pub}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
+    return `<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
   }).join("");
 }
 
-/* groups */
-document.querySelectorAll(".grp").forEach(b=>b.addEventListener("click",()=>{
-  b.setAttribute("aria-expanded", b.getAttribute("aria-expanded")==="true" ? "false" : "true");
+/* collapsible groups */
+document.querySelectorAll(".grp,.sub").forEach(b=>b.addEventListener("click",()=>{
+  b.setAttribute("aria-expanded",b.getAttribute("aria-expanded")==="true"?"false":"true");
 }));
 
-/* routing */
-const views=[...document.querySelectorAll(".view")], links=[...document.querySelectorAll(".items a")];
-function go(id){
-  if(!views.some(v=>v.id===id)) id="tr-netload";
-  views.forEach(v=>v.classList.toggle("on",v.id===id));
-  links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
-  const owner=document.querySelector(`.items a[data-view="${id}"]`);
-  if(owner){
-    owner.closest(".items").previousElementSibling.setAttribute("aria-expanded","true");
-    const t=document.getElementById("topbar-sec");
-    if(t) t.textContent=owner.textContent.trim();
-  }
-  window.scrollTo(0,0);
-}
+/* mobile drawer */
 const rail=document.getElementById("rail"),scrim=document.getElementById("scrim"),burger=document.getElementById("burger");
 function setMenu(open){
   rail.classList.toggle("open",open);
@@ -420,6 +488,26 @@ function setMenu(open){
 burger.addEventListener("click",()=>setMenu(!rail.classList.contains("open")));
 scrim.addEventListener("click",()=>setMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
+
+/* routing */
+const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
+function go(id){
+  if(!views.some(v=>v.id===id))id="tr-netload";
+  views.forEach(v=>v.classList.toggle("on",v.id===id));
+  links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
+  const owner=document.querySelector(`a[data-view="${id}"]`);
+  if(owner){
+    let box=owner.parentElement;
+    while(box&&box!==rail){
+      const ctl=box.previousElementSibling;
+      if(ctl&&(ctl.classList.contains("grp")||ctl.classList.contains("sub")))ctl.setAttribute("aria-expanded","true");
+      box=box.parentElement;
+    }
+    const t=document.getElementById("topbar-sec");
+    if(t)t.textContent=owner.textContent.trim();
+  }
+  window.scrollTo(0,0);
+}
 links.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();history.replaceState(null,"","#"+a.dataset.view);go(a.dataset.view);setMenu(false)}));
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 go(location.hash.slice(1)||"tr-netload");
@@ -429,11 +517,11 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).cat
 fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
  .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
-   {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968"},
-   {analysis_date:"2026-08-26",kind:"post1",post_id:"urn:li:share:7498722107460120576"},
-   {analysis_date:"2026-08-25",kind:"post1",post_id:"urn:li:share:7498286459423227904"},
-   {analysis_date:"2026-08-24",kind:"post1",post_id:"urn:li:share:7497980526339796993"},
-   {analysis_date:"2026-08-23",kind:"post1",post_id:"urn:li:share:7497561523238916096"}
+   {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968",at:"2026-08-27T09:54:04Z"},
+   {analysis_date:"2026-08-26",kind:"post1",post_id:"urn:li:share:7498722107460120576",at:"2026-08-27T12:44:30Z"},
+   {analysis_date:"2026-08-25",kind:"post1",post_id:"urn:li:share:7498286459423227904",at:"2026-08-26T07:53:24Z"},
+   {analysis_date:"2026-08-24",kind:"post1",post_id:"urn:li:share:7497980526339796993",at:"2026-08-25T11:37:43Z"},
+   {analysis_date:"2026-08-23",kind:"post1",post_id:"urn:li:share:7497561523238916096",at:"2026-08-24T07:52:45Z"}
  ]));
 </script>
 </body>
