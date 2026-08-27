@@ -30,7 +30,7 @@ h1,h2,h3{font-family:Archivo,system-ui,sans-serif;letter-spacing:-.02em;margin:0
 
 .grp{border:0;background:none;width:100%;display:flex;align-items:center;justify-content:space-between;
      padding:12px 20px 10px;color:var(--text);font-family:Archivo;font-weight:600;font-size:13px;
-     letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+     letter-spacing:.1em;text-transform:none;cursor:pointer}
 .grp:hover{background:var(--surface-2)}
 .grp:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
 .chev{width:9px;height:9px;border-right:1.8px solid var(--muted);border-bottom:1.8px solid var(--muted);
@@ -87,8 +87,8 @@ a.post:hover{text-decoration:underline}
 
 .mix{display:grid;gap:8px}
 .mix .row{display:grid;grid-template-columns:120px 1fr 54px;align-items:center;gap:12px;font-size:14px}
-.mix .track{height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden}
-.mix .fill{height:100%;border-radius:5px}
+.mix .track{display:block;height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.mix .fill{display:block;height:100%;border-radius:5px}
 .mix .pc{font-family:"IBM Plex Mono";text-align:right;color:var(--muted);font-size:13px}
 
 .empty{border:1px dashed var(--line);border-radius:12px;padding:32px;text-align:center;color:var(--muted)}
@@ -117,14 +117,14 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px}
   </div>
 
   <div class="nav">
-    <button class="grp" aria-expanded="true" data-grp="tr">Türkiye<span class="chev"></span></button>
+    <button class="grp" aria-expanded="true" data-grp="tr">TÜRKİYE<span class="chev"></span></button>
     <div class="items">
       <a href="#tr-netload"  data-view="tr-netload"  style="--c:var(--b1)"><span class="bar"></span>Net load outlook</a>
       <a href="#tr-daily"    data-view="tr-daily"    style="--c:var(--b2)"><span class="bar"></span>Daily market analysis</a>
       <a href="#tr-archive"  data-view="tr-archive"  style="--c:var(--b3)"><span class="bar"></span>Published archive</a>
     </div>
 
-    <button class="grp" aria-expanded="true" data-grp="gb">Great Britain<span class="chev"></span></button>
+    <button class="grp" aria-expanded="true" data-grp="gb">GREAT BRITAIN<span class="chev"></span></button>
     <div class="items">
       <a href="#gb-scorecard" data-view="gb-scorecard" style="--c:var(--b4)"><span class="bar"></span>Wind imbalance scorecard</a>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--b5)"><span class="bar"></span>Market structure</a>
