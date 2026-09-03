@@ -315,22 +315,22 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
   <div class="eyebrow">Türkiye · daily · ex-post check</div>
   <h1>Actual vs outlook</h1>
   <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours are checked against what actually cleared.</p>
-  <p class="note-p">The outlook never forecasts price. It makes four structural claims: where the trough sits, where the peak sits, which run of hours is the deepest and which is the tightest. Each one either holds or it does not, and the record below is scored automatically with no day left out.</p>
+  <p class="note-p">The outlook never forecasts price. It makes four structural claims: where the trough sits, where the peak sits, which run of hours is the deepest and which is the tightest. Each one either holds or it does not, the record is scored automatically, and no day is left out.</p>
 
   <div class="panel">
     <div class="vhead">
       <div class="score">
         <svg viewBox="0 0 126 126" aria-hidden="true">
           <circle cx="63" cy="63" r="56" fill="none" stroke="#26364B" stroke-width="6"/>
-          <circle cx="63" cy="63" r="56" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"
-                  stroke-dasharray="351.9" stroke-dashoffset="112.6" transform="rotate(-90 63 63)"/>
+          <circle id="v-arc" cx="63" cy="63" r="56" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"
+                  stroke-dasharray="351.9" stroke-dashoffset="351.9" transform="rotate(-90 63 63)"/>
         </svg>
-        <div class="n">68%</div><div class="l">13 / 19</div>
+        <div class="n" id="v-pct">—</div><div class="l" id="v-frac"></div>
       </div>
       <div>
-        <h2>Five days, nineteen claims</h2>
-        <p class="body">Thirteen held on the strict test, which requires the claimed window to be the single cheapest or dearest run of its length in the whole day. Nothing here is graded by eye.</p>
-        <p class="body">Allowing a <strong>3% margin</strong> against the best available window, the score is <strong>15 of 19</strong>. Two of the four strict misses were within a few lira per MWh of passing and came down to the window sitting one hour off.</p>
+        <h2 id="v-head">Loading…</h2>
+        <p class="body">A claim holds only if the claimed hour is among the three cheapest or dearest of the day, or if the claimed run is the single cheapest or dearest run of its length. Nothing is graded by eye and no day is removed after the fact.</p>
+        <p class="body" id="v-sum"></p>
       </div>
     </div>
   </div>
@@ -340,68 +340,22 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
     <p class="note">Figures are TL/MWh against the best the day allowed. A positive number means the claimed hours ran that much dearer than the cheapest available; a negative number means they ran that much cheaper than the dearest available. Grey means no claim was made.</p>
     <table class="mx">
       <thead><tr><th>Day</th><th class="c">Trough</th><th class="c">Peak</th><th class="c">Deep run</th><th class="c">Tight run</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="d">28 Aug</td>
-          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="Second dearest hour">✓</span><span class="sub">−9</span></td>
-          <td class="c"><span class="dot m" title="1,989 claimed vs 1,851 best, starting 10:00">✕</span><span class="sub">+138</span></td>
-          <td class="c"><span class="dot m" title="3,794 claimed vs 3,804 best, starting 17:00">✕</span><span class="sub">−10</span></td>
-        </tr>
-        <tr>
-          <td class="d">29 Aug</td>
-          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot m" title="2,184 claimed vs 2,124 best, starting 02:00">✕</span><span class="sub">+59</span></td>
-          <td class="c"><span class="dot n" title="No top band reached, so no claim">–</span><span class="sub">none</span></td>
-        </tr>
-        <tr>
-          <td class="d">30 Aug</td>
-          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="616 TL/MWh, the cheapest 7h run in the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="3,393 TL/MWh, the dearest 3h run in the day">✓</span><span class="sub">±0</span></td>
-        </tr>
-        <tr>
-          <td class="d">31 Aug</td>
-          <td class="c"><span class="dot m" title="2,300 at the claimed hour vs 1,500 at the cheapest">✕</span><span class="sub">+800</span></td>
-          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot m" title="2,281 claimed vs 2,192 best, starting 00:00">✕</span><span class="sub">+89</span></td>
-          <td class="c"><span class="dot m" title="3,692 claimed vs 3,808 best, starting 19:00">✕</span><span class="sub">−117</span></td>
-        </tr>
-        <tr>
-          <td class="d">1 Sep</td>
-          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="2,261 TL/MWh, the cheapest 3h run in the day">✓</span><span class="sub">±0</span></td>
-          <td class="c"><span class="dot h" title="4,020 TL/MWh, the dearest 5h run in the day">✓</span><span class="sub">±0</span></td>
-        </tr>
-      </tbody>
+      <tbody id="v-rows"><tr><td colspan="5" style="color:var(--muted)">Loading…</td></tr></tbody>
     </table>
   </div>
 
   <div class="panel">
     <h2>Which claim is carrying the method</h2>
-    <p class="note">Hit rate by claim type across the five days.</p>
-    <div class="bars">
-      <div class="bar"><span class="t">Peak hour</span><span class="track"><span class="fill" style="width:100%;background:var(--b2)"></span></span><span class="pc">5 / 5</span></div>
-      <div class="bar"><span class="t">Trough hour</span><span class="track"><span class="fill" style="width:80%;background:var(--b2)"></span></span><span class="pc">4 / 5</span></div>
-      <div class="bar"><span class="t">Tight run</span><span class="track"><span class="fill" style="width:50%;background:var(--b3)"></span></span><span class="pc">2 / 4</span></div>
-      <div class="bar"><span class="t">Deep run</span><span class="track"><span class="fill" style="width:40%;background:var(--b4)"></span></span><span class="pc">2 / 5</span></div>
-    </div>
-    <p class="body" style="margin-top:18px">The two single-hour claims are close to reliable. The window claims are not, and they fail in one direction: the deep run keeps landing later than the cheapest hours actually sit. On 28 and 29 August the cheapest run began two to four hours earlier than the outlook placed it, and the four misses sum to a positive 1,086 TL/MWh.</p>
-    <p class="body">That pattern points at the solar shaping rather than the wind forecast. It is the input with no published forecast behind it, and the one the method flagged as weakest from the start. Five days is not proof, but it is the first evidence of which input to fix.</p>
+    <p class="note">Hit rate by claim type across the record.</p>
+    <div class="bars" id="v-bars"></div>
+    <p class="body" style="margin-top:18px">The two single-hour claims are close to reliable. The window claims are not, and they fail in one direction: the deep run keeps landing later than the cheapest hours actually sit.</p>
+    <p class="body">That pattern points at the solar shaping rather than the wind forecast. It is the input with no published forecast behind it, and the one the method flagged as weakest from the start. A handful of days is not proof, but it is the first evidence of which input to fix.</p>
   </div>
 
   <div class="panel">
-    <h2>31 August, the day it failed</h2>
-    <p class="note">Three of four claims missed. Worth keeping visible rather than averaging away.</p>
-    <p class="body">The outlook put the trough at 07:00. Price bottomed at 10:00, 12:00 and 15:00 instead, all three at the same 1,500 TL/MWh floor, and the claimed hour came in 800 TL/MWh above them. When several hours clear at an identical price, ranking a single hour stops being a meaningful test.</p>
-    <p class="body">The tight run missed by 117 TL/MWh, one hour off. The deep run missed by 89. On a day where a third of the hours cleared at one of three repeated prices, the scoring method itself is under strain, and that is a finding about the test rather than about the market.</p>
-  </div>
-
-  <div class="callout">
-    <b>How this is scored.</b> Trough and peak hold if the claimed hour is among the three cheapest or three dearest of the day. A run holds if its average price equals the best available run of the same length. The strict figure is the headline and the 3% variant is reported alongside, so a near miss is not hidden. Every day published is included, and no day is removed after the fact.
+    <h2>When the score is misleading</h2>
+    <p class="body">On 31 August a third of the hours cleared at one of three repeated prices, several of them at the same floor. When many hours settle identically, ranking a single hour stops being a meaningful test, and the trough claim was scored as missed even though the shape was not obviously wrong.</p>
+    <p class="body">Days like that stay in the record rather than being set aside. A scoring method that quietly drops its hard cases is not a scoring method.</p>
   </div>
 </section>
 
@@ -680,6 +634,30 @@ function renderMarket(m){
   document.getElementById("m-rows").innerHTML=(m.rows||[]).map(r=>
     `<tr><td class="mono">${r.hour}</td><td class="num">${r.mcp}</td><td class="num">${r.smp}</td><td class="num">${r.vol}</td><td class="num">${r.raw}</td><td class="num">${r.adj}</td><td class="num">${r.weeks}</td></tr>`).join("");
 }
+function renderVerify(v){
+  const C=2*Math.PI*56;
+  document.getElementById("v-arc").setAttribute("stroke-dashoffset",(C*(1-v.pct/100)).toFixed(1));
+  document.getElementById("v-pct").textContent=v.pct+"%";
+  document.getElementById("v-frac").textContent=v.held+" / "+v.total;
+  document.getElementById("v-head").textContent=v.days.length+" days, "+v.total+" claims";
+  document.getElementById("v-sum").textContent="Of "+v.total+" claims scored, "+v.held+" held and "+(v.total-v.held)+" missed. The record covers "+v.days.length+" published days and grows by one each day.";
+  const short=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+  const cell=c=>{
+    const k=c.held===null?"n":(c.held?"h":"m"), m=c.held===null?"–":(c.held?"✓":"✕");
+    return `<td class="c"><span class="dot ${k}" title="${c.title}">${m}</span><span class="sub">${c.delta}</span></td>`;
+  };
+  document.getElementById("v-rows").innerHTML=v.days.map(d=>
+    `<tr><td class="d">${short(d.date)}</td>${cell(d.cells.trough)}${cell(d.cells.peak)}${cell(d.cells.low)}${cell(d.cells.high)}</tr>`).join("");
+  const col=r=>r>=.8?"var(--b2)":r>=.6?"var(--b3)":"var(--b4)";
+  document.getElementById("v-bars").innerHTML=v.byClaim.map(b=>{
+    const r=b.of?b.held/b.of:0;
+    return `<div class="bar"><span class="t">${b.t}</span><span class="track"><span class="fill" style="width:${(r*100).toFixed(0)}%;background:${col(r)}"></span></span><span class="pc">${b.held} / ${b.of}</span></div>`;
+  }).join("");
+}
+fetch("verification.json").then(r=>r.ok?r.json():Promise.reject()).then(renderVerify)
+ .catch(()=>{document.getElementById("v-head").textContent="Record in preparation";
+   document.getElementById("v-rows").innerHTML='<tr><td colspan="5" style="color:var(--muted)">No scored days yet.</td></tr>';});
+
 fetch("market.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket)
  .catch(()=>{document.getElementById("m-title").textContent="Market analysis";
    document.getElementById("m-lede").textContent="The next closed day is published once its settlement data lands.";});
