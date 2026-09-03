@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-02",
+  "updated": "2026-09-03T13:10:00Z",
+  "source": "EPIAS Transparency Platform",
+  "lede": "Down-regulation ran to 6,480 MWh and cost 9.7 million TL. Almost all of it landed between 03:00 and 12:00, the hours solar was strongest.",
+  "figures": [
+    {"k":"Daily average","v":"3,313","n":"TL/MWh, 9% below the same weekday a week earlier"},
+    {"k":"Floor","v":"1,800","n":"TL/MWh at 12:00"},
+    {"k":"Spread","v":"2,300","n":"TL/MWh, 28% wider than a week earlier"},
+    {"k":"Balancing cost","v":"8.9M","n":"TL, of which 9.7M was turning generation down"}
+  ],
+  "mix": [
+    {"t":"Other fossil","p":31.9,"c":"var(--muted)"},
+    {"t":"Hydro","p":24.4,"c":"var(--b1)"},
+    {"t":"Solar","p":15.9,"c":"var(--b3)"},
+    {"t":"Natural gas","p":12.7,"c":"var(--b4)"},
+    {"t":"Wind","p":11.2,"c":"var(--b2)"},
+    {"t":"Geothermal, biomass","p":3.9,"c":"var(--b5)"}
+  ],
+  "mixNote": "Renewables took 55.4% of the day, five points more than the same weekday a week earlier. Wind rose 41% week on week and gas fell 30%.",
+  "solarNote": "Solar supplied 183,515 MWh. Of that, 145,787 MWh came from distributed rooftop capacity that files no schedule and appears in the data only as consumption that never showed up.",
+  "tableNote": "The three hours where up-regulation cost the most, with the raw wedge and the same wedge after re-clearing the day-ahead supply curve with the extra demand.",
+  "rows": [
+    {"hour":"23:00","mcp":"3,263","smp":"3,854","vol":"788 MWh","raw":"591","adj":"262","weeks":"4 / 4"},
+    {"hour":"11:00","mcp":"2,900","smp":"3,450","vol":"539 MWh","raw":"550","adj":"200","weeks":"3 / 4"},
+    {"hour":"18:00","mcp":"3,800","smp":"4,100","vol":"506 MWh","raw":"300","adj":"150","weeks":"4 / 4"}
+  ],
+  "closing": "All three hours deviated in the same direction on at least three of the last four same weekdays, so none of them was a surprise. Of the day's instructions, 1,500 MWh carried a grid-constraint code rather than a market imbalance code, so part of this was the network rather than the schedule."
+}
