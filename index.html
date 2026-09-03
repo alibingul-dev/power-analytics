@@ -408,41 +408,33 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 <!-- ===== DAILY MARKET ANALYSIS ===== -->
 <section class="view" id="tr-daily">
   <div class="eyebrow">Türkiye · daily · closed day</div>
-  <h1>26 August 2026</h1>
-  <p class="lede">The day-ahead market spent four hours at the 4,500 TL/MWh cap. Real time agreed with it for one of them.</p>
-  <p class="note-p">Published every day after settlement data lands, from EPİAŞ open data. Each number is read from tool output rather than typed from memory, and the balancing figures separate market imbalance from grid constraints.</p>
+  <h1 id="m-title">Loading…</h1>
+  <p class="lede" id="m-lede"></p>
+  <p class="note-p">Published after settlement data lands, from EPİAŞ open data. Every number is read from tool output rather than typed from memory, and the balancing figures separate market imbalance from grid constraints.</p>
 
-  <div class="figs">
-    <div class="fig"><div class="k">Daily average</div><div class="v">3,635</div><div class="n">TL/MWh</div></div>
-    <div class="fig"><div class="k">Floor</div><div class="v">2,700</div><div class="n">TL/MWh at 12:00, up 80% on the day</div></div>
-    <div class="fig"><div class="k">Spread</div><div class="v">1,800</div><div class="n">TL/MWh, narrowed by a third</div></div>
-    <div class="fig"><div class="k">Balancing cost</div><div class="v">5.1M</div><div class="n">TL, mostly turning generation down</div></div>
-  </div>
+  <div class="figs" id="m-figs"></div>
 
   <div class="panel">
     <h2>Generation mix</h2>
-    <p class="note">Renewables took 50.3% of the day, the narrowest margin over fossil this month.</p>
-    <div class="mix">
-      <div class="row"><span>Hydro</span><span class="track"><span class="fill" style="width:24.7%;background:var(--b1)"></span></span><span class="pc">24.7%</span></div>
-      <div class="row"><span>Natural gas</span><span class="track"><span class="fill" style="width:18.1%;background:var(--b4)"></span></span><span class="pc">18.1%</span></div>
-      <div class="row"><span>Solar</span><span class="track"><span class="fill" style="width:14.4%;background:var(--b3)"></span></span><span class="pc">14.4%</span></div>
-      <div class="row"><span>Wind</span><span class="track"><span class="fill" style="width:7.5%;background:var(--b2)"></span></span><span class="pc">7.5%</span></div>
-      <div class="row"><span>Other fossil</span><span class="track"><span class="fill" style="width:31.6%;background:var(--muted)"></span></span><span class="pc">31.6%</span></div>
-    </div>
+    <p class="note" id="m-mixnote"></p>
+    <div class="mix" id="m-mix"></div>
+    <p class="body" style="margin-top:18px" id="m-solarnote"></p>
   </div>
 
   <div class="panel">
     <h2>Where the schedule and the system disagreed</h2>
-    <p class="note">From 16:00 to 21:00 the day-ahead price ran between 3,800 and the cap while the balancing price sat at 2,600 to 3,000.</p>
+    <p class="note" id="m-tablenote"></p>
     <table>
-      <thead><tr><th>Hour</th><th class="num">Day-ahead</th><th class="num">Real time</th><th class="num">Turned down</th><th class="num">Cost</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">16:00</td><td class="num">3,800</td><td class="num">2,600</td><td class="num">943 MWh</td><td class="num">925k TL</td></tr>
-        <tr><td class="mono">17:00</td><td class="num">4,490</td><td class="num">3,000</td><td class="num">769 MWh</td><td class="num">751k TL</td></tr>
-        <tr><td class="mono">21:00</td><td class="num">4,500</td><td class="num">3,000</td><td class="num">1,087 MWh</td><td class="num">761k TL</td></tr>
-      </tbody>
+      <thead><tr><th>Hour</th><th class="num">Day-ahead</th><th class="num">Real time</th><th class="num">Volume</th><th class="num">Raw wedge</th><th class="num">Adjusted</th><th class="num">Repeats</th></tr></thead>
+      <tbody id="m-rows"></tbody>
     </table>
-    <p class="body" style="margin:18px 0 0">The day-ahead priced the evening as if the system would be short. It was long instead, and unwinding that cost 5.3 million TL in down-regulation. Of the day's instructions, 1,135 MWh carried a grid-constraint code, so not all of this was market imbalance.</p>
+    <p class="body" style="margin:18px 0 0" id="m-closing"></p>
+  </div>
+
+  <div class="panel">
+    <h2>Why the adjusted wedge is the honest number</h2>
+    <p class="body">The raw wedge is the difference between the balancing price and the day-ahead price for the same energy. It overstates what could have been saved, because buying that volume in the day-ahead market would itself have moved the clearing price up the supply curve.</p>
+    <p class="body">The adjusted column re-clears the curve with the extra demand added. On this day it cut the largest wedge from 591 to 262 TL/MWh. The aggregate curve excludes block and flexible orders, so the adjusted figure is an approximation rather than a settlement.</p>
   </div>
 </section>
 
@@ -673,6 +665,24 @@ go(location.hash.slice(1)||"tr-netload");
 
 /* data */
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
+
+function renderMarket(m){
+  const long=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("m-title").textContent=long(m.date);
+  document.getElementById("m-lede").textContent=m.lede||"";
+  document.getElementById("m-figs").innerHTML=(m.figures||[]).map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
+  document.getElementById("m-mixnote").textContent=m.mixNote||"";
+  document.getElementById("m-solarnote").textContent=m.solarNote||"";
+  document.getElementById("m-tablenote").textContent=m.tableNote||"";
+  document.getElementById("m-closing").textContent=m.closing||"";
+  document.getElementById("m-mix").innerHTML=(m.mix||[]).map(r=>
+    `<div class="row"><span>${r.t}</span><span class="track"><span class="fill" style="width:${r.p}%;background:${r.c}"></span></span><span class="pc">${r.p}%</span></div>`).join("");
+  document.getElementById("m-rows").innerHTML=(m.rows||[]).map(r=>
+    `<tr><td class="mono">${r.hour}</td><td class="num">${r.mcp}</td><td class="num">${r.smp}</td><td class="num">${r.vol}</td><td class="num">${r.raw}</td><td class="num">${r.adj}</td><td class="num">${r.weeks}</td></tr>`).join("");
+}
+fetch("market.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket)
+ .catch(()=>{document.getElementById("m-title").textContent="Market analysis";
+   document.getElementById("m-lede").textContent="The next closed day is published once its settlement data lands.";});
 fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
  .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
