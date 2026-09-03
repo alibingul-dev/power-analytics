@@ -1,0 +1,181 @@
+{
+ "updated": "2026-09-03T13:30:00Z",
+ "source": "EPIAS Transparency Platform",
+ "held": 15,
+ "total": 23,
+ "pct": 65,
+ "byClaim": [
+  {
+   "t": "Peak hour",
+   "held": 6,
+   "of": 6
+  },
+  {
+   "t": "Trough hour",
+   "held": 5,
+   "of": 6
+  },
+  {
+   "t": "Tight run",
+   "held": 2,
+   "of": 5
+  },
+  {
+   "t": "Deep run",
+   "held": 2,
+   "of": 6
+  }
+ ],
+ "days": [
+  {
+   "date": "2026-08-28",
+   "cells": {
+    "trough": {
+     "held": true,
+     "delta": "±0",
+     "title": "1,500 at the claimed hour vs 1,500 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "−9",
+     "title": "3,986 at the claimed hour vs 3,995 at the dearest"
+    },
+    "low": {
+     "held": false,
+     "delta": "+138",
+     "title": "1,989 claimed vs 1,851 best, starting 10:00"
+    },
+    "high": {
+     "held": false,
+     "delta": "−10",
+     "title": "3,794 claimed vs 3,804 best, starting 17:00"
+    }
+   }
+  },
+  {
+   "date": "2026-08-29",
+   "cells": {
+    "trough": {
+     "held": true,
+     "delta": "±0",
+     "title": "1,500 at the claimed hour vs 1,500 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "±0",
+     "title": "4,193 at the claimed hour vs 4,193 at the dearest"
+    },
+    "low": {
+     "held": false,
+     "delta": "+59",
+     "title": "2,184 claimed vs 2,124 best, starting 02:00"
+    },
+    "high": {
+     "held": null,
+     "delta": "none",
+     "title": "No top band reached, so no claim"
+    }
+   }
+  },
+  {
+   "date": "2026-08-30",
+   "cells": {
+    "trough": {
+     "held": true,
+     "delta": "±0",
+     "title": "200 at the claimed hour vs 200 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "±0",
+     "title": "3,510 at the claimed hour vs 3,510 at the dearest"
+    },
+    "low": {
+     "held": true,
+     "delta": "±0",
+     "title": "616 claimed vs 616 best, starting 09:00"
+    },
+    "high": {
+     "held": true,
+     "delta": "±0",
+     "title": "3,393 claimed vs 3,393 best, starting 19:00"
+    }
+   }
+  },
+  {
+   "date": "2026-08-31",
+   "cells": {
+    "trough": {
+     "held": false,
+     "delta": "+800",
+     "title": "2,300 at the claimed hour vs 1,500 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "±0",
+     "title": "3,975 at the claimed hour vs 3,975 at the dearest"
+    },
+    "low": {
+     "held": false,
+     "delta": "+89",
+     "title": "2,281 claimed vs 2,192 best, starting 00:00"
+    },
+    "high": {
+     "held": false,
+     "delta": "−117",
+     "title": "3,692 claimed vs 3,808 best, starting 19:00"
+    }
+   }
+  },
+  {
+   "date": "2026-09-01",
+   "cells": {
+    "trough": {
+     "held": true,
+     "delta": "±0",
+     "title": "1,556 at the claimed hour vs 1,556 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "±0",
+     "title": "4,295 at the claimed hour vs 4,295 at the dearest"
+    },
+    "low": {
+     "held": true,
+     "delta": "±0",
+     "title": "2,261 claimed vs 2,261 best, starting 10:00"
+    },
+    "high": {
+     "held": true,
+     "delta": "±0",
+     "title": "4,020 claimed vs 4,020 best, starting 17:00"
+    }
+   }
+  },
+  {
+   "date": "2026-09-02",
+   "cells": {
+    "trough": {
+     "held": true,
+     "delta": "±0",
+     "title": "1,800 at the claimed hour vs 1,800 at the cheapest"
+    },
+    "peak": {
+     "held": true,
+     "delta": "±0",
+     "title": "4,100 at the claimed hour vs 4,100 at the dearest"
+    },
+    "low": {
+     "held": false,
+     "delta": "+493",
+     "title": "2,293 claimed vs 1,800 best, starting 12:00"
+    },
+    "high": {
+     "held": false,
+     "delta": "−100",
+     "title": "3,825 claimed vs 3,925 best, starting 17:00"
+    }
+   }
+  }
+ ]
+}
