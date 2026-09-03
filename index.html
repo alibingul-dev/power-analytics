@@ -136,7 +136,100 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 }
 @media (max-width:520px){.figs{grid-template-columns:1fr 1fr}.fig .v{font-size:19px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- verification record ---- */
+.vhead{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+.score{position:relative;flex:none;width:126px;height:126px;border-radius:50%;
+  border:1px solid var(--line);background:var(--surface-2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score svg{position:absolute;inset:0}
+.score .n{font-family:"IBM Plex Mono";font-size:29px;font-weight:500;line-height:1}
+.score .l{font-family:"IBM Plex Mono";font-size:11px;color:var(--muted);letter-spacing:.08em;margin-top:5px}
+.mx{width:100%;border-collapse:collapse;font-size:14px}
+.mx th{text-align:left;font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;padding:0 8px 10px;border-bottom:1px solid var(--line)}
+.mx th.c{text-align:center;width:104px}
+.mx td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.mx tr:last-child td{border-bottom:0}
+.mx td.d{font-family:"IBM Plex Mono";white-space:nowrap}
+.mx td.c{text-align:center}
+.dot{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;font-size:13px;font-weight:700}
+.dot.h{background:rgba(52,211,153,.16);color:var(--b2)}
+.dot.m{background:rgba(244,63,94,.16);color:var(--b5)}
+.dot.n{background:var(--surface-2);color:var(--muted)}
+.sub{display:block;font-size:11px;color:var(--muted);font-family:"IBM Plex Mono";margin-top:3px}
+.bars{display:grid;gap:11px}
+.bar{display:grid;grid-template-columns:170px 1fr 58px;align-items:center;gap:12px;font-size:14px}
+.bar .t{color:var(--muted)}
+.bar .track{height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bar .fill{height:100%;border-radius:5px}
+.bar .pc{font-family:"IBM Plex Mono";text-align:right;font-size:13px;color:var(--muted)}
+.callout{border:1px dashed var(--line);border-radius:10px;padding:16px 18px;color:var(--muted);font-size:13.5px;max-width:74ch}
+.callout b{color:var(--text)}
+@media (max-width:880px){
+  .vhead{grid-template-columns:1fr;gap:15px}
+  .bar{grid-template-columns:110px 1fr 50px;gap:9px;font-size:13px}
+  .mx{font-size:12.5px}.mx th.c{width:58px}
+  .mx td{padding:9px 4px}.dot{width:23px;height:23px;font-size:12px}
+}
 </style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "@id": "https://alibingul-dev.github.io/power-analytics/#dataset",
+  "name": "Turkish net load outlook and wind forecast, daily series",
+  "description": "Next-day net load profile for Türkiye derived from EPİAŞ pre-market data: load plan minus wind forecast minus a solar shape, with trough, peak, swing and ramp metrics. Published daily before the day-ahead result. The site also carries an imbalance scorecard for the Great Britain wind fleet built from Elexon Insights data.",
+  "url": "https://alibingul-dev.github.io/power-analytics/",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "temporalCoverage": "P1D",
+  "keywords": ["net load","wind forecast","load plan","ramp","imbalance","EPİAŞ","Elexon","Turkish power market","GB wind"],
+  "spatialCoverage": [
+    { "@type": "Place", "name": "Türkiye" },
+    { "@type": "Place", "name": "Great Britain" }
+  ],
+  "variableMeasured": [
+    { "@type": "PropertyValue", "name": "Net load, hourly", "unitText": "MWh" },
+    { "@type": "PropertyValue", "name": "Wind generation forecast", "unitText": "MWh" },
+    { "@type": "PropertyValue", "name": "Load plan peak", "unitText": "MWh" },
+    { "@type": "PropertyValue", "name": "Daily swing, peak minus trough", "unitText": "MWh" },
+    { "@type": "PropertyValue", "name": "Ramp rate, trough to peak", "unitText": "MWh per hour" }
+  ],
+  "creator": {
+    "@type": "Person",
+    "name": "Ali Bingül",
+    "url": "https://alibingul-dev.github.io/power-analytics/"
+  },
+  "isBasedOn": [
+    {
+      "@type": "Dataset",
+      "name": "EPİAŞ Transparency Platform",
+      "url": "https://seffaflik.epias.com.tr/"
+    },
+    {
+      "@type": "Dataset",
+      "name": "Elexon Insights",
+      "url": "https://data.elexon.co.uk/"
+    }
+  ],
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "name": "Daily net load data",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://alibingul-dev.github.io/power-analytics/data.json"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "Published analysis archive",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://alibingul-dev.github.io/power-analytics/published.json"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -221,28 +314,94 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 <section class="view" id="tr-actual">
   <div class="eyebrow">Türkiye · daily · ex-post check</div>
   <h1>Actual vs outlook</h1>
-  <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours can be checked against what actually cleared, which is the only honest way to know whether the method is worth anything.</p>
-  <p class="note-p">The outlook never forecasts price. What it claims is structural: which hours sit at the bottom of the range, which sit at the top, and where the ramp runs. Those claims either hold or they do not.</p>
+  <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours are checked against what actually cleared.</p>
+  <p class="note-p">The outlook never forecasts price. It makes four structural claims: where the trough sits, where the peak sits, which run of hours is the deepest and which is the tightest. Each one either holds or it does not, and the record below is scored automatically with no day left out.</p>
 
   <div class="panel">
-    <h2>13 August 2026, checked against outturn</h2>
-    <p class="note">The first outlook to be verified after publication. All four structural claims held.</p>
-    <table>
-      <thead><tr><th>Claim made the day before</th><th>What happened</th><th class="num">Result</th></tr></thead>
-      <tbody>
-        <tr><td>Net load bottoms twice, at 07:00 and 12:00</td><td>Price bottomed in those two hours: 1,500 and 1,000 TL/MWh, the day's two cheapest</td><td class="num ok">held</td></tr>
-        <tr><td>Deepest window 10:00–13:59</td><td>Cleared at 1,771 TL/MWh average, the cheapest four consecutive hours of the day</td><td class="num ok">held</td></tr>
-        <tr><td>Tightest window 18:00–21:59</td><td>Cleared at 3,684 TL/MWh average, the most expensive four consecutive hours</td><td class="num ok">held</td></tr>
-        <tr><td>Peak inside the top band</td><td>4,000 TL/MWh at 20:00, the same hour net load peaked</td><td class="num ok">held</td></tr>
-      </tbody>
-    </table>
-    <p class="note" style="margin:16px 0 0">Spread between the two windows: 1,913 TL/MWh.</p>
+    <div class="vhead">
+      <div class="score">
+        <svg viewBox="0 0 126 126" aria-hidden="true">
+          <circle cx="63" cy="63" r="56" fill="none" stroke="#26364B" stroke-width="6"/>
+          <circle cx="63" cy="63" r="56" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"
+                  stroke-dasharray="351.9" stroke-dashoffset="112.6" transform="rotate(-90 63 63)"/>
+        </svg>
+        <div class="n">68%</div><div class="l">13 / 19</div>
+      </div>
+      <div>
+        <h2>Five days, nineteen claims</h2>
+        <p class="body">Thirteen held on the strict test, which requires the claimed window to be the single cheapest or dearest run of its length in the whole day. Nothing here is graded by eye.</p>
+        <p class="body">Allowing a <strong>3% margin</strong> against the best available window, the score is <strong>15 of 19</strong>. Two of the four strict misses were within a few lira per MWh of passing and came down to the window sitting one hour off.</p>
+      </div>
+    </div>
   </div>
 
   <div class="panel">
-    <h2>What a failed check would look like</h2>
-    <p class="body">The method has three ways to be wrong, and each points somewhere different. If the deep window lands in the right hours but the price does not follow, the bid stack is doing the work rather than the fundamentals. If the window itself lands in the wrong hours, the solar shaping is off, which is the weakest input because no forecast is published. If the evening block is right but the ramp is not, the wind forecast missed.</p>
-    <p class="body">Recording which of the three fails is more useful than recording whether the day was right. A single check proves nothing; a run of them tells you which input to fix.</p>
+    <h2>Claim by claim</h2>
+    <p class="note">Figures are TL/MWh against the best the day allowed. A positive number means the claimed hours ran that much dearer than the cheapest available; a negative number means they ran that much cheaper than the dearest available. Grey means no claim was made.</p>
+    <table class="mx">
+      <thead><tr><th>Day</th><th class="c">Trough</th><th class="c">Peak</th><th class="c">Deep run</th><th class="c">Tight run</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="d">28 Aug</td>
+          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="Second dearest hour">✓</span><span class="sub">−9</span></td>
+          <td class="c"><span class="dot m" title="1,989 claimed vs 1,851 best, starting 10:00">✕</span><span class="sub">+138</span></td>
+          <td class="c"><span class="dot m" title="3,794 claimed vs 3,804 best, starting 17:00">✕</span><span class="sub">−10</span></td>
+        </tr>
+        <tr>
+          <td class="d">29 Aug</td>
+          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot m" title="2,184 claimed vs 2,124 best, starting 02:00">✕</span><span class="sub">+59</span></td>
+          <td class="c"><span class="dot n" title="No top band reached, so no claim">–</span><span class="sub">none</span></td>
+        </tr>
+        <tr>
+          <td class="d">30 Aug</td>
+          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="616 TL/MWh, the cheapest 7h run in the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="3,393 TL/MWh, the dearest 3h run in the day">✓</span><span class="sub">±0</span></td>
+        </tr>
+        <tr>
+          <td class="d">31 Aug</td>
+          <td class="c"><span class="dot m" title="2,300 at the claimed hour vs 1,500 at the cheapest">✕</span><span class="sub">+800</span></td>
+          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot m" title="2,281 claimed vs 2,192 best, starting 00:00">✕</span><span class="sub">+89</span></td>
+          <td class="c"><span class="dot m" title="3,692 claimed vs 3,808 best, starting 19:00">✕</span><span class="sub">−117</span></td>
+        </tr>
+        <tr>
+          <td class="d">1 Sep</td>
+          <td class="c"><span class="dot h" title="Cheapest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="Dearest hour of the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="2,261 TL/MWh, the cheapest 3h run in the day">✓</span><span class="sub">±0</span></td>
+          <td class="c"><span class="dot h" title="4,020 TL/MWh, the dearest 5h run in the day">✓</span><span class="sub">±0</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Which claim is carrying the method</h2>
+    <p class="note">Hit rate by claim type across the five days.</p>
+    <div class="bars">
+      <div class="bar"><span class="t">Peak hour</span><span class="track"><span class="fill" style="width:100%;background:var(--b2)"></span></span><span class="pc">5 / 5</span></div>
+      <div class="bar"><span class="t">Trough hour</span><span class="track"><span class="fill" style="width:80%;background:var(--b2)"></span></span><span class="pc">4 / 5</span></div>
+      <div class="bar"><span class="t">Tight run</span><span class="track"><span class="fill" style="width:50%;background:var(--b3)"></span></span><span class="pc">2 / 4</span></div>
+      <div class="bar"><span class="t">Deep run</span><span class="track"><span class="fill" style="width:40%;background:var(--b4)"></span></span><span class="pc">2 / 5</span></div>
+    </div>
+    <p class="body" style="margin-top:18px">The two single-hour claims are close to reliable. The window claims are not, and they fail in one direction: the deep run keeps landing later than the cheapest hours actually sit. On 28 and 29 August the cheapest run began two to four hours earlier than the outlook placed it, and the four misses sum to a positive 1,086 TL/MWh.</p>
+    <p class="body">That pattern points at the solar shaping rather than the wind forecast. It is the input with no published forecast behind it, and the one the method flagged as weakest from the start. Five days is not proof, but it is the first evidence of which input to fix.</p>
+  </div>
+
+  <div class="panel">
+    <h2>31 August, the day it failed</h2>
+    <p class="note">Three of four claims missed. Worth keeping visible rather than averaging away.</p>
+    <p class="body">The outlook put the trough at 07:00. Price bottomed at 10:00, 12:00 and 15:00 instead, all three at the same 1,500 TL/MWh floor, and the claimed hour came in 800 TL/MWh above them. When several hours clear at an identical price, ranking a single hour stops being a meaningful test.</p>
+    <p class="body">The tight run missed by 117 TL/MWh, one hour off. The deep run missed by 89. On a day where a third of the hours cleared at one of three repeated prices, the scoring method itself is under strain, and that is a finding about the test rather than about the market.</p>
+  </div>
+
+  <div class="callout">
+    <b>How this is scored.</b> Trough and peak hold if the claimed hour is among the three cheapest or three dearest of the day. A run holds if its average price equals the best available run of the same length. The strict figure is the headline and the 3% variant is reported alongside, so a near miss is not hidden. Every day published is included, and no day is removed after the fact.
   </div>
 </section>
 
