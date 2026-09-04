@@ -38,8 +38,9 @@ h1,h2,h3{font-family:Archivo,system-ui,sans-serif;letter-spacing:-.02em;margin:0
 .grp[aria-expanded="false"] .chev{transform:rotate(-45deg)}
 .grp[aria-expanded="false"]+.items{display:none}
 
-.sub{border:0;background:none;width:100%;display:flex;align-items:center;justify-content:space-between;
-     padding:8px 20px 8px 22px;color:var(--muted);font-family:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.sub{border:0;background:none;width:100%;display:flex;align-items:center;gap:8px;
+     padding:8px 20px 8px 22px;color:var(--muted);font-family:inherit;font-weight:600;font-size:14px;
+     cursor:pointer;text-align:left}
 .sub:hover{background:var(--surface-2);color:var(--text)}
 .sub:focus-visible{outline:2px solid var(--b1);outline-offset:-2px}
 .sub .chev{width:7px;height:7px}
@@ -136,100 +137,7 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 }
 @media (max-width:520px){.figs{grid-template-columns:1fr 1fr}.fig .v{font-size:19px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* ---- verification record ---- */
-.vhead{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
-.score{position:relative;flex:none;width:126px;height:126px;border-radius:50%;
-  border:1px solid var(--line);background:var(--surface-2);
-  display:flex;flex-direction:column;align-items:center;justify-content:center}
-.score svg{position:absolute;inset:0}
-.score .n{font-family:"IBM Plex Mono";font-size:29px;font-weight:500;line-height:1}
-.score .l{font-family:"IBM Plex Mono";font-size:11px;color:var(--muted);letter-spacing:.08em;margin-top:5px}
-.mx{width:100%;border-collapse:collapse;font-size:14px}
-.mx th{text-align:left;font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--muted);font-weight:400;padding:0 8px 10px;border-bottom:1px solid var(--line)}
-.mx th.c{text-align:center;width:104px}
-.mx td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
-.mx tr:last-child td{border-bottom:0}
-.mx td.d{font-family:"IBM Plex Mono";white-space:nowrap}
-.mx td.c{text-align:center}
-.dot{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;font-size:13px;font-weight:700}
-.dot.h{background:rgba(52,211,153,.16);color:var(--b2)}
-.dot.m{background:rgba(244,63,94,.16);color:var(--b5)}
-.dot.n{background:var(--surface-2);color:var(--muted)}
-.sub{display:block;font-size:11px;color:var(--muted);font-family:"IBM Plex Mono";margin-top:3px}
-.bars{display:grid;gap:11px}
-.bar{display:grid;grid-template-columns:170px 1fr 58px;align-items:center;gap:12px;font-size:14px}
-.bar .t{color:var(--muted)}
-.bar .track{display:block;height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden}
-.bar .fill{display:block;height:100%;border-radius:5px}
-.bar .pc{font-family:"IBM Plex Mono";text-align:right;font-size:13px;color:var(--muted)}
-.callout{border:1px dashed var(--line);border-radius:10px;padding:16px 18px;color:var(--muted);font-size:13.5px;max-width:74ch}
-.callout b{color:var(--text)}
-@media (max-width:880px){
-  .vhead{grid-template-columns:1fr;gap:15px}
-  .bar{grid-template-columns:110px 1fr 50px;gap:9px;font-size:13px}
-  .mx{font-size:12.5px}.mx th.c{width:58px}
-  .mx td{padding:9px 4px}.dot{width:23px;height:23px;font-size:12px}
-}
 </style>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Dataset",
-  "@id": "https://alibingul-dev.github.io/power-analytics/#dataset",
-  "name": "Turkish net load outlook and wind forecast, daily series",
-  "description": "Next-day net load profile for Türkiye derived from EPİAŞ pre-market data: load plan minus wind forecast minus a solar shape, with trough, peak, swing and ramp metrics. Published daily before the day-ahead result. The site also carries an imbalance scorecard for the Great Britain wind fleet built from Elexon Insights data.",
-  "url": "https://alibingul-dev.github.io/power-analytics/",
-  "inLanguage": "en",
-  "isAccessibleForFree": true,
-  "temporalCoverage": "P1D",
-  "keywords": ["net load","wind forecast","load plan","ramp","imbalance","EPİAŞ","Elexon","Turkish power market","GB wind"],
-  "spatialCoverage": [
-    { "@type": "Place", "name": "Türkiye" },
-    { "@type": "Place", "name": "Great Britain" }
-  ],
-  "variableMeasured": [
-    { "@type": "PropertyValue", "name": "Net load, hourly", "unitText": "MWh" },
-    { "@type": "PropertyValue", "name": "Wind generation forecast", "unitText": "MWh" },
-    { "@type": "PropertyValue", "name": "Load plan peak", "unitText": "MWh" },
-    { "@type": "PropertyValue", "name": "Daily swing, peak minus trough", "unitText": "MWh" },
-    { "@type": "PropertyValue", "name": "Ramp rate, trough to peak", "unitText": "MWh per hour" }
-  ],
-  "creator": {
-    "@type": "Person",
-    "name": "Ali Bingül",
-    "url": "https://alibingul-dev.github.io/power-analytics/"
-  },
-  "isBasedOn": [
-    {
-      "@type": "Dataset",
-      "name": "EPİAŞ Transparency Platform",
-      "url": "https://seffaflik.epias.com.tr/"
-    },
-    {
-      "@type": "Dataset",
-      "name": "Elexon Insights",
-      "url": "https://data.elexon.co.uk/"
-    }
-  ],
-  "distribution": [
-    {
-      "@type": "DataDownload",
-      "name": "Daily net load data",
-      "encodingFormat": "application/json",
-      "contentUrl": "https://alibingul-dev.github.io/power-analytics/data.json"
-    },
-    {
-      "@type": "DataDownload",
-      "name": "Published analysis archive",
-      "encodingFormat": "application/json",
-      "contentUrl": "https://alibingul-dev.github.io/power-analytics/published.json"
-    }
-  ]
-}
-</script>
 </head>
 <body>
 
@@ -314,48 +222,28 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 <section class="view" id="tr-actual">
   <div class="eyebrow">Türkiye · daily · ex-post check</div>
   <h1>Actual vs outlook</h1>
-  <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours are checked against what actually cleared.</p>
-  <p class="note-p">The outlook never forecasts price. It makes four structural claims: where the trough sits, where the peak sits, which run of hours is the deepest and which is the tightest. Each one either holds or it does not, the record is scored automatically, and no day is left out.</p>
+  <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours can be checked against what actually cleared, which is the only honest way to know whether the method is worth anything.</p>
+  <p class="note-p">The outlook never forecasts price. What it claims is structural: which hours sit at the bottom of the range, which sit at the top, and where the ramp runs. Those claims either hold or they do not.</p>
 
   <div class="panel">
-    <div class="vhead">
-      <div class="score">
-        <svg viewBox="0 0 126 126" aria-hidden="true">
-          <circle cx="63" cy="63" r="56" fill="none" stroke="#26364B" stroke-width="6"/>
-          <circle id="v-arc" cx="63" cy="63" r="56" fill="none" stroke="#34D399" stroke-width="6" stroke-linecap="round"
-                  stroke-dasharray="351.9" stroke-dashoffset="351.9" transform="rotate(-90 63 63)"/>
-        </svg>
-        <div class="n" id="v-pct">—</div><div class="l" id="v-frac"></div>
-      </div>
-      <div>
-        <h2 id="v-head">Loading…</h2>
-        <p class="body">A claim holds only if the claimed hour is among the three cheapest or dearest of the day, or if the claimed run is the single cheapest or dearest run of its length. Nothing is graded by eye and no day is removed after the fact.</p>
-        <p class="body" id="v-sum"></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>Claim by claim</h2>
-    <p class="note">Figures are TL/MWh against the best the day allowed. A positive number means the claimed hours ran that much dearer than the cheapest available; a negative number means they ran that much cheaper than the dearest available. Grey means no claim was made.</p>
-    <table class="mx">
-      <thead><tr><th>Day</th><th class="c">Trough</th><th class="c">Peak</th><th class="c">Deep run</th><th class="c">Tight run</th></tr></thead>
-      <tbody id="v-rows"><tr><td colspan="5" style="color:var(--muted)">Loading…</td></tr></tbody>
+    <h2>13 August 2026, checked against outturn</h2>
+    <p class="note">The first outlook to be verified after publication. All four structural claims held.</p>
+    <table>
+      <thead><tr><th>Claim made the day before</th><th>What happened</th><th class="num">Result</th></tr></thead>
+      <tbody>
+        <tr><td>Net load bottoms twice, at 07:00 and 12:00</td><td>Price bottomed in those two hours: 1,500 and 1,000 TL/MWh, the day's two cheapest</td><td class="num ok">held</td></tr>
+        <tr><td>Deepest window 10:00–13:59</td><td>Cleared at 1,771 TL/MWh average, the cheapest four consecutive hours of the day</td><td class="num ok">held</td></tr>
+        <tr><td>Tightest window 18:00–21:59</td><td>Cleared at 3,684 TL/MWh average, the most expensive four consecutive hours</td><td class="num ok">held</td></tr>
+        <tr><td>Peak inside the top band</td><td>4,000 TL/MWh at 20:00, the same hour net load peaked</td><td class="num ok">held</td></tr>
+      </tbody>
     </table>
+    <p class="note" style="margin:16px 0 0">Spread between the two windows: 1,913 TL/MWh.</p>
   </div>
 
   <div class="panel">
-    <h2>Which claim is carrying the method</h2>
-    <p class="note">Hit rate by claim type across the record.</p>
-    <div class="bars" id="v-bars"></div>
-    <p class="body" style="margin-top:18px">The two single-hour claims are close to reliable. The window claims are not, and they fail in one direction: the deep run keeps landing later than the cheapest hours actually sit.</p>
-    <p class="body">That pattern points at the solar shaping rather than the wind forecast. It is the input with no published forecast behind it, and the one the method flagged as weakest from the start. A handful of days is not proof, but it is the first evidence of which input to fix.</p>
-  </div>
-
-  <div class="panel">
-    <h2>When the score is misleading</h2>
-    <p class="body">On 31 August a third of the hours cleared at one of three repeated prices, several of them at the same floor. When many hours settle identically, ranking a single hour stops being a meaningful test, and the trough claim was scored as missed even though the shape was not obviously wrong.</p>
-    <p class="body">Days like that stay in the record rather than being set aside. A scoring method that quietly drops its hard cases is not a scoring method.</p>
+    <h2>What a failed check would look like</h2>
+    <p class="body">The method has three ways to be wrong, and each points somewhere different. If the deep window lands in the right hours but the price does not follow, the bid stack is doing the work rather than the fundamentals. If the window itself lands in the wrong hours, the solar shaping is off, which is the weakest input because no forecast is published. If the evening block is right but the ramp is not, the wind forecast missed.</p>
+    <p class="body">Recording which of the three fails is more useful than recording whether the day was right. A single check proves nothing; a run of them tells you which input to fix.</p>
   </div>
 </section>
 
@@ -372,23 +260,24 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
     <h2>Generation mix</h2>
     <p class="note" id="m-mixnote"></p>
     <div class="mix" id="m-mix"></div>
-    <p class="body" style="margin-top:18px" id="m-solarnote"></p>
   </div>
 
   <div class="panel">
-    <h2>Where the schedule and the system disagreed</h2>
-    <p class="note" id="m-tablenote"></p>
+    <h2>The hours that cost most to balance</h2>
+    <p class="note" id="m-bnote"></p>
     <table>
-      <thead><tr><th>Hour</th><th class="num">Day-ahead</th><th class="num">Real time</th><th class="num">Volume</th><th class="num">Raw wedge</th><th class="num">Adjusted</th><th class="num">Repeats</th></tr></thead>
+      <thead><tr><th>Hour</th><th class="num">Day-ahead</th><th class="num">Real time</th><th class="num">Volume</th><th class="num">Cost</th></tr></thead>
       <tbody id="m-rows"></tbody>
     </table>
-    <p class="body" style="margin:18px 0 0" id="m-closing"></p>
+    <p class="body" id="m-constraint" style="margin:18px 0 0"></p>
   </div>
 
   <div class="panel">
-    <h2>Why the adjusted wedge is the honest number</h2>
-    <p class="body">The raw wedge is the difference between the balancing price and the day-ahead price for the same energy. It overstates what could have been saved, because buying that volume in the day-ahead market would itself have moved the clearing price up the supply curve.</p>
-    <p class="body">The adjusted column re-clears the curve with the extra demand added. On this day it cut the largest wedge from 591 to 262 TL/MWh. The aggregate curve excludes block and flexible orders, so the adjusted figure is an approximation rather than a settlement.</p>
+    <h2>Against recent days</h2>
+    <table>
+      <thead><tr><th></th><th class="num">Wind</th><th class="num">Average</th><th class="num">Floor</th><th class="num">Spread</th></tr></thead>
+      <tbody id="m-cmp"></tbody>
+    </table>
   </div>
 </section>
 
@@ -517,12 +406,16 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
   </div>
 </section>
 
-<div class="foot">Data: EPİAŞ Transparency Platform, Elexon Insights. Published in a personal capacity. Not advice, not a forecast, not a trading recommendation.</div>
+<div class="foot">
+  <div id="updated" class="mono" style="color:var(--text);margin-bottom:6px">Last updated —</div>
+  Data: EPİAŞ Transparency Platform, Elexon Insights. Published in a personal capacity. Not advice, not a forecast, not a trading recommendation.
+</div>
 </main>
 
 <script>
 const FALLBACK={
   date:"2026-08-28",
+  updated:null,
   netLoad:[38391,36347,34691,33505,32626,32405,30968,28471,28595,27473,26145,25544,23450,24230,26951,28871,32414,36959,40442,42406,42791,41488,39734,37587],
   lowBlock:[9,14],topBlock:[18,21],
   figures:[
@@ -558,7 +451,18 @@ function drawChart(d){
   svg.innerHTML=svg.querySelector("title").outerHTML+s;
 }
 
+function stamp(iso){
+  const el=document.getElementById("updated");
+  if(!el) return;
+  const d=iso?new Date(iso):new Date(document.lastModified);
+  if(isNaN(d)) return;
+  el.textContent="Last updated "+d.toLocaleString("en-GB",{
+    day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false
+  }).replace(",","")+" "+Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
 function renderDaily(d){
+  stamp(d.updated||d.retrieved||null);
   document.getElementById("d-title").textContent=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   document.getElementById("d-note").textContent=d.note||"";
   document.getElementById("d-figs").innerHTML=(d.figures||[]).map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
@@ -616,51 +520,44 @@ function go(id){
 links.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();history.replaceState(null,"","#"+a.dataset.view);go(a.dataset.view);setMenu(false)}));
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 go(location.hash.slice(1)||"tr-netload");
+stamp(null);
+
+function pct(v){return v===null||v===undefined?"—":(v>0?"+":"")+v+"%"}
+
+function renderMarket(d){
+  const t=document.getElementById("m-title");
+  if(t) t.textContent=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const lede=document.getElementById("m-lede");
+  if(lede){
+    const bal=(d.figures||[]).find(f=>f.k==="Balancing cost");
+    lede.textContent="Renewables covered "+(d.renewable_pct??"—")+"% of the day. Balancing cost "+(bal?bal.v:"—")+" TL net, with "+(d.yal_mwh||"—")+" MWh of up-regulation against "+(d.yat_mwh||"—")+" MWh down.";
+  }
+  const figs=document.getElementById("m-figs");
+  if(figs) figs.innerHTML=(d.figures||[]).map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
+  const mn=document.getElementById("m-mixnote");
+  if(mn) mn.textContent="Renewables "+(d.renewable_pct??"—")+"%, all fossil "+(d.fossil_pct??"—")+"%. Solar splits into "+(d.solar_licensed_pct??"—")+"% licensed and "+(d.solar_rooftop_pct??"—")+"% distributed rooftop.";
+  const mix=document.getElementById("m-mix");
+  if(mix) mix.innerHTML=(d.mix||[]).map(r=>`<div class="row"><span>${r.k}</span><span class="track"><span class="fill" style="width:${r.v}%;background:var(--${r.c})"></span></span><span class="pc">${r.v}%</span></div>`).join("");
+  const bn=document.getElementById("m-bnote");
+  if(bn) bn.textContent="Demand peaked at "+String(d.peak_demand_hour??0).padStart(2,"0")+":00 with "+(d.peak_demand_mwh||"—")+" MWh.";
+  const rows=document.getElementById("m-rows");
+  if(rows) rows.innerHTML=(d.worst_hours||[]).map(r=>`<tr><td class="mono">${r.hour}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.mwh.toLocaleString("en-GB")} MWh ${r.dir}</td><td class="num">${r.cost.toLocaleString("en-GB")}k TL</td></tr>`).join("");
+  const c=document.getElementById("m-constraint");
+  if(c) c.textContent=d.constraint_mwh&&d.constraint_mwh!=="0"?("Of the day's instructions, "+d.constraint_mwh+" MWh carried a grid-constraint code, so not all of this was market imbalance."):"None of the day's instructions carried a grid-constraint code.";
+  const cmp=document.getElementById("m-cmp");
+  if(cmp){
+    const line=(lbl,o)=>o&&o.date?`<tr><td>${lbl} <span class="mono" style="color:var(--muted)">${o.date}</span></td><td class="num">${pct(o.wind)}</td><td class="num">${pct(o.avg)}</td><td class="num">${pct(o.min)}</td><td class="num">${pct(o.spread)}</td></tr>`:"";
+    cmp.innerHTML=line("Day before",d.d1)+line("Same weekday, week earlier",d.d8);
+  }
+  stamp(d.updated||null);
+}
 
 /* data */
+fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket).catch(()=>{
+  const t=document.getElementById("m-title"); if(t) t.textContent="No analysis published yet";
+  const l=document.getElementById("m-lede"); if(l) l.textContent="The daily market analysis appears here once the first one is written to daily.json.";
+});
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
-
-function renderMarket(m){
-  const long=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  document.getElementById("m-title").textContent=long(m.date);
-  document.getElementById("m-lede").textContent=m.lede||"";
-  document.getElementById("m-figs").innerHTML=(m.figures||[]).map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
-  document.getElementById("m-mixnote").textContent=m.mixNote||"";
-  document.getElementById("m-solarnote").textContent=m.solarNote||"";
-  document.getElementById("m-tablenote").textContent=m.tableNote||"";
-  document.getElementById("m-closing").textContent=m.closing||"";
-  document.getElementById("m-mix").innerHTML=(m.mix||[]).map(r=>
-    `<div class="row"><span>${r.t}</span><span class="track"><span class="fill" style="width:${r.p}%;background:${r.c}"></span></span><span class="pc">${r.p}%</span></div>`).join("");
-  document.getElementById("m-rows").innerHTML=(m.rows||[]).map(r=>
-    `<tr><td class="mono">${r.hour}</td><td class="num">${r.mcp}</td><td class="num">${r.smp}</td><td class="num">${r.vol}</td><td class="num">${r.raw}</td><td class="num">${r.adj}</td><td class="num">${r.weeks}</td></tr>`).join("");
-}
-function renderVerify(v){
-  const C=2*Math.PI*56;
-  document.getElementById("v-arc").setAttribute("stroke-dashoffset",(C*(1-v.pct/100)).toFixed(1));
-  document.getElementById("v-pct").textContent=v.pct+"%";
-  document.getElementById("v-frac").textContent=v.held+" / "+v.total;
-  document.getElementById("v-head").textContent=v.days.length+" days, "+v.total+" claims";
-  document.getElementById("v-sum").textContent="Of "+v.total+" claims scored, "+v.held+" held and "+(v.total-v.held)+" missed. The record covers "+v.days.length+" published days and grows by one each day.";
-  const short=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
-  const cell=c=>{
-    const k=c.held===null?"n":(c.held?"h":"m"), m=c.held===null?"–":(c.held?"✓":"✕");
-    return `<td class="c"><span class="dot ${k}" title="${c.title}">${m}</span><span class="sub">${c.delta}</span></td>`;
-  };
-  document.getElementById("v-rows").innerHTML=v.days.map(d=>
-    `<tr><td class="d">${short(d.date)}</td>${cell(d.cells.trough)}${cell(d.cells.peak)}${cell(d.cells.low)}${cell(d.cells.high)}</tr>`).join("");
-  const col=r=>r>=.8?"var(--b2)":r>=.6?"var(--b3)":"var(--b4)";
-  document.getElementById("v-bars").innerHTML=v.byClaim.map(b=>{
-    const r=b.of?b.held/b.of:0;
-    return `<div class="bar"><span class="t">${b.t}</span><span class="track"><span class="fill" style="width:${(r*100).toFixed(0)}%;background:${col(r)}"></span></span><span class="pc">${b.held} / ${b.of}</span></div>`;
-  }).join("");
-}
-fetch("verification.json").then(r=>r.ok?r.json():Promise.reject()).then(renderVerify)
- .catch(()=>{document.getElementById("v-head").textContent="Record in preparation";
-   document.getElementById("v-rows").innerHTML='<tr><td colspan="5" style="color:var(--muted)">No scored days yet.</td></tr>';});
-
-fetch("market.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket)
- .catch(()=>{document.getElementById("m-title").textContent="Market analysis";
-   document.getElementById("m-lede").textContent="The next closed day is published once its settlement data lands.";});
 fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
  .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
