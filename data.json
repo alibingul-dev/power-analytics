@@ -1,66 +1,66 @@
 {
-  "date": "2026-09-04",
+  "date": "2026-09-05",
   "figures": [
     {
       "k": "Trough",
       "n": "MWh at 12:00",
-      "v": "25,223"
+      "v": "24,007"
     },
     {
       "k": "Peak",
       "n": "MWh at 19:00",
-      "v": "41,713"
+      "v": "42,248"
     },
     {
       "k": "Swing",
-      "n": "MWh, 8.1% below the 30-day median",
-      "v": "16,490"
+      "n": "MWh, 1.6% above the 30-day median",
+      "v": "18,240"
     },
     {
       "k": "Ramp",
       "n": "MWh per hour, 12:00 to 19:00",
-      "v": "2,356"
+      "v": "2,606"
     }
   ],
   "loadPlanPeakHour": 14,
-  "loadPlanPeakMwh": 52690.0,
+  "loadPlanPeakMwh": 48491.0,
   "lowBlock": [
-    9,
-    13
+    7,
+    14
   ],
   "netLoad": [
-    35866,
-    33965,
-    32385,
-    31228,
-    30433,
-    29992,
-    29255,
-    27948,
-    28364,
-    27969,
-    26800,
-    26817,
-    25223,
-    26468,
-    29326,
-    31704,
-    34741,
-    38244,
-    40544,
-    41713,
-    41225,
-    39986,
-    38469,
-    36330
+    35122,
+    33402,
+    31986,
+    30907,
+    30195,
+    29754,
+    28389,
+    25965,
+    25064,
+    24498,
+    24026,
+    24356,
+    24007,
+    25006,
+    26853,
+    29209,
+    34438,
+    37885,
+    41256,
+    42248,
+    42082,
+    41161,
+    39722,
+    38310
   ],
-  "note": "bottom band 09:00-13:59; top band 18:00-20:59; wind forecast 170,732 MWh. Swing ranks 24 of 30 in the lookback.",
+  "note": "bottom band 07:00-14:59; top band 18:00-21:59; wind forecast 126,559 MWh. Swing ranks 13 of 30 in the lookback.",
   "source": "EPIAS Transparency Platform",
   "topBlock": [
     18,
-    20
+    21
   ],
-  "updated": "2026-09-03T09:04:57Z",
-  "windPeakHour": 18,
-  "windTroughHour": 8
+  "updated": "2026-09-04T14:29:05Z",
+  "windPeakHour": 0,
+  "windTroughHour": 11
 }
