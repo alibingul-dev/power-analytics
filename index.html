@@ -223,27 +223,16 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
   <div class="eyebrow">Türkiye · daily · ex-post check</div>
   <h1>Actual vs outlook</h1>
   <p class="lede">Every net load outlook is published before the day-ahead price exists. The next day the same hours can be checked against what actually cleared, which is the only honest way to know whether the method is worth anything.</p>
-  <p class="note-p">The outlook never forecasts price. What it claims is structural: which hours sit at the bottom of the range, which sit at the top, and where the ramp runs. Those claims either hold or they do not.</p>
+  <p class="note-p">The outlook never forecasts price. What it claims is structural: which hours sit at the bottom of the range and which sit at the top. Those claims either hold or they do not, and the record below is kept whether they do or not.</p>
+
+  <div class="figs" id="x-figs"></div>
+
+  <div id="x-days"></div>
 
   <div class="panel">
-    <h2>13 August 2026, checked against outturn</h2>
-    <p class="note">The first outlook to be verified after publication. All four structural claims held.</p>
-    <table>
-      <thead><tr><th>Claim made the day before</th><th>What happened</th><th class="num">Result</th></tr></thead>
-      <tbody>
-        <tr><td>Net load bottoms twice, at 07:00 and 12:00</td><td>Price bottomed in those two hours: 1,500 and 1,000 TL/MWh, the day's two cheapest</td><td class="num ok">held</td></tr>
-        <tr><td>Deepest window 10:00–13:59</td><td>Cleared at 1,771 TL/MWh average, the cheapest four consecutive hours of the day</td><td class="num ok">held</td></tr>
-        <tr><td>Tightest window 18:00–21:59</td><td>Cleared at 3,684 TL/MWh average, the most expensive four consecutive hours</td><td class="num ok">held</td></tr>
-        <tr><td>Peak inside the top band</td><td>4,000 TL/MWh at 20:00, the same hour net load peaked</td><td class="num ok">held</td></tr>
-      </tbody>
-    </table>
-    <p class="note" style="margin:16px 0 0">Spread between the two windows: 1,913 TL/MWh.</p>
-  </div>
-
-  <div class="panel">
-    <h2>What a failed check would look like</h2>
-    <p class="body">The method has three ways to be wrong, and each points somewhere different. If the deep window lands in the right hours but the price does not follow, the bid stack is doing the work rather than the fundamentals. If the window itself lands in the wrong hours, the solar shaping is off, which is the weakest input because no forecast is published. If the evening block is right but the ramp is not, the wind forecast missed.</p>
-    <p class="body">Recording which of the three fails is more useful than recording whether the day was right. A single check proves nothing; a run of them tells you which input to fix.</p>
+    <h2>What a failed check means</h2>
+    <p class="body">The method has three ways to be wrong, and each points somewhere different. If the low block lands in the right hours but the price does not follow, the bid stack is doing the work rather than the fundamentals. If the block itself lands in the wrong hours, the solar shaping is off, which is the weakest input because no forecast is published. If the evening block is right but the ramp is not, the wind forecast missed.</p>
+    <p class="body">Recording which of the three fails is more useful than recording whether the day was right.</p>
   </div>
 </section>
 
@@ -552,7 +541,32 @@ function renderMarket(d){
   stamp(d.updated||null);
 }
 
+function renderActual(j){
+  const days=Object.values(j.days||{}).sort((a,b)=>b.date.localeCompare(a.date));
+  const sm=j.summary||{};
+  const figs=document.getElementById("x-figs");
+  if(figs) figs.innerHTML=[
+    {k:"Days checked",v:sm.days_checked??0,n:"outlooks verified after publication"},
+    {k:"Claims held",v:(sm.claims_held??0)+" / "+(sm.claims_total??0),n:"across all checked days"},
+    {k:"Hit rate",v:sm.claims_total?Math.round(100*sm.claims_held/sm.claims_total)+"%":"—",n:"structural claims that held"}
+  ].map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
+
+  const box=document.getElementById("x-days");
+  if(!box) return;
+  if(!days.length){box.innerHTML='<div class="empty"><strong>No checks yet</strong>The first verification appears here once an outlook has been checked against outturn.</div>';return}
+  box.innerHTML=days.slice(0,10).map(d=>`
+    <div class="panel">
+      <h2>${new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</h2>
+      <p class="note">Low block ${d.low_block||"—"} · top block ${d.top_block||"—"} · ${d.held} of ${d.of} claims held${d.spread_tl_mwh?" · spread "+d.spread_tl_mwh.toLocaleString("en-GB")+" TL/MWh":""}</p>
+      <table>
+        <thead><tr><th>Claim made the day before</th><th>What happened</th><th class="num">Result</th></tr></thead>
+        <tbody>${(d.checks||[]).map(c=>`<tr><td>${c.claim}</td><td>${c.detail}</td><td class="num ${c.held?"ok":"bad"}">${c.held?"held":"missed"}</td></tr>`).join("")}</tbody>
+      </table>
+    </div>`).join("");
+}
+
 /* data */
+fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(renderActual).catch(()=>renderActual({days:{},summary:{}}));
 fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket).catch(()=>{
   const t=document.getElementById("m-title"); if(t) t.textContent="No analysis published yet";
   const l=document.getElementById("m-lede"); if(l) l.textContent="The daily market analysis appears here once the first one is written to daily.json.";
