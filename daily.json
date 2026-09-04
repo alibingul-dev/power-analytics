@@ -1,0 +1,103 @@
+{
+  "constraint_mwh": "3,230",
+  "d1": {
+    "avg": -12.7,
+    "date": "2026-09-02",
+    "min": -16.7,
+    "spread": 12.0,
+    "wind": 14.7
+  },
+  "d8": {
+    "avg": -16.6,
+    "date": "2026-08-27",
+    "min": -29.4,
+    "spread": 18.5,
+    "wind": 9.2
+  },
+  "date": "2026-09-03",
+  "figures": [
+    {
+      "k": "Daily average",
+      "n": "TL/MWh",
+      "v": "2,891"
+    },
+    {
+      "k": "Floor",
+      "n": "TL/MWh at 12:00",
+      "v": "1,500"
+    },
+    {
+      "k": "Ceiling",
+      "n": "TL/MWh at 19:00",
+      "v": "4,077"
+    },
+    {
+      "k": "Balancing cost",
+      "n": "TL net",
+      "v": "6.6M"
+    }
+  ],
+  "fossil_pct": 42.4,
+  "mix": [
+    {
+      "c": "b1",
+      "k": "Hydro",
+      "v": 25.0
+    },
+    {
+      "c": "b3",
+      "k": "Solar",
+      "v": 15.8
+    },
+    {
+      "c": "b2",
+      "k": "Wind",
+      "v": 12.9
+    },
+    {
+      "c": "b4",
+      "k": "Natural gas",
+      "v": 11.3
+    },
+    {
+      "c": "muted",
+      "k": "Other fossil",
+      "v": 31.1
+    }
+  ],
+  "peak_demand_hour": 14,
+  "peak_demand_mwh": "53,829",
+  "renewable_pct": 57.6,
+  "solar_licensed_pct": 3.2,
+  "solar_rooftop_pct": 12.6,
+  "source": "EPIAS Transparency Platform",
+  "updated": "2026-09-04T14:22:32Z",
+  "worst_hours": [
+    {
+      "cost": 1788,
+      "dir": "down",
+      "hour": "13:00",
+      "mcp": 2288,
+      "mwh": 1578,
+      "smp": 500
+    },
+    {
+      "cost": 998,
+      "dir": "down",
+      "hour": "12:00",
+      "mcp": 1500,
+      "mwh": 1275,
+      "smp": 360
+    },
+    {
+      "cost": 833,
+      "dir": "down",
+      "hour": "15:00",
+      "mcp": 1500,
+      "mwh": 1931,
+      "smp": 500
+    }
+  ],
+  "yal_mwh": "9,435",
+  "yat_mwh": "8,959"
+}
