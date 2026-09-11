@@ -133,14 +133,14 @@
       14
     ],
     "peak_hour": 19,
-    "peak_mwh": 42035.9,
-    "published_at": "2026-09-11T19:21:40Z",
-    "range_mwh": 19811.6,
+    "peak_mwh": 42143.5,
+    "published_at": "2026-09-11T19:40:56Z",
+    "range_mwh": 19918.9,
     "top_block": [
       18,
       22
     ],
     "trough_hour": 12,
-    "trough_mwh": 22224.3
+    "trough_mwh": 22224.6
   }
 }
