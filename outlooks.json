@@ -47,6 +47,22 @@
     "trough_hour": 10,
     "trough_mwh": 17872.9
   },
+  "2026-09-07": {
+    "low_block": [
+      3,
+      14
+    ],
+    "peak_hour": 19,
+    "peak_mwh": 40114.6,
+    "published_at": "2026-09-11T19:18:07Z",
+    "range_mwh": 18009.2,
+    "top_block": [
+      19,
+      20
+    ],
+    "trough_hour": 12,
+    "trough_mwh": 22105.4
+  },
   "2026-09-08": {
     "low_block": [
       5,
