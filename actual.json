@@ -93,6 +93,37 @@
       "spread_tl_mwh": 3309,
       "top_block": "18:00-22:59"
     },
+    "2026-09-07": {
+      "checked_at": "2026-09-11T19:18:45Z",
+      "checks": [
+        {
+          "claim": "Price low lands in the low block",
+          "detail": "07:00, 500 TL/MWh",
+          "held": true
+        },
+        {
+          "claim": "Cheapest four consecutive hours start in the low block",
+          "detail": "10:00-13:59, 964 TL/MWh average",
+          "held": true
+        },
+        {
+          "claim": "Price high lands in the top block",
+          "detail": "19:00, 4,000 TL/MWh",
+          "held": true
+        },
+        {
+          "claim": "Most expensive four consecutive hours start in the top block",
+          "detail": "17:00-20:59, 3,946 TL/MWh average",
+          "held": false
+        }
+      ],
+      "date": "2026-09-07",
+      "held": 3,
+      "low_block": "03:00-14:59",
+      "of": 4,
+      "spread_tl_mwh": 2982,
+      "top_block": "19:00-20:59"
+    },
     "2026-09-08": {
       "checked_at": "2026-09-09T07:18:25Z",
       "checks": [
@@ -126,9 +157,9 @@
     }
   },
   "summary": {
-    "claims_held": 15,
-    "claims_total": 16,
-    "days_checked": 4,
-    "updated": "2026-09-09T07:18:25Z"
+    "claims_held": 18,
+    "claims_total": 20,
+    "days_checked": 5,
+    "updated": "2026-09-11T19:18:45Z"
   }
 }
