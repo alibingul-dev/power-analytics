@@ -5,14 +5,14 @@
     "date": "2026-09-26",
     "min": -45.5,
     "spread": -23.9,
-    "wind": 86.6
+    "wind": 86.9
   },
   "d8": {
     "avg": -19.4,
     "date": "2026-09-20",
     "min": null,
     "spread": -27.9,
-    "wind": 73.8
+    "wind": 74.1
   },
   "date": "2026-09-27",
   "figures": [
@@ -66,12 +66,12 @@
     }
   ],
   "peak_demand_hour": 19,
-  "peak_demand_mwh": "40,628",
+  "peak_demand_mwh": "40,675",
   "renewable_pct": 65.5,
   "solar_licensed_pct": 2.6,
   "solar_rooftop_pct": 9.6,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-09-28T03:07:37Z",
+  "updated": "2026-09-28T08:19:29Z",
   "worst_hours": [
     {
       "cost": 1852,
