@@ -1,103 +1,103 @@
 {
-  "constraint_mwh": "0",
+  "constraint_mwh": "174",
   "d1": {
-    "avg": -45.0,
-    "date": "2026-09-26",
-    "min": -45.5,
-    "spread": -23.9,
-    "wind": 87.2
+    "avg": 49.2,
+    "date": "2026-09-27",
+    "min": 41.2,
+    "spread": 34.7,
+    "wind": -5.4
   },
   "d8": {
-    "avg": -19.4,
-    "date": "2026-09-20",
-    "min": null,
-    "spread": -27.9,
-    "wind": 74.5
+    "avg": -33.0,
+    "date": "2026-09-21",
+    "min": -88.0,
+    "spread": 63.3,
+    "wind": 178.6
   },
-  "date": "2026-09-27",
+  "date": "2026-09-28",
   "figures": [
     {
       "k": "Daily average",
       "n": "TL/MWh",
-      "v": "1,424"
+      "v": "2,125"
     },
     {
       "k": "Floor",
-      "n": "TL/MWh at 09:00",
-      "v": "170"
+      "n": "TL/MWh at 03:00",
+      "v": "240"
     },
     {
       "k": "Ceiling",
       "n": "TL/MWh at 19:00",
-      "v": "3,200"
+      "v": "4,321"
     },
     {
       "k": "Balancing cost",
       "n": "TL net",
-      "v": "11.1M"
+      "v": "19.2M"
     }
   ],
-  "fossil_pct": 34.5,
+  "fossil_pct": 38.0,
   "mix": [
     {
       "c": "b1",
       "k": "Hydro",
-      "v": 23.6
+      "v": 26.8
     },
     {
       "c": "b3",
       "k": "Solar",
-      "v": 12.2
+      "v": 9.8
     },
     {
       "c": "b2",
       "k": "Wind",
-      "v": 23.9
+      "v": 20.3
     },
     {
       "c": "b4",
       "k": "Natural gas",
-      "v": 5.7
+      "v": 7.6
     },
     {
       "c": "muted",
       "k": "Other fossil",
-      "v": 28.8
+      "v": 30.4
     }
   ],
-  "peak_demand_hour": 19,
-  "peak_demand_mwh": "40,749",
-  "renewable_pct": 65.5,
-  "solar_licensed_pct": 2.6,
-  "solar_rooftop_pct": 9.6,
+  "peak_demand_hour": 11,
+  "peak_demand_mwh": "46,103",
+  "renewable_pct": 62.0,
+  "solar_licensed_pct": 2.1,
+  "solar_rooftop_pct": 7.7,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-09-28T15:34:39Z",
+  "updated": "2026-09-29T03:07:07Z",
   "worst_hours": [
     {
-      "cost": 1852,
+      "cost": 4576,
       "dir": "up",
-      "hour": "14:00",
-      "mcp": 252,
-      "mwh": 836,
-      "smp": 2466
+      "hour": "09:00",
+      "mcp": 2500,
+      "mwh": 2708,
+      "smp": 4190
     },
     {
-      "cost": 1832,
-      "dir": "down",
-      "hour": "21:00",
-      "mcp": 2529,
-      "mwh": 931,
-      "smp": 560
+      "cost": 3644,
+      "dir": "up",
+      "hour": "10:00",
+      "mcp": 1845,
+      "mwh": 1873,
+      "smp": 3790
     },
     {
-      "cost": 1616,
+      "cost": 2980,
       "dir": "up",
-      "hour": "15:00",
-      "mcp": 1400,
-      "mwh": 1000,
-      "smp": 3050
+      "hour": "08:00",
+      "mcp": 2500,
+      "mwh": 2358,
+      "smp": 3790
     }
   ],
-  "yal_mwh": "7,519",
-  "yat_mwh": "7,244"
+  "yal_mwh": "13,907",
+  "yat_mwh": "3,520"
 }
