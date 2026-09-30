@@ -465,7 +465,7 @@ function renderArchive(rows){
   body.innerHTML=rows.map(r=>{
     const id=(r.post_id||"").replace("urn:li:share:","");
     const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
-    const kind=r.kind==="post2"?"Net load outlook":"Market analysis";
+    const kind={post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook"}[r.kind]||"Market analysis";
     return `<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
   }).join("");
 }
@@ -573,7 +573,7 @@ fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket).c
 });
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
 fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
- .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({analysis_date:d,...v})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
+ .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({...v,analysis_date:v.analysis_date||d.split("#")[0]})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
    {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968",at:"2026-08-27T09:54:04Z"},
    {analysis_date:"2026-08-26",kind:"post1",post_id:"urn:li:share:7498722107460120576",at:"2026-08-27T12:44:30Z"},
