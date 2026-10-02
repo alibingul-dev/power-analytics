@@ -54,13 +54,10 @@
     28972,
     27335
   ],
-  "note": "bottom band 02:00-15:59; top band 18:00-20:59; wind forecast 225,750 MWh. Swing ranks 20 of 30 in the lookback.",
+  "note": "bottom band 02:00-15:59; wind forecast 225,750 MWh. Swing ranks 20 of 30 in the lookback.",
   "source": "EPIAS Transparency Platform",
-  "topBlock": [
-    18,
-    20
-  ],
-  "updated": "2026-10-02T14:12:58Z",
+  "topBlock": null,
+  "updated": "2026-10-02T14:46:13Z",
   "windPeakHour": 0,
   "windTroughHour": 23
 }
