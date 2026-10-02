@@ -386,14 +386,14 @@
       15
     ],
     "peak_hour": 19,
-    "peak_mwh": 32730.3,
-    "published_at": "2026-10-02T08:17:14Z",
-    "range_mwh": 16869.7,
+    "peak_mwh": 32725,
+    "published_at": "2026-10-02T14:13:00Z",
+    "range_mwh": 17549,
     "top_block": [
       18,
       20
     ],
     "trough_hour": 12,
-    "trough_mwh": 15860.6
+    "trough_mwh": 15176
   }
 }
