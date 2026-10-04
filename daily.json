@@ -37,12 +37,12 @@
       "v": "13.4M"
     }
   ],
-  "fossil_pct": 31.1,
+  "fossil_pct": 31.2,
   "mix": [
     {
       "c": "b1",
       "k": "Hydro",
-      "v": 25.7
+      "v": 25.6
     },
     {
       "c": "b3",
@@ -57,7 +57,7 @@
     {
       "c": "b4",
       "k": "Natural gas",
-      "v": 3.6
+      "v": 3.7
     },
     {
       "c": "muted",
@@ -66,12 +66,12 @@
     }
   ],
   "peak_demand_hour": 19,
-  "peak_demand_mwh": "42,432",
-  "renewable_pct": 68.9,
+  "peak_demand_mwh": "42,462",
+  "renewable_pct": 68.8,
   "solar_licensed_pct": 1.9,
   "solar_rooftop_pct": 9.7,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-04T07:59:06Z",
+  "updated": "2026-10-04T19:29:04Z",
   "worst_hours": [
     {
       "cost": 3383,
