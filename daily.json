@@ -52,7 +52,7 @@
     {
       "c": "b2",
       "k": "Wind",
-      "v": 20.0
+      "v": 19.9
     },
     {
       "c": "b4",
@@ -66,12 +66,12 @@
     }
   ],
   "peak_demand_hour": 19,
-  "peak_demand_mwh": "38,588",
+  "peak_demand_mwh": "38,687",
   "renewable_pct": 66.9,
-  "solar_licensed_pct": 1.9,
+  "solar_licensed_pct": 2.0,
   "solar_rooftop_pct": 13.4,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-05T09:08:29Z",
+  "updated": "2026-10-05T09:44:34Z",
   "worst_hours": [
     {
       "cost": 5894,
