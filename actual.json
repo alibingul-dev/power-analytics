@@ -858,12 +858,33 @@
       "of": 2,
       "spread_tl_mwh": 2514,
       "top_block": "16:00-22:59"
+    },
+    "2026-10-08": {
+      "checked_at": "2026-10-09T03:06:55Z",
+      "checks": [
+        {
+          "claim": "Price high lands in the top block",
+          "detail": "18:00, 4,500 TL/MWh",
+          "held": true
+        },
+        {
+          "claim": "Most expensive four consecutive hours start in the top block",
+          "detail": "17:00-20:59, 4,385 TL/MWh average",
+          "held": true
+        }
+      ],
+      "date": "2026-10-08",
+      "held": 2,
+      "low_block": null,
+      "of": 2,
+      "spread_tl_mwh": 2773,
+      "top_block": "16:00-22:59"
     }
   },
   "summary": {
-    "claims_held": 83,
-    "claims_total": 108,
-    "days_checked": 29,
-    "updated": "2026-10-08T03:07:13Z"
+    "claims_held": 85,
+    "claims_total": 110,
+    "days_checked": 30,
+    "updated": "2026-10-09T03:06:56Z"
   }
 }
