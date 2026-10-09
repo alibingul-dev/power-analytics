@@ -5,14 +5,14 @@
     "date": "2026-10-07",
     "min": -46.2,
     "spread": 12.0,
-    "wind": -40.8
+    "wind": -40.4
   },
   "d8": {
     "avg": 22.9,
     "date": "2026-10-01",
     "min": -47.4,
     "spread": 27.0,
-    "wind": -88.1
+    "wind": -88.0
   },
   "date": "2026-10-08",
   "figures": [
@@ -37,17 +37,17 @@
       "v": "7.5M"
     }
   ],
-  "fossil_pct": 50.1,
+  "fossil_pct": 50.0,
   "mix": [
     {
       "c": "b1",
       "k": "Hydro",
-      "v": 26.9
+      "v": 26.8
     },
     {
       "c": "b3",
       "k": "Solar",
-      "v": 14.7
+      "v": 14.9
     },
     {
       "c": "b2",
@@ -62,16 +62,16 @@
     {
       "c": "muted",
       "k": "Other fossil",
-      "v": 36.1
+      "v": 36.0
     }
   ],
   "peak_demand_hour": 19,
-  "peak_demand_mwh": "44,473",
-  "renewable_pct": 49.9,
-  "solar_licensed_pct": 3.1,
-  "solar_rooftop_pct": 11.6,
+  "peak_demand_mwh": "44,709",
+  "renewable_pct": 50.0,
+  "solar_licensed_pct": 3.2,
+  "solar_rooftop_pct": 11.7,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-09T03:06:49Z",
+  "updated": "2026-10-09T12:31:57Z",
   "worst_hours": [
     {
       "cost": 1760,
