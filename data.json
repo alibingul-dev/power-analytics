@@ -1,66 +1,63 @@
 {
-  "date": "2026-10-10",
+  "date": "2026-10-11",
   "figures": [
     {
       "k": "Trough",
-      "n": "MWh at 12:00",
-      "v": "21,763"
+      "n": "MWh at 11:00",
+      "v": "13,281"
     },
     {
       "k": "Peak",
       "n": "MWh at 19:00",
-      "v": "39,345"
+      "v": "34,780"
     },
     {
       "k": "Swing",
-      "n": "MWh, 0.5% below the 30-day median",
-      "v": "17,582"
+      "n": "MWh, 21.6% above the 30-day median",
+      "v": "21,499"
     },
     {
       "k": "Ramp",
-      "n": "MWh per hour, 12:00 to 19:00",
-      "v": "2,512"
+      "n": "MWh per hour, 11:00 to 19:00",
+      "v": "2,687"
     }
   ],
   "loadPlanPeakHour": 19,
-  "loadPlanPeakMwh": 41090,
+  "loadPlanPeakMwh": 37979,
   "lowBlock": [
-    9,
-    13
+    7,
+    15
   ],
   "netLoad": [
-    33344,
-    31799,
-    30403,
-    29493,
-    29095,
-    29124,
-    28899,
-    27073,
-    25607,
-    23365,
-    22093,
-    22140,
-    21763,
-    23206,
-    25412,
-    27969,
-    31939,
-    36397,
-    38864,
-    39345,
-    38583,
-    37427,
-    35886,
-    33859
+    32028,
+    30470,
+    29139,
+    28029,
+    27267,
+    26921,
+    25800,
+    21971,
+    17347,
+    14374,
+    13302,
+    13281,
+    13899,
+    15530,
+    17714,
+    21024,
+    25645,
+    30553,
+    33903,
+    34780,
+    34299,
+    32919,
+    31279,
+    29809
   ],
-  "note": "bottom band 09:00-13:59; top band 17:00-22:59; wind forecast 30,414 MWh. Swing ranks 16 of 30 in the lookback.",
+  "note": "bottom band 07:00-15:59; wind forecast 61,109 MWh. Swing ranks 3 of 30 in the lookback.",
   "source": "EPIAS Transparency Platform",
-  "topBlock": [
-    17,
-    22
-  ],
-  "updated": "2026-10-09T08:19:13Z",
-  "windPeakHour": 20,
-  "windTroughHour": 13
+  "topBlock": null,
+  "updated": "2026-10-10T08:17:48Z",
+  "windPeakHour": 23,
+  "windTroughHour": 2
 }
