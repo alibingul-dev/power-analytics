@@ -502,5 +502,21 @@
     "top_block": null,
     "trough_hour": 11,
     "trough_mwh": 13281
+  },
+  "2026-10-12": {
+    "low_block": [
+      10,
+      13
+    ],
+    "peak_hour": 18,
+    "peak_mwh": 40652,
+    "published_at": "2026-10-11T08:17:52Z",
+    "range_mwh": 19802,
+    "top_block": [
+      17,
+      22
+    ],
+    "trough_hour": 12,
+    "trough_mwh": 20850
   }
 }
