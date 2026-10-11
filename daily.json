@@ -66,12 +66,12 @@
     }
   ],
   "peak_demand_hour": 19,
-  "peak_demand_mwh": "42,252",
+  "peak_demand_mwh": "42,265",
   "renewable_pct": 49.7,
   "solar_licensed_pct": 3.4,
-  "solar_rooftop_pct": 14.1,
+  "solar_rooftop_pct": 14.0,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-11T08:17:46Z",
+  "updated": "2026-10-11T12:05:04Z",
   "worst_hours": [
     {
       "cost": 1911,
