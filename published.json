@@ -281,6 +281,13 @@
     "post_id": "urn:li:share:7514245780686266370",
     "source": "manual"
   },
+  "2026-10-12#gb_post1": {
+    "analysis_date": "2026-10-12",
+    "at": "2026-10-13T11:01:27.062391Z",
+    "kind": "gb_post1",
+    "post_id": "urn:li:share:7515728400129552384",
+    "source": "scheduled"
+  },
   "2026-10-14#post2": {
     "analysis_date": "2026-10-14",
     "at": "2026-10-13T09:08:21.847494Z",
