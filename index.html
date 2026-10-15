@@ -180,20 +180,42 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .tview[open] summary{margin-bottom:14px}
 .btn{font-family:"IBM Plex Mono";font-size:12px;background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
 .btn:hover{border-color:var(--b1)}
-.tscroll{max-height:360px;overflow:auto}
+.tscroll{max-height:360px;overflow:auto;padding-right:14px;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.tscroll::-webkit-scrollbar{width:8px}.tscroll::-webkit-scrollbar-track{background:transparent}.tscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.tscroll td.num:last-child,.tscroll th.num:last-child{padding-right:4px}
 .tscroll thead th{position:sticky;top:0;background:var(--surface)}
 svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-radius:6px}
 #tr-dash .scroller .sc-head{margin-bottom:10px}
 .vtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
 .vtabs button{font-family:"IBM Plex Mono";font-size:12px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
 .vtabs button[aria-selected="true"],.vtabs button:hover{color:var(--text);border-color:var(--b1)}
-.vbody{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:22px;align-items:start}
+.vbody{display:grid;grid-template-columns:minmax(0,400px) 1fr;gap:24px;align-items:start}
 .vframe{background:#0B111A;border:1px solid var(--line);border-radius:10px;overflow:hidden;aspect-ratio:4/5}
 .vframe video{width:100%;height:100%;display:block;object-fit:contain;background:#0B111A}
 .vdates{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
 .vdates button{font-family:"IBM Plex Mono";font-size:12px;background:none;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
 .vdates button.on,.vdates button:hover{color:var(--text);border-color:var(--b2)}
 a.btn{display:inline-block;text-decoration:none}
+.vside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.vhead .t{font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.vhead .d{font-family:Archivo;font-weight:800;font-size:22px;margin:2px 0 6px}
+.vhead .note{margin:0}
+.vcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface-2)}
+.vcard .h{display:flex;justify-content:space-between;align-items:baseline;font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.vcard .h b{font-size:15px;letter-spacing:0;color:var(--text);font-weight:500}
+.vcard ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.vcard li{display:grid;grid-template-columns:18px 1fr;gap:6px;font-size:13.5px;line-height:1.4}
+.vcard li span.dt{grid-column:2;font-family:"IBM Plex Mono";font-size:12px;color:var(--muted)}
+.vcard .empty-s{font-size:13.5px;color:var(--muted)}
+.vlinks{display:flex;flex-wrap:wrap;gap:8px}
+.vstrip-h{font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:-8px}
+.vstrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.vstrip button{padding:0;border:1px solid var(--line);border-radius:7px;background:#0B111A;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;color:var(--muted);font-family:"IBM Plex Mono";font-size:11px}
+.vstrip button img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;opacity:.7}
+.vstrip button span{padding:3px 0}
+.vstrip button.on{border-color:var(--b2);color:var(--text)}
+.vstrip button.on img,.vstrip button:hover img{opacity:1}
+
 @media (max-width:880px){.vbody{grid-template-columns:1fr}}
 @media (max-width:880px){.minifigs{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr}.wd{gap:5px}.wd .col{height:90px}#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
 
@@ -405,9 +427,11 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="vbody">
       <div class="vframe"><video id="k-video" controls muted playsinline loop preload="none"></video></div>
       <div class="vside">
-        <p class="note" id="k-vnote"></p>
-        <div class="vdates" id="k-vdates"></div>
-        <a class="btn" id="k-vdl" download>Download MP4</a>
+        <div class="vhead"><div class="t" id="k-vkind"></div><div class="d" id="k-vdate"></div><p class="note" id="k-vnote"></p></div>
+        <div class="vcard" id="k-vcheck"></div>
+        <div class="vlinks" id="k-vlinks"></div>
+        <div class="vstrip-h">Recent</div>
+        <div class="vstrip" id="k-vdates"></div>
       </div>
     </div>
   </div>
@@ -887,6 +911,7 @@ function renderDashActual(j){
   A.max=B.max=Math.max(0,n-1);A.value=0;B.value=Math.max(0,n-1);
   drawMini();renderWindow();
   if(DASH.daily)renderDashDaily(DASH.daily);
+  if(window._vRepick)window._vRepick();
   renderFresh();
 }
 
@@ -1021,19 +1046,39 @@ $("k-csv").addEventListener("click",e=>{
 
 /* animated charts (media/index.json, MP4 copies of the LinkedIn GIFs) */
 (function(){
-  const KIND_NOTE={"tr":"Türkiye day-end scorecard: hourly bid curves morphing through the day, generation stack and PTF.","tr-outlook":"Türkiye next-day net load outlook, published before the day-ahead result.","gb":"Great Britain day-end scorecard with the seven-day context: wind, gas, prices."};
+  const KIND_NOTE={"tr":"Hour by hour through the closed day: the day-ahead bid curves, the generation stack and where the price cleared.","tr-outlook":"Net load hour by hour, published before the day-ahead result, with the bands each hour falls into.","gb":"Great Britain closed day against the same day a week earlier and the day before: system price range, energy by fuel."};
   const ORDER=["tr","tr-outlook","gb"];let M={},kind=null,day=null;
+  const POSTKIND={"tr":"post1","tr-outlook":"post2","gb":"gb_post1"};let PUB={};
+  function checkCard(k,date){
+    if(k==="gb")return '<div class="h">Check</div><p class="empty-s" style="margin:0">The GB scorecard describes a closed day; it makes no claims to check.</p>';
+    const d=DASH.days.find(x=>x.date===date);
+    const head=k==="tr-outlook"?"What the outlook claimed":"How the outlook for this day did";
+    const N=DASH.next;
+    if(!d&&k==="tr-outlook"&&N&&N.date===date){
+      const hh=r=>r?String(r[0]).padStart(2,"0")+":00–"+String(r[1]).padStart(2,"0")+":59":null,lb=hh(N.lowBlock),tb=hh(N.topBlock);
+      const cl=[];if(lb){cl.push(["Price low lands in the low block",lb]);cl.push(["Cheapest four consecutive hours start in the low block",lb])}
+      if(tb){cl.push(["Price high lands in the top block",tb]);cl.push(["Most expensive four consecutive hours start in the top block",tb])}
+      return `<div class="h">${head}<b>pending</b></div><ul>${cl.map(([c,r])=>`<li><span style="color:var(--muted)">○</span><span>${c}</span><span class="dt">${r} · checked after the day-ahead result</span></li>`).join("")}</ul>`;
+    }
+    if(!d)return `<div class="h">${head}</div><p class="empty-s" style="margin:0">${date>=(DASH.days.length?DASH.days[DASH.days.length-1].date:"")?"Not checked yet. The check runs after the day-ahead result is in.":"No check on record for this day."}</p>`;
+    return `<div class="h">${head}<b class="${d.held===d.of?"ok":d.held/d.of>=.5?"":"bad"}">${d.held} / ${d.of} held</b></div><ul>${(d.checks||[]).map(c=>`<li><span class="${c.held?"ok":"bad"}">${c.held?"✓":"✗"}</span><span>${esc(c.claim)}</span><span class="dt">${esc(c.detail||"")}</span></li>`).join("")}</ul>`;
+  }
   function pick(k,d){
     kind=k;const list=M[k]||[];day=d||(list.length?list[list.length-1].date:null);
     document.querySelectorAll("#k-vtabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.k===k?"true":"false"));
-    $("k-vdates").innerHTML=list.slice().reverse().map(i=>`<button data-d="${i.date}" class="${i.date===day?"on":""}">${sd(i.date)}</button>`).join("");
+    $("k-vdates").innerHTML=list.slice(-8).reverse().map(i=>`<button data-d="${i.date}" class="${i.date===day?"on":""}" aria-label="${fmtDate(i.date)}"><img src="${i.poster}" alt="" loading="lazy"><span>${sd(i.date)}</span></button>`).join("");
     const it=list.find(i=>i.date===day),v=$("k-video");
     if(!it){v.removeAttribute("src");setT("k-vnote","No animation published yet.");return}
     v.poster=it.poster;v.src=it.src;v.load();
     const p=v.play();if(p&&p.catch)p.catch(()=>{});
-    $("k-vdl").href=it.src;
-    setT("k-vnote",(KIND_NOTE[k]||"")+" "+fmtDate(it.date)+(it.duration_s?" · "+Math.round(it.duration_s)+" s loop.":""));
+    setT("k-vkind",it.label);setT("k-vdate",fmtDate(it.date));
+    setT("k-vnote",(KIND_NOTE[k]||"")+(it.duration_s?" "+Math.round(it.duration_s)+" s loop.":""));
+    $("k-vcheck").innerHTML=checkCard(k,it.date);
+    const pub=PUB[it.date+"#"+POSTKIND[k]],id=pub&&(pub.post_id||"").replace("urn:li:share:","");
+    $("k-vlinks").innerHTML=(id?`<a class="btn" href="https://www.linkedin.com/feed/update/urn:li:share:${id}" target="_blank" rel="noopener">Read the LinkedIn post ↗</a>`:"")+`<a class="btn" href="${it.src}" download>Download MP4</a>`;
   }
+  fetch("published.json").then(r=>r.ok?r.json():{}).then(j=>{PUB=j||{};if(kind)pick(kind,day)}).catch(()=>{});
+  window._vRepick=()=>{if(kind)pick(kind,day)};
   fetch("media/index.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
     (j.items||[]).forEach(i=>{(M[i.kind]=M[i.kind]||[]).push(i)});
     Object.values(M).forEach(a=>a.sort((x,y)=>x.date.localeCompare(y.date)));
