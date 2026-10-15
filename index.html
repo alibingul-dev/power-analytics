@@ -112,6 +112,23 @@ dl.method dt:first-child{margin-top:0}
 dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
 
+
+/* ---------- dashboard ---------- */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+.dgrid .panel{margin-bottom:0}
+#k-figs{grid-template-columns:repeat(3,1fr)}
+.donut{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}
+.donut svg{width:150px;height:150px}
+.dl{display:grid;gap:6px;font-size:13.5px}
+.dl div{display:grid;grid-template-columns:12px 1fr auto;gap:8px;align-items:center}
+.dl i{width:10px;height:10px;border-radius:2px}
+.dl b{font-family:"IBM Plex Mono";font-weight:400;color:var(--muted)}
+.strip{display:flex;flex-wrap:wrap;gap:4px}
+.strip span{width:20px;height:20px;border-radius:4px;background:var(--surface-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:"IBM Plex Mono";font-size:12px;padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+@media (max-width:880px){#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
+
 /* ---------- mobile ---------- */
 .topbar{display:none}.scrim{display:none}
 @media (max-width:880px){
@@ -161,6 +178,7 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
         <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Net load outlook</a>
         <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
+        <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
       </div>
       <a href="#tr-weekly"  data-view="tr-weekly"  style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
       <a href="#tr-monthly" data-view="tr-monthly" style="--c:var(--b3)"><span class="bar"></span>Monthly</a>
@@ -267,6 +285,64 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
       <thead><tr><th></th><th class="num">Wind</th><th class="num">Average</th><th class="num">Floor</th><th class="num">Spread</th></tr></thead>
       <tbody id="m-cmp"></tbody>
     </table>
+  </div>
+</section>
+
+<!-- ===== MARKET DASHBOARD ===== -->
+<section class="view" id="tr-dash">
+  <div class="eyebrow">Türkiye · daily · dashboard</div>
+  <h1 id="k-title">Loading…</h1>
+  <p class="note-p">The closed day at a glance, next to the running record of every outlook check. Fed from daily.json and actual.json, the same files behind Market analysis and Actual vs outlook.</p>
+
+  <div class="figs" id="k-figs"></div>
+
+  <div class="dgrid">
+    <div class="panel">
+      <h2>Generation mix</h2>
+      <p class="note" id="k-mixnote"></p>
+      <div class="donut"><svg id="k-donut" viewBox="0 0 120 120" role="img" aria-label="Generation mix"></svg><div class="dl" id="k-dl"></div></div>
+    </div>
+    <div class="panel">
+      <h2>Balancing</h2>
+      <p class="note" id="k-balnote"></p>
+      <div class="mix" id="k-bal"></div>
+      <p class="note" id="k-cons" style="margin:16px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Price spread, every checked day</h2>
+    <p class="note" id="k-spnote"></p>
+    <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average"></svg>
+    <div class="legend">
+      <span><i style="background:var(--b3)"></i>Daily spread, TL/MWh</span>
+      <span><i style="background:var(--text)"></i>Seven-day average</span>
+    </div>
+  </div>
+
+  <div class="dgrid">
+    <div class="panel">
+      <h2>Outlook record</h2>
+      <p class="note" id="k-recnote"></p>
+      <div class="strip" id="k-strip"></div>
+      <div class="legend">
+        <span><i style="background:var(--b2)"></i>4 of 4</span>
+        <span><i style="background:var(--b3)"></i>3 of 4</span>
+        <span><i style="background:var(--b4)"></i>2 of 4</span>
+        <span><i style="background:var(--b5)"></i>1 or none</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Hit rate by claim</h2>
+      <p class="note">Share of checked days on which each structural claim held.</p>
+      <div class="mix" id="k-claims"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Against recent days</h2>
+    <p class="note">Change in the closed day versus the day before and the same weekday a week earlier.</p>
+    <div class="chips" id="k-cmp"></div>
   </div>
 </section>
 
@@ -581,6 +657,77 @@ fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
    {analysis_date:"2026-08-24",kind:"post1",post_id:"urn:li:share:7497980526339796993",at:"2026-08-25T11:37:43Z"},
    {analysis_date:"2026-08-23",kind:"post1",post_id:"urn:li:share:7497561523238916096",at:"2026-08-24T07:52:45Z"}
  ]));
+
+/* ---------- dashboard ---------- */
+const DASH={daily:null,actual:null};
+function fmtDate(d,o){return new Date(d+"T00:00:00").toLocaleDateString("en-GB",o||{day:"numeric",month:"long",year:"numeric"})}
+function num(x){const n=typeof x==="number"?x:parseFloat(String(x||"").replace(/,/g,""));return isNaN(n)?null:n}
+
+function renderDashDaily(d){
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  set("k-title",fmtDate(d.date));
+  const figs=[...(d.figures||[]),{k:"Renewables",v:(d.renewable_pct??"—")+"%",n:"of generation, fossil "+(d.fossil_pct??"—")+"%"}];
+  const sm=DASH.actual&&DASH.actual.summary;
+  if(sm&&sm.claims_total)figs.push({k:"Outlook hit rate",v:Math.round(100*sm.claims_held/sm.claims_total)+"%",n:sm.claims_held+" of "+sm.claims_total+" claims, "+sm.days_checked+" days"});
+  document.getElementById("k-figs").innerHTML=figs.map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
+
+  const mix=d.mix||[],tot=mix.reduce((a,r)=>a+r.v,0)||1,R=46,C=2*Math.PI*R;
+  let off=0,arcs=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--surface-2)" stroke-width="16"/>`;
+  mix.forEach(r=>{const len=C*r.v/tot;arcs+=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--${r.c})" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"/>`;off+=len});
+  arcs+=`<text x="60" y="58" text-anchor="middle" fill="#E6EDF5" font-size="17" font-family="IBM Plex Mono">${d.renewable_pct??"—"}%</text><text x="60" y="74" text-anchor="middle" fill="#8A9BB0" font-size="9" font-family="IBM Plex Mono">RENEWABLE</text>`;
+  document.getElementById("k-donut").innerHTML=arcs;
+  document.getElementById("k-dl").innerHTML=mix.map(r=>`<div><i style="background:var(--${r.c})"></i><span>${r.k}</span><b>${r.v}%</b></div>`).join("");
+  set("k-mixnote","Solar splits into "+(d.solar_licensed_pct??"—")+"% licensed and "+(d.solar_rooftop_pct??"—")+"% distributed rooftop.");
+
+  const up=num(d.yal_mwh),dn=num(d.yat_mwh),mx=Math.max(up||0,dn||0)||1;
+  const bal=(d.figures||[]).find(f=>f.k==="Balancing cost");
+  set("k-balnote","Net cost "+(bal?bal.v:"—")+" TL. Demand peaked at "+String(d.peak_demand_hour??0).padStart(2,"0")+":00 with "+(d.peak_demand_mwh||"—")+" MWh.");
+  const w=(d.worst_hours||[]);
+  document.getElementById("k-bal").innerHTML=
+    `<div class="row"><span>Up (YAL)</span><span class="track"><span class="fill" style="width:${100*(up||0)/mx}%;background:var(--b4)"></span></span><span class="pc">${d.yal_mwh||"—"}</span></div>`+
+    `<div class="row"><span>Down (YAT)</span><span class="track"><span class="fill" style="width:${100*(dn||0)/mx}%;background:var(--b1)"></span></span><span class="pc">${d.yat_mwh||"—"}</span></div>`+
+    (w.length?`<table style="margin-top:14px"><thead><tr><th>Hour</th><th class="num">DA</th><th class="num">RT</th><th class="num">Cost</th></tr></thead><tbody>${w.map(r=>`<tr><td class="mono">${r.hour} ${r.dir}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.cost.toLocaleString("en-GB")}k</td></tr>`).join("")}</tbody></table>`:"");
+  set("k-cons",d.constraint_mwh&&d.constraint_mwh!=="0"?d.constraint_mwh+" MWh of instructions carried a grid-constraint code.":"No grid-constraint instructions.");
+
+  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip">${lbl} · ${k} <span class="${v>0?"ok":v<0?"bad":""}">${pct(v)}</span></span>`).join(""):"";
+  document.getElementById("k-cmp").innerHTML=chip("D-1",d.d1)+chip("D-7",d.d8)||'<span class="chip">No comparison yet</span>';
+}
+
+function renderDashActual(j){
+  const days=Object.values(j.days||{}).sort((a,b)=>a.date.localeCompare(b.date));
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  /* spread chart */
+  const sp=days.filter(d=>typeof d.spread_tl_mwh==="number");
+  const svg=document.getElementById("k-spread");
+  if(!sp.length){svg.innerHTML="";set("k-spnote","No spread recorded yet.");}
+  else{
+    const W=900,H=260,L=54,R=14,T=14,B=28,n=sp.length,v=sp.map(d=>d.spread_tl_mwh);
+    const hi=Math.max(...v)*1.1||1,bw=(W-L-R)/n,X=i=>L+bw*i+bw/2,Y=q=>T+(H-T-B)*(1-q/hi);
+    let s="";
+    for(let g=0;g<=3;g++){const q=hi*g/3;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/><text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${Math.round(q).toLocaleString("en-GB")}</text>`}
+    sp.forEach((d,i)=>{s+=`<rect x="${X(i)-bw*0.34}" y="${Y(d.spread_tl_mwh)}" width="${bw*0.68}" height="${Y(0)-Y(d.spread_tl_mwh)}" rx="2" fill="#FBBF24" opacity=".75"><title>${d.date}: ${d.spread_tl_mwh.toLocaleString("en-GB")} TL/MWh</title></rect>`});
+    const ma=v.map((_,i)=>{const w=v.slice(Math.max(0,i-6),i+1);return w.reduce((a,b)=>a+b,0)/w.length});
+    s+=`<polyline fill="none" stroke="#E6EDF5" stroke-width="2" stroke-linejoin="round" points="${ma.map((q,i)=>X(i)+","+Y(q)).join(" ")}"/>`;
+    const every=Math.ceil(n/8);
+    sp.forEach((d,i)=>{if(i%every===0||i===n-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${fmtDate(d.date,{day:"numeric",month:"short"})}</text>`});
+    svg.innerHTML=s;
+    const last=v[n-1],avg=Math.round(ma[n-1]);
+    set("k-spnote","Latest "+last.toLocaleString("en-GB")+" TL/MWh against a seven-day average of "+avg.toLocaleString("en-GB")+". Range "+Math.min(...v).toLocaleString("en-GB")+" to "+Math.max(...v).toLocaleString("en-GB")+" over "+n+" days.");
+  }
+  /* record strip */
+  const col=d=>{const r=d.of?d.held/d.of:0;return r>=1?"b2":r>=.75?"b3":r>=.5?"b4":"b5"};
+  document.getElementById("k-strip").innerHTML=days.map(d=>`<span style="background:var(--${col(d)})" title="${d.date}: ${d.held} of ${d.of}"></span>`).join("");
+  const sm=j.summary||{};
+  set("k-recnote",days.length?(sm.days_checked??days.length)+" days checked, oldest on the left. "+(sm.claims_held??0)+" of "+(sm.claims_total??0)+" claims held.":"No checks yet.");
+  /* per claim */
+  const by={};
+  days.forEach(d=>(d.checks||[]).forEach(c=>{if(c.held===null||c.held===undefined)return;const b=by[c.claim]||(by[c.claim]={h:0,n:0});b.n++;if(c.held)b.h++}));
+  document.getElementById("k-claims").innerHTML=Object.entries(by).map(([k,b])=>{const p=Math.round(100*b.h/b.n);return `<div class="row" style="grid-template-columns:1fr 90px 46px"><span style="font-size:13px">${k}</span><span class="track"><span class="fill" style="width:${p}%;background:var(--${p>=75?"b2":p>=50?"b3":"b5"})"></span></span><span class="pc">${p}%</span></div>`}).join("")||'<p class="note">No checks yet.</p>';
+  if(DASH.daily)renderDashDaily(DASH.daily);
+}
+
+fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{DASH.actual=j;renderDashActual(j)}).catch(()=>renderDashActual({days:{},summary:{}}));
+fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{const t=document.getElementById("k-title");if(t)t.textContent="No analysis published yet"});
 </script>
 </body>
 </html>
