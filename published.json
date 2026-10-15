@@ -315,5 +315,12 @@
     "kind": "post2",
     "post_id": "urn:li:share:7516052090369142784",
     "source": "scheduled"
+  },
+  "2026-10-16#gb_post2": {
+    "analysis_date": "2026-10-16",
+    "at": "2026-10-15T06:34:10.249415Z",
+    "kind": "gb_post2",
+    "post_id": "urn:li:share:7516385913208344576",
+    "source": "scheduled"
   }
 }
