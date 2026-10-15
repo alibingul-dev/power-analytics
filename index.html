@@ -162,6 +162,8 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .minifigs .k{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .minifigs .v{font-family:"IBM Plex Mono";font-size:18px}
 .minifigs .n{font-size:12px;color:var(--muted);line-height:1.35}
+.how{font-size:14px;color:var(--muted);margin:-4px 0 14px;max-width:72ch;line-height:1.55}
+.panel .how{margin:0 0 12px}
 .tagv{font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);font-weight:400}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
 .stats .k{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -383,20 +385,23 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view" id="tr-dash">
   <div class="eyebrow">Türkiye · daily · dashboard</div>
   <h1 id="k-title">Loading…</h1>
-  <p class="note-p">The closed day, tomorrow's outlook and the running record of every outlook check on one page. Fed from daily.json, data.json and actual.json, the same files behind the other daily pages. Hover, tap or tab through any chart for detail.</p>
+  <p class="note-p">Türkiye's electricity market on one page: what happened yesterday, what we expect tomorrow, and how often our expectations turned out right. Point at any chart (or tap it on a phone) to see the numbers behind it.</p>
   <div class="fresh" id="k-fresh"></div>
 
-  <div class="grp-h"><span>Closed day</span></div>
+  <div class="grp-h"><span>Yesterday · the closed day</span></div>
+  <p class="how">Wholesale electricity prices (TL per MWh) set the day before by the day-ahead market, and what actually happened on the grid.</p>
   <div class="figs" id="k-figs"><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div></div>
 
   <div class="dgrid">
     <div class="panel">
-      <h2>Generation mix</h2>
+      <h2>Where the electricity came from</h2>
+      <p class="how">Share of the day's electricity by source. Renewables are hydro, wind, solar and other clean sources.</p>
       <p class="note" id="k-mixnote"></p>
       <div class="donut"><svg id="k-donut" viewBox="0 0 120 120" role="img" aria-label="Generation mix"></svg><div class="dl" id="k-dl"></div></div>
     </div>
     <div class="panel">
-      <h2>Balancing</h2>
+      <h2>Last-minute corrections</h2>
+      <p class="how">Plans never match reality exactly, so the grid operator orders plants to produce more (up) or less (down) in real time. More corrections means the day was harder to predict. The table shows the three hours where corrections cost the most: DA is the day-ahead price, RT the real-time price.</p>
       <p class="note" id="k-balnote"></p>
       <div class="mix" id="k-bal"></div>
       <p class="note" id="k-cons" style="margin:16px 0 0"></p>
@@ -404,25 +409,26 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="panel">
-    <h2>Against recent days</h2>
-    <p class="note">Change in the closed day versus the day before and the same weekday a week earlier.</p>
+    <h2>Compared with recent days</h2>
+    <p class="how">How yesterday differs from the day before (D-1) and from the same weekday a week earlier (D-7). ▲ means higher, ▼ lower. Floor is the cheapest hour's price; spread is the gap between the dearest and cheapest hour.</p>
     <div class="chips" id="k-cmp"></div>
   </div>
 
-  <div class="grp-h"><span>Next day</span><a href="#tr-netload" class="more">Full outlook →</a></div>
+  <div class="grp-h"><span>Tomorrow · the outlook</span><a href="#tr-netload" class="more">Full outlook →</a></div>
+  <p class="how">Published before tomorrow's prices are set. Net load is demand minus wind and solar: the part coal, gas and hydro must cover. Hours with the least net load are usually the cheapest, hours with the most are usually the dearest.</p>
   <div class="panel">
     <h2 id="k-nxt-t">Net load outlook</h2>
     <p class="note" id="k-nxt-note"></p>
     <div class="minifigs" id="k-nxt-figs"></div>
     <svg class="chart" id="k-nxt" viewBox="0 0 900 220" role="img" aria-label="Next-day net load by hour" tabindex="0"></svg>
     <div class="legend">
-      <span><i style="background:var(--b1)"></i>Lowest net load block</span>
-      <span><i style="background:var(--b5)"></i>Highest net load block</span>
+      <span><i style="background:var(--b1)"></i>Blue band: hours we expect to be cheapest</span>
+      <span><i style="background:var(--b5)"></i>Red band: hours we expect to be dearest</span>
       <span><i style="background:var(--text)"></i>Net load, MWh</span>
     </div>
   </div>
 
-  <div class="grp-h"><span>Animated charts</span><span class="tagv" id="k-vlbl"></span></div>
+  <div class="grp-h"><span>Animated daily charts</span><span class="tagv" id="k-vlbl"></span></div>
   <div class="panel vid">
     <div class="vtabs" role="tablist" id="k-vtabs"></div>
     <div class="vbody">
@@ -437,19 +443,20 @@ a.btn{display:inline-block;text-decoration:none}
     </div>
   </div>
 
-  <div class="grp-h"><span>Track record</span></div>
+  <div class="grp-h"><span>Track record · were we right?</span></div>
+  <p class="how">Every outlook makes four claims that can be checked once prices are known: (1) the cheapest hour falls in the blue band, (2) the cheapest four hours in a row start there, (3) the dearest hour falls in the red band, (4) the dearest four hours in a row start there. The day after, each claim is marked right or wrong. Days without a red band carry only the first two claims.</p>
   <div class="panel scroller" id="k-sc">
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
       <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
     <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
       <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
       <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
-    <p class="note" style="margin:10px 0 0">Drag the handles or pick a preset. Every chart in this section follows the window.</p>
+    <p class="note" style="margin:10px 0 0">Choose which days to look at: drag the blue handles or pick 7, 14 or 30 days. Every chart below follows this choice.</p>
   </div>
 
   <div class="panel">
     <h2>Four-hour price spread, day by day</h2>
-    <p class="note">Average day-ahead price of the day's most expensive four consecutive hours, minus the average of its cheapest four. It is what one MWh earns by moving four hours of energy from the cheap block to the dear one, roughly the gross margin of a four-hour battery cycle. Bars are days, the line is the seven-day average.</p>
+    <p class="how">For each day: the average price of its four most expensive hours in a row, minus the average of its four cheapest. Roughly what a battery earns per MWh by charging in the cheap hours and selling in the dear ones. Taller bar = bigger gap between cheap and expensive hours. The white line is the seven-day average.</p>
     <p class="note" id="k-spnote"></p>
     <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average" tabindex="0"></svg>
     <div class="legend">
@@ -459,43 +466,45 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="panel">
-    <h2>Hit rate, seven-day rolling</h2>
+    <h2>How often the outlook was right</h2>
+    <p class="how">Of all claims made in the past seven days, the share that turned out right. 75% means three in four. The dashed line is the average over the days you selected. Rising line = the outlook is getting better.</p>
     <p class="note" id="k-hrnote"></p>
     <svg class="chart" id="k-hr" viewBox="0 0 900 220" role="img" aria-label="Seven-day rolling share of claims held" tabindex="0"></svg>
     <div class="legend">
-      <span><i style="background:var(--b2)"></i>Claims held, 7-day rolling</span>
-      <span><i style="background:var(--muted)"></i>Window average</span>
+      <span><i style="background:var(--b2)"></i>Share of claims right, past 7 days</span>
+      <span><i style="background:var(--muted)"></i>Average over selected days</span>
     </div>
   </div>
 
   <div class="dgrid">
     <div class="panel">
-      <h2>Outlook record <span class="tagv" id="k-rectag"></span></h2>
+      <h2>Day by day <span class="tagv" id="k-rectag"></span></h2>
+      <p class="how">One square per day, oldest first. Colour shows how many of that day's claims were right.</p>
       <p class="note" id="k-recnote"></p>
       <div class="strip" id="k-strip"></div>
       <div class="legend">
-        <span><i style="background:var(--b2)"></i>All held</span>
-        <span><i style="background:var(--b3)"></i>3 of 4</span>
-        <span><i style="background:var(--b4)"></i>Half</span>
-        <span><i style="background:var(--b5)"></i>1 or none</span>
+        <span><i style="background:var(--b2)"></i>All right</span>
+        <span><i style="background:var(--b3)"></i>3 of 4 right</span>
+        <span><i style="background:var(--b4)"></i>Half right</span>
+        <span><i style="background:var(--b5)"></i>1 or none right</span>
       </div>
       <div class="stats" id="k-stats"></div>
     </div>
     <div class="panel">
-      <h2>Hit rate by claim</h2>
-      <p class="note">Share of days in the window on which each structural claim held.</p>
+      <h2>Which claim is most reliable</h2>
+      <p class="how">For each of the four claims, how often it was right over the selected days.</p>
       <div class="mix" id="k-claims"></div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Hit rate by weekday</h2>
+    <h2>Is the outlook better on some weekdays?</h2>
     <p class="note" id="k-wdnote"></p>
     <div class="wd" id="k-wd"></div>
   </div>
 
   <details class="panel tview">
-    <summary><span>Table view</span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
+    <summary><span>All checked days as a table</span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
     <div class="tscroll"><table>
       <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">4 h spread</th></tr></thead>
       <tbody id="k-rows"></tbody>
@@ -826,7 +835,8 @@ const tl=v=>Math.round(v).toLocaleString("en-GB");
 const $=id=>document.getElementById(id);
 const setT=(id,v)=>{const e=$(id);if(e)e.textContent=v};
 const ago=iso=>{if(!iso)return"";const h=(Date.now()-new Date(iso))/36e5;return h<1?"under an hour ago":h<48?Math.round(h)+" h ago":Math.round(h/24)+" days ago"};
-const deltaSpan=(lbl,v)=>v===null||v===undefined?"":`<span>${lbl} <b class="${v>0?"ok":v<0?"bad":""}" style="font-weight:500">${pct(v)}</b></span>`;
+const arr=v=>v>0?"▲ "+v+"%":v<0?"▼ "+Math.abs(v)+"%":"= 0%";
+const deltaSpan=(lbl,v)=>v===null||v===undefined?"":`<span>${lbl} <b style="font-weight:500;color:var(--text)">${arr(v)}</b></span>`;
 const hrCol=p=>p>=75?"b2":p>=50?"b3":"b5";
 
 /* generic line chart with crosshair, keyboard and optional shaded blocks */
@@ -839,12 +849,12 @@ function lineChart(id,pts,o){
   const step=n>1?(W-L-R)/(n-1):0,X=i=>L+step*i,Y=q=>T+(H-T-B)*(1-(q-y0)/(y1-y0));
   let s="";
   (o.bands||[]).forEach(b=>{if(b.r)s+=`<rect x="${X(b.r[0])-step/2}" y="${T}" width="${(b.r[1]-b.r[0]+1)*step}" height="${H-T-B}" fill="${b.c}" opacity=".13" rx="4"/>`});
-  for(let g=0;g<=3;g++){const q=y0+(y1-y0)*g/3;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/><text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${o.fmt(q)}</text>`}
+  const G=o.grid||3;for(let g=0;g<=G;g++){const q=y0+(y1-y0)*g/G;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/><text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${o.fmt(q)}</text>`}
   if(o.ref!==undefined)s+=`<line x1="${L}" x2="${W-R}" y1="${Y(o.ref)}" y2="${Y(o.ref)}" stroke="#8A9BB0" stroke-dasharray="5 4"/>`;
   let path="",pen=false;pts.forEach((p,i)=>{if(p.v===null){pen=false;return}path+=(pen?"L":"M")+X(i)+","+Y(p.v);pen=true});
   s+=`<path d="${path}" fill="none" stroke="${o.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   const every=Math.ceil(n/(o.ticks||8));
-  pts.forEach((p,i)=>{if(i%every===0||i===n-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${p.lab}</text>`});
+  pts.forEach((p,i)=>{if(i%every===0||i===n-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="${i===n-1?"end":i===0?"start":"middle"}" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${p.lab}</text>`});
   s+=`<line class="guide" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/><circle class="dot" r="5" fill="${o.color}" stroke="#16202E" stroke-width="2" opacity="0"/>`;
   pts.forEach((p,i)=>{if(p.v===null)return;const hw=Math.max(step,8);s+=`<rect class="hit" data-i="${i}" data-x="${X(i)}" data-y="${Y(p.v)}" x="${X(i)-hw/2}" y="${T}" width="${hw}" height="${H-T-B}" fill="transparent" data-tip="${p.tip}"/>`});
   svg.innerHTML=s;
@@ -872,7 +882,7 @@ function renderDashDaily(d){
   if(sm&&sm.claims_total){
     const days=DASH.days,last=days.slice(-14),prev=days.slice(-28,-14),r=a=>{const t=a.reduce((p,x)=>p+(x.of||0),0);return t?100*a.reduce((p,x)=>p+(x.held||0),0)/t:null};
     const a=r(last),b=r(prev),dd=a!==null&&b!==null?Math.round(a-b):null;
-    figs.push({k:"Outlook hit rate",v:Math.round(100*sm.claims_held/sm.claims_total)+"%",n:sm.claims_held+" of "+sm.claims_total+" claims, "+sm.days_checked+" days",dl:dd===null?"":`<span>Last 14d vs prior <b class="${dd>0?"ok":dd<0?"bad":""}" style="font-weight:500">${dd>0?"+":""}${dd} pts</b></span>`});
+    figs.push({k:"Outlook right",v:Math.round(100*sm.claims_held/sm.claims_total)+"%",n:sm.claims_held+" of "+sm.claims_total+" claims, "+sm.days_checked+" days",dl:dd===null?"":`<span>Last 14 days vs 14 before <b class="${dd>0?"ok":dd<0?"bad":""}" style="font-weight:500">${dd>0?"▲ ":dd<0?"▼ ":""}${Math.abs(dd)} pts</b></span>`});
   }
   $("k-figs").innerHTML=figs.map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div>${f.dl?`<div class="d">${f.dl}</div>`:""}</div>`).join("");
 
@@ -892,14 +902,15 @@ function renderDashDaily(d){
     (w.length?`<table style="margin-top:14px"><thead><tr><th>Hour</th><th class="num">DA</th><th class="num">RT</th><th class="num">Cost</th></tr></thead><tbody>${w.map(r=>`<tr data-tip="${r.hour}, ${r.dir}-regulation|${r.mwh.toLocaleString("en-GB")} MWh<br>Day-ahead <b>${r.mcp.toLocaleString("en-GB")}</b> vs real time <b>${r.smp.toLocaleString("en-GB")}</b> TL/MWh<br>Wedge <b>${(r.mcp-r.smp).toLocaleString("en-GB")}</b> TL/MWh"><td class="mono">${r.hour} ${r.dir}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.cost.toLocaleString("en-GB")}k</td></tr>`).join("")}</tbody></table>`:"");
   setT("k-cons",d.constraint_mwh&&d.constraint_mwh!=="0"?d.constraint_mwh+" MWh of instructions carried a grid-constraint code.":"No grid-constraint instructions.");
 
-  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip" data-tip="${lbl} · ${k}|Closed day vs <b>${sd(o.date)}</b>: <b>${pct(v)}</b>">${lbl} · ${k} <span class="${v>0?"ok":v<0?"bad":""}">${pct(v)}</span></span>`).join(""):"";
+  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip" data-tip="${lbl} · ${k}|Yesterday vs <b>${sd(o.date)}</b>: <b>${arr(v)}</b>">${lbl} · ${k} <span style="color:var(--text)">${arr(v)}</span></span>`).join(""):"";
   $("k-cmp").innerHTML=chip("D-1",d.d1)+chip("D-7",d.d8)||'<span class="chip">No comparison yet</span>';
   renderFresh();
 }
 
 function renderNext(d){
   setT("k-nxt-t","Net load outlook, "+fmtDate(d.date));
-  setT("k-nxt-note",d.note||"");
+  {const hh=r=>r?String(r[0]).padStart(2,"0")+":00–"+String(r[1]).padStart(2,"0")+":59":null,lb=hh(d.lowBlock),tb=hh(d.topBlock),wm=/wind forecast ([\d,]+) MWh/.exec(d.note||"");
+   setT("k-nxt-note",(lb?"Expected cheapest hours: "+lb+". ":"")+(tb?"Expected dearest hours: "+tb+". ":"No hour reaches the top band, so no dearest-hours claim. ")+(wm?"Wind is forecast at "+wm[1]+" MWh for the day.":""));}
   $("k-nxt-figs").innerHTML=(d.figures||[]).map(f=>`<div><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
   const v=d.netLoad||[],lb=d.lowBlock,tb=d.topBlock,inb=(r,h)=>r&&h>=r[0]&&h<=r[1];
   lineChart("k-nxt",v.map((q,h)=>({v:q,lab:String(h).padStart(2,"0"),tip:`${String(h).padStart(2,"0")}:00|Net load <b>${tl(q)}</b> MWh${inb(lb,h)?"<br>Inside the <b>low</b> block":""}${inb(tb,h)?"<br>Inside the <b>top</b> block":""}${h===d.windPeakHour?"<br>Wind forecast peak":""}${h===d.loadPlanPeakHour?"<br>Load plan peak":""}`})),
@@ -950,7 +961,7 @@ function renderWindow(){
     sp.forEach((x,i)=>{s+=`<rect class="bar" data-i="${i}" x="${X(i)-bwid/2}" y="${Y(x.d.spread_tl_mwh)}" width="${bwid}" height="${Y(0)-Y(x.d.spread_tl_mwh)}" rx="${Math.min(4,bwid/2)}" fill="#FBBF24" opacity=".75"/>`});
     s+=`<polyline fill="none" stroke="#E6EDF5" stroke-width="2" stroke-linejoin="round" points="${sp.map((x,i)=>X(i)+","+Y(x.ma)).join(" ")}"/>`;
     const every=Math.ceil(m/8);
-    sp.forEach((x,i)=>{if(i%every===0||i===m-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${sd(x.d.date)}</text>`});
+    sp.forEach((x,i)=>{if(i%every===0||i===m-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="${i===m-1&&m>1?"end":"middle"}" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${sd(x.d.date)}</text>`});
     s+=`<line class="guide" x1="0" x2="0" y1="${T}" y2="${H-Bm}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/>`;
     const win4=(d,re)=>{const c=(d.checks||[]).find(c=>re.test(c.claim));const m=c&&/(\d\d:\d\d)-(\d\d:\d\d), ([\d,]+) TL\/MWh/.exec(c.detail||"");return m?{h:m[1]+"–"+m[2],p:m[3]}:null};
     sp.forEach((x,i)=>{const d=x.d,diff=x.ma?Math.round(100*(d.spread_tl_mwh-x.ma)/x.ma):0,lo=win4(d,/Cheapest four/),hi4=win4(d,/Most expensive four/);
@@ -963,19 +974,19 @@ function renderWindow(){
   /* rolling hit rate */
   const h=days.reduce((p,d)=>p+(d.held||0),0),t=days.reduce((p,d)=>p+(d.of||0),0),wavg=t?100*h/t:null;
   lineChart("k-hr",days.map((d,k)=>{const r=hrAll[a+k];return {v:r,lab:sd(d.date),tip:`${fmtDate(d.date)}|7-day rolling <b>${r===null?"—":Math.round(r)+"%"}</b><br>That day <b>${d.held} / ${d.of}</b> held`}}),
-    {color:"#34D399",min:0,max:100,fmt:q=>Math.round(q)+"%",ref:wavg===null?undefined:wavg,ticks:8});
-  if(days.length){const rs=days.map((_,k)=>hrAll[a+k]).filter(x=>x!==null);setT("k-hrnote","Window average "+(wavg===null?"—":Math.round(wavg)+"%")+"."+(rs.length>1?" The rolling rate moved from "+Math.round(rs[0])+"% to "+Math.round(rs[rs.length-1])+"% across the window.":"")+(a<6?" The line starts once seven days of record exist.":""))}
+    {color:"#34D399",min:0,max:100,grid:4,fmt:q=>Math.round(q)+"%",ref:wavg===null?undefined:wavg,ticks:8});
+  if(days.length){const rs=days.map((_,k)=>hrAll[a+k]).filter(x=>x!==null);setT("k-hrnote",(wavg===null?"":"Over the selected days "+Math.round(wavg)+"% of claims were right.")+(rs.length>1?" The seven-day figure went from "+Math.round(rs[0])+"% to "+Math.round(rs[rs.length-1])+"%.":"")+(a<6?" The line starts on the seventh day of the record.":""))}
   else setT("k-hrnote","No checks yet.");
 
   /* record strip + stats */
   const col=d=>{const r=d.of?d.held/d.of:0;return r>=1?"b2":r>=.75?"b3":r>=.5?"b4":"b5"};
   $("k-strip").innerHTML=days.map(d=>`<span style="background:var(--${col(d)})" data-tip="${fmtDate(d.date)}|<b>${d.held} of ${d.of}</b> claims held${(d.checks||[]).map(c=>"<br>"+(c.held?"✓ ":"✗ ")+esc(c.claim)).join("")}"></span>`).join("");
   setT("k-rectag",t?Math.round(100*h/t)+"%":"");
-  setT("k-recnote",days.length?days.length+" days in window, oldest on the left. "+h+" of "+t+" claims held.":"No checks yet.");
+  setT("k-recnote",days.length?h+" of "+t+" claims right over "+days.length+" days.":"No checks yet.");
   let cur=0;for(let i=all.length-1;i>=0&&all[i].of&&all[i].held===all[i].of;i--)cur++;
   let best=0,run=0;days.forEach(d=>{run=d.of&&d.held===d.of?run+1:0;best=Math.max(best,run)});
   const full=days.filter(d=>d.of&&d.held===d.of).length;
-  $("k-stats").innerHTML=[["Current streak",cur+" d","perfect days to date"],["Longest in window",best+" d","perfect days in a row"],["Perfect days",full+" / "+days.length,"every claim held"]].map(([k,v,nn])=>`<div><div class="k">${k}</div><div class="v">${v}</div><div class="n">${nn}</div></div>`).join("");
+  $("k-stats").innerHTML=[["Current run",cur+" d","days in a row, all right"],["Best run",best+" d","in the selected days"],["Perfect days",full+" / "+days.length,"every claim right"]].map(([k,v,nn])=>`<div><div class="k">${k}</div><div class="v">${v}</div><div class="n">${nn}</div></div>`).join("");
 
   /* per claim */
   const by={};
