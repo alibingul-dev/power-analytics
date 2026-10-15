@@ -168,7 +168,13 @@ table.cmp td.num{width:30%}
 table.cmp .cv{display:inline-block;min-width:78px;color:var(--text)}
 table.cmp .cb{display:inline-block;position:relative;width:90px;height:12px;margin-left:10px;vertical-align:middle;background:linear-gradient(var(--muted),var(--muted)) center/1px 100% no-repeat}
 table.cmp .cb i{position:absolute;top:0;bottom:0;max-width:50%;background:var(--muted);border-radius:2px;transform-origin:left}
-.trk{position:relative}
+.trk{position:relative;border:1px solid rgba(56,189,248,.35);border-radius:16px;padding:0 14px 14px;background:linear-gradient(180deg,rgba(56,189,248,.05),rgba(56,189,248,.015) 240px,transparent 600px)}
+.trk>.panel{background:var(--surface)}
+.trk .dgrid{margin-bottom:22px}
+#tr-dash .trk>.scroller{margin:0 -14px 18px;border:0;border-bottom:1px solid rgba(56,189,248,.35);border-radius:15px 15px 0 0;background:#132235}
+#tr-dash .trk>.scroller.stuck{border-radius:0 0 12px 12px;border:1px solid rgba(56,189,248,.35)}
+.trk .trk-cap{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--b1);margin-bottom:8px}
+@media (max-width:880px){.trk{padding:0 8px 8px}#tr-dash .trk>.scroller{margin:0 -8px 14px}}
 #tr-dash .scroller.stuck{padding:10px 22px;border-radius:0 0 12px 12px}
 #tr-dash .scroller.stuck .sc-note{display:none}
 #tr-dash .scroller.stuck .sc-track{height:30px}
@@ -462,12 +468,13 @@ a.btn{display:inline-block;text-decoration:none}
   <div class="trk">
   <div id="k-sc-sentinel" style="height:1px"></div>
   <div class="panel scroller" id="k-sc">
+    <div class="trk-cap">Filter for everything in this box</div>
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
       <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
     <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
       <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
       <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
-    <p class="note sc-note" style="margin:10px 0 0">Pick the days to look at: drag the blue handles or press 7D, 14D, 30D. Grey bars are each day's four-hour spread. <b style="color:var(--text);font-weight:600">This filter changes every panel below that carries a blue date tag</b>; the sections above it always show yesterday and tomorrow.</p>
+    <p class="note sc-note" style="margin:10px 0 0">Pick the days to look at: drag the blue handles or press 7D, 14D, 30D. Grey bars are each day's four-hour spread. <b style="color:var(--text);font-weight:600">It changes every panel inside this blue frame</b>, each marked with the same date tag. The sections above the frame always show yesterday and tomorrow.</p>
   </div>
 
   <div class="panel">
