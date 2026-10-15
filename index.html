@@ -197,6 +197,7 @@ svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-ra
 .vdates button.on,.vdates button:hover{color:var(--text);border-color:var(--b2)}
 a.btn{display:inline-block;text-decoration:none}
 .vside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.vhead{border-top:1px solid var(--line);padding-top:14px}
 .vhead .t{font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .vhead .d{font-family:Archivo;font-weight:800;font-size:22px;margin:2px 0 6px}
 .vhead .note{margin:0}
@@ -209,14 +210,14 @@ a.btn{display:inline-block;text-decoration:none}
 .vcard .empty-s{font-size:13.5px;color:var(--muted)}
 .vlinks{display:flex;flex-wrap:wrap;gap:8px}
 .vstrip-h{font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:-8px}
-.vstrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.vstrip{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
 .vstrip button{padding:0;border:1px solid var(--line);border-radius:7px;background:#0B111A;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;color:var(--muted);font-family:"IBM Plex Mono";font-size:11px}
 .vstrip button img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;opacity:.7}
 .vstrip button span{padding:3px 0}
 .vstrip button.on{border-color:var(--b2);color:var(--text)}
 .vstrip button.on img,.vstrip button:hover img{opacity:1}
 
-@media (max-width:880px){.vbody{grid-template-columns:1fr}}
+@media (max-width:880px){.vbody{grid-template-columns:1fr}.vstrip{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:880px){.minifigs{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr}.wd{gap:5px}.wd .col{height:90px}#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
 
 /* ---------- mobile ---------- */
@@ -427,11 +428,11 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="vbody">
       <div class="vframe"><video id="k-video" controls muted playsinline loop preload="none"></video></div>
       <div class="vside">
-        <div class="vhead"><div class="t" id="k-vkind"></div><div class="d" id="k-vdate"></div><p class="note" id="k-vnote"></p></div>
-        <div class="vcard" id="k-vcheck"></div>
-        <div class="vlinks" id="k-vlinks"></div>
         <div class="vstrip-h">Recent</div>
         <div class="vstrip" id="k-vdates"></div>
+        <div class="vlinks" id="k-vlinks"></div>
+        <div class="vhead"><div class="t" id="k-vkind"></div><div class="d" id="k-vdate"></div><p class="note" id="k-vnote"></p></div>
+        <div class="vcard" id="k-vcheck"></div>
       </div>
     </div>
   </div>
