@@ -168,23 +168,20 @@ table.cmp td.num{width:30%}
 table.cmp .cv{display:inline-block;min-width:78px;color:var(--text)}
 table.cmp .cb{display:inline-block;position:relative;width:90px;height:12px;margin-left:10px;vertical-align:middle;background:linear-gradient(var(--muted),var(--muted)) center/1px 100% no-repeat}
 table.cmp .cb i{position:absolute;top:0;bottom:0;max-width:50%;background:var(--muted);border-radius:2px;transform-origin:left}
+.minibar{position:fixed;z-index:30;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:#132235;border:1px solid rgba(56,189,248,.45);border-top:0;border-radius:0 0 12px 12px;box-shadow:0 10px 24px rgba(6,11,18,.6);font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);transform:translateY(-110%);opacity:0;pointer-events:none;transition:transform .15s ease,opacity .15s ease}
+.minibar.on{transform:none;opacity:1;pointer-events:auto}
+.minibar b{color:var(--text);font-weight:500}
+.minibar .mb-l{flex:1;min-width:160px}
+.minibar .btn{padding:3px 9px;font-size:11.5px}
 .trk{position:relative;border:1px solid rgba(56,189,248,.35);border-radius:16px;padding:0 14px 14px;background:#132235}
 .trk .panel{background:#132235;border-color:rgba(56,189,248,.18)}
 .trk .tscroll thead th{background:#132235}
 .trk .dgrid{margin-bottom:22px}
 #tr-dash .trk>.scroller{margin:0 -14px 18px;border:0;border-bottom:1px solid rgba(56,189,248,.35);border-radius:15px 15px 0 0;background:#132235}
-#tr-dash .trk>.scroller.stuck{border-radius:0 0 12px 12px;border:1px solid rgba(56,189,248,.35)}
 .trk .trk-cap{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--b1);margin-bottom:8px}
 @media (max-width:880px){.trk{padding:0 8px 8px}#tr-dash .trk>.scroller{margin:0 -8px 14px}}
-#tr-dash .scroller.stuck{padding:10px 22px;border-radius:0 0 12px 12px}
-#tr-dash .scroller.stuck .sc-note{display:none}
-#tr-dash .scroller.stuck .sc-track{height:30px}
-#tr-dash .scroller.stuck .sc-track input::-webkit-slider-thumb{height:30px}
-#tr-dash .scroller.stuck .sc-track input::-moz-range-thumb{height:30px}
-#tr-dash .scroller{position:sticky;top:0;z-index:15;box-shadow:0 10px 24px rgba(6,11,18,.55)}
 .wbadge{display:inline-block;font-family:"IBM Plex Mono";font-style:normal;font-size:11px;font-weight:400;letter-spacing:.02em;color:var(--b1);border:1px solid rgba(56,189,248,.45);background:rgba(56,189,248,.08);border-radius:999px;padding:1px 9px;margin-left:8px;vertical-align:2px}
 .wbadge:empty{display:none}
-@media (max-width:880px){#tr-dash .scroller{top:56px}}
 .how{font-size:14px;color:var(--muted);margin:-4px 0 14px;max-width:72ch;line-height:1.55}
 .panel .how{margin:0 0 12px}
 .tagv{font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);font-weight:400}
@@ -467,7 +464,6 @@ a.btn{display:inline-block;text-decoration:none}
   <div class="grp-h"><span>Track record · were we right?</span></div>
   <p class="how">Every outlook makes four claims that can be checked once prices are known: (1) the cheapest hour falls in the blue band, (2) the cheapest four hours in a row start there, (3) the dearest hour falls in the red band, (4) the dearest four hours in a row start there. The day after, each claim is marked right or wrong. Days without a red band carry only the first two claims.</p>
   <div class="trk">
-  <div id="k-sc-sentinel" style="height:1px"></div>
   <div class="panel scroller" id="k-sc">
     <div class="trk-cap">Filter for everything in this box</div>
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
@@ -668,6 +664,7 @@ a.btn{display:inline-block;text-decoration:none}
 </div>
 </main>
 <div id="tip" role="tooltip"></div>
+<div class="minibar" id="k-mini" aria-hidden="true"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">Adjust ↑</button></div>
 
 <script>
 const FALLBACK={
@@ -967,7 +964,7 @@ function renderWindow(){
   const A=$("k-sca"),B=$("k-scb");
   let a=+A.value,b=+B.value;if(a>b){[a,b]=[b,a]}
   const all=DASH.days,n=all.length,days=all.slice(a,b+1),win=$("k-scwin");
-  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");document.querySelectorAll("#tr-dash .wbadge").forEach(x=>x.textContent=sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" d")}
+  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");setT("k-mini-lbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");document.querySelectorAll("#tr-dash .wbadge").forEach(x=>x.textContent=sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" d")}
   else{win.style.width="0";setT("k-sclbl","no data")}
   document.querySelectorAll(".sc-presets button").forEach(x=>x.classList.toggle("on",(+x.dataset.n===0&&a===0&&b===n-1)||(+x.dataset.n>0&&b===n-1&&b-a+1===+x.dataset.n)));
 
@@ -1036,7 +1033,12 @@ function renderWindow(){
 
 /* scroller + csv */
 ["k-sca","k-scb"].forEach(id=>$(id).addEventListener("input",renderWindow));
-{const stick=()=>{const t=$("k-sc-sentinel").getBoundingClientRect().top;$("k-sc").classList.toggle("stuck",t<(innerWidth<=880?56:0)&&$("k-sc").offsetParent!==null)};addEventListener("scroll",stick,{passive:true});addEventListener("resize",stick);}
+{/* floating mini bar: a fixed overlay, so showing it never changes page layout (no scroll jumps) */
+ const mb=$("k-mini"),sc=$("k-sc"),tk=document.querySelector(".trk"),top0=()=>innerWidth<=880?56:0;let raf=0;
+ const upd=()=>{raf=0;if(sc.offsetParent===null){mb.classList.remove("on");return}const a=sc.getBoundingClientRect(),t=tk.getBoundingClientRect(),on=a.bottom<top0()&&t.bottom>top0()+90;
+   if(on){mb.style.left=t.left+"px";mb.style.width=t.width+"px";mb.style.top=top0()+"px"}mb.classList.toggle("on",on)};
+ addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});addEventListener("resize",upd);
+ $("k-mini-up").addEventListener("click",()=>sc.scrollIntoView({behavior:"smooth",block:"start"}));}
 document.querySelectorAll(".sc-presets button").forEach(x=>x.addEventListener("click",()=>{
   const n=DASH.days.length,k=+x.dataset.n;$("k-scb").value=n-1;$("k-sca").value=k?Math.max(0,n-k):0;renderWindow();
 }));
