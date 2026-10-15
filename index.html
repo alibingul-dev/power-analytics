@@ -168,6 +168,16 @@ table.cmp td.num{width:30%}
 table.cmp .cv{display:inline-block;min-width:78px;color:var(--text)}
 table.cmp .cb{display:inline-block;position:relative;width:90px;height:12px;margin-left:10px;vertical-align:middle;background:linear-gradient(var(--muted),var(--muted)) center/1px 100% no-repeat}
 table.cmp .cb i{position:absolute;top:0;bottom:0;max-width:50%;background:var(--muted);border-radius:2px;transform-origin:left}
+.trk{position:relative}
+#tr-dash .scroller.stuck{padding:10px 22px;border-radius:0 0 12px 12px}
+#tr-dash .scroller.stuck .sc-note{display:none}
+#tr-dash .scroller.stuck .sc-track{height:30px}
+#tr-dash .scroller.stuck .sc-track input::-webkit-slider-thumb{height:30px}
+#tr-dash .scroller.stuck .sc-track input::-moz-range-thumb{height:30px}
+#tr-dash .scroller{position:sticky;top:0;z-index:15;box-shadow:0 10px 24px rgba(6,11,18,.55)}
+.wbadge{display:inline-block;font-family:"IBM Plex Mono";font-style:normal;font-size:11px;font-weight:400;letter-spacing:.02em;color:var(--b1);border:1px solid rgba(56,189,248,.45);background:rgba(56,189,248,.08);border-radius:999px;padding:1px 9px;margin-left:8px;vertical-align:2px}
+.wbadge:empty{display:none}
+@media (max-width:880px){#tr-dash .scroller{top:56px}}
 .how{font-size:14px;color:var(--muted);margin:-4px 0 14px;max-width:72ch;line-height:1.55}
 .panel .how{margin:0 0 12px}
 .tagv{font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);font-weight:400}
@@ -449,17 +459,19 @@ a.btn{display:inline-block;text-decoration:none}
 
   <div class="grp-h"><span>Track record · were we right?</span></div>
   <p class="how">Every outlook makes four claims that can be checked once prices are known: (1) the cheapest hour falls in the blue band, (2) the cheapest four hours in a row start there, (3) the dearest hour falls in the red band, (4) the dearest four hours in a row start there. The day after, each claim is marked right or wrong. Days without a red band carry only the first two claims.</p>
+  <div class="trk">
+  <div id="k-sc-sentinel" style="height:1px"></div>
   <div class="panel scroller" id="k-sc">
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
       <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
     <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
       <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
       <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
-    <p class="note" style="margin:10px 0 0">Choose which days to look at: drag the blue handles or pick 7, 14 or 30 days. Every chart below follows this choice.</p>
+    <p class="note sc-note" style="margin:10px 0 0">Pick the days to look at: drag the blue handles or press 7D, 14D, 30D. Grey bars are each day's four-hour spread. <b style="color:var(--text);font-weight:600">This filter changes every panel below that carries a blue date tag</b>; the sections above it always show yesterday and tomorrow.</p>
   </div>
 
   <div class="panel">
-    <h2>Four-hour price spread, day by day</h2>
+    <h2>Four-hour price spread, day by day <span class="wbadge"></span></h2>
     <p class="how">For each day: the average price of its four most expensive hours in a row, minus the average of its four cheapest. Roughly what a battery earns per MWh by charging in the cheap hours and selling in the dear ones. Taller bar = bigger gap between cheap and expensive hours. The white line is the seven-day average.</p>
     <p class="note" id="k-spnote"></p>
     <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average" tabindex="0"></svg>
@@ -470,7 +482,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="panel">
-    <h2>How often the outlook was right</h2>
+    <h2>How often the outlook was right <span class="wbadge"></span></h2>
     <p class="how">Of all claims made in the past seven days, the share that turned out right. 75% means three in four. The dashed line is the average over the days you selected. Rising line = the outlook is getting better.</p>
     <p class="note" id="k-hrnote"></p>
     <svg class="chart" id="k-hr" viewBox="0 0 900 220" role="img" aria-label="Seven-day rolling share of claims held" tabindex="0"></svg>
@@ -482,7 +494,7 @@ a.btn{display:inline-block;text-decoration:none}
 
   <div class="dgrid">
     <div class="panel">
-      <h2>Day by day <span class="tagv" id="k-rectag"></span></h2>
+      <h2>Day by day <span class="tagv" id="k-rectag"></span> <span class="wbadge"></span></h2>
       <p class="how">One square per day, oldest first. Colour shows how many of that day's claims were right.</p>
       <p class="note" id="k-recnote"></p>
       <div class="strip" id="k-strip"></div>
@@ -495,25 +507,26 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="stats" id="k-stats"></div>
     </div>
     <div class="panel">
-      <h2>Which claim is most reliable</h2>
+      <h2>Which claim is most reliable <span class="wbadge"></span></h2>
       <p class="how">For each of the four claims, how often it was right over the selected days.</p>
       <div class="mix" id="k-claims"></div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Is the outlook better on some weekdays?</h2>
+    <h2>Is the outlook better on some weekdays? <span class="wbadge"></span></h2>
     <p class="note" id="k-wdnote"></p>
     <div class="wd" id="k-wd"></div>
   </div>
 
   <details class="panel tview">
-    <summary><span>All checked days as a table</span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
+    <summary><span>Checked days as a table <i class="wbadge"></i></span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
     <div class="tscroll"><table>
       <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">4 h spread</th></tr></thead>
       <tbody id="k-rows"></tbody>
     </table></div>
   </details>
+  </div>
 </section>
 
 <!-- ===== WEEKLY ===== -->
@@ -946,7 +959,7 @@ function renderWindow(){
   const A=$("k-sca"),B=$("k-scb");
   let a=+A.value,b=+B.value;if(a>b){[a,b]=[b,a]}
   const all=DASH.days,n=all.length,days=all.slice(a,b+1),win=$("k-scwin");
-  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days")}
+  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");document.querySelectorAll("#tr-dash .wbadge").forEach(x=>x.textContent=sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" d")}
   else{win.style.width="0";setT("k-sclbl","no data")}
   document.querySelectorAll(".sc-presets button").forEach(x=>x.classList.toggle("on",(+x.dataset.n===0&&a===0&&b===n-1)||(+x.dataset.n>0&&b===n-1&&b-a+1===+x.dataset.n)));
 
@@ -1015,6 +1028,7 @@ function renderWindow(){
 
 /* scroller + csv */
 ["k-sca","k-scb"].forEach(id=>$(id).addEventListener("input",renderWindow));
+{const stick=()=>{const t=$("k-sc-sentinel").getBoundingClientRect().top;$("k-sc").classList.toggle("stuck",t<(innerWidth<=880?56:0)&&$("k-sc").offsetParent!==null)};addEventListener("scroll",stick,{passive:true});addEventListener("resize",stick);}
 document.querySelectorAll(".sc-presets button").forEach(x=>x.addEventListener("click",()=>{
   const n=DASH.days.length,k=+x.dataset.n;$("k-scb").value=n-1;$("k-sca").value=k?Math.max(0,n-k):0;renderWindow();
 }));
