@@ -447,11 +447,12 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="panel">
-    <h2>Price spread, every checked day</h2>
+    <h2>Four-hour price spread, day by day</h2>
+    <p class="note">Average day-ahead price of the day's most expensive four consecutive hours, minus the average of its cheapest four. It is what one MWh earns by moving four hours of energy from the cheap block to the dear one, roughly the gross margin of a four-hour battery cycle. Bars are days, the line is the seven-day average.</p>
     <p class="note" id="k-spnote"></p>
     <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average" tabindex="0"></svg>
     <div class="legend">
-      <span><i style="background:var(--b3)"></i>Daily spread, TL/MWh</span>
+      <span><i style="background:var(--b3)"></i>Dearest 4 h minus cheapest 4 h, TL/MWh</span>
       <span><i style="background:var(--text)"></i>Seven-day average</span>
     </div>
   </div>
@@ -495,7 +496,7 @@ a.btn{display:inline-block;text-decoration:none}
   <details class="panel tview">
     <summary><span>Table view</span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
     <div class="tscroll"><table>
-      <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">Spread</th></tr></thead>
+      <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">4 h spread</th></tr></thead>
       <tbody id="k-rows"></tbody>
     </table></div>
   </details>
@@ -950,11 +951,12 @@ function renderWindow(){
     const every=Math.ceil(m/8);
     sp.forEach((x,i)=>{if(i%every===0||i===m-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${sd(x.d.date)}</text>`});
     s+=`<line class="guide" x1="0" x2="0" y1="${T}" y2="${H-Bm}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/>`;
-    sp.forEach((x,i)=>{const d=x.d,diff=x.ma?Math.round(100*(d.spread_tl_mwh-x.ma)/x.ma):0;
-      s+=`<rect class="hit" data-i="${i}" data-x="${X(i)}" x="${X(i)-bw/2}" y="${T}" width="${bw}" height="${H-T-Bm}" fill="transparent" data-tip="${fmtDate(d.date)}|Spread <b>${tl(d.spread_tl_mwh)}</b> TL/MWh<br>7-day avg <b>${tl(x.ma)}</b> (${diff>0?"+":""}${diff}%)<br>Claims held <b>${d.held} / ${d.of}</b><br>Low ${esc(d.low_block||"—")} · top ${esc(d.top_block||"—")}"/>`});
+    const win4=(d,re)=>{const c=(d.checks||[]).find(c=>re.test(c.claim));const m=c&&/(\d\d:\d\d)-(\d\d:\d\d), ([\d,]+) TL\/MWh/.exec(c.detail||"");return m?{h:m[1]+"–"+m[2],p:m[3]}:null};
+    sp.forEach((x,i)=>{const d=x.d,diff=x.ma?Math.round(100*(d.spread_tl_mwh-x.ma)/x.ma):0,lo=win4(d,/Cheapest four/),hi4=win4(d,/Most expensive four/);
+      s+=`<rect class="hit" data-i="${i}" data-x="${X(i)}" x="${X(i)-bw/2}" y="${T}" width="${bw}" height="${H-T-Bm}" fill="transparent" data-tip="${fmtDate(d.date)}|${hi4?`Dearest 4 h ${hi4.h}: <b>${hi4.p}</b><br>`:""}${lo?`Cheapest 4 h ${lo.h}: <b>${lo.p}</b><br>`:""}Spread <b>${tl(d.spread_tl_mwh)}</b> TL/MWh<br>7-day avg <b>${tl(x.ma)}</b> (${diff>0?"+":""}${diff}%)"/>`});
     svg.innerHTML=s;
     const imax=v.indexOf(Math.max(...v)),imin=v.indexOf(Math.min(...v));
-    setT("k-spnote","Latest "+tl(v[m-1])+" TL/MWh against a seven-day average of "+tl(sp[m-1].ma)+". Widest "+tl(v[imax])+" on "+sd(sp[imax].d.date)+", narrowest "+tl(v[imin])+" on "+sd(sp[imin].d.date)+".");
+    setT("k-spnote","Latest day "+tl(v[m-1])+" TL/MWh against a seven-day average of "+tl(sp[m-1].ma)+". Widest "+tl(v[imax])+" on "+sd(sp[imax].d.date)+", narrowest "+tl(v[imin])+" on "+sd(sp[imin].d.date)+".");
   }
 
   /* rolling hit rate */
