@@ -168,10 +168,14 @@ table.cmp td.num{width:30%}
 table.cmp .cv{display:inline-block;min-width:78px;color:var(--text)}
 table.cmp .cb{display:inline-block;position:relative;width:90px;height:12px;margin-left:10px;vertical-align:middle;background:linear-gradient(var(--muted),var(--muted)) center/1px 100% no-repeat}
 table.cmp .cb i{position:absolute;top:0;bottom:0;max-width:50%;background:var(--muted);border-radius:2px;transform-origin:left}
-.minibar{position:fixed;z-index:30;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:#132235;border:1px solid rgba(56,189,248,.45);border-top:0;border-radius:0 0 12px 12px;box-shadow:0 10px 24px rgba(6,11,18,.6);font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);transform:translateY(-110%);opacity:0;pointer-events:none;transition:transform .15s ease,opacity .15s ease}
+.minibar{position:fixed;z-index:30;display:flex;flex-direction:column;gap:8px;padding:9px 16px;background:#132235;border:1px solid rgba(56,189,248,.45);border-top:0;border-radius:0 0 12px 12px;box-shadow:0 10px 24px rgba(6,11,18,.6);font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);transform:translateY(-110%);opacity:0;pointer-events:none;transition:transform .15s ease,opacity .15s ease}
 .minibar.on{transform:none;opacity:1;pointer-events:auto}
 .minibar b{color:var(--text);font-weight:500}
+.minibar .mb-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .minibar .mb-l{flex:1;min-width:160px}
+.minibar .mb-track{height:32px}
+.minibar .mb-track input::-webkit-slider-thumb{height:32px}
+.minibar .mb-track input::-moz-range-thumb{height:32px}
 .minibar .btn{padding:3px 9px;font-size:11.5px}
 .trk{position:relative;border:1px solid rgba(56,189,248,.35);border-radius:16px;padding:0 14px 14px;background:#132235}
 .trk .panel{background:#132235;border-color:rgba(56,189,248,.18)}
@@ -664,7 +668,7 @@ a.btn{display:inline-block;text-decoration:none}
 </div>
 </main>
 <div id="tip" role="tooltip"></div>
-<div class="minibar" id="k-mini" aria-hidden="true"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">Adjust ↑</button></div>
+<div class="minibar" id="k-mini" aria-hidden="true"><div class="mb-row"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">↑</button></div><div class="sc-track mb-track"><svg id="k-mmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-mwin"></div><input type="range" id="k-msa" min="0" max="0" value="0" aria-label="Window start"><input type="range" id="k-msb" min="0" max="0" value="0" aria-label="Window end"></div></div>
 
 <script>
 const FALLBACK={
@@ -946,7 +950,7 @@ function renderNext(d){
 function renderDashActual(j){
   DASH.days=Object.values(j.days||{}).sort((a,b)=>a.date.localeCompare(b.date));
   const n=DASH.days.length,A=$("k-sca"),B=$("k-scb");
-  A.max=B.max=Math.max(0,n-1);A.value=0;B.value=Math.max(0,n-1);
+  A.max=B.max=$("k-msa").max=$("k-msb").max=Math.max(0,n-1);A.value=$("k-msa").value=0;B.value=$("k-msb").value=Math.max(0,n-1);
   drawMini();renderWindow();
   if(DASH.daily)renderDashDaily(DASH.daily);
   if(window._vRepick)window._vRepick();
@@ -958,12 +962,14 @@ function drawMini(){
   if(!n){svg.innerHTML="";return}
   const hi=Math.max(...v)||1,bw=900/n;
   svg.innerHTML=v.map((q,i)=>`<rect x="${bw*i+bw*.15}" y="${44-40*q/hi}" width="${bw*.7}" height="${40*q/hi}" fill="#8A9BB0" opacity=".35"/>`).join("");
+  $("k-mmini").innerHTML=svg.innerHTML;
 }
 
 function renderWindow(){
   const A=$("k-sca"),B=$("k-scb");
   let a=+A.value,b=+B.value;if(a>b){[a,b]=[b,a]}
   const all=DASH.days,n=all.length,days=all.slice(a,b+1),win=$("k-scwin");
+  const mw=$("k-mwin");if(n){mw.style.left=(100*a/n)+"%";mw.style.width=(100*(b-a+1)/n)+"%";$("k-msa").value=A.value;$("k-msb").value=B.value}
   if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");setT("k-mini-lbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days");document.querySelectorAll("#tr-dash .wbadge").forEach(x=>x.textContent=sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" d")}
   else{win.style.width="0";setT("k-sclbl","no data")}
   document.querySelectorAll(".sc-presets button").forEach(x=>x.classList.toggle("on",(+x.dataset.n===0&&a===0&&b===n-1)||(+x.dataset.n>0&&b===n-1&&b-a+1===+x.dataset.n)));
@@ -1033,6 +1039,7 @@ function renderWindow(){
 
 /* scroller + csv */
 ["k-sca","k-scb"].forEach(id=>$(id).addEventListener("input",renderWindow));
+[["k-msa","k-sca"],["k-msb","k-scb"]].forEach(([m,t])=>$(m).addEventListener("input",()=>{$(t).value=$(m).value;renderWindow()}));
 {/* floating mini bar: a fixed overlay, so showing it never changes page layout (no scroll jumps) */
  const mb=$("k-mini"),sc=$("k-sc"),tk=document.querySelector(".trk"),top0=()=>innerWidth<=880?56:0;let raf=0;
  const upd=()=>{raf=0;if(sc.offsetParent===null){mb.classList.remove("on");return}const a=sc.getBoundingClientRect(),t=tk.getBoundingClientRect(),on=a.bottom<top0()&&t.bottom>top0()+90;
