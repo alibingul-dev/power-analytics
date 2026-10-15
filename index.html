@@ -184,6 +184,17 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .tscroll thead th{position:sticky;top:0;background:var(--surface)}
 svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-radius:6px}
 #tr-dash .scroller .sc-head{margin-bottom:10px}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.vtabs button{font-family:"IBM Plex Mono";font-size:12px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
+.vtabs button[aria-selected="true"],.vtabs button:hover{color:var(--text);border-color:var(--b1)}
+.vbody{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:22px;align-items:start}
+.vframe{background:#0B111A;border:1px solid var(--line);border-radius:10px;overflow:hidden;aspect-ratio:4/5}
+.vframe video{width:100%;height:100%;display:block;object-fit:contain;background:#0B111A}
+.vdates{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.vdates button{font-family:"IBM Plex Mono";font-size:12px;background:none;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:4px 9px;cursor:pointer}
+.vdates button.on,.vdates button:hover{color:var(--text);border-color:var(--b2)}
+a.btn{display:inline-block;text-decoration:none}
+@media (max-width:880px){.vbody{grid-template-columns:1fr}}
 @media (max-width:880px){.minifigs{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr}.wd{gap:5px}.wd .col{height:90px}#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
 
 /* ---------- mobile ---------- */
@@ -385,6 +396,19 @@ svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-ra
       <span><i style="background:var(--b1)"></i>Lowest net load block</span>
       <span><i style="background:var(--b5)"></i>Highest net load block</span>
       <span><i style="background:var(--text)"></i>Net load, MWh</span>
+    </div>
+  </div>
+
+  <div class="grp-h"><span>Animated charts</span><span class="tagv" id="k-vlbl"></span></div>
+  <div class="panel vid">
+    <div class="vtabs" role="tablist" id="k-vtabs"></div>
+    <div class="vbody">
+      <div class="vframe"><video id="k-video" controls muted playsinline loop preload="none"></video></div>
+      <div class="vside">
+        <p class="note" id="k-vnote"></p>
+        <div class="vdates" id="k-vdates"></div>
+        <a class="btn" id="k-vdl" download>Download MP4</a>
+      </div>
     </div>
   </div>
 
@@ -994,6 +1018,36 @@ $("k-csv").addEventListener("click",e=>{
   addEventListener("scroll",()=>{const ae=document.activeElement;if(cur&&!(ae&&ae.matches&&ae.matches("svg.chart")))hide()},{passive:true});
 })();
 
+
+/* animated charts (media/index.json, MP4 copies of the LinkedIn GIFs) */
+(function(){
+  const KIND_NOTE={"tr":"Türkiye day-end scorecard: hourly bid curves morphing through the day, generation stack and PTF.","tr-outlook":"Türkiye next-day net load outlook, published before the day-ahead result.","gb":"Great Britain day-end scorecard with the seven-day context: wind, gas, prices."};
+  const ORDER=["tr","tr-outlook","gb"];let M={},kind=null,day=null;
+  function pick(k,d){
+    kind=k;const list=M[k]||[];day=d||(list.length?list[list.length-1].date:null);
+    document.querySelectorAll("#k-vtabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.k===k?"true":"false"));
+    $("k-vdates").innerHTML=list.slice().reverse().map(i=>`<button data-d="${i.date}" class="${i.date===day?"on":""}">${sd(i.date)}</button>`).join("");
+    const it=list.find(i=>i.date===day),v=$("k-video");
+    if(!it){v.removeAttribute("src");setT("k-vnote","No animation published yet.");return}
+    v.poster=it.poster;v.src=it.src;v.load();
+    const p=v.play();if(p&&p.catch)p.catch(()=>{});
+    $("k-vdl").href=it.src;
+    setT("k-vnote",(KIND_NOTE[k]||"")+" "+fmtDate(it.date)+(it.duration_s?" · "+Math.round(it.duration_s)+" s loop.":""));
+  }
+  fetch("media/index.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+    (j.items||[]).forEach(i=>{(M[i.kind]=M[i.kind]||[]).push(i)});
+    Object.values(M).forEach(a=>a.sort((x,y)=>x.date.localeCompare(y.date)));
+    const ks=ORDER.filter(k=>M[k]&&M[k].length);
+    if(!ks.length)throw 0;
+    $("k-vtabs").innerHTML=ks.map(k=>`<button role="tab" data-k="${k}">${M[k][0].label}</button>`).join("");
+    setT("k-vlbl",(j.items||[]).length+" clips · last "+ago(j.updated));
+    $("k-vtabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)pick(b.dataset.k)});
+    $("k-vdates").addEventListener("click",e=>{const b=e.target.closest("button");if(b)pick(kind,b.dataset.d)});
+    const io=new IntersectionObserver(es=>{es.forEach(en=>{const v=$("k-video");if(!v.src)return;if(en.isIntersecting){const p=v.play();if(p&&p.catch)p.catch(()=>{})}else v.pause()})},{threshold:.25});
+    io.observe($("k-video"));
+    pick(ks[0]);
+  }).catch(()=>{document.querySelector(".panel.vid").innerHTML='<p class="note" style="margin:0">No animations published yet.</p>'});
+})();
 fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{DASH.actual=j;renderDashActual(j)}).catch(()=>renderDashActual({days:{},summary:{}}));
 fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{setT("k-title","No analysis published yet");$("k-figs").innerHTML=""});
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;renderNext(d)}).catch(()=>{setT("k-nxt-note","No outlook published yet.")});

@@ -1,0 +1,133 @@
+{
+ "updated": "2026-10-15T10:17:14Z",
+ "items": [
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-08",
+   "src": "media/gb-2026-10-08.mp4",
+   "poster": "media/gb-2026-10-08.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-09",
+   "src": "media/gb-2026-10-09.mp4",
+   "poster": "media/gb-2026-10-09.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-10",
+   "src": "media/gb-2026-10-10.mp4",
+   "poster": "media/gb-2026-10-10.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-11",
+   "src": "media/gb-2026-10-11.mp4",
+   "poster": "media/gb-2026-10-11.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-12",
+   "src": "media/gb-2026-10-12.mp4",
+   "poster": "media/gb-2026-10-12.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-13",
+   "src": "media/gb-2026-10-13.mp4",
+   "poster": "media/gb-2026-10-13.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-14",
+   "src": "media/gb-2026-10-14.mp4",
+   "poster": "media/gb-2026-10-14.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-09",
+   "src": "media/tr-2026-10-09.mp4",
+   "poster": "media/tr-2026-10-09.jpg",
+   "duration_s": 51.0
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-10",
+   "src": "media/tr-2026-10-10.mp4",
+   "poster": "media/tr-2026-10-10.jpg",
+   "duration_s": 52.3
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-11",
+   "src": "media/tr-2026-10-11.mp4",
+   "poster": "media/tr-2026-10-11.jpg",
+   "duration_s": 52.3
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-12",
+   "src": "media/tr-2026-10-12.mp4",
+   "poster": "media/tr-2026-10-12.jpg",
+   "duration_s": 51.0
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-13",
+   "src": "media/tr-2026-10-13.mp4",
+   "poster": "media/tr-2026-10-13.jpg",
+   "duration_s": 51.0
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-14",
+   "src": "media/tr-2026-10-14.mp4",
+   "poster": "media/tr-2026-10-14.jpg",
+   "duration_s": 52.3
+  },
+  {
+   "kind": "tr-outlook",
+   "label": "TR net load outlook",
+   "date": "2026-10-14",
+   "src": "media/tr-outlook-2026-10-14.mp4",
+   "poster": "media/tr-outlook-2026-10-14.jpg",
+   "duration_s": 33.8
+  },
+  {
+   "kind": "tr-outlook",
+   "label": "TR net load outlook",
+   "date": "2026-10-15",
+   "src": "media/tr-outlook-2026-10-15.mp4",
+   "poster": "media/tr-outlook-2026-10-15.jpg",
+   "duration_s": 33.8
+  },
+  {
+   "kind": "tr-outlook",
+   "label": "TR net load outlook",
+   "date": "2026-10-16",
+   "src": "media/tr-outlook-2026-10-16.mp4",
+   "poster": "media/tr-outlook-2026-10-16.jpg",
+   "duration_s": 33.8
+  }
+ ]
+}
