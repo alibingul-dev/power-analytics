@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
+  color-scheme:dark;
   --bg:#0E1520;--surface:#16202E;--surface-2:#1D2A3B;--line:#26364B;
   --text:#E6EDF5;--muted:#8A9BB0;
   --b1:#38BDF8;--b2:#34D399;--b3:#FBBF24;--b4:#FB923C;--b5:#F43F5E;
@@ -162,6 +163,11 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .minifigs .k{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .minifigs .v{font-family:"IBM Plex Mono";font-size:18px}
 .minifigs .n{font-size:12px;color:var(--muted);line-height:1.35}
+table.cmp td{vertical-align:middle}
+table.cmp td.num{width:30%}
+table.cmp .cv{display:inline-block;min-width:78px;color:var(--text)}
+table.cmp .cb{display:inline-block;position:relative;width:90px;height:12px;margin-left:10px;vertical-align:middle;background:linear-gradient(var(--muted),var(--muted)) center/1px 100% no-repeat}
+table.cmp .cb i{position:absolute;top:0;bottom:0;max-width:50%;background:var(--muted);border-radius:2px;transform-origin:left}
 .how{font-size:14px;color:var(--muted);margin:-4px 0 14px;max-width:72ch;line-height:1.55}
 .panel .how{margin:0 0 12px}
 .tagv{font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);font-weight:400}
@@ -182,9 +188,7 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .tview[open] summary{margin-bottom:14px}
 .btn{font-family:"IBM Plex Mono";font-size:12px;background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
 .btn:hover{border-color:var(--b1)}
-.tscroll{max-height:360px;overflow:auto;padding-right:14px;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.tscroll::-webkit-scrollbar{width:8px}.tscroll::-webkit-scrollbar-track{background:transparent}.tscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
-.tscroll td.num:last-child,.tscroll th.num:last-child{padding-right:4px}
+.tscroll{overflow-x:auto}
 .tscroll thead th{position:sticky;top:0;background:var(--surface)}
 svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-radius:6px}
 #tr-dash .scroller .sc-head{margin-bottom:10px}
@@ -410,8 +414,8 @@ a.btn{display:inline-block;text-decoration:none}
 
   <div class="panel">
     <h2>Compared with recent days</h2>
-    <p class="how">How yesterday differs from the day before (D-1) and from the same weekday a week earlier (D-7). ▲ means higher, ▼ lower. Floor is the cheapest hour's price; spread is the gap between the dearest and cheapest hour.</p>
-    <div class="chips" id="k-cmp"></div>
+    <p class="how">How yesterday differs from the day before and from the same weekday a week earlier. ▲ higher, ▼ lower; the bar shows how big the change is.</p>
+    <table class="cmp"><thead><tr><th></th><th class="num" id="k-cmp-h1">vs day before</th><th class="num" id="k-cmp-h7">vs week before</th></tr></thead><tbody id="k-cmp"></tbody></table>
   </div>
 
   <div class="grp-h"><span>Tomorrow · the outlook</span><a href="#tr-netload" class="more">Full outlook →</a></div>
@@ -902,8 +906,11 @@ function renderDashDaily(d){
     (w.length?`<table style="margin-top:14px"><thead><tr><th>Hour</th><th class="num">DA</th><th class="num">RT</th><th class="num">Cost</th></tr></thead><tbody>${w.map(r=>`<tr data-tip="${r.hour}, ${r.dir}-regulation|${r.mwh.toLocaleString("en-GB")} MWh<br>Day-ahead <b>${r.mcp.toLocaleString("en-GB")}</b> vs real time <b>${r.smp.toLocaleString("en-GB")}</b> TL/MWh<br>Wedge <b>${(r.mcp-r.smp).toLocaleString("en-GB")}</b> TL/MWh"><td class="mono">${r.hour} ${r.dir}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.cost.toLocaleString("en-GB")}k</td></tr>`).join("")}</tbody></table>`:"");
   setT("k-cons",d.constraint_mwh&&d.constraint_mwh!=="0"?d.constraint_mwh+" MWh of instructions carried a grid-constraint code.":"No grid-constraint instructions.");
 
-  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip" data-tip="${lbl} · ${k}|Yesterday vs <b>${sd(o.date)}</b>: <b>${arr(v)}</b>">${lbl} · ${k} <span style="color:var(--text)">${arr(v)}</span></span>`).join(""):"";
-  $("k-cmp").innerHTML=chip("D-1",d.d1)+chip("D-7",d.d8)||'<span class="chip">No comparison yet</span>';
+  const rowsC=[["wind","Wind generation","Total wind output over the day"],["avg","Average price","Mean day-ahead price over 24 hours"],["min","Cheapest hour's price","Price of the day's cheapest hour"],["spread","Gap, dearest vs cheapest hour","Dearest hour's price minus cheapest hour's price"]];
+  const cell=(o,key)=>{if(!o||!o.date||o[key]===null||o[key]===undefined)return'<td class="num">—</td>';const v=o[key],w=Math.min(100,Math.abs(v));return `<td class="num" data-tip="${sd(o.date)}|Yesterday is <b>${arr(v)}</b> vs ${fmtDate(o.date)}"><span class="cv">${arr(v)}</span><span class="cb"><i style="width:${w/2}%;${v<0?"right:50%":"left:50%"};"></i></span></td>`};
+  setT("k-cmp-h1",d.d1&&d.d1.date?"vs "+sd(d.d1.date):"vs day before");
+  setT("k-cmp-h7",d.d8&&d.d8.date?"vs "+sd(d.d8.date):"vs week before");
+  $("k-cmp").innerHTML=(d.d1||d.d8)?rowsC.map(([k,l,tt])=>`<tr><td title="${tt}">${l}</td>${cell(d.d1,k)}${cell(d.d8,k)}</tr>`).join(""):'<tr><td colspan="3" style="color:var(--muted)">No comparison yet.</td></tr>';
   renderFresh();
 }
 
