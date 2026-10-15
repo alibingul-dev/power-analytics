@@ -132,7 +132,7 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 #tip b{font-family:"IBM Plex Mono";font-weight:500}
 #tip .t{font-family:"IBM Plex Mono";font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
 [data-tip]{cursor:default}
-.scroller{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+
 .scroller .sc-head{display:flex;justify-content:space-between;align-items:center;font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);margin-bottom:8px;gap:10px;flex-wrap:wrap}
 .scroller .sc-head b{color:var(--text);font-weight:500}
 .sc-presets{display:flex;gap:6px}
@@ -147,7 +147,44 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 .sc-track input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:14px;height:46px;border-radius:5px;background:var(--b1);cursor:ew-resize;border:0}
 .sc-track input::-moz-range-thumb{pointer-events:auto;width:14px;height:46px;border-radius:5px;background:var(--b1);cursor:ew-resize;border:0}
 .sc-track input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--text)}
-@media (max-width:880px){#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
+.fresh{display:flex;flex-wrap:wrap;gap:8px;margin:-14px 0 26px}
+.fresh span{font-family:"IBM Plex Mono";font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.fresh span i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:0}
+.grp-h{display:flex;justify-content:space-between;align-items:baseline;margin:34px 0 14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.grp-h span{font-family:"IBM Plex Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+.grp-h .more{font-size:13px;color:var(--b1);text-decoration:none}
+.grp-h .more:hover{text-decoration:underline}
+.fig .d{font-family:"IBM Plex Mono";font-size:11.5px;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted)}
+.fig.sk{min-height:104px;background:linear-gradient(90deg,var(--surface) 0,var(--surface-2) 50%,var(--surface) 100%);background-size:200% 100%;animation:sk 1.2s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.minifigs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.minifigs div{border-left:2px solid var(--line);padding-left:10px}
+.minifigs .k{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.minifigs .v{font-family:"IBM Plex Mono";font-size:18px}
+.minifigs .n{font-size:12px;color:var(--muted);line-height:1.35}
+.tagv{font-family:"IBM Plex Mono";font-size:12px;color:var(--muted);font-weight:400}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.stats .k{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stats .v{font-family:"IBM Plex Mono";font-size:17px}
+.stats .n{font-size:12px;color:var(--muted)}
+.wd{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end}
+.wd .c{display:flex;flex-direction:column;align-items:center;gap:6px}
+.wd .col{width:100%;max-width:56px;height:120px;background:var(--surface-2);border-radius:5px;display:flex;align-items:flex-end;overflow:hidden}
+.wd .col i{display:block;width:100%;border-radius:4px 4px 0 0}
+.wd .p{font-family:"IBM Plex Mono";font-size:12.5px}
+.wd .l{font-family:"IBM Plex Mono";font-size:11px;color:var(--muted)}
+.tview summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Archivo;font-weight:600;font-size:17px;list-style:none}
+.tview summary::-webkit-details-marker{display:none}
+.tview summary span::before{content:"▸ ";color:var(--muted)}
+.tview[open] summary span::before{content:"▾ "}
+.tview[open] summary{margin-bottom:14px}
+.btn{font-family:"IBM Plex Mono";font-size:12px;background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
+.btn:hover{border-color:var(--b1)}
+.tscroll{max-height:360px;overflow:auto}
+.tscroll thead th{position:sticky;top:0;background:var(--surface)}
+svg.chart:focus-visible{outline:2px solid var(--b1);outline-offset:4px;border-radius:6px}
+#tr-dash .scroller .sc-head{margin-bottom:10px}
+@media (max-width:880px){.minifigs{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr}.wd{gap:5px}.wd .col{height:90px}#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
 
 /* ---------- mobile ---------- */
 .topbar{display:none}.scrim{display:none}
@@ -312,9 +349,11 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
 <section class="view" id="tr-dash">
   <div class="eyebrow">Türkiye · daily · dashboard</div>
   <h1 id="k-title">Loading…</h1>
-  <p class="note-p">The closed day at a glance, next to the running record of every outlook check. Fed from daily.json and actual.json, the same files behind Market analysis and Actual vs outlook. Hover any chart for detail; drag the window under the spread chart to narrow the record.</p>
+  <p class="note-p">The closed day, tomorrow's outlook and the running record of every outlook check on one page. Fed from daily.json, data.json and actual.json, the same files behind the other daily pages. Hover, tap or tab through any chart for detail.</p>
+  <div class="fresh" id="k-fresh"></div>
 
-  <div class="figs" id="k-figs"></div>
+  <div class="grp-h"><span>Closed day</span></div>
+  <div class="figs" id="k-figs"><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div><div class="fig sk"></div></div>
 
   <div class="dgrid">
     <div class="panel">
@@ -331,46 +370,87 @@ dl.method dd{margin:5px 0 0;color:var(--muted);font-size:14px;max-width:70ch}
   </div>
 
   <div class="panel">
+    <h2>Against recent days</h2>
+    <p class="note">Change in the closed day versus the day before and the same weekday a week earlier.</p>
+    <div class="chips" id="k-cmp"></div>
+  </div>
+
+  <div class="grp-h"><span>Next day</span><a href="#tr-netload" class="more">Full outlook →</a></div>
+  <div class="panel">
+    <h2 id="k-nxt-t">Net load outlook</h2>
+    <p class="note" id="k-nxt-note"></p>
+    <div class="minifigs" id="k-nxt-figs"></div>
+    <svg class="chart" id="k-nxt" viewBox="0 0 900 220" role="img" aria-label="Next-day net load by hour" tabindex="0"></svg>
+    <div class="legend">
+      <span><i style="background:var(--b1)"></i>Lowest net load block</span>
+      <span><i style="background:var(--b5)"></i>Highest net load block</span>
+      <span><i style="background:var(--text)"></i>Net load, MWh</span>
+    </div>
+  </div>
+
+  <div class="grp-h"><span>Track record</span></div>
+  <div class="panel scroller" id="k-sc">
+    <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
+      <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
+    <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
+      <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
+      <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
+    <p class="note" style="margin:10px 0 0">Drag the handles or pick a preset. Every chart in this section follows the window.</p>
+  </div>
+
+  <div class="panel">
     <h2>Price spread, every checked day</h2>
     <p class="note" id="k-spnote"></p>
-    <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average"></svg>
+    <svg class="chart" id="k-spread" viewBox="0 0 900 260" role="img" aria-label="Daily price spread with seven-day average" tabindex="0"></svg>
     <div class="legend">
       <span><i style="background:var(--b3)"></i>Daily spread, TL/MWh</span>
       <span><i style="background:var(--text)"></i>Seven-day average</span>
     </div>
-    <div class="scroller" id="k-sc">
-      <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
-        <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
-      <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
-        <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
-        <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Hit rate, seven-day rolling</h2>
+    <p class="note" id="k-hrnote"></p>
+    <svg class="chart" id="k-hr" viewBox="0 0 900 220" role="img" aria-label="Seven-day rolling share of claims held" tabindex="0"></svg>
+    <div class="legend">
+      <span><i style="background:var(--b2)"></i>Claims held, 7-day rolling</span>
+      <span><i style="background:var(--muted)"></i>Window average</span>
     </div>
   </div>
 
   <div class="dgrid">
     <div class="panel">
-      <h2>Outlook record <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400" id="k-rectag"></span></h2>
+      <h2>Outlook record <span class="tagv" id="k-rectag"></span></h2>
       <p class="note" id="k-recnote"></p>
       <div class="strip" id="k-strip"></div>
       <div class="legend">
-        <span><i style="background:var(--b2)"></i>4 of 4</span>
+        <span><i style="background:var(--b2)"></i>All held</span>
         <span><i style="background:var(--b3)"></i>3 of 4</span>
-        <span><i style="background:var(--b4)"></i>2 of 4</span>
+        <span><i style="background:var(--b4)"></i>Half</span>
         <span><i style="background:var(--b5)"></i>1 or none</span>
       </div>
+      <div class="stats" id="k-stats"></div>
     </div>
     <div class="panel">
       <h2>Hit rate by claim</h2>
-      <p class="note">Share of days in the selected window on which each structural claim held.</p>
+      <p class="note">Share of days in the window on which each structural claim held.</p>
       <div class="mix" id="k-claims"></div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Against recent days</h2>
-    <p class="note">Change in the closed day versus the day before and the same weekday a week earlier.</p>
-    <div class="chips" id="k-cmp"></div>
+    <h2>Hit rate by weekday</h2>
+    <p class="note" id="k-wdnote"></p>
+    <div class="wd" id="k-wd"></div>
   </div>
+
+  <details class="panel tview">
+    <summary><span>Table view</span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
+    <div class="tscroll"><table>
+      <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">Spread</th></tr></thead>
+      <tbody id="k-rows"></tbody>
+    </table></div>
+  </details>
 </section>
 
 <!-- ===== WEEKLY ===== -->
@@ -687,143 +767,236 @@ fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
  ]));
 
 /* ---------- dashboard ---------- */
-const DASH={daily:null,actual:null};
+const DASH={daily:null,actual:null,next:null,days:[]};
 function fmtDate(d,o){return new Date(d+"T00:00:00").toLocaleDateString("en-GB",o||{day:"numeric",month:"long",year:"numeric"})}
+const sd=d=>fmtDate(d,{day:"numeric",month:"short"});
 function num(x){const n=typeof x==="number"?x:parseFloat(String(x||"").replace(/,/g,""));return isNaN(n)?null:n}
-
-function renderDashDaily(d){
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
-  set("k-title",fmtDate(d.date));
-  const figs=[...(d.figures||[]),{k:"Renewables",v:(d.renewable_pct??"—")+"%",n:"of generation, fossil "+(d.fossil_pct??"—")+"%"}];
-  const sm=DASH.actual&&DASH.actual.summary;
-  if(sm&&sm.claims_total)figs.push({k:"Outlook hit rate",v:Math.round(100*sm.claims_held/sm.claims_total)+"%",n:sm.claims_held+" of "+sm.claims_total+" claims, "+sm.days_checked+" days"});
-  document.getElementById("k-figs").innerHTML=figs.map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
-
-  const mix=d.mix||[],tot=mix.reduce((a,r)=>a+r.v,0)||1,R=46,C=2*Math.PI*R;
-  let off=0,arcs=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--surface-2)" stroke-width="16"/>`;
-  mix.forEach(r=>{const len=C*r.v/tot;arcs+=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--${r.c})" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)" data-tip="${esc(r.k)}|<b>${r.v}%</b> of generation"/>`;off+=len});
-  arcs+=`<text x="60" y="58" text-anchor="middle" fill="#E6EDF5" font-size="17" font-family="IBM Plex Mono">${d.renewable_pct??"—"}%</text><text x="60" y="74" text-anchor="middle" fill="#8A9BB0" font-size="9" font-family="IBM Plex Mono">RENEWABLE</text>`;
-  document.getElementById("k-donut").innerHTML=arcs;
-  document.getElementById("k-dl").innerHTML=mix.map(r=>`<div data-tip="${esc(r.k)}|<b>${r.v}%</b> of generation"><i style="background:var(--${r.c})"></i><span>${r.k}</span><b>${r.v}%</b></div>`).join("");
-  set("k-mixnote","Solar splits into "+(d.solar_licensed_pct??"—")+"% licensed and "+(d.solar_rooftop_pct??"—")+"% distributed rooftop.");
-
-  const up=num(d.yal_mwh),dn=num(d.yat_mwh),mx=Math.max(up||0,dn||0)||1;
-  const bal=(d.figures||[]).find(f=>f.k==="Balancing cost");
-  set("k-balnote","Net cost "+(bal?bal.v:"—")+" TL. Demand peaked at "+String(d.peak_demand_hour??0).padStart(2,"0")+":00 with "+(d.peak_demand_mwh||"—")+" MWh.");
-  const w=(d.worst_hours||[]);
-  document.getElementById("k-bal").innerHTML=
-    `<div class="row" data-tip="Up-regulation (YAL)|<b>${d.yal_mwh||"—"}</b> MWh instructed up"><span>Up (YAL)</span><span class="track"><span class="fill" style="width:${100*(up||0)/mx}%;background:var(--b4)"></span></span><span class="pc">${d.yal_mwh||"—"}</span></div>`+
-    `<div class="row" data-tip="Down-regulation (YAT)|<b>${d.yat_mwh||"—"}</b> MWh instructed down"><span>Down (YAT)</span><span class="track"><span class="fill" style="width:${100*(dn||0)/mx}%;background:var(--b1)"></span></span><span class="pc">${d.yat_mwh||"—"}</span></div>`+
-    (w.length?`<table style="margin-top:14px"><thead><tr><th>Hour</th><th class="num">DA</th><th class="num">RT</th><th class="num">Cost</th></tr></thead><tbody>${w.map(r=>`<tr><td class="mono">${r.hour} ${r.dir}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.cost.toLocaleString("en-GB")}k</td></tr>`).join("")}</tbody></table>`:"");
-  set("k-cons",d.constraint_mwh&&d.constraint_mwh!=="0"?d.constraint_mwh+" MWh of instructions carried a grid-constraint code.":"No grid-constraint instructions.");
-
-  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip">${lbl} · ${k} <span class="${v>0?"ok":v<0?"bad":""}">${pct(v)}</span></span>`).join(""):"";
-  document.getElementById("k-cmp").innerHTML=chip("D-1",d.d1)+chip("D-7",d.d8)||'<span class="chip">No comparison yet</span>';
-}
-
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 const tl=v=>Math.round(v).toLocaleString("en-GB");
+const $=id=>document.getElementById(id);
+const setT=(id,v)=>{const e=$(id);if(e)e.textContent=v};
+const ago=iso=>{if(!iso)return"";const h=(Date.now()-new Date(iso))/36e5;return h<1?"under an hour ago":h<48?Math.round(h)+" h ago":Math.round(h/24)+" days ago"};
+const deltaSpan=(lbl,v)=>v===null||v===undefined?"":`<span>${lbl} <b class="${v>0?"ok":v<0?"bad":""}" style="font-weight:500">${pct(v)}</b></span>`;
+const hrCol=p=>p>=75?"b2":p>=50?"b3":"b5";
+
+/* generic line chart with crosshair, keyboard and optional shaded blocks */
+function lineChart(id,pts,o){
+  const svg=$(id),W=900,H=o.h||220,L=54,R=14,T=14,B=28,n=pts.length;
+  if(!n){svg.innerHTML="";return}
+  const vs=pts.map(p=>p.v).filter(v=>v!==null);
+  let y0=o.min!==undefined?o.min:Math.min(...vs),y1=o.max!==undefined?o.max:Math.max(...vs);
+  if(o.min===undefined){const pad=(y1-y0)*.14||1;y0-=pad;y1+=pad}
+  const step=n>1?(W-L-R)/(n-1):0,X=i=>L+step*i,Y=q=>T+(H-T-B)*(1-(q-y0)/(y1-y0));
+  let s="";
+  (o.bands||[]).forEach(b=>{if(b.r)s+=`<rect x="${X(b.r[0])-step/2}" y="${T}" width="${(b.r[1]-b.r[0]+1)*step}" height="${H-T-B}" fill="${b.c}" opacity=".13" rx="4"/>`});
+  for(let g=0;g<=3;g++){const q=y0+(y1-y0)*g/3;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/><text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${o.fmt(q)}</text>`}
+  if(o.ref!==undefined)s+=`<line x1="${L}" x2="${W-R}" y1="${Y(o.ref)}" y2="${Y(o.ref)}" stroke="#8A9BB0" stroke-dasharray="5 4"/>`;
+  let path="",pen=false;pts.forEach((p,i)=>{if(p.v===null){pen=false;return}path+=(pen?"L":"M")+X(i)+","+Y(p.v);pen=true});
+  s+=`<path d="${path}" fill="none" stroke="${o.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const every=Math.ceil(n/(o.ticks||8));
+  pts.forEach((p,i)=>{if(i%every===0||i===n-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${p.lab}</text>`});
+  s+=`<line class="guide" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/><circle class="dot" r="5" fill="${o.color}" stroke="#16202E" stroke-width="2" opacity="0"/>`;
+  pts.forEach((p,i)=>{if(p.v===null)return;const hw=Math.max(step,8);s+=`<rect class="hit" data-i="${i}" data-x="${X(i)}" data-y="${Y(p.v)}" x="${X(i)-hw/2}" y="${T}" width="${hw}" height="${H-T-B}" fill="transparent" data-tip="${p.tip}"/>`});
+  svg.innerHTML=s;
+}
+
+function renderFresh(){
+  const f=[];
+  if(DASH.daily)f.push(["b1","Closed day "+sd(DASH.daily.date)+" · updated "+ago(DASH.daily.updated)]);
+  if(DASH.next)f.push(["b2","Outlook "+sd(DASH.next.date)+" · updated "+ago(DASH.next.updated)]);
+  if(DASH.actual&&DASH.actual.summary)f.push(["b3","Record "+(DASH.actual.summary.days_checked||0)+" days · updated "+ago(DASH.actual.summary.updated)]);
+  $("k-fresh").innerHTML=f.map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join("");
+}
+
+function renderDashDaily(d){
+  setT("k-title",fmtDate(d.date));
+  const F=d.figures||[],get=k=>F.find(f=>f.k===k);
+  const figs=F.map(f=>{
+    let dl="";
+    if(f.k==="Daily average")dl=deltaSpan("D-1",d.d1&&d.d1.avg)+deltaSpan("D-7",d.d8&&d.d8.avg);
+    if(f.k==="Floor")dl=deltaSpan("D-1",d.d1&&d.d1.min)+deltaSpan("D-7",d.d8&&d.d8.min);
+    return {...f,dl};
+  });
+  figs.push({k:"Renewables",v:(d.renewable_pct??"—")+"%",n:"of generation, fossil "+(d.fossil_pct??"—")+"%"});
+  const sm=DASH.actual&&DASH.actual.summary;
+  if(sm&&sm.claims_total){
+    const days=DASH.days,last=days.slice(-14),prev=days.slice(-28,-14),r=a=>{const t=a.reduce((p,x)=>p+(x.of||0),0);return t?100*a.reduce((p,x)=>p+(x.held||0),0)/t:null};
+    const a=r(last),b=r(prev),dd=a!==null&&b!==null?Math.round(a-b):null;
+    figs.push({k:"Outlook hit rate",v:Math.round(100*sm.claims_held/sm.claims_total)+"%",n:sm.claims_held+" of "+sm.claims_total+" claims, "+sm.days_checked+" days",dl:dd===null?"":`<span>Last 14d vs prior <b class="${dd>0?"ok":dd<0?"bad":""}" style="font-weight:500">${dd>0?"+":""}${dd} pts</b></span>`});
+  }
+  $("k-figs").innerHTML=figs.map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div>${f.dl?`<div class="d">${f.dl}</div>`:""}</div>`).join("");
+
+  const mix=d.mix||[],tot=mix.reduce((a,r)=>a+r.v,0)||1,R=46,C=2*Math.PI*R,gap=1.2;
+  let off=0,arcs=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--surface-2)" stroke-width="16"/>`;
+  mix.forEach(r=>{const len=C*r.v/tot;arcs+=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--${r.c})" stroke-width="16" stroke-dasharray="${Math.max(0,len-gap)} ${C-len+gap}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)" data-tip="${esc(r.k)}|<b>${r.v}%</b> of generation"/>`;off+=len});
+  arcs+=`<text x="60" y="58" text-anchor="middle" fill="#E6EDF5" font-size="17" font-family="IBM Plex Mono">${d.renewable_pct??"—"}%</text><text x="60" y="74" text-anchor="middle" fill="#8A9BB0" font-size="9" font-family="IBM Plex Mono">RENEWABLE</text>`;
+  $("k-donut").innerHTML=arcs;
+  $("k-dl").innerHTML=mix.map(r=>`<div data-tip="${esc(r.k)}|<b>${r.v}%</b> of generation"><i style="background:var(--${r.c})"></i><span>${r.k}</span><b>${r.v}%</b></div>`).join("");
+  setT("k-mixnote","Solar splits into "+(d.solar_licensed_pct??"—")+"% licensed and "+(d.solar_rooftop_pct??"—")+"% distributed rooftop.");
+
+  const up=num(d.yal_mwh),dn=num(d.yat_mwh),mx=Math.max(up||0,dn||0)||1,bal=get("Balancing cost"),w=d.worst_hours||[];
+  setT("k-balnote","Net cost "+(bal?bal.v:"—")+" TL. Demand peaked at "+String(d.peak_demand_hour??0).padStart(2,"0")+":00 with "+(d.peak_demand_mwh||"—")+" MWh.");
+  $("k-bal").innerHTML=
+    `<div class="row" data-tip="Up-regulation (YAL)|<b>${d.yal_mwh||"—"}</b> MWh instructed up"><span>Up (YAL)</span><span class="track"><span class="fill" style="width:${100*(up||0)/mx}%;background:var(--b4)"></span></span><span class="pc">${d.yal_mwh||"—"}</span></div>`+
+    `<div class="row" data-tip="Down-regulation (YAT)|<b>${d.yat_mwh||"—"}</b> MWh instructed down"><span>Down (YAT)</span><span class="track"><span class="fill" style="width:${100*(dn||0)/mx}%;background:var(--b1)"></span></span><span class="pc">${d.yat_mwh||"—"}</span></div>`+
+    (w.length?`<table style="margin-top:14px"><thead><tr><th>Hour</th><th class="num">DA</th><th class="num">RT</th><th class="num">Cost</th></tr></thead><tbody>${w.map(r=>`<tr data-tip="${r.hour}, ${r.dir}-regulation|${r.mwh.toLocaleString("en-GB")} MWh<br>Day-ahead <b>${r.mcp.toLocaleString("en-GB")}</b> vs real time <b>${r.smp.toLocaleString("en-GB")}</b> TL/MWh<br>Wedge <b>${(r.mcp-r.smp).toLocaleString("en-GB")}</b> TL/MWh"><td class="mono">${r.hour} ${r.dir}</td><td class="num">${r.mcp.toLocaleString("en-GB")}</td><td class="num">${r.smp.toLocaleString("en-GB")}</td><td class="num">${r.cost.toLocaleString("en-GB")}k</td></tr>`).join("")}</tbody></table>`:"");
+  setT("k-cons",d.constraint_mwh&&d.constraint_mwh!=="0"?d.constraint_mwh+" MWh of instructions carried a grid-constraint code.":"No grid-constraint instructions.");
+
+  const chip=(lbl,o)=>o&&o.date?[["Wind",o.wind],["Average",o.avg],["Floor",o.min],["Spread",o.spread]].map(([k,v])=>`<span class="chip" data-tip="${lbl} · ${k}|Closed day vs <b>${sd(o.date)}</b>: <b>${pct(v)}</b>">${lbl} · ${k} <span class="${v>0?"ok":v<0?"bad":""}">${pct(v)}</span></span>`).join(""):"";
+  $("k-cmp").innerHTML=chip("D-1",d.d1)+chip("D-7",d.d8)||'<span class="chip">No comparison yet</span>';
+  renderFresh();
+}
+
+function renderNext(d){
+  setT("k-nxt-t","Net load outlook, "+fmtDate(d.date));
+  setT("k-nxt-note",d.note||"");
+  $("k-nxt-figs").innerHTML=(d.figures||[]).map(f=>`<div><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
+  const v=d.netLoad||[],lb=d.lowBlock,tb=d.topBlock,inb=(r,h)=>r&&h>=r[0]&&h<=r[1];
+  lineChart("k-nxt",v.map((q,h)=>({v:q,lab:String(h).padStart(2,"0"),tip:`${String(h).padStart(2,"0")}:00|Net load <b>${tl(q)}</b> MWh${inb(lb,h)?"<br>Inside the <b>low</b> block":""}${inb(tb,h)?"<br>Inside the <b>top</b> block":""}${h===d.windPeakHour?"<br>Wind forecast peak":""}${h===d.loadPlanPeakHour?"<br>Load plan peak":""}`})),
+    {color:"#E6EDF5",fmt:q=>Math.round(q/1000)+"k",bands:[{r:lb,c:"#38BDF8"},{r:tb,c:"#F43F5E"}],ticks:8});
+  renderFresh();
+}
 
 function renderDashActual(j){
   DASH.days=Object.values(j.days||{}).sort((a,b)=>a.date.localeCompare(b.date));
-  const n=DASH.days.length,A=document.getElementById("k-sca"),B=document.getElementById("k-scb");
+  const n=DASH.days.length,A=$("k-sca"),B=$("k-scb");
   A.max=B.max=Math.max(0,n-1);A.value=0;B.value=Math.max(0,n-1);
   drawMini();renderWindow();
   if(DASH.daily)renderDashDaily(DASH.daily);
+  renderFresh();
 }
 
 function drawMini(){
-  const days=DASH.days,svg=document.getElementById("k-scmini");
-  const v=days.map(d=>typeof d.spread_tl_mwh==="number"?d.spread_tl_mwh:0),n=v.length;
+  const v=DASH.days.map(d=>typeof d.spread_tl_mwh==="number"?d.spread_tl_mwh:0),n=v.length,svg=$("k-scmini");
   if(!n){svg.innerHTML="";return}
   const hi=Math.max(...v)||1,bw=900/n;
   svg.innerHTML=v.map((q,i)=>`<rect x="${bw*i+bw*.15}" y="${44-40*q/hi}" width="${bw*.7}" height="${40*q/hi}" fill="#8A9BB0" opacity=".35"/>`).join("");
 }
 
 function renderWindow(){
-  const A=document.getElementById("k-sca"),B=document.getElementById("k-scb");
+  const A=$("k-sca"),B=$("k-scb");
   let a=+A.value,b=+B.value;if(a>b){[a,b]=[b,a]}
-  const all=DASH.days,n=all.length,days=all.slice(a,b+1);
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
-  const win=document.getElementById("k-scwin");
-  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";
-    set("k-sclbl",fmtDate(all[a].date,{day:"numeric",month:"short"})+" – "+fmtDate(all[b].date,{day:"numeric",month:"short"})+" · "+days.length+" days")}
-  else{win.style.width="0";set("k-sclbl","no data")}
+  const all=DASH.days,n=all.length,days=all.slice(a,b+1),win=$("k-scwin");
+  if(n){win.style.left=(100*a/n)+"%";win.style.width=(100*(b-a+1)/n)+"%";setT("k-sclbl",sd(all[a].date)+" – "+sd(all[b].date)+" · "+days.length+" days")}
+  else{win.style.width="0";setT("k-sclbl","no data")}
   document.querySelectorAll(".sc-presets button").forEach(x=>x.classList.toggle("on",(+x.dataset.n===0&&a===0&&b===n-1)||(+x.dataset.n>0&&b===n-1&&b-a+1===+x.dataset.n)));
 
-  /* spread chart: 7-day average uses full history so the line does not restart at the window edge */
+  /* rolling series from full history, so the window edge never resets them */
   const allv=all.map(d=>typeof d.spread_tl_mwh==="number"?d.spread_tl_mwh:null);
   const maAll=allv.map((_,i)=>{const w=allv.slice(Math.max(0,i-6),i+1).filter(x=>x!==null);return w.length?w.reduce((p,q)=>p+q,0)/w.length:null});
+  const hrAll=all.map((_,i)=>{if(i<6)return null;const w=all.slice(i-6,i+1),t=w.reduce((p,x)=>p+(x.of||0),0);return t?100*w.reduce((p,x)=>p+(x.held||0),0)/t:null});
+
+  /* spread bars */
   const sp=[];days.forEach((d,k)=>{if(typeof d.spread_tl_mwh==="number")sp.push({d,ma:maAll[a+k]})});
-  const svg=document.getElementById("k-spread");
-  if(!sp.length){svg.innerHTML="";set("k-spnote","No spread recorded in this window.")}
+  const svg=$("k-spread");
+  if(!sp.length){svg.innerHTML="";setT("k-spnote","No spread recorded in this window.")}
   else{
     const W=900,H=260,L=54,R=14,T=14,Bm=28,m=sp.length,v=sp.map(x=>x.d.spread_tl_mwh);
     const hi=Math.max(...v)*1.1||1,bw=(W-L-R)/m,X=i=>L+bw*i+bw/2,Y=q=>T+(H-T-Bm)*(1-q/hi);
     let s="";
     for(let g=0;g<=3;g++){const q=hi*g/3;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/><text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${tl(q)}</text>`}
-    sp.forEach((x,i)=>{s+=`<rect class="bar" data-i="${i}" x="${X(i)-bw*0.34}" y="${Y(x.d.spread_tl_mwh)}" width="${bw*0.68}" height="${Y(0)-Y(x.d.spread_tl_mwh)}" rx="2" fill="#FBBF24" opacity=".75"/>`});
+    const bwid=Math.max(2,Math.min(bw-2,bw*.7));
+    sp.forEach((x,i)=>{s+=`<rect class="bar" data-i="${i}" x="${X(i)-bwid/2}" y="${Y(x.d.spread_tl_mwh)}" width="${bwid}" height="${Y(0)-Y(x.d.spread_tl_mwh)}" rx="${Math.min(4,bwid/2)}" fill="#FBBF24" opacity=".75"/>`});
     s+=`<polyline fill="none" stroke="#E6EDF5" stroke-width="2" stroke-linejoin="round" points="${sp.map((x,i)=>X(i)+","+Y(x.ma)).join(" ")}"/>`;
     const every=Math.ceil(m/8);
-    sp.forEach((x,i)=>{if(i%every===0||i===m-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${fmtDate(x.d.date,{day:"numeric",month:"short"})}</text>`});
-    s+=`<line id="k-guide" x1="0" x2="0" y1="${T}" y2="${H-Bm}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/>`;
+    sp.forEach((x,i)=>{if(i%every===0||i===m-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${sd(x.d.date)}</text>`});
+    s+=`<line class="guide" x1="0" x2="0" y1="${T}" y2="${H-Bm}" stroke="#8A9BB0" stroke-dasharray="3 3" opacity="0"/>`;
     sp.forEach((x,i)=>{const d=x.d,diff=x.ma?Math.round(100*(d.spread_tl_mwh-x.ma)/x.ma):0;
-      s+=`<rect data-i="${i}" data-x="${X(i)}" x="${X(i)-bw/2}" y="${T}" width="${bw}" height="${H-T-Bm}" fill="transparent" data-tip="${fmtDate(d.date)}|Spread <b>${tl(d.spread_tl_mwh)}</b> TL/MWh<br>7-day avg <b>${tl(x.ma)}</b> (${diff>0?"+":""}${diff}%)<br>Claims held <b>${d.held} / ${d.of}</b><br>Low ${esc(d.low_block||"—")} · top ${esc(d.top_block||"—")}"/>`});
+      s+=`<rect class="hit" data-i="${i}" data-x="${X(i)}" x="${X(i)-bw/2}" y="${T}" width="${bw}" height="${H-T-Bm}" fill="transparent" data-tip="${fmtDate(d.date)}|Spread <b>${tl(d.spread_tl_mwh)}</b> TL/MWh<br>7-day avg <b>${tl(x.ma)}</b> (${diff>0?"+":""}${diff}%)<br>Claims held <b>${d.held} / ${d.of}</b><br>Low ${esc(d.low_block||"—")} · top ${esc(d.top_block||"—")}"/>`});
     svg.innerHTML=s;
-    const last=v[m-1];
-    set("k-spnote","Latest in window "+tl(last)+" TL/MWh against a seven-day average of "+tl(sp[m-1].ma)+". Range "+tl(Math.min(...v))+" to "+tl(Math.max(...v))+" over "+m+" days.");
+    const imax=v.indexOf(Math.max(...v)),imin=v.indexOf(Math.min(...v));
+    setT("k-spnote","Latest "+tl(v[m-1])+" TL/MWh against a seven-day average of "+tl(sp[m-1].ma)+". Widest "+tl(v[imax])+" on "+sd(sp[imax].d.date)+", narrowest "+tl(v[imin])+" on "+sd(sp[imin].d.date)+".");
   }
 
-  /* record strip */
+  /* rolling hit rate */
+  const h=days.reduce((p,d)=>p+(d.held||0),0),t=days.reduce((p,d)=>p+(d.of||0),0),wavg=t?100*h/t:null;
+  lineChart("k-hr",days.map((d,k)=>{const r=hrAll[a+k];return {v:r,lab:sd(d.date),tip:`${fmtDate(d.date)}|7-day rolling <b>${r===null?"—":Math.round(r)+"%"}</b><br>That day <b>${d.held} / ${d.of}</b> held`}}),
+    {color:"#34D399",min:0,max:100,fmt:q=>Math.round(q)+"%",ref:wavg===null?undefined:wavg,ticks:8});
+  if(days.length){const rs=days.map((_,k)=>hrAll[a+k]).filter(x=>x!==null);setT("k-hrnote","Window average "+(wavg===null?"—":Math.round(wavg)+"%")+"."+(rs.length>1?" The rolling rate moved from "+Math.round(rs[0])+"% to "+Math.round(rs[rs.length-1])+"% across the window.":"")+(a<6?" The line starts once seven days of record exist.":""))}
+  else setT("k-hrnote","No checks yet.");
+
+  /* record strip + stats */
   const col=d=>{const r=d.of?d.held/d.of:0;return r>=1?"b2":r>=.75?"b3":r>=.5?"b4":"b5"};
-  document.getElementById("k-strip").innerHTML=days.map(d=>`<span style="background:var(--${col(d)})" data-tip="${fmtDate(d.date)}|<b>${d.held} of ${d.of}</b> claims held${(d.checks||[]).map(c=>"<br>"+(c.held?"✓ ":"✗ ")+esc(c.claim)).join("")}"></span>`).join("");
-  const h=days.reduce((p,d)=>p+(d.held||0),0),t=days.reduce((p,d)=>p+(d.of||0),0);
-  set("k-rectag",t?Math.round(100*h/t)+"%":"");
-  set("k-recnote",days.length?days.length+" days in window, oldest on the left. "+h+" of "+t+" claims held.":"No checks yet.");
+  $("k-strip").innerHTML=days.map(d=>`<span style="background:var(--${col(d)})" data-tip="${fmtDate(d.date)}|<b>${d.held} of ${d.of}</b> claims held${(d.checks||[]).map(c=>"<br>"+(c.held?"✓ ":"✗ ")+esc(c.claim)).join("")}"></span>`).join("");
+  setT("k-rectag",t?Math.round(100*h/t)+"%":"");
+  setT("k-recnote",days.length?days.length+" days in window, oldest on the left. "+h+" of "+t+" claims held.":"No checks yet.");
+  let cur=0;for(let i=all.length-1;i>=0&&all[i].of&&all[i].held===all[i].of;i--)cur++;
+  let best=0,run=0;days.forEach(d=>{run=d.of&&d.held===d.of?run+1:0;best=Math.max(best,run)});
+  const full=days.filter(d=>d.of&&d.held===d.of).length;
+  $("k-stats").innerHTML=[["Current streak",cur+" d","perfect days to date"],["Longest in window",best+" d","perfect days in a row"],["Perfect days",full+" / "+days.length,"every claim held"]].map(([k,v,nn])=>`<div><div class="k">${k}</div><div class="v">${v}</div><div class="n">${nn}</div></div>`).join("");
 
   /* per claim */
   const by={};
   days.forEach(d=>(d.checks||[]).forEach(c=>{if(c.held===null||c.held===undefined)return;const q=by[c.claim]||(by[c.claim]={h:0,n:0});q.n++;if(c.held)q.h++}));
-  document.getElementById("k-claims").innerHTML=Object.entries(by).map(([k,q])=>{const p=Math.round(100*q.h/q.n);return `<div class="row" style="grid-template-columns:1fr 90px 46px" data-tip="${esc(k)}|Held on <b>${q.h} of ${q.n}</b> days in window"><span style="font-size:13px">${esc(k)}</span><span class="track"><span class="fill" style="width:${p}%;background:var(--${p>=75?"b2":p>=50?"b3":"b5"})"></span></span><span class="pc">${p}%</span></div>`}).join("")||'<p class="note">No checks yet.</p>';
+  $("k-claims").innerHTML=Object.entries(by).map(([k,q])=>{const p=Math.round(100*q.h/q.n);return `<div class="row" style="grid-template-columns:1fr 90px 46px" data-tip="${esc(k)}|Held on <b>${q.h} of ${q.n}</b> days in window"><span style="font-size:13px">${esc(k)}</span><span class="track"><span class="fill" style="width:${p}%;background:var(--${hrCol(p)})"></span></span><span class="pc">${p}%</span></div>`}).join("")||'<p class="note">No checks yet.</p>';
+
+  /* weekday */
+  const wn=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],wk=wn.map(()=>({h:0,t:0,d:0}));
+  days.forEach(d=>{const i=(new Date(d.date+"T00:00:00").getDay()+6)%7;wk[i].h+=d.held||0;wk[i].t+=d.of||0;wk[i].d++});
+  $("k-wd").innerHTML=wk.map((x,i)=>{const p=x.t?Math.round(100*x.h/x.t):null;return `<div class="c" data-tip="${wn[i]}|${p===null?"No days in window":`<b>${x.h} of ${x.t}</b> claims held<br>across ${x.d} day${x.d>1?"s":""}`}"><span class="p">${p===null?"—":p+"%"}</span><span class="col"><i style="height:${p||0}%;background:var(--${p===null?"surface-2":hrCol(p)})"></i></span><span class="l">${wn[i]}</span></div>`}).join("");
+  const ok=wk.map((x,i)=>({i,p:x.t?x.h/x.t:null,d:x.d})).filter(x=>x.p!==null&&x.d>=2);
+  if(ok.length>1){ok.sort((x,y)=>y.p-x.p);setT("k-wdnote","Strongest on "+wn[ok[0].i]+" ("+Math.round(100*ok[0].p)+"%), weakest on "+wn[ok[ok.length-1].i]+" ("+Math.round(100*ok[ok.length-1].p)+"%). Only a handful of days per weekday, so read this as a hint rather than a pattern.")}
+  else setT("k-wdnote","Too few days in the window for a weekday split.");
+
+  /* table */
+  $("k-rows").innerHTML=days.slice().reverse().map(d=>`<tr><td class="mono">${d.date}</td><td class="mono">${esc(d.low_block||"—")}</td><td class="mono">${esc(d.top_block||"—")}</td><td class="num">${d.held} / ${d.of}</td><td class="num">${typeof d.spread_tl_mwh==="number"?tl(d.spread_tl_mwh):"—"}</td></tr>`).join("");
+  DASH.win=days;
 }
 
-/* scroller events */
-["k-sca","k-scb"].forEach(id=>document.getElementById(id).addEventListener("input",renderWindow));
+/* scroller + csv */
+["k-sca","k-scb"].forEach(id=>$(id).addEventListener("input",renderWindow));
 document.querySelectorAll(".sc-presets button").forEach(x=>x.addEventListener("click",()=>{
-  const n=DASH.days.length,k=+x.dataset.n,A=document.getElementById("k-sca"),B=document.getElementById("k-scb");
-  B.value=n-1;A.value=k?Math.max(0,n-k):0;renderWindow();
+  const n=DASH.days.length,k=+x.dataset.n;$("k-scb").value=n-1;$("k-sca").value=k?Math.max(0,n-k):0;renderWindow();
 }));
+$("k-csv").addEventListener("click",e=>{
+  e.preventDefault();e.stopPropagation();
+  const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const rows=[["date","low_block","top_block","held","of","spread_tl_mwh"].join(",")].concat((DASH.win||[]).map(d=>[d.date,q(d.low_block),q(d.top_block),d.held,d.of,d.spread_tl_mwh??""].join(",")));
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([rows.join("\n")],{type:"text/csv"}));a.download="outlook-record.csv";document.body.appendChild(a);a.click();a.remove();
+});
 
-/* tooltip: hover on desktop, tap on touch */
+/* tooltip: hover, tap, and arrow keys on focused charts */
 (function(){
-  const tip=document.getElementById("tip");let cur=null;
+  const tip=$("tip");let cur=null;
+  function mark(el,on){
+    const svg=el&&el.closest("svg");if(!svg)return;
+    const g=svg.querySelector(".guide"),dot=svg.querySelector(".dot");
+    if(g){g.setAttribute("opacity",on&&el.dataset.x?"1":"0");if(on&&el.dataset.x){g.setAttribute("x1",el.dataset.x);g.setAttribute("x2",el.dataset.x)}}
+    if(dot){dot.setAttribute("opacity",on&&el.dataset.y?"1":"0");if(on&&el.dataset.y){dot.setAttribute("cx",el.dataset.x);dot.setAttribute("cy",el.dataset.y)}}
+    svg.querySelectorAll("rect.bar").forEach(r=>r.setAttribute("opacity",!on?".75":r.dataset.i===el.dataset.i?"1":".45"));
+  }
   function show(el,x,y){
+    if(cur&&cur!==el)mark(cur,false);
     const [t,body]=(el.getAttribute("data-tip")||"").split("|");
     tip.innerHTML=(body!==undefined?`<div class="t">${t}</div>${body}`:t);
-    tip.classList.add("on");cur=el;move(x,y);
-    const g=document.getElementById("k-guide");
-    if(g&&el.dataset.x){g.setAttribute("x1",el.dataset.x);g.setAttribute("x2",el.dataset.x);g.setAttribute("opacity","1")}
-    if(el.dataset.i!==undefined&&el.closest("#k-spread"))el.closest("svg").querySelectorAll("rect.bar").forEach(r=>r.setAttribute("opacity",r.dataset.i===el.dataset.i?"1":".45"));
+    tip.classList.add("on");cur=el;move(x,y);mark(el,true);
   }
-  function hide(){
-    tip.classList.remove("on");cur=null;
-    const g=document.getElementById("k-guide");if(g)g.setAttribute("opacity","0");
-    document.querySelectorAll("#k-spread rect.bar").forEach(r=>r.setAttribute("opacity",".75"));
-  }
+  function hide(){if(cur)mark(cur,false);tip.classList.remove("on");cur=null}
   function move(x,y){
     const r=tip.getBoundingClientRect(),W=innerWidth,H=innerHeight;
     let l=x+14,t=y+14;if(l+r.width>W-8)l=x-r.width-14;if(t+r.height>H-8)t=y-r.height-14;
     tip.style.left=Math.max(8,l)+"px";tip.style.top=Math.max(8,t)+"px";
   }
+  function showAt(el){const r=el.getBoundingClientRect();show(el,r.left+r.width/2,r.top+r.height*.35)}
   document.addEventListener("pointerover",e=>{if(e.pointerType==="touch")return;const el=e.target.closest("[data-tip]");if(el)show(el,e.clientX,e.clientY)});
   document.addEventListener("pointermove",e=>{if(cur&&e.pointerType!=="touch")move(e.clientX,e.clientY)});
   document.addEventListener("pointerout",e=>{if(e.pointerType==="touch")return;const el=e.target.closest("[data-tip]");if(el&&!el.contains(e.relatedTarget))hide()});
   document.addEventListener("click",e=>{const el=e.target.closest("[data-tip]");if(el){if(cur===el)hide();else show(el,e.clientX,e.clientY)}else if(cur)hide()});
-  addEventListener("scroll",()=>{if(cur)hide()},{passive:true});
+  document.addEventListener("keydown",e=>{
+    const svg=document.activeElement;if(!svg||!svg.matches||!svg.matches("svg.chart"))return;
+    const hits=[...svg.querySelectorAll("rect.hit")];if(!hits.length)return;
+    let i=cur&&svg.contains(cur)?hits.indexOf(cur):-1;
+    if(e.key==="ArrowRight")i=Math.min(hits.length-1,i+1);else if(e.key==="ArrowLeft")i=i<0?hits.length-1:Math.max(0,i-1);
+    else if(e.key==="Home")i=0;else if(e.key==="End")i=hits.length-1;else if(e.key==="Escape"){hide();return}else return;
+    e.preventDefault();showAt(hits[i]);
+  });
+  document.addEventListener("focusout",e=>{if(e.target.matches&&e.target.matches("svg.chart"))hide()});
+  addEventListener("scroll",()=>{const ae=document.activeElement;if(cur&&!(ae&&ae.matches&&ae.matches("svg.chart")))hide()},{passive:true});
 })();
 
 fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{DASH.actual=j;renderDashActual(j)}).catch(()=>renderDashActual({days:{},summary:{}}));
-fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{const t=document.getElementById("k-title");if(t)t.textContent="No analysis published yet"});
+fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{setT("k-title","No analysis published yet");$("k-figs").innerHTML=""});
+fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;renderNext(d)}).catch(()=>{setT("k-nxt-note","No outlook published yet.")});
 </script>
 </body>
 </html>
