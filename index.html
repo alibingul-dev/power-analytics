@@ -272,6 +272,113 @@ a.btn{display:inline-block;text-decoration:none}
 </style>
 </head>
 <body>
+<!-- ===== POWER ANALYTICS INTRO — paste right after <body> ===== -->
+<div id="pa-intro" aria-hidden="true">
+  <svg class="pa-chart" viewBox="0 0 960 400" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="paLine" x1="0" x2="1">
+        <stop offset="0" stop-color="#38bdf8"/>
+        <stop offset=".5" stop-color="#facc15"/>
+        <stop offset="1" stop-color="#f97316"/>
+      </linearGradient>
+      <radialGradient id="paSun">
+        <stop offset="0" stop-color="#fde68a"/>
+        <stop offset=".45" stop-color="#facc15" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#facc15" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="paGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- 24h grid -->
+    <g class="pa-grid">
+      <line x1="40" y1="340" x2="920" y2="340"/>
+      <line x1="40" y1="260" x2="920" y2="260"/>
+      <line x1="40" y1="180" x2="920" y2="180"/>
+      <line x1="40" y1="100" x2="920" y2="100"/>
+    </g>
+    <g class="pa-hours">
+      <text x="40" y="365">00</text><text x="260" y="365">06</text>
+      <text x="480" y="365">12</text><text x="700" y="365">18</text><text x="905" y="365">24</text>
+    </g>
+
+    <!-- sun path -->
+    <circle class="pa-sun" r="34" fill="url(#paSun)"/>
+
+    <!-- duck curve: net load -->
+    <path class="pa-duck" filter="url(#paGlow)" stroke="url(#paLine)"
+      d="M40,170 C120,190 200,200 260,175 C330,145 380,250 480,290 C580,320 630,250 700,95 C760,60 830,110 920,150"/>
+    <circle class="pa-dot" r="6"/>
+  </svg>
+
+  <div class="pa-title">
+    <span>P</span><span>O</span><span>W</span><span>E</span><span>R</span><span class="sp"></span><span>A</span><span>N</span><span>A</span><span>L</span><span>Y</span><span>T</span><span>I</span><span>C</span><span>S</span>
+  </div>
+  <div class="pa-sub">Turkish electricity, read plainly.</div>
+  <div class="pa-by">Prepared by: Ali Bingül</div>
+  <button class="pa-skip" type="button">Skip ›</button>
+</div>
+
+<style>
+#pa-intro{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 60%,#14203d 0%,#070b17 70%);color:#e5e7eb;
+  font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden;
+  animation:paOut .7s ease-in 5s forwards}
+#pa-intro .pa-chart{width:min(92vw,900px);height:auto;margin-top:-6vh}
+#pa-intro .pa-grid line{stroke:#1f2a44;stroke-width:1;stroke-dasharray:4 6;opacity:0;animation:paFade .5s ease-out .1s forwards}
+#pa-intro .pa-hours text{fill:#475569;font-size:13px;letter-spacing:.08em;opacity:0;animation:paFade .5s ease-out .3s forwards}
+#pa-intro .pa-duck{fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:1200;stroke-dashoffset:1200;
+  animation:paDraw 1.9s cubic-bezier(.65,0,.35,1) .4s forwards}
+#pa-intro .pa-dot{fill:#fff;offset-path:path("M40,170 C120,190 200,200 260,175 C330,145 380,250 480,290 C580,320 630,250 700,95 C760,60 830,110 920,150");
+  offset-distance:0%;opacity:0;filter:drop-shadow(0 0 8px #facc15);
+  animation:paRide 1.9s cubic-bezier(.65,0,.35,1) .4s forwards, paPulse .9s ease-in-out 2.3s infinite}
+#pa-intro .pa-sun{offset-path:path("M260,330 Q480,-40 700,330");offset-distance:0%;opacity:0;
+  animation:paSunMove 1.9s cubic-bezier(.65,0,.35,1) .4s forwards}
+#pa-intro .pa-title{display:flex;gap:.06em;font-size:clamp(26px,5.2vw,58px);font-weight:800;letter-spacing:.12em;margin-top:-2vh}
+#pa-intro .pa-title span{opacity:0;transform:translateY(18px);display:inline-block;
+  background:linear-gradient(90deg,#38bdf8,#facc15,#f97316);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:1500% 100%;animation:paLetter .5s cubic-bezier(.2,.8,.2,1) forwards}
+#pa-intro .pa-title .sp{width:.45em}
+#pa-intro .pa-sub{margin-top:14px;font-size:clamp(13px,1.6vw,17px);color:#94a3b8;letter-spacing:.06em;opacity:0;
+  animation:paFade .6s ease-out 2.9s forwards}
+#pa-intro .pa-by{margin-top:10px;font-size:clamp(11px,1.2vw,13px);color:#64748b;letter-spacing:.14em;opacity:0;
+  animation:paFade .5s ease-out 3.1s forwards}
+#pa-intro .pa-skip{position:absolute;bottom:22px;right:24px;background:none;border:1px solid #334155;color:#94a3b8;
+  font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;cursor:pointer;opacity:.7}
+#pa-intro .pa-skip:hover{opacity:1;color:#fff;border-color:#64748b}
+#pa-intro.pa-done{animation:paOut .35s ease-in forwards}
+
+@keyframes paDraw{to{stroke-dashoffset:0}}
+@keyframes paRide{0%{opacity:1;offset-distance:0%}100%{opacity:1;offset-distance:100%}}
+@keyframes paSunMove{0%{opacity:0;offset-distance:0%}15%{opacity:1}85%{opacity:1}100%{opacity:0;offset-distance:100%}}
+@keyframes paPulse{50%{r:9}}
+@keyframes paFade{to{opacity:1}}
+@keyframes paLetter{to{opacity:1;transform:none}}
+@keyframes paOut{to{opacity:0;transform:scale(1.04);visibility:hidden}}
+
+@media (prefers-reduced-motion:reduce){#pa-intro{display:none!important}}
+</style>
+
+<script>
+(function(){
+  var el=document.getElementById('pa-intro'); if(!el) return;
+  var seen=false; try{seen=sessionStorage.getItem('paIntroSeen')==='1';}catch(e){}
+  if(seen){el.remove();return;}
+  try{sessionStorage.setItem('paIntroSeen','1');}catch(e){}
+  // stagger letters (2.1s → 2.8s)
+  el.querySelectorAll('.pa-title span').forEach(function(s,i){
+    s.style.animationDelay=(2.1+i*0.045)+'s';
+    s.style.backgroundPosition=(i*7)+'% 0';
+  });
+  document.documentElement.style.overflow='hidden';
+  function done(){ if(!el.isConnected) return; el.classList.add('pa-done');
+    setTimeout(function(){el.remove();document.documentElement.style.overflow='';},380); }
+  el.querySelector('.pa-skip').addEventListener('click',done);
+  el.addEventListener('animationend',function(e){ if(e.target===el) {el.remove();document.documentElement.style.overflow='';} });
+  setTimeout(done,6000); // safety net
+})();
+</script>
+<!-- ===== /POWER ANALYTICS INTRO ===== -->
+
 
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
