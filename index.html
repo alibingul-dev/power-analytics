@@ -1256,5 +1256,29 @@ fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{DASH.actua
 fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{setT("k-title","No analysis published yet");$("k-figs").innerHTML=""});
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;renderNext(d)}).catch(()=>{setT("k-nxt-note","No outlook published yet.")});
 </script>
+<!-- ===== BACK TO HUB ===== -->
+<a id="ab-home" href="https://alibingul-dev.github.io/" aria-label="Back to alibingul-dev.github.io" hidden>
+  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg><span>Ali Bingül</span>
+</a>
+<style>
+#ab-home{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:9000;display:inline-flex;align-items:center;gap:6px;
+  padding:7px 13px 7px 9px;border-radius:999px;background:rgba(17,17,20,.74);color:#ecebe6;border:1px solid rgba(255,255,255,.16);
+  font:500 13px/1 Inter,system-ui,-apple-system,Segoe UI,sans-serif;text-decoration:none;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:.85;transition:opacity .15s,transform .15s}
+#ab-home[hidden]{display:none}
+#ab-home:hover{opacity:1;transform:translateX(-2px)}
+#ab-home svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media print{#ab-home{display:none}}
+@media (min-width:881px){#ab-home{left:calc(var(--rail,270px) + 14px)}}
+</style>
+<script>
+(function(){
+  var a=document.getElementById('ab-home'); if(!a) return;
+  var web=location.hostname==='alibingul-dev.github.io';
+  var app=window.matchMedia && matchMedia('(display-mode: standalone)').matches;
+  if(web && !app) a.hidden=false;
+})();
+</script>
+<!-- ===== /BACK TO HUB ===== -->
 </body>
 </html>
