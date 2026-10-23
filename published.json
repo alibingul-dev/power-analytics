@@ -512,6 +512,13 @@
     "post_id": "urn:li:share:7518591411538149376",
     "source": "scheduled"
   },
+  "2026-10-23#news": {
+    "analysis_date": "2026-10-23",
+    "at": "2026-10-23T18:23:16.895851Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7519463469457362944",
+    "source": "manual"
+  },
   "2026-10-23#post2": {
     "analysis_date": "2026-10-23",
     "at": "2026-10-22T08:34:38.588388Z",
