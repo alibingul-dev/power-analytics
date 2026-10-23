@@ -61,9 +61,9 @@ main{display:grid;grid-template-columns:minmax(280px,26%) 1fr 240px;gap:10px;min
 .bats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:8px;min-height:0}
 .bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
 .bc.best{border:2px solid var(--accent)}
-.bn{font-family:var(--font-display);font-weight:600;font-size:15px}
-.bs{color:var(--muted);font-size:11.5px;line-height:1.3}
-.wrap{position:relative;flex:1;min-height:110px;margin:4px 0}
+.bn{font-family:var(--font-display);font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bs{color:var(--muted);font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.wrap{position:relative;flex:1;min-height:70px;margin:4px 0}
 .bar{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:52px;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:var(--bg)}
 .z{position:absolute;left:0;right:0}
 .labl{position:absolute;right:calc(50% + 32px);font-size:11px;transform:translateY(50%);text-align:right;line-height:1.25}
@@ -149,7 +149,7 @@ footer a{color:var(--accent)}
   <span><span class="sq" style="background:var(--pad-dn)"></span>PFK deşarj payı</span>
   <span><span class="sq" style="background:var(--pad-up);outline:1px dashed var(--pad-edge)"></span>PFK şarj payı</span>
   <span><span class="sq" style="border-top:1px dashed var(--corr);border-bottom:1px dashed var(--corr)"></span>SoC koridoru</span>
-  <span><span class="sq" style="background:var(--dead)"></span>Kullanılmayan bant</span>
+  <span><span class="sq" style="background:var(--dead)"></span>Ölü bant (verim ve ömür için kullanılmaz)</span>
   <span class="note">Fiyatlar: EPİAŞ Şeffaflık. Frekans temsili simülasyon. Kurgusal bir bataryadır, yatırım tavsiyesi değildir.</span>
 </footer>
 </div>
@@ -173,16 +173,19 @@ function sim(name,sub,Rf,act,opt){
     let R=Rf(h),lost=0;
     if(opt.cert&&R){lost=R*PFK[h];R=0;}
     const a=act(h,s);let d=0,mk='p';if(a){d=Math.round((a[0]-s)*10)/10;mk=a[1];}
-    const dPhys=trip?0:d;
+    const err=opt.err&&opt.err[h]!==undefined;if(err)d=opt.err[h];
+    const bad=trip||err;
+    const dPhys=bad?0:d;
     for(let k=0;k<60;k++){const P=trip?0:resp(R,F[h*60+k]);const e=P/60;s+=dPhys/60+(e>0?-e/ETA:-e*ETA);s=Math.max(5,Math.min(95,s));soc.push(s);}
     const px=mk==='s'?SMF[h]:PTF[h];
     const tc=d?tradeCash(d,px):0;
     let pen=0;
-    if(trip&&d<0){pen=(-d*ETA)*Math.max(PTF[h],SMF[h])*(1+K);}
-    if(trip&&d>0){pen=-(d/ETA)*Math.min(PTF[h],SMF[h])*(1-K);}
+    if(bad&&d<0){pen=(-d*ETA)*Math.max(PTF[h],SMF[h])*(1+K);}
+    if(bad&&d>0){pen=-(d/ETA)*Math.min(PTF[h],SMF[h])*(1-K);}
     let kind=d>0?'chg':d<0?'dis':(R?'pfk':'idle');
     let lab=R?'PFK '+R+' MW':'';
     if(d){const m=mk==='s'?(d>0?'DGP YAT alış':'DGP YAL satış'):(d>0?'GÖP alış':'GÖP satış');lab+=(lab?' + ':'')+m+' '+(d>0?'+':'')+n1(d)+' MWh';}
+    if(err){kind='miss';lab='Yön hatası · alış yerine satış '+n1(d)+' MWh, teslim edilemedi';}
     if(trip){kind='miss';lab='Arıza · '+(d<0?'satış teslim edilemedi':'işlem yapılamadı');}
     if(lost){kind='miss';lab='Sertifika askıda · PFK yok';}
     hrs.push({R,cash:R*PFK[h]+tc-pen,sell:tc>0?tc:0,buy:tc<0?-tc:0,pen:pen+lost,kind,lab:lab||'Bekle',d,db:false});
@@ -209,17 +212,17 @@ const SC=[
   sim('S2 · Arbitraj','Ucuz saatte GÖP\'ten al, pahalı saatte sat. PFK yok.',h=>0,T({4:95,8:5,12:95,17:5,22:50})),
   sim('S3 · Mix','8 MW sürekli PFK, kalan kapasite 10–90 koridorunda arbitraj.',h=>8,T({4:90,8:10,12:90,17:10,22:50})),
   sim('S4 · GÖP + DGP','Sistem fazlayken YAT ile ucuza şarj, açıktayken YAL ile sat.',h=>0,T({8:5,9:95,10:5,13:95,17:5,22:50},{9:'s',13:'s',17:'s'})),
-  simDB('S5 · Ardışık PFK','24 saat 72 MW PFK; SoC yalnızca ölü bantta toplanır. Cezasız.',false),
-  simDB('S6 · S5 + PFK cezası','S5\'in rezerv eksik saatlerine Md. 30: bedel ödenmez, kapasite bedelinin %25\'i ceza.',true),
-  sim('S7 · Sertifika askıda','S1, ama TEİAŞ sertifika yenilemesi istedi (Md. 8/3): PFK yapılamaz, 60 güne kadar sürebilir.',h=>h%2===0?72:0,(h)=>h%2===1?[50,'p']:null,{cert:true}),
-  sim('S8 · Satış teslim edilemedi','S2, ama 08:00\'de arıza: GÖP satışı teslim edilemez, açık dengesizlikten kapanır.',h=>0,T({4:95,8:5,12:95,17:5,22:50}),{trip:[8]})
+  simDB('S5 · Ardışık PFK','24 saat 72 MW PFK; SoC yalnızca frekans ölü bandında toplanır. Cezasız.',false),
+  simDB('S6 · Ardışık PFK + ceza','24 saat 72 MW PFK, SoC yalnız frekans ölü bandında toplanır. Rezerv eksik saatte bedel yok + %25 ceza (Md. 30).',true),
+  sim('S7 · Yön hatası','8 MW PFK + 10–90 koridorunda GÖP arbitrajı. 12:00\'de alış yerine satış girildi; teslim edilemez, ucuz şarj kaçar.',h=>8,T({4:90,8:10,12:90,17:10,22:50}),{err:{12:-80}}),
+  sim('S8 · Teslim edilemeyen satış','GÖP arbitrajı. 08:00\'de arıza: satış teslim edilemez, açık dengesizlikten kapanır.',h=>0,T({4:95,8:5,12:95,17:5,22:50}),{trip:[8]})
 ];
 
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const $=id=>document.getElementById(id);
 const box=$('bats');
 SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="bx${i}">
-<div class="bn"><span class="dot" style="background:var(--s${i})"></span>${sc.name}</div><div class="bs">${sc.sub}</div>
+<div class="bn"><span class="dot" style="background:var(--s${i})"></span>${sc.name}</div><div class="bs" title="${sc.sub}">${sc.sub}</div>
 <div class="wrap"><div class="bar">
 <div class="z" style="bottom:0;height:5%;background:var(--dead)"></div><div class="z" style="bottom:95%;height:5%;background:var(--dead)"></div>
 <div class="z" id="wa${i}" style="bottom:0;background:var(--soc)"></div>
@@ -233,12 +236,13 @@ SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="
 <span class="lab" id="lh${i}" style="color:var(--pad-ink)"></span>
 <span class="lab" id="ll${i}" style="color:var(--pad-ink)"></span>
 <span class="lab" id="ls${i}" style="font-weight:500;color:var(--ink)"></span>
-<span class="labl" id="lb${i}"></span></div>
+<span class="labl" style="top:0;transform:none;color:var(--muted)">ölü bant</span><span class="labl" style="bottom:0;transform:none;color:var(--muted)">ölü bant</span></div>
 <div class="info">
 <span>PFK limiti</span><span id="il${i}">—</span>
 <span>Anlık PFK</span><span id="ip${i}">—</span>
 <span>Pay ↓+↑</span><span id="ia${i}">—</span>
 <span>Koridor</span><span id="ik${i}">5–95 MWh</span>
+<span>Frekans ölü bandı</span><span id="fd${i}">—</span>
 </div>
 <div><span class="pill" id="pi${i}"></span></div>
 <div class="pnl">
@@ -316,10 +320,9 @@ function render(){
     const P=resp(o.R,f);
     $('il'+i).textContent=o.R?'±'+o.R+' MW':'Yok';
     $('ip'+i).textContent=o.R?(P>0?'+':'')+n1(P)+' MW':'—';
-    const lb=$('lb'+i);lb.style.bottom=s+'%';
-    if(!o.R){lb.style.visibility='hidden';}
-    else{lb.style.visibility='visible';const st=inDB?(o.db?'içinde<br>topluyor':'içinde'):'dışında';
-      lb.innerHTML='<span style="color:var(--muted)">ölü bant</span><br><b style="font-weight:500;color:'+(inDB?'var(--live)':'var(--ink)')+'">'+st+'</b>';}
+    const fd=$('fd'+i);
+    if(!o.R){fd.textContent='—';fd.style.color='var(--muted)';}
+    else{fd.textContent=inDB?(o.db?'içinde, topluyor':'içinde'):'dışında';fd.style.color=inDB?'var(--live)':'var(--ink)';}
     $('ia'+i).textContent=o.R?n1(pad)+'+'+n1(pad)+' MWh':'—';
     $('ik'+i).textContent=o.R?Math.round(5+pad)+'–'+Math.round(95-pad)+' MWh':'5–95 MWh';
     const p=$('pi'+i),k=PILL[o.kind];p.style.background='var(--pill-'+k+'-bg)';p.style.color='var(--pill-'+k+'-ink)';
