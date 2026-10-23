@@ -49,21 +49,21 @@ main{display:grid;grid-template-columns:minmax(300px,30%) 1fr;gap:12px;min-heigh
 .lgd i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:4px}
 .cv{position:relative;flex:1;min-height:70px}
 .cv canvas{position:absolute;inset:0;width:100%;height:100%}
-.bats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;min-height:0}
-.bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:10px;display:flex;flex-direction:column;min-height:0}
+.bats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:8px;min-height:0}
+.bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
 .bc.best{border:2px solid var(--accent)}
 .bn{font-family:var(--font-display);font-weight:600;font-size:15px}
-.bs{color:var(--muted);font-size:12px;min-height:34px}
-.wrap{position:relative;flex:1;min-height:200px;margin:6px 0}
+.bs{color:var(--muted);font-size:11.5px;line-height:1.3}
+.wrap{position:relative;flex:1;min-height:110px;margin:4px 0}
 .bar{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:52px;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:var(--bg)}
 .z{position:absolute;left:0;right:0}
 .labl{position:absolute;right:calc(50% + 32px);font-size:11px;transform:translateY(50%);text-align:right;line-height:1.25}
 .lab{position:absolute;left:calc(50% + 32px);font-size:11px;transform:translateY(50%);white-space:nowrap;line-height:1;font-family:var(--font-mono)}
-.info{margin-top:4px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:12px}
+.info{margin-top:2px;display:grid;grid-template-columns:auto 1fr;gap:0 8px;font-size:11px;line-height:1.35}
 .info span:nth-child(odd){color:var(--muted);white-space:nowrap}
 .info span:nth-child(even){text-align:right;font-family:var(--font-mono);white-space:nowrap}
-.pill{display:inline-block;font-size:12px;padding:3px 8px;border-radius:var(--r-s);margin:6px 0;min-height:22px}
-.pnl{border-top:1px solid var(--line);padding-top:6px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:12px}
+.pill{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:var(--r-s);margin:3px 0;min-height:20px}
+.pnl{border-top:1px solid var(--line);padding-top:3px;display:grid;grid-template-columns:auto 1fr;gap:0 8px;font-size:11px;line-height:1.35}
 .pnl span:nth-child(odd){color:var(--muted);white-space:nowrap}
 .pnl span:nth-child(even){text-align:right;font-family:var(--font-mono);white-space:nowrap}
 .pnl .big{font-size:13px;font-weight:500;color:var(--ink)}
@@ -74,7 +74,7 @@ footer a{color:var(--accent)}
 @media (max-width:1100px){
   main{grid-template-columns:1fr}
   .charts{grid-template-rows:200px 160px 160px}
-  .bats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .bats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));grid-template-rows:none}
   .wrap{min-height:220px}
 }
 </style>
@@ -83,8 +83,8 @@ footer a{color:var(--accent)}
 <div class="app">
 <header>
   <div>
-    <h1>Bir batarya, beş strateji</h1>
-    <div class="sub">22 Ekim 2026'nın gerçek fiyatlarıyla aynı bataryanın beş farklı kullanımda gün boyu ne kazandığı</div>
+    <h1>Bir batarya, sekiz senaryo</h1>
+    <div class="sub">22 Ekim 2026'nın gerçek fiyatlarıyla aynı bataryanın dört stratejide ne kazandığı ve dört hata senaryosunda ne kaybettiği</div>
   </div>
   <div class="specs">
     <span class="chip">Güç <b>100 MW</b></span>
@@ -117,7 +117,7 @@ footer a{color:var(--accent)}
     </div>
     <div class="panel">
       <div class="ph"><span class="pt">Şebeke frekansı</span><span class="lgd"><span><i style="border-color:var(--c-freq)"></i>Hz</span><span><i style="border-color:var(--band);border-top-width:8px"></i>ölü bant</span></span></div>
-      <div class="pc">Dakikalık, temsili seri. Beş batarya da aynı frekansı görüyor; ±10 mHz içinde PFK tepki vermez.</div>
+      <div class="pc">Dakikalık, temsili seri. Tüm bataryalar aynı frekansı görüyor; ±10 mHz içinde PFK tepki vermez.</div>
       <div class="cv"><canvas id="cF" role="img" aria-label="Dört senaryonun ortak gördüğü dakikalık frekans"></canvas></div>
     </div>
   </section>
@@ -145,39 +145,54 @@ const F=[];{let b=0,x=0;for(let m=0;m<1440;m++){b=0.996*b+gs()*0.0016;x=0.85*x+g
 const resp=(R,f)=>{const d=f-50;return Math.abs(d)<0.01?0:Math.max(-R,Math.min(R,-R*d/0.2))};
 const tradeCash=(d,p)=>d>0?-(d/ETA)*p:(-d*ETA)*p;
 const stepE=(s,P)=>{const e=P/60;return Math.max(5,Math.min(95,s+(e>0?-e/ETA:-e*ETA)));};
-function sim(name,sub,Rf,act){
-  let s=50,soc=[s],hrs=[];
+const K=0.03;
+function sim(name,sub,Rf,act,opt){
+  opt=opt||{};let s=50,soc=[s],hrs=[];
   for(let h=0;h<24;h++){
-    const R=Rf(h),a=act(h,s);let d=0,mk='p';if(a){d=Math.round((a[0]-s)*10)/10;mk=a[1];}
-    for(let k=0;k<60;k++){const P=resp(R,F[h*60+k]);const e=P/60;s+=d/60+(e>0?-e/ETA:-e*ETA);s=Math.max(5,Math.min(95,s));soc.push(s);}
-    const tc=d?tradeCash(d,mk==='s'?SMF[h]:PTF[h]):0;
-    const kind=d>0?'chg':d<0?'dis':(R?'pfk':'idle');
+    const trip=opt.trip&&opt.trip.includes(h);
+    let R=Rf(h),lost=0;
+    if(opt.cert&&R){lost=R*PFK[h];R=0;}
+    const a=act(h,s);let d=0,mk='p';if(a){d=Math.round((a[0]-s)*10)/10;mk=a[1];}
+    const dPhys=trip?0:d;
+    for(let k=0;k<60;k++){const P=trip?0:resp(R,F[h*60+k]);const e=P/60;s+=dPhys/60+(e>0?-e/ETA:-e*ETA);s=Math.max(5,Math.min(95,s));soc.push(s);}
+    const px=mk==='s'?SMF[h]:PTF[h];
+    const tc=d?tradeCash(d,px):0;
+    let pen=0;
+    if(trip&&d<0){pen=(-d*ETA)*Math.max(PTF[h],SMF[h])*(1+K);}
+    if(trip&&d>0){pen=-(d/ETA)*Math.min(PTF[h],SMF[h])*(1-K);}
+    let kind=d>0?'chg':d<0?'dis':(R?'pfk':'idle');
     let lab=R?'PFK '+R+' MW':'';
     if(d){const m=mk==='s'?(d>0?'DGP YAT alış':'DGP YAL satış'):(d>0?'GÖP alış':'GÖP satış');lab+=(lab?' + ':'')+m+' '+(d>0?'+':'')+n1(d)+' MWh';}
-    hrs.push({R,cash:R*PFK[h]+tc,sell:tc>0?tc:0,buy:tc<0?-tc:0,kind,lab:lab||'Bekle',d,db:false});
+    if(trip){kind='miss';lab='Arıza · '+(d<0?'satış teslim edilemedi':'işlem yapılamadı');}
+    if(lost){kind='miss';lab='Sertifika askıda · PFK yok';}
+    hrs.push({R,cash:R*PFK[h]+tc-pen,sell:tc>0?tc:0,buy:tc<0?-tc:0,pen:pen+lost,kind,lab:lab||'Bekle',d,db:false});
   }
   return {name,sub,soc,hrs};
 }
-function simDB(name,sub){
+function simDB(name,sub,md30){
   const R=72;let s=50,soc=[s],hrs=[];
   for(let h=0;h<24;h++){let sell=0,buy=0,minDn=1e9,minUp=1e9,rec=0;
     for(let k=0;k<60;k++){const f=F[h*60+k],dd=f-50;let P;
       if(Math.abs(dd)<0.01){P=Math.max(-0.1*R,Math.min(0.1*R,(s-50)*2));const e=P/60;rec-=e;
-        if(e<0)buy+=-e*Math.max(PTF[h],SMF[h])*1.03;else sell+=e*Math.min(PTF[h],SMF[h])*0.97;}
+        if(e<0)buy+=-e*Math.max(PTF[h],SMF[h])*(1+K);else sell+=e*Math.min(PTF[h],SMF[h])*(1-K);}
       else P=resp(R,f);
       s=stepE(s,P);soc.push(s);minDn=Math.min(minDn,s-5);minUp=Math.min(minUp,95-s);}
     const ok=minDn>=R*0.25&&minUp>=R*0.25;
-    hrs.push({R,cash:(ok?R*PFK[h]:0)+sell-buy,sell,buy,kind:ok?'pfk':'miss',lab:ok?'PFK 72 MW · ölü bant '+(rec>=0?'+':'')+n1(rec)+' MWh':'Rezerv eksik · bedel yok',d:0,db:true});}
+    const pen=(!ok&&md30)?0.25*R*PFK[h]:0;
+    hrs.push({R,cash:(ok?R*PFK[h]:0)+sell-buy-pen,sell,buy,pen,kind:ok?'pfk':'miss',lab:ok?'PFK 72 MW · ölü bant '+(rec>=0?'+':'')+n1(rec)+' MWh':(md30?'Katılmadı · bedel yok + %25 ceza':'Rezerv eksik · bedel yok'),d:0,db:true});}
   return {name,sub,soc,hrs};
 }
 function n1(v){return v.toFixed(1).replace('.',',')}
 const T=(o,mk)=>(h)=>o[h]!==undefined?[o[h],mk&&mk[h]?mk[h]:'p']:null;
 const SC=[
-  sim('S1 · Tam PFK','Çift saatlerde 72 MW frekans desteği, tek saatlerde GÖP ile SoC 50\'ye düzeltilir.',h=>h%2===0?72:0,(h)=>h%2===1?[50,'p']:null),
-  sim('S2 · Arbitraj','Ucuz saatte GÖP\'ten al, pahalı saatte sat. Frekans desteği yok.',h=>0,T({4:95,8:5,12:95,17:5,22:50})),
-  sim('S3 · Mix','8 MW sürekli frekans desteği, kalan kapasite 10–90 koridorunda arbitraj.',h=>8,T({4:90,8:10,12:90,17:10,22:50})),
-  sim('S4 · GÖP + DGP','Sistem fazla enerjideyken YAT ile ucuza şarj, açıktayken YAL ile sat.',h=>0,T({8:5,9:95,10:5,13:95,17:5,22:50},{9:'s',13:'s',17:'s'})),
-  simDB('S5 · Ardışık PFK','24 saat 72 MW frekans desteği; SoC yalnızca ölü bantta toplanır.')
+  sim('S1 · Tam PFK','Çift saatlerde 72 MW PFK, tek saatlerde GÖP ile SoC 50\'ye düzeltilir.',h=>h%2===0?72:0,(h)=>h%2===1?[50,'p']:null),
+  sim('S2 · Arbitraj','Ucuz saatte GÖP\'ten al, pahalı saatte sat. PFK yok.',h=>0,T({4:95,8:5,12:95,17:5,22:50})),
+  sim('S3 · Mix','8 MW sürekli PFK, kalan kapasite 10–90 koridorunda arbitraj.',h=>8,T({4:90,8:10,12:90,17:10,22:50})),
+  sim('S4 · GÖP + DGP','Sistem fazlayken YAT ile ucuza şarj, açıktayken YAL ile sat.',h=>0,T({8:5,9:95,10:5,13:95,17:5,22:50},{9:'s',13:'s',17:'s'})),
+  simDB('S5 · Ardışık PFK','24 saat 72 MW PFK; SoC yalnızca ölü bantta toplanır. Cezasız.',false),
+  simDB('S6 · S5 + PFK cezası','S5\'in rezerv eksik saatlerine Md. 30: bedel ödenmez, kapasite bedelinin %25\'i ceza.',true),
+  sim('S7 · Sertifika askıda','S1, ama TEİAŞ sertifika yenilemesi istedi (Md. 8/3): PFK yapılamaz, 60 güne kadar sürebilir.',h=>h%2===0?72:0,(h)=>h%2===1?[50,'p']:null,{cert:true}),
+  sim('S8 · Satış teslim edilemedi','S2, ama 08:00\'de arıza: GÖP satışı teslim edilemez, açık dengesizlikten kapanır.',h=>0,T({4:95,8:5,12:95,17:5,22:50}),{trip:[8]})
 ];
 
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -210,6 +225,7 @@ SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="
 <span>Kümülatif PnL</span><span class="big" id="pn${i}">0 bin TL</span>
 <span>Satış</span><span id="sa${i}" style="color:var(--live)">0 bin</span>
 <span>Alış</span><span id="al${i}" style="color:var(--bad)">0 bin</span>
+<span>Ceza / kayıp</span><span id="ce${i}" style="color:var(--bad)">0 bin</span>
 </div></article>`);});
 
 function chart(cv,series,opt){
@@ -237,8 +253,8 @@ function drawCharts(cur){
 const PILL={pfk:'pfk',chg:'chg',dis:'dis',idle:'idle',miss:'miss'};
 const fmt=x=>(x<0?'−':'')+Math.round(Math.abs(x)/1000).toLocaleString('tr-TR')+' bin TL';
 const fk=x=>Math.round(x/1000).toLocaleString('tr-TR')+' bin';
-const N=SC.length;let h=0,frac=0,hold=0,run=true,last=performance.now(),cum,cs,cb,done=false,lastM=-1,endWait=0;
-function reset(){h=0;frac=0;hold=0;endWait=0;cum=Array(N).fill(0);cs=Array(N).fill(0);cb=Array(N).fill(0);done=false;lastM=-1;SC.forEach((s,i)=>$('bx'+i).classList.remove('best'));render();}
+const N=SC.length;let h=0,frac=0,hold=0,run=true,last=performance.now(),cum,cs,cb,cp,done=false,lastM=-1,endWait=0;
+function reset(){h=0;frac=0;hold=0;endWait=0;cum=Array(N).fill(0);cs=Array(N).fill(0);cb=Array(N).fill(0);cp=Array(N).fill(0);done=false;lastM=-1;SC.forEach((s,i)=>$('bx'+i).classList.remove('best'));render();}
 const place=(id,pct,txt,show)=>{const e=$(id);e.style.bottom=pct+'%';e.textContent=txt;e.style.visibility=show?'visible':'hidden';};
 function render(){
   const m=Math.min(1439,h*60+Math.floor(frac*60));const f=F[m];const inDB=Math.abs(f-50)<0.01;
@@ -273,6 +289,7 @@ function render(){
     $('pn'+i).textContent=fmt(cum[i]+o.cash*fr);
     $('sa'+i).textContent=fk(cs[i]+o.sell*fr);
     $('al'+i).textContent=fk(cb[i]+o.buy*fr);
+    $('ce'+i).textContent=fk(cp[i]+o.pen*fr);
   });
   if(m!==lastM){drawCharts(h+frac);lastM=m;}
 }
@@ -282,7 +299,7 @@ function tick(now){const dt=Math.max(0,Math.min(250,now-last));last=now;
   if(run&&done&&$('lp').checked){endWait-=dt;if(endWait<=0)reset();}
   else if(run&&!done){const D=3000/(+$('sp').value);
     if(hold>0)hold-=dt;else{frac+=dt/D;
-      if(frac>=1){SC.forEach((sc,i)=>{cum[i]+=sc.hrs[h].cash;cs[i]+=sc.hrs[h].sell;cb[i]+=sc.hrs[h].buy;});
+      if(frac>=1){SC.forEach((sc,i)=>{cum[i]+=sc.hrs[h].cash;cs[i]+=sc.hrs[h].sell;cb[i]+=sc.hrs[h].buy;cp[i]+=sc.hrs[h].pen;});
         if(h>=23){frac=0.999;finish();requestAnimationFrame(tick);return;}
         h++;frac=0;if(SC.some(sc=>sc.hrs[h].kind==='chg'))hold=900;}}
     render();}
