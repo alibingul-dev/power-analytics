@@ -55,9 +55,10 @@ main{display:grid;grid-template-columns:minmax(300px,30%) 1fr;gap:12px;min-heigh
 .bn{font-family:var(--font-display);font-weight:600;font-size:15px}
 .bs{color:var(--muted);font-size:12px;min-height:34px}
 .wrap{position:relative;flex:1;min-height:200px;margin:6px 0}
-.bar{position:absolute;left:0;top:0;bottom:0;width:52px;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:var(--bg)}
+.bar{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:52px;border:1px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:var(--bg)}
 .z{position:absolute;left:0;right:0}
-.lab{position:absolute;left:58px;font-size:11px;transform:translateY(50%);white-space:nowrap;line-height:1;font-family:var(--font-mono)}
+.labl{position:absolute;right:calc(50% + 32px);font-size:11px;transform:translateY(50%);text-align:right;line-height:1.25}
+.lab{position:absolute;left:calc(50% + 32px);font-size:11px;transform:translateY(50%);white-space:nowrap;line-height:1;font-family:var(--font-mono)}
 .info{margin-top:4px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:12px}
 .info span:nth-child(odd){color:var(--muted);white-space:nowrap}
 .info span:nth-child(even){text-align:right;font-family:var(--font-mono);white-space:nowrap}
@@ -65,7 +66,7 @@ main{display:grid;grid-template-columns:minmax(300px,30%) 1fr;gap:12px;min-heigh
 .pnl{border-top:1px solid var(--line);padding-top:6px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:12px}
 .pnl span:nth-child(odd){color:var(--muted);white-space:nowrap}
 .pnl span:nth-child(even){text-align:right;font-family:var(--font-mono);white-space:nowrap}
-.pnl .big{font-size:15px;font-weight:500;color:var(--ink)}
+.pnl .big{font-size:13px;font-weight:500;color:var(--ink)}
 footer{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted);align-items:center}
 footer .sq{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border-radius:2px}
 footer a{color:var(--accent)}
@@ -196,11 +197,11 @@ SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="
 <span class="lab" id="t5${i}" style="bottom:5%;color:var(--muted)">5</span>
 <span class="lab" id="lh${i}" style="color:var(--pad-ink)"></span>
 <span class="lab" id="ll${i}" style="color:var(--pad-ink)"></span>
-<span class="lab" id="ls${i}" style="font-weight:500;color:var(--ink)"></span></div>
+<span class="lab" id="ls${i}" style="font-weight:500;color:var(--ink)"></span>
+<span class="labl" id="lb${i}"></span></div>
 <div class="info">
 <span>PFK limiti</span><span id="il${i}">—</span>
 <span>Anlık PFK</span><span id="ip${i}">—</span>
-<span>Ölü bant</span><span id="id${i}">—</span>
 <span>Pay ↓+↑</span><span id="ia${i}">—</span>
 <span>Koridor</span><span id="ik${i}">5–95 MWh</span>
 </div>
@@ -260,10 +261,10 @@ function render(){
     const P=resp(o.R,f);
     $('il'+i).textContent=o.R?'±'+o.R+' MW':'Yok';
     $('ip'+i).textContent=o.R?(P>0?'+':'')+n1(P)+' MW':'—';
-    const di=$('id'+i);
-    if(!o.R){di.textContent='—';di.style.color='var(--muted)';}
-    else if(inDB){di.textContent=o.db?'içinde, topluyor':'içinde';di.style.color='var(--live)';}
-    else{di.textContent='dışında';di.style.color='var(--ink)';}
+    const lb=$('lb'+i);lb.style.bottom=s+'%';
+    if(!o.R){lb.style.visibility='hidden';}
+    else{lb.style.visibility='visible';const st=inDB?(o.db?'içinde<br>topluyor':'içinde'):'dışında';
+      lb.innerHTML='<span style="color:var(--muted)">ölü bant</span><br><b style="font-weight:500;color:'+(inDB?'var(--live)':'var(--ink)')+'">'+st+'</b>';}
     $('ia'+i).textContent=o.R?n1(pad)+'+'+n1(pad)+' MWh':'—';
     $('ik'+i).textContent=o.R?Math.round(5+pad)+'–'+Math.round(95-pad)+' MWh':'5–95 MWh';
     const p=$('pi'+i),k=PILL[o.kind];p.style.background='var(--pill-'+k+'-bg)';p.style.color='var(--pill-'+k+'-ink)';
