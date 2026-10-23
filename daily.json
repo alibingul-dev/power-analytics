@@ -5,7 +5,7 @@
     "date": "2026-10-21",
     "min": -61.0,
     "spread": 12.6,
-    "wind": 166.3
+    "wind": 167.0
   },
   "d8": {
     "avg": 12.5,
@@ -47,7 +47,7 @@
     {
       "c": "b3",
       "k": "Solar",
-      "v": 14.4
+      "v": 14.5
     },
     {
       "c": "b2",
@@ -57,21 +57,21 @@
     {
       "c": "b4",
       "k": "Natural gas",
-      "v": 14.6
+      "v": 14.7
     },
     {
       "c": "muted",
       "k": "Other fossil",
-      "v": 36.4
+      "v": 36.3
     }
   ],
   "peak_demand_hour": 9,
-  "peak_demand_mwh": "45,097",
+  "peak_demand_mwh": "45,272",
   "renewable_pct": 49.0,
-  "solar_licensed_pct": 2.8,
+  "solar_licensed_pct": 2.9,
   "solar_rooftop_pct": 11.6,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-23T09:18:32Z",
+  "updated": "2026-10-23T20:44:26Z",
   "worst_hours": [
     {
       "cost": 995,
