@@ -539,5 +539,12 @@
     "kind": "gb_post2",
     "post_id": "urn:li:share:7519283558964862978",
     "source": "scheduled"
+  },
+  "2026-10-24#news": {
+    "analysis_date": "2026-10-24",
+    "at": "2026-10-24T14:33:51.684819Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7519768121629454336",
+    "source": "manual"
   }
 }
