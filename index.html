@@ -408,21 +408,17 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
       </div>
-      <a href="#tr-weekly"  data-view="tr-weekly"  style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
-      <a href="#tr-monthly" data-view="tr-monthly" style="--c:var(--b3)"><span class="bar"></span>Monthly</a>
-      <a href="#tr-yearly"  data-view="tr-yearly"  style="--c:var(--b4)"><span class="bar"></span>Yearly</a>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
     </div>
 
     <button class="grp" aria-expanded="true">GREAT BRITAIN<span class="chev"></span></button>
     <div class="items">
-      <a href="#gb-scorecard" data-view="gb-scorecard" style="--c:var(--b3)"><span class="bar"></span>Wind imbalance scorecard</a>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
   </div>
 
   <div class="ladder" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-  <div class="rail-foot">Built on EPİAŞ and Elexon open data.<br><a href="https://github.com/alibingul-dev">github.com/alibingul-dev</a></div>
+  <div class="rail-foot">Built on EPİAŞ and Elexon open data by Ali Bingül, short-term power trader in Istanbul.<br><a href="https://alibingul-dev.github.io/">About the author</a> · <a href="https://github.com/alibingul-dev">GitHub</a></div>
 </nav>
 
 <main>
@@ -431,6 +427,7 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view on" id="tr-netload">
   <div class="eyebrow">Türkiye, daily, published before the day-ahead result</div>
   <h1 id="d-title">Loading…</h1>
+  <p class="note-p" id="d-record" hidden></p>
   <p class="lede">Net load is the load plan with wind and solar taken out. It is what dispatchable plant actually has to cover, and it is the curve that decides which hours are tight.</p>
   <p class="note-p">Two series are published while the day-ahead market is still open: the load plan and the wind forecast. EPİAŞ publishes no solar forecast, so solar is shaped from the mean realised profile of the seven preceding days. Bands are quintiles of the last thirty days rather than of the target day, so a flat day reads as flat instead of being rescaled to look dramatic.</p>
 
@@ -650,39 +647,6 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 </section>
 
-<!-- ===== WEEKLY ===== -->
-<section class="view" id="tr-weekly">
-  <div class="eyebrow">Türkiye, weekly</div>
-  <h1>Weekly review</h1>
-  <p class="lede">Seven days is the shortest window where the difference between weather and structure starts to show.</p>
-  <div class="empty">
-    <strong>In preparation</strong>
-    The weekly view will carry three things the daily posts cannot: how the trough and the peak moved across the week rather than day to day, how much of the week's balancing bill fell on which hours, and whether the hours that ran short kept running short. A single day tells you the weather. A week starts to tell you the market.
-  </div>
-</section>
-
-<!-- ===== MONTHLY ===== -->
-<section class="view" id="tr-monthly">
-  <div class="eyebrow">Türkiye, monthly</div>
-  <h1>Monthly review</h1>
-  <p class="lede">A month is long enough to measure what a forecast error actually costs, plant by plant.</p>
-  <div class="empty">
-    <strong>In preparation</strong>
-    The monthly view will hold the imbalance work: the spread between day-ahead and balancing prices by hour of day, how often the settlement rules pushed a generator into the penalty branch, and the cost of that in lira per MWh. This is the same engine that produced the plant-level imbalance analysis for a 60 MW wind portfolio, applied to the market as a whole.
-  </div>
-</section>
-
-<!-- ===== YEARLY ===== -->
-<section class="view" id="tr-yearly">
-  <div class="eyebrow">Türkiye, yearly</div>
-  <h1>Yearly review</h1>
-  <p class="lede">Structural change is only visible at a year, and it is the only horizon where an investment decision lives.</p>
-  <div class="empty">
-    <strong>In preparation</strong>
-    The yearly view will track what changed rather than what happened: how the midday trough deepened as distributed solar grew, how many hours cleared below the penalty threshold, how the evening ramp steepened, and where the flexibility gap sits. These are the numbers that decide whether storage is worth building, and none of them can be read from a single day.
-  </div>
-</section>
-
 <!-- ===== ARCHIVE ===== -->
 <section class="view" id="tr-archive">
   <div class="eyebrow">Archive</div>
@@ -694,37 +658,6 @@ a.btn{display:inline-block;text-decoration:none}
       <thead><tr><th>Day analysed</th><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead>
       <tbody id="a-rows"><tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr></tbody>
     </table>
-  </div>
-</section>
-
-<!-- ===== GB SCORECARD ===== -->
-<section class="view" id="gb-scorecard">
-  <div class="eyebrow">Great Britain, monthly</div>
-  <h1>Wind Imbalance Scorecard</h1>
-  <p class="lede">Deviation from final physical notification, imbalance cost per MWh, and directional accuracy for every transmission-connected wind BMU in Great Britain.</p>
-  <p class="note-p">Built from Elexon Insights open data. The GB fleet publishes physical notifications and metered volumes per unit, which makes something possible that cannot be done in Türkiye: ranking generators by how well they manage their own imbalance, and separating the size of a forecast error from its direction.</p>
-
-  <div class="empty">
-    <strong>First report: September 2026</strong>
-    B1610 metered volumes publish five days after delivery, so the August scorecard runs in the second week of September.
-  </div>
-
-  <div class="panel" style="margin-top:22px">
-    <h2>Why direction matters more than accuracy</h2>
-    <p class="body">GB settles imbalance at a single price. A generator that comes in short when the system is short pays that price; a generator that comes in short when the system is long is paid. The same 2% deviation can therefore cost several times more for one unit than another, and the ranking by deviation size is not the ranking by cost.</p>
-    <p class="body">Türkiye settles at a dual price, where a deviation is valued at whichever of the day-ahead and balancing prices is worse for the generator. Direction carries no reward there, only the size of the error matters. That is the single largest difference between managing a portfolio on each side, and it is why the GB scorecard reports a column that has no Turkish equivalent.</p>
-  </div>
-
-  <div class="panel">
-    <h2>Method</h2>
-    <dl class="method">
-      <dt>DEVIATION</dt><dd>Metered volume minus FPN energy, per settlement period. FPN is a MW level, so energy is (levelFrom + levelTo) ÷ 2 × 0.5 h.</dd>
-      <dt>COST</dt><dd>Deviation × system price, summed over the month.</dd>
-      <dt>DIRECTION</dt><dd>A deviation is helpful when its sign is opposite to net imbalance volume.</dd>
-      <dt>SCOPE</dt><dd>Transmission-connected BMUs with fuel type WIND. Embedded wind sits outside the balancing mechanism. Units, not sites — Hornsea 2 reports as three BMUs.</dd>
-      <dt>TIMING</dt><dd>FPN is submitted at gate closure, one hour before delivery, so a low deviation reflects notification accuracy at gate closure rather than day-ahead forecast skill.</dd>
-      <dt>RUN TYPE</dt><dd>Interim settlement. Final reconciliation can move these figures.</dd>
-    </dl>
   </div>
 </section>
 
@@ -773,6 +706,12 @@ a.btn{display:inline-block;text-decoration:none}
     <p class="body">Under dual pricing every deviation is a loss, so the objective is simply to be accurate. Under a single price, being wrong in the direction the system needs is paid, so the objective changes: a portfolio can be deliberately short into a short system and earn from it. The same forecast error produces a penalty in one market and a payment in the other.</p>
     <p class="body">The price cap works the same way in reverse. A ceiling means scarcity stops being priced past a point, so the day-ahead market can clear at the cap for hours while real time settles far lower, which is exactly what happened in Türkiye on 26 August. Without a ceiling, GB lets the price go where the last accepted offer sits, and lets it go negative when there is too much.</p>
   </div>
+  <div class="panel">
+    <h2>Why direction matters more than accuracy</h2>
+    <p class="body">GB settles imbalance at a single price. A generator that comes in short when the system is short pays that price; a generator that comes in short when the system is long is paid. The same 2% deviation can therefore cost several times more for one unit than another, and the ranking by deviation size is not the ranking by cost.</p>
+    <p class="body">Türkiye settles at a dual price, where a deviation is valued at whichever of the day-ahead and balancing prices is worse for the generator. Direction carries no reward there, only the size of the error matters. That is the single largest difference between managing a portfolio on each side, and it is why the GB scorecard reports a column that has no Turkish equivalent.</p>
+  </div>
+
 </section>
 
 <div class="foot">
@@ -926,6 +865,11 @@ function renderMarket(d){
 function renderActual(j){
   const days=Object.values(j.days||{}).sort((a,b)=>b.date.localeCompare(a.date));
   const sm=j.summary||{};
+  const rec=document.getElementById("d-record");
+  if(rec&&sm.claims_total){
+    rec.innerHTML=`Track record: <strong>${sm.claims_held} of ${sm.claims_total}</strong> claims held over ${sm.days_checked} checked days (${Math.round(100*sm.claims_held/sm.claims_total)}%), misses included. <a href="#tr-actual">See every check</a>`;
+    rec.hidden=false;
+  }
   const figs=document.getElementById("x-figs");
   if(figs) figs.innerHTML=[
     {k:"Days checked",v:sm.days_checked??0,n:"outlooks verified after publication"},
