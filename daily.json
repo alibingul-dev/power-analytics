@@ -37,7 +37,7 @@
       "v": "1.4M"
     }
   ],
-  "fossil_pct": 52.3,
+  "fossil_pct": 52.4,
   "mix": [
     {
       "c": "b1",
@@ -47,7 +47,7 @@
     {
       "c": "b3",
       "k": "Solar",
-      "v": 13.9
+      "v": 13.8
     },
     {
       "c": "b2",
@@ -62,16 +62,16 @@
     {
       "c": "muted",
       "k": "Other fossil",
-      "v": 33.4
+      "v": 33.5
     }
   ],
   "peak_demand_hour": 18,
   "peak_demand_mwh": "42,469",
-  "renewable_pct": 47.7,
+  "renewable_pct": 47.6,
   "solar_licensed_pct": 2.8,
   "solar_rooftop_pct": 11.1,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-25T09:18:16Z",
+  "updated": "2026-10-25T09:32:24Z",
   "worst_hours": [
     {
       "cost": 527,
