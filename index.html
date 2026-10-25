@@ -1155,7 +1155,7 @@ function nativeNews(d){
 function postBody(e){
   let h="";
   if(e.data){if(e.kind==="gb_post1")h+=nativeGB1(e.data);else if(e.kind==="gb_post2")h+=nativeGB2(e.data);else if(e.kind==="news")h+=nativeNews(e.data)}
-  if(e.media)h+=panel("The clip","The animation that went out with the post. Tap to play.",`<div class="clip"><video controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  if(e.media)h+=panel("The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
   h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   return h;
@@ -1253,7 +1253,7 @@ function renderTRPage(vid,kind){
   if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;box.innerHTML="";return}
   gate.innerHTML=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
   let h="";
-  if(e.media)h+=panel("The clip","The animation that went out with the post. Tap to play.",`<div class="clip"><video controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  if(e.media)h+=panel("The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
   h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   box.innerHTML=h;
@@ -1607,6 +1607,17 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
     deferred.userChoice.finally(function(){deferred=null;btn.hidden=true;});
   });
   window.addEventListener("appinstalled",function(){btn.hidden=true;});
+})();
+</script>
+<script>
+/* clips marked data-auto play while on screen and pause when scrolled away */
+(function(){
+  if(!("IntersectionObserver" in window))return;
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){var v=en.target;
+    if(en.isIntersecting){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){})}else v.pause()})},{threshold:.25});
+  function scan(root){(root.querySelectorAll?root:document).querySelectorAll("video[data-auto]").forEach(function(v){if(!v._auto){v._auto=1;io.observe(v)}})}
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1){if(n.matches&&n.matches("video[data-auto]"))scan(n.parentNode);else scan(n)}})})}).observe(document.body,{childList:true,subtree:true});
+  scan(document);
 })();
 </script>
 </body>

@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
         s.setSupportMultipleWindows(false);
-        s.setMediaPlaybackRequiresUserGesture(true);
+        s.setMediaPlaybackRequiresUserGesture(false);  // the site's clips are muted and play on their own
         s.setUserAgentString(s.getUserAgentString() + " EnergyAnalyticsAndroid/" + BuildConfig.VERSION_NAME);
 
         web.setWebChromeClient(new WebChromeClient());
