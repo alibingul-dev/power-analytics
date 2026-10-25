@@ -16,7 +16,7 @@
   --pill-pfk-bg:#EEEDFE;--pill-pfk-ink:#3C3489;--pill-chg-bg:#E1F5EE;--pill-chg-ink:#085041;--pill-dis-bg:#FAECE7;--pill-dis-ink:#712B13;--pill-idle-bg:#F1EFE8;--pill-idle-ink:#444441;--pill-miss-bg:#FCEBEB;--pill-miss-ink:#791F1F;
   --font-display:'Archivo',system-ui,sans-serif;--font-body:'Source Sans 3',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
   --q2:#1F5FAF;--q3:#2A78D6;--q4:#2F95C8;--q5:#1FA6A0;--q6:#1BAF7A;--q7:#6FAE2E;--q8:#B8A000;--q9:#EDA100;--q10:#E87B24;--q11:#D9552B;--q12:#C2253C;
-  --r-s:6px;--r-m:10px;color-scheme:light;
+  --r-s:6px;--r-m:10px;color-scheme:light;--win:#0B6A8C;--on-win:#FFFFFF;
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0E1520;--ink:#E6EDF3;--muted:#93A1B3;--line:#263243;--card:#16202E;--accent:#38BDF8;--accent-soft:#0F2A3A;--live:#34D399;--warn:#FBBF24;--bad:#F43F5E;
@@ -93,13 +93,24 @@ main{display:grid;grid-template-columns:minmax(280px,26%) 1fr 240px;gap:10px;min
 .cv{position:relative;flex:1;min-height:70px}
 .cv canvas{position:absolute;inset:0;width:100%;height:100%}
 .bats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:8px;min-height:0}
-.bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
+.win{position:absolute;inset:0;z-index:5;background:var(--win);color:var(--on-win);border-radius:inherit;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 12px;animation:blink 1s ease-in-out infinite alternate}
+.win .wk{font-size:11px;opacity:.85}.win .wn{font-family:var(--font-display);font-weight:600;font-size:15px;line-height:1.2}
+.win .ws{font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.win .wv{font-family:var(--font-mono);font-size:16px;font-weight:500}
+.mc .win{padding:4px 8px;gap:1px}.mc .win .wn{font-size:12.5px}.mc .win .ws{-webkit-line-clamp:2;font-size:10.5px}.mc .win .wv{font-size:13px}
+.lead{position:absolute;left:52px;top:2px;z-index:2;background:var(--win);color:var(--on-win);font-size:11px;line-height:1.3;padding:2px 7px;border-radius:var(--r-s);animation:blink 1s ease-in-out infinite alternate;max-width:calc(100% - 60px)}
+.lead b{font-family:var(--font-mono);font-weight:500}
+@keyframes blink{from{opacity:1}to{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.win,.lead{animation:none}}
+.home{color:var(--accent);text-decoration:none;font-weight:600}.home:hover{text-decoration:underline}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0}
+.bc{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
 .bc.best{border:2px solid var(--accent)}
 .bats.all{display:flex;flex-direction:column;gap:3px}
 .fam{flex:1;display:flex;flex-direction:column;min-height:0}
 .fh{font-size:11.5px;color:var(--muted);margin:0 0 3px 2px}
 .fg{flex:1;display:grid;grid-auto-rows:minmax(0,1fr);gap:6px;min-height:0}
-.mc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;display:flex;flex-direction:column;gap:2px;min-height:0;min-width:0;overflow:hidden;font-size:11px;line-height:1.2}
+.mc{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;display:flex;flex-direction:column;gap:2px;min-height:0;min-width:0;overflow:hidden;font-size:11px;line-height:1.2}
 .mc>*{flex-shrink:0}
 .fam{flex-basis:0}
 .mc.best{border:2px solid var(--accent)}
@@ -152,7 +163,7 @@ footer a{color:var(--accent)}
 <div class="app">
 <header>
   <div>
-    <div class="sub" style="font-size:12px">BESS (Battery Energy Storage System): batarya enerji depolama sistemi</div>
+    <div class="sub" style="font-size:12px"><a class="home" href="./">← Power Analytics</a> · BESS: Battery Energy Storage System</div>
     <h1 id="ttl">Bir batarya, sekiz senaryo</h1>
     <div class="sub" id="tsub">Son 30 günün gerçek fiyatlarıyla aynı bataryanın dört stratejide ne kazandığı ve dört hata senaryosunda ne kaybettiği</div>
   </div>
@@ -211,7 +222,7 @@ footer a{color:var(--accent)}
     <div class="panel">
       <div class="ph"><span class="pt">Kümülatif PnL, 30 gün</span><span class="pc">milyon TL</span></div>
       <div class="lgd" id="pl8"></div>
-      <div class="cv"><canvas id="cS" role="img" aria-label="Senaryoların 30 günlük kümülatif PnL gelişimi"></canvas></div>
+      <div class="cv"><canvas id="cS" role="img" aria-label="Senaryoların 30 günlük kümülatif PnL gelişimi"></canvas><div class="lead" id="lead"></div></div>
     </div>
   </section>
   <section class="bats" id="bats"></section>
@@ -318,7 +329,7 @@ const CYK={
   dt:{p:'G',t:'DGP tahminli',R:0,lo:5,hi:95,dgp:false,guess:true,sub:n=>'Günde tam '+n+' satış saati, saatler PTF ile seçilir. Dün aynı saatte sistem uygun yöndeyse DGP teklifi verilir; yön tutmazsa talimat gelmez, işlem olmaz.'}};
 const mkCyc=v=>(i,S0)=>{setDay(i);const K=CYK[v];return NS.map((n,j)=>{const s0=S0?S0[j]:50;let act=cycPlan(n,K.lo,K.hi,K.dgp,s0);
   if(K.guess&&i>0){const pl=act,yd=DAYS[i-1];act=(h,s)=>{const a=pl(h,s);if(!a)return a;const up=a[0]>s;return [a[0],(up?yd.smf[h]<yd.ptf[h]:yd.smf[h]>yd.ptf[h])?'g':'p'];};}
-  const sc=sim(K.p+n+' · '+n+' çevrim',K.sub(n),h=>K.R,act,{s0});sc.fam=v;
+  const sc=sim(K.p+n+' · Günlük '+n+' çevrim',K.sub(n),h=>K.R,act,{s0});sc.fam=v;
   sc.col='--q'+n;sc.dash=false;sc.n=n;sc.st=cycStat(sc);return sc;});};
 function buildDay(i,S0){const o=(k,x)=>Object.assign({s0:S0?S0[k]:50},x||{});
   setDay(i);
@@ -375,7 +386,7 @@ function drawCharts(cur){
   chart($('cK'),[{data:PFK,color:'--c-pfk'}],{min:0,max:Math.max(1200,Math.ceil(Math.max(...PFK)/400)*400),ticks:[0,400,800,1200,1600,2000,2400,2800,3200].filter(t=>t<=Math.max(1200,Math.ceil(Math.max(...PFK)/400)*400)),fmt:v=>String(v),xstep:3,step:true,cursor:cur});
   chart($('cF'),[{data:F,color:'--c-freq',w:1}],{min:49.8,max:50.2,ticks:[49.8,49.9,50,50.1,50.2],fmt:v=>v.toFixed(1).replace('.',','),xstep:3,band:[49.99,50.01],cursor:cur});
   const xl=[];DAYS.forEach((d,i)=>{if(i%7===0&&i<DAYS.length-3||i===DAYS.length-1)xl.push([i+1,d.date.slice(8)+'.'+d.date.slice(5,7)]);});
-  const M=MC[VIEW];
+  const M=MC[VIEW];{const d=DI+1;let bi=0;M.cum.forEach((a,i)=>{if(a[d]>M.cum[bi][d])bi=i;});$('lead').innerHTML='Lider, '+fmtD(DAYS[DI].date).slice(0,5)+' itibarıyla: '+SC[bi].name+' · <b>'+fmt(M.cum[bi][d])+'</b>';}
   chart($('cS'),M.cum.map((a,i)=>({data:a,color:SC[i].col,w:VIEW==='all'?1.1:SC[i].dash?1.6:2,dash:SC[i].dash?[5,3]:[]})),{n:DAYS.length+1,min:M.min,max:M.max,ticks:M.ticks,fmt:v=>(v/1e6).toLocaleString('tr-TR')+' mn',xlab:xl,cursorX:DI+1,zero:true});
   if(isCyc(VIEW))drawCyc();
 }
@@ -391,11 +402,11 @@ function infoHTML(i){return VIEW==='st'?`<span>PFK limiti</span><span id="il${i}
 function cycInfo(){if(!isCyc(VIEW))return;SC.forEach((sc,i)=>{$('ef'+i).textContent=n1(sc.st.efc);$('ob'+i).textContent=Math.round(sc.st.pb).toLocaleString('tr-TR')+' TL';$('os'+i).textContent=Math.round(sc.st.ps).toLocaleString('tr-TR')+' TL';});}
 function buildMini(){box.innerHTML='';box.classList.add('all');let i=0;
   FAMS.forEach(v=>{const sec=document.createElement('div');sec.className='fam';sec.style.flexGrow=v==='st'?1.95:1;sec.innerHTML='<div class="fh">'+FAMT[v]+'</div><div class="fg" style="grid-template-columns:repeat('+(v==='st'?4:6)+',minmax(0,1fr))"></div>';const g=sec.lastChild;
-    SC.forEach((sc,k)=>{if(sc.fam!==v)return;const id=sc.name.split(' · ')[0],ds=sc.short||sc.name.split(' · ')[1];
+    SC.forEach((sc,k)=>{if(sc.fam!==v)return;const id=sc.name.split(' · ')[0],ds=sc.short||(sc.n+' çevrim/gün');
       g.insertAdjacentHTML('beforeend',`<article class="mc" id="bx${k}" title="${sc.name}: ${sc.sub}">
-<div class="mh"><span class="mn"><span class="dot" style="background:var(${sc.col})"></span><b>${id}</b> ${v==='st'?ds:''}</span><span class="ms" id="ls${k}">—</span></div>
+<div class="mh"><span class="mn"><span class="dot" style="background:var(${sc.col})"></span><b>${id}</b> ${ds}</span></div>
 <div class="hb"><div class="z" style="left:0;width:5%;background:var(--dead);z-index:1"></div><div class="z" style="left:95%;width:5%;background:var(--dead);z-index:1"></div><div class="z" id="wa${k}" style="left:0;background:var(--soc)"></div><div class="z" id="dn${k}" style="background:var(--pad-dn)"></div><div class="z" id="up${k}" style="background:var(--pad-up);border:1px dashed var(--pad-edge)"></div><div class="z" id="ln${k}" style="width:2px;background:var(--marker)"></div></div>
-<div class="ma" id="pi${k}">—</div>
+<div class="mrow"><div class="ma" id="pi${k}">—</div><span class="ms" id="ls${k}">—</span></div>
 <div class="mr mpn"><span>PnL</span><span id="pn${k}">0 TL</span></div>
 <div class="mr"><span>Satış</span><span id="sa${k}" style="color:var(--live)">0 TL</span></div>
 <div class="mr"><span>Alış</span><span id="al${k}" style="color:var(--bad)">0 TL</span></div></article>`);});
@@ -466,7 +477,7 @@ let h=0,frac=0,hold=0,run=true,last=performance.now(),cum,cs,cb,cp,done=false,la
 function reset(){$('log').innerHTML='';logN=0;userScrolled=false;$('lgd').textContent=fmtD(DAYS[DI].date)+' · simülasyon saati';
   logAdd('00:00',DI===0?'Gün başladı. İlk gün, tüm bataryalar SoC 50 MWh.':'Gün başladı. SoC önceki günün kapanışından devraldı: '+SC.map(sc=>sc.name.split(' · ')[0]+' '+Math.round(sc.soc[0])).join(', ')+' MWh.','sum');logHour(0);
   h=0;frac=0;hold=0;endWait=0;const N=SC.length;cum=Array(N).fill(0);cs=Array(N).fill(0);cb=Array(N).fill(0);cp=Array(N).fill(0);done=false;lastM=-1;
-  SC.forEach((s,i)=>$('bx'+i).classList.remove('best'));render();}
+  SC.forEach((s,i)=>$('bx'+i).classList.remove('best'));const ow=$('win');if(ow)ow.remove();render();}
 const place=(id,pct,txt,show)=>{const e=$(id);e.style.bottom=pct+'%';e.textContent=txt;e.style.visibility=show?'visible':'hidden';};
 function render(){
   const m=Math.min(1439,h*60+Math.floor(frac*60));const f=F[m];const inDB=Math.abs(f-50)<0.01;
@@ -510,10 +521,13 @@ function render(){
   });
   if(m!==lastM){drawCharts(h+frac);lastM=m;}
 }
-function finish(){done=true;endWait=2500;const best=cum.indexOf(Math.max(...cum));
+function finish(){done=true;endWait=6000;const best=cum.indexOf(Math.max(...cum));
   logAdd('24:00','Gün bitti. Günlük sıralama'+(VIEW==='all'?' (ilk 10)':'')+':','sum');
   SC.map((sc,i)=>[cum[i],i]).sort((a,b)=>b[0]-a[0]).slice(0,VIEW==='all'?10:99).forEach(([v,i],r)=>logAdd((r+1)+'.',tag(i)+fmt(v),r===0?'sum':'',i));
-  SC.forEach((sc,i)=>$('bx'+i).classList.toggle('best',i===best));render();}
+  SC.forEach((sc,i)=>$('bx'+i).classList.toggle('best',i===best));render();
+  const b=SC[best],w=document.createElement('div');w.className='win';w.id='win';
+  w.innerHTML='<div class="wk">Günün en iyisi · '+fmtD(DAYS[DI].date)+'</div><div class="wn">'+b.name+'</div><div class="ws">'+b.sub+'</div><div class="wv">'+(cum[best]>=0?'+':'')+fmt(cum[best])+'</div>';
+  $('bx'+best).appendChild(w);}
 function tick(now){const dt=Math.max(0,Math.min(250,now-last));last=now;
   if(run&&done&&$('lp').checked){endWait-=dt;if(endWait<=0)reset();}
   else if(run&&!done){const D=3000/(+$('sp').value);
