@@ -42,7 +42,7 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 .brand{padding:24px 20px 18px;border-bottom:1px solid var(--line)}
 .back{display:inline-block;font-size:12.5px;color:var(--muted);text-decoration:none;margin-bottom:12px}
 .back:hover{color:var(--text)}
-.in-app .back{display:none}
+.in-app .back,.in-app .back-top{display:none!important}
 #d-record a{color:var(--text)}
 .brand .name{font-family:var(--font-display);font-weight:800;font-size:17px;line-height:1.2}
 .brand .role{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
@@ -749,12 +749,7 @@ a.btn{display:inline-block;text-decoration:none}
   <h1>Published analysis</h1>
   <p class="lede">Every post, indexed by the day it analyses.</p>
   <p class="note-p">The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date. Market analysis covers a closed day.</p>
-  <div class="panel">
-    <table>
-      <thead><tr><th>Day analysed</th><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead>
-      <tbody id="a-rows"><tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr></tbody>
-    </table>
-  </div>
+  <div id="a-rows"><p class="note-p">Loading…</p></div>
 </section>
 
 <section class="view" id="tr-news">
@@ -918,15 +913,28 @@ function renderDaily(d){
 }
 
 function renderArchive(rows){
-  const body=document.getElementById("a-rows");
-  if(!rows.length){body.innerHTML='<tr><td colspan="4" style="color:var(--muted)">Nothing published yet.</td></tr>';return}
+  const box=document.getElementById("a-rows");
+  if(!rows.length){box.innerHTML='<p class="note-p">Nothing published yet.</p>';return}
   const short=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-  body.innerHTML=rows.map(r=>{
-    const id=(r.post_id||"").replace("urn:li:share:","");
-    const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
-    const kind={post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook",news:"Energy news"}[r.kind]||"Market analysis";
-    return `<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
-  }).join("");
+  const KIND={post1:"Market analysis",post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook",news:"Energy news"};
+  const ORD={post1:0,post2:1,news:2,gb_post1:3,gb_post2:4};
+  /* one folder per day analysed, newest first; folders grouped under month headings */
+  const byDay={};rows.forEach(r=>{(byDay[r.analysis_date]=byDay[r.analysis_date]||[]).push(r)});
+  const days=Object.keys(byDay).sort().reverse();
+  let h="",month="";
+  days.forEach((d,n)=>{
+    const dt=new Date(d+"T00:00:00");
+    const m=dt.toLocaleDateString("en-GB",{month:"long",year:"numeric"});
+    if(m!==month){if(month)h+="</div>";h+=`<div class="wkday"><h2>${m}</h2>`;month=m}
+    const its=byDay[d].sort((a,b)=>(ORD[a.kind]??0)-(ORD[b.kind]??0));
+    const tags=its.map(r=>`<span class="tag">${KIND[r.kind]||"Market analysis"}</span>`).join(" ");
+    const list=its.map(r=>{
+      const id=(r.post_id||"").replace("urn:li:share:","");
+      const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
+      return `<tr><td><span class="tag">${KIND[r.kind]||"Market analysis"}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`}).join("");
+    h+=`<details class="wk"${n===0?" open":""}><summary><b>${dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span class="hk">${its.length} post${its.length>1?"s":""}</span><span>${tags}</span></summary><div class="wkb"><table><thead><tr><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead><tbody>${list}</tbody></table></div></details>`;
+  });
+  box.innerHTML=h+(month?"</div>":"");
 }
 
 /* collapsible groups */
