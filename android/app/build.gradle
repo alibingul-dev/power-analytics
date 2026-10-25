@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'dev.alibingul.poweranalytics'
+    namespace 'ai.baseload.energyanalytics'
     compileSdk 36
 
     defaultConfig {
-        applicationId 'dev.alibingul.poweranalytics'
+        applicationId 'ai.baseload.energyanalytics'
         minSdk 24
         targetSdk 36
         // CI passes a number that only ever grows

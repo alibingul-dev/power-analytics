@@ -74,12 +74,12 @@ jobs:
       - name: Name the file
         run: |
           mkdir out
-          cp android/app/build/outputs/bundle/release/app-release.aab "out/PowerAnalytics-v${VERSION_NAME}-vc${{ github.run_number }}.aab"
+          cp android/app/build/outputs/bundle/release/app-release.aab "out/EnergyAnalytics-v${VERSION_NAME}-vc${{ github.run_number }}.aab"
           rm -f "$RUNNER_TEMP/upload.keystore"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: PowerAnalytics-aab-${{ github.run_number }}
+          name: EnergyAnalytics-aab-${{ github.run_number }}
           path: out/*.aab
           retention-days: 30
 

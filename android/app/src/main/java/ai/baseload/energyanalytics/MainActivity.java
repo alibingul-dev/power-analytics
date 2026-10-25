@@ -1,4 +1,4 @@
-package dev.alibingul.poweranalytics;
+package ai.baseload.energyanalytics;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
         s.setSupportMultipleWindows(false);
         s.setMediaPlaybackRequiresUserGesture(true);
-        s.setUserAgentString(s.getUserAgentString() + " PowerAnalyticsAndroid/" + BuildConfig.VERSION_NAME);
+        s.setUserAgentString(s.getUserAgentString() + " EnergyAnalyticsAndroid/" + BuildConfig.VERSION_NAME);
 
         web.setWebChromeClient(new WebChromeClient());
         web.setWebViewClient(new WebViewClient() {
