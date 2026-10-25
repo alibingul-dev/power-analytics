@@ -117,7 +117,31 @@ td.num{font-family:var(--font-mono)}
 tr:last-child td{border-bottom:0}
 a.post{color:var(--b1);text-decoration:none}
 a.post:hover{text-decoration:underline}
-.li-embed iframe{display:block;width:100%;max-width:560px;height:720px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
+.pday{font-size:13px;color:var(--muted);margin:0 0 18px}
+.pday b{color:var(--text);font-weight:600}
+.posttext{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--text);max-width:66ch;margin:0}
+.clip video{display:block;width:100%;max-width:720px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--frame)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:var(--r-xs);margin-right:6px;vertical-align:-1px}
+.ncards{display:grid;gap:12px}
+.ncard{border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px;background:var(--surface-2)}
+.ncard .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.ncard .tg{font-size:13px;color:var(--muted)}
+.ncard .big{font-family:var(--font-mono);font-size:26px;margin:6px 0 4px}
+.ncard .big small{font-size:14px;color:var(--muted);margin-left:6px}
+.ncard p{margin:4px 0 0;font-size:14.5px;max-width:70ch}
+.ncard .why{color:var(--muted)}
+.dir{font-size:12px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--line);white-space:nowrap}
+.dir.up{color:var(--b5);border-color:var(--b5)}.dir.down{color:var(--b2);border-color:var(--b2)}.dir.flat{color:var(--muted)}
+.wkday{margin:0 0 26px}
+.wkday h2{font-size:18px;margin:0 0 10px}
+details.wk{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:10px}
+details.wk>summary{cursor:pointer;list-style:none;padding:14px 18px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+details.wk>summary::-webkit-details-marker{display:none}
+details.wk>summary .hk{color:var(--muted);font-size:14px;flex:1 1 280px}
+details.wk[open]>summary{border-bottom:1px solid var(--line)}
+details.wk .wkb{padding:18px}
+details.wk .wkb .panel{background:var(--bg)}
 .tag{font-family:var(--font-body);font-size:11px;padding:2px 7px;border-radius:var(--r-s);border:1px solid var(--line);color:var(--muted)}
 .ok{color:var(--b2)} .bad{color:var(--b5)}
 
@@ -428,6 +452,10 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
         <a href="#tr-news"    data-view="tr-news"    style="--c:var(--b1)"><span class="bar"></span>Energy news</a>
       </div>
+      <button class="sub" aria-expanded="true">Weekly<span class="chev"></span></button>
+      <div class="leaves">
+        <a href="#tr-weekly" data-view="tr-weekly" style="--c:var(--b2)"><span class="bar"></span>Last seven post days</a>
+      </div>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves">
@@ -441,6 +469,10 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="leaves">
         <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
         <a href="#gb-outlook"  data-view="gb-outlook"  style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
+      </div>
+      <button class="sub" aria-expanded="true">Weekly<span class="chev"></span></button>
+      <div class="leaves">
+        <a href="#gb-weekly" data-view="gb-weekly" style="--c:var(--b2)"><span class="bar"></span>Last seven post days</a>
       </div>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
@@ -691,60 +723,43 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <section class="view" id="tr-news">
-  <div class="eyebrow">Türkiye, daily energy news</div>
+  <div class="eyebrow">Türkiye, daily, today's post</div>
   <h1>Energy news</h1>
-  <p class="lede">The day's energy headlines from Türkiye in one short post, in Turkish and English.</p>
-  <p class="note-p">Only news that can move power prices or the grid makes the cut. Each post is checked against its sources before it goes out.</p>
-  <div class="panel">
-    <h2 id="tr-news-t">Latest post</h2>
-    <p class="note" id="tr-news-n">Loading…</p>
-    <div class="li-embed" id="tr-news-e"></div>
-  </div>
-  <div class="panel">
-    <h2>Earlier posts</h2>
-    <table>
-      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
-      <tbody id="tr-news-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
-    </table>
-  </div>
+  <p class="lede">The energy headlines from Türkiye that can move the power price, with what each one means.</p>
+  <p class="note-p">Only news that has a path to the electricity price makes the cut. Each item says which way it pushes the price and why. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
+  <div id="tr-news-body"><p class="note-p">Loading…</p></div>
+</section>
+
+<section class="view" id="tr-weekly">
+  <div class="eyebrow">Türkiye, weekly</div>
+  <h1>Last seven post days</h1>
+  <p class="lede">Every Türkiye post from the last seven post days: the day-end scorecard, the net load outlook and the energy news.</p>
+  <p class="note-p">Today's posts are under Daily. This page holds the seven days before today that had at least one post. Days without a post are skipped, so the list can reach back further than a calendar week. Open a post to see its chart, its clip and the full text.</p>
+  <div id="tr-weekly-body"><p class="note-p">Loading…</p></div>
 </section>
 
 <section class="view" id="gb-analysis">
-  <div class="eyebrow">Great Britain, daily, closed day</div>
+  <div class="eyebrow">Great Britain, daily, today's post</div>
   <h1>Market analysis</h1>
-  <p class="lede">What happened in the British power market yesterday, compared with the same day a week earlier.</p>
-  <p class="note-p">The system price is what generators pay or receive for being out of balance. Energy by fuel shows which sources kept the lights on.</p>
-  <div class="panel">
-    <h2 id="gb-analysis-t">Latest post</h2>
-    <p class="note" id="gb-analysis-n">Loading…</p>
-    <div class="li-embed" id="gb-analysis-e"></div>
-  </div>
-  <div class="panel">
-    <h2>Earlier posts</h2>
-    <table>
-      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
-      <tbody id="gb-analysis-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
-    </table>
-  </div>
+  <p class="lede">What happened in the British power market on the closed day: the price, and which sources kept the lights on.</p>
+  <p class="note-p">The system price is what a generator or supplier pays or receives for every MWh it is out of balance. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
+  <div id="gb-analysis-body"><p class="note-p">Loading…</p></div>
 </section>
 
 <section class="view" id="gb-outlook">
-  <div class="eyebrow">Great Britain, daily, before the day starts</div>
+  <div class="eyebrow">Great Britain, daily, today's post</div>
   <h1>Day-ahead outlook</h1>
-  <p class="lede">How tomorrow looks for British power before it happens, led by the wind forecast.</p>
-  <p class="note-p">Wind is the swing source in Great Britain: a windy day pushes prices down, a still day pushes them up. Read it as an outlook, not a promise.</p>
-  <div class="panel">
-    <h2 id="gb-outlook-t">Latest post</h2>
-    <p class="note" id="gb-outlook-n">Loading…</p>
-    <div class="li-embed" id="gb-outlook-e"></div>
-  </div>
-  <div class="panel">
-    <h2>Earlier posts</h2>
-    <table>
-      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
-      <tbody id="gb-outlook-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
-    </table>
-  </div>
+  <p class="lede">How much wind Great Britain expects tomorrow, hour by hour, before the day starts.</p>
+  <p class="note-p">Wind is the source that swings most in Great Britain: a windy hour usually means cheaper power, a still hour dearer. This is the system operator's own forecast, not a promise. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
+  <div id="gb-outlook-body"><p class="note-p">Loading…</p></div>
+</section>
+
+<section class="view" id="gb-weekly">
+  <div class="eyebrow">Great Britain, weekly</div>
+  <h1>Last seven post days</h1>
+  <p class="lede">Every Great Britain post from the last seven post days: the closed-day analysis and the day-ahead wind outlook.</p>
+  <p class="note-p">Today's posts are under Daily. This page holds the seven days before today that had at least one post. Days without a post are skipped, so the list can reach back further than a calendar week. Open a post to see its chart, its clip and the full text.</p>
+  <div id="gb-weekly-body"><p class="note-p">Loading…</p></div>
 </section>
 
 <!-- ===== GB STRUCTURE ===== -->
@@ -1005,24 +1020,138 @@ const sd=d=>fmtDate(d,{day:"numeric",month:"short"});
 function num(x){const n=typeof x==="number"?x:parseFloat(String(x||"").replace(/,/g,""));return isNaN(n)?null:n}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
-/* ---------- series pages: GB post1, GB post2, News (fed by published.json) ---------- */
-function renderSeries(vid,kind,all){
-  const rows=all.filter(r=>r.kind===kind&&r.post_id);
-  const n=document.getElementById(vid+"-n"),e=document.getElementById(vid+"-e"),b=document.getElementById(vid+"-rows");
-  const short=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-  const url=r=>"https://www.linkedin.com/feed/update/"+r.post_id;
-  if(!rows.length){n.textContent="Nothing published yet.";b.innerHTML='<tr><td colspan="3" style="color:var(--muted)">Nothing published yet.</td></tr>';return}
-  const top=rows[0];
-  document.getElementById(vid+"-t").textContent=fmtDate(top.analysis_date);
-  n.innerHTML=`The newest post, shown as it appears on LinkedIn. If it does not load, <a class="post" href="${url(top)}" target="_blank" rel="noopener">open it on LinkedIn ↗</a>.`;
-  e.innerHTML=`<iframe src="https://www.linkedin.com/embed/feed/update/${esc(top.post_id)}" title="LinkedIn post" loading="lazy" allowfullscreen></iframe>`;
-  const rest=rows.slice(1);
-  b.innerHTML=rest.length?rest.map(r=>`<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url(r)}" target="_blank" rel="noopener">open ↗</a></td></tr>`).join(""):'<tr><td colspan="3" style="color:var(--muted)">Only one post so far.</td></tr>';
+/* ---------- post pages: Daily (today, UTC) and Weekly (last 7 post days before today), fed by feed.json ---------- */
+const FEED={items:[]};
+const PK={post1:"Day-end scorecard",post2:"Net load outlook",news:"Energy news",gb_post1:"Market analysis",gb_post2:"Day-ahead wind outlook"};
+const PORDER={post1:0,post2:1,news:2,gb_post1:0,gb_post2:1};
+const utcToday=()=>new Date().toISOString().slice(0,10);
+const gbp=v=>"£"+(Math.round(v*100)/100).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+const mw=v=>Math.round(v).toLocaleString("en-GB")+" MW";
+
+function hookOf(t){
+  const ls=(t||"").split("\n").map(x=>x.trim()).filter(Boolean);
+  if(!ls.length)return "";
+  return ls[0].includes(" · ")&&ls[1]?ls[1]:ls[0];
 }
-fetch("published.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
-  const all=Object.entries(j).map(([d,v])=>({...v,analysis_date:v.analysis_date||d.split("#")[0]})).sort((a,b)=>(b.analysis_date+(b.at||"")).localeCompare(a.analysis_date+(a.at||"")));
-  renderSeries("tr-news","news",all);renderSeries("gb-analysis","gb_post1",all);renderSeries("gb-outlook","gb_post2",all);
-}).catch(()=>["tr-news","gb-analysis","gb-outlook"].forEach(v=>{const n=document.getElementById(v+"-n");if(n)n.textContent="Could not load the post list."}));
+function axisY(lo,hi){const span=hi-lo||1,raw=span/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),st=[1,2,2.5,5,10].map(m=>m*mag).find(m=>m>=raw);const a=Math.floor(lo/st)*st,b=Math.ceil(hi/st)*st,t=[];for(let v=a;v<=b+st/2;v+=st)t.push(+v.toFixed(6));return t}
+function frame(W,H,L,R,T,B,ticks,yfmt,labels,every){
+  const y=v=>T+(H-T-B)*(1-(v-ticks[0])/(ticks[ticks.length-1]-ticks[0]||1));
+  const x=i=>L+(W-L-R)*(labels.length>1?i/(labels.length-1):.5);
+  let g=ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--font-mono)">${yfmt(v)}</text>`).join("");
+  labels.forEach((l,i)=>{if(i%every===0)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--font-mono)">${esc(l)}</text>`});
+  return {y,x,g};
+}
+function segs(ok){const out=[];let cur=null;ok.forEach((v,i)=>{if(v){if(!cur){cur=[];out.push(cur)}cur.push(i)}else cur=null});return out}
+function pLine(vals,labels,o){
+  const ok=vals.map(v=>v!=null),nv=vals.filter(v=>v!=null);
+  const W=900,H=o.h||250,L=64,R=16,T=16,B=30,lo=Math.min(0,...nv),hi=Math.max(...nv),tk=axisY(lo,hi);
+  const f=frame(W,H,L,R,T,B,tk,o.yfmt,labels,o.every||6);
+  const d=segs(ok).map(sg=>sg.map((i,k)=>(k?"L":"M")+f.x(i).toFixed(1)+","+f.y(vals[i]).toFixed(1)).join("")).join("");
+  const iMin=vals.indexOf(Math.min(...nv)),iMax=vals.indexOf(Math.max(...nv));
+  const dot=(i,lab,up)=>`<circle cx="${f.x(i)}" cy="${f.y(vals[i])}" r="4.5" fill="var(--bg)" stroke="${o.color}" stroke-width="2"/><text x="${Math.min(W-R-4,Math.max(L+4,f.x(i)))}" y="${f.y(vals[i])+(up?-10:20)}" text-anchor="middle" font-size="12.5" fill="var(--text)" font-family="var(--font-mono)">${lab}</text>`;
+  const zero=lo<0?`<line x1="${L}" x2="${W-R}" y1="${f.y(0)}" y2="${f.y(0)}" stroke="var(--muted)" stroke-dasharray="3 4"/>`:"";
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label)}">${f.g}${zero}<path d="${d}" fill="none" stroke="${o.color}" stroke-width="2.4" stroke-linejoin="round"/>${dot(iMax,o.yfmt(vals[iMax])+" at "+labels[iMax],true)}${dot(iMin,o.yfmt(vals[iMin])+" at "+labels[iMin],false)}</svg>`;
+}
+function pStack(series,labels,o){
+  const W=900,H=o.h||260,L=64,R=16,T=16,B=30,n=labels.length;
+  const ok=labels.map((_,i)=>series.every(s=>s.vals[i]!=null));
+  const tot=labels.map((_,i)=>series.reduce((a,s)=>a+Math.max(0,s.vals[i]||0),0));
+  const tk=axisY(0,Math.max(...tot)),f=frame(W,H,L,R,T,B,tk,v=>(v/1000)+"k",labels,o.every||6);
+  let base=new Array(n).fill(0),out="";
+  series.forEach(s=>{
+    const top=base.map((b,i)=>b+Math.max(0,s.vals[i]||0));
+    segs(ok).forEach(sg=>{
+      const up=sg.map(i=>f.x(i).toFixed(1)+","+f.y(top[i]).toFixed(1)).join(" L");
+      const dn=sg.map(i=>f.x(i).toFixed(1)+","+f.y(base[i]).toFixed(1)).reverse().join(" L");
+      out+=`<path d="M${up} L${dn} Z" fill="${s.color}" fill-opacity=".78" stroke="none"><title>${esc(s.name)}</title></path>`;
+    });
+    base=top;
+  });
+  const miss=labels.filter((_,i)=>!ok[i]);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label)}">${f.g}${out}</svg>`+
+    `<div class="legend">${series.slice().reverse().map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("")}${miss.length?`<span>Gap: no source data at ${miss.map(esc).join(", ")}</span>`:""}</div>`;
+}
+function pBars(vals,labels,lo,hi,o){
+  const W=900,H=o.h||250,L=64,R=16,T=16,B=30,n=vals.length,tk=axisY(0,Math.max(...vals));
+  const f=frame(W,H,L,R,T,B,tk,v=>(v/1000)+"k",labels,3);
+  const bw=(W-L-R)/n*.7;
+  const bars=vals.map((v,i)=>{const c=(i>=lo&&i<lo+3)?"var(--b1)":(i>=hi&&i<hi+3)?"var(--b4)":"var(--muted)";
+    return `<rect x="${(f.x(i)-bw/2).toFixed(1)}" y="${f.y(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(f.y(0)-f.y(v)).toFixed(1)}" rx="2" fill="${c}" fill-opacity="${c==="var(--muted)"?.45:.95}"><title>${esc(labels[i])}: ${mw(v)}</title></rect>`}).join("");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label)}">${f.g}${bars}</svg>`+
+    `<div class="legend"><span><i style="background:var(--b1)"></i>Lowest three hours</span><span><i style="background:var(--b4)"></i>Highest three hours</span></div>`;
+}
+const fig=(k,v,n)=>`<div class="fig"><div class="k">${k}</div><div class="v">${v}</div><div class="n">${n}</div></div>`;
+const panel=(h,note,body)=>`<div class="panel"><h2>${h}</h2>${note?`<p class="note">${note}</p>`:""}${body}</div>`;
+
+function nativeGB1(d){
+  const p=d.price,t=d.t,F=d.fuels,n=p.length,pv=p.filter(v=>v!=null);
+  const iMin=p.indexOf(Math.min(...pv)),iMax=p.indexOf(Math.max(...pv)),avg=pv.reduce((a,b)=>a+b,0)/(pv.length||1);
+  const sum=a=>a.reduce((x,y)=>x+Math.max(0,y),0),all=Object.values(F).reduce((a,v)=>a+sum(v),0)||1;
+  const short=d.niv.filter(v=>v!=null&&v>0).length;
+  const other=t.map((_,i)=>(F.biomass[i]||0)+(F.hydro[i]||0)+(F.ps[i]||0)+(F.other[i]||0));
+  const series=[{name:"Nuclear",color:"var(--b1)",vals:F.nuclear},{name:"Wind",color:"var(--b2)",vals:F.wind},{name:"Solar",color:"var(--b3)",vals:F.solar},{name:"Gas",color:"var(--b4)",vals:F.gas},{name:"Biomass, hydro, storage and other",color:"var(--muted)",vals:other}];
+  return `<div class="figs">${fig("Average system price",gbp(avg),"Mean over the day's "+n+" half hours, per MWh")}${fig("Lowest price",gbp(p[iMin]),"At "+t[iMin]+" (UK time)")}${fig("Highest price",gbp(p[iMax]),"At "+t[iMax]+" (UK time)")}${fig("Wind share",Math.round(sum(F.wind)/all*100)+"%","Of metered generation over the day")}${fig("System short",short+" of "+n,"Half hours when the grid needed more power than was scheduled")}</div>`+
+    panel("System price through the day","How to read: each point is one half hour. Higher means being out of balance cost more. The two marked points are the day's floor and ceiling.",pLine(p,t,{color:"var(--b1)",yfmt:v=>"£"+Math.round(v),label:"System price by half hour",every:8}))+
+    panel("What generated the power","How to read: the stacked layers add up to the metered output in each half hour, in MW. Most solar in Great Britain sits behind the meter, so it shows up as lower demand rather than as a big yellow layer.",pStack(series,t,{label:"Generation by fuel",every:8}));
+}
+function nativeGB2(d){
+  const v=d.mw,t=d.t,n=v.length;if(n<3)return "";
+  const tot=v.slice(0,n-2).map((_,i)=>v[i]+v[i+1]+v[i+2]),lo=tot.indexOf(Math.min(...tot)),hi=tot.indexOf(Math.max(...tot));
+  const avg=v.reduce((a,b)=>a+b,0)/n,mn=Math.min(...v),mx=Math.max(...v);
+  const pt=new Date(d.publish_time);
+  return `<div class="figs">${fig("Lowest three hours",t[lo]+"–"+t[lo+2].slice(0,3)+"59",mw(Math.min(...v.slice(lo,lo+3)))+" to "+mw(Math.max(...v.slice(lo,lo+3))))}${fig("Highest three hours",t[hi]+"–"+t[hi+2].slice(0,3)+"59",mw(Math.min(...v.slice(hi,hi+3)))+" to "+mw(Math.max(...v.slice(hi,hi+3))))}${fig("Swing",mw(mx-mn),"Distance from the lowest hour to the highest")}${fig("Day average",mw(avg),"Mean of the "+n+" hourly readings")}</div>`+
+    panel("Expected wind, hour by hour","How to read: each bar is the forecast wind output for one hour, UK time. Blue marks the three hours with the least wind in total, orange the three with the most. Forecast published "+pt.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"UTC"})+" UTC.",pBars(v,t,lo,hi,{label:"Wind forecast by hour"}));
+}
+function dirChip(it){
+  const s=it.signal||{},d=it.direction||"flat",lab=s.dir_en&&s.dir_en!=="-"?s.dir_en:(d==="up"?"Up":d==="down"?"Down":"No effect");
+  return `<span class="dir ${d}">${esc(lab)}${s.type_en&&s.type_en!=="-"?" · "+esc(s.type_en):""}</span>`;
+}
+function nativeNews(d){
+  const pt=d.ptf;let h="";
+  if(pt)h+=`<div class="figs">${fig("Day-ahead price, average",Math.round(pt.avg).toLocaleString("en-GB")+" TL","Per MWh on "+fmtDate(pt.day))}${fig("Cheapest hour",Math.round(pt.min).toLocaleString("en-GB")+" TL","Per MWh")}${fig("Dearest hour",Math.round(pt.max).toLocaleString("en-GB")+" TL","Per MWh")}${fig("News that made the cut",String((d.news||[]).length),"Items with a checked source")}</div>`;
+  const cards=(d.news||[]).map(it=>{const e=it.en||{},b=(e.big||"").split("|");
+    return `<div class="ncard"><div class="top"><span class="tg">${esc(e.tag||"")}</span>${dirChip(it)}</div>${b[0]?`<div class="big">${esc(b[0])}<small>${esc(b[1]||"")}</small></div>`:""}<p>${esc(e.sentence||"")}</p><p><b>${esc(e.impact||"")}</b></p><p class="why">${esc(e.why||"")}</p>${it.url?`<p class="why"><a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||"Source")} ↗</a></p>`:""}</div>`}).join("");
+  if(cards)h+=panel("Today's news","How to read: the chip says which way the item pushes the Turkish power price, if at all. The bold line is the effect; the grey line is the reason.",`<div class="ncards">${cards}</div>`);
+  const up=(d.upcoming||[]).map(it=>{const e=it.en||{},s=it.signal||{};
+    return `<tr><td>${esc(e.summary||"")}<div style="color:var(--muted);font-size:13px">${esc(e.why||"")}</div></td><td>${dirChip(it)}</td><td class="mono" style="color:var(--muted)">${esc(s.period_en||((it.start||"")+" – "+(it.end||"")))}</td><td class="num mono">${it.p!=null?Math.round(it.p*100)+"%":"—"}</td></tr>`}).join("");
+  if(up)h+=panel("On the horizon","Things that have not happened yet but would move the price if they did. The last column is the estimated chance.",`<table><thead><tr><th>What</th><th>Direction</th><th>When</th><th class="num">Chance</th></tr></thead><tbody>${up}</tbody></table>`);
+  return h;
+}
+function postBody(e){
+  let h="";
+  if(e.data){if(e.kind==="gb_post1")h+=nativeGB1(e.data);else if(e.kind==="gb_post2")h+=nativeGB2(e.data);else if(e.kind==="news")h+=nativeNews(e.data)}
+  if(e.media)h+=panel("The clip","The animation that went out with the post. Tap to play.",`<div class="clip"><video controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
+  h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  return h;
+}
+const covers=e=>"Covers "+fmtDate(e.analysis_date,{day:"numeric",month:"long"});
+function nextTurn(){const n=new Date(),m=new Date(Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1));return m.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}
+function renderDailyPost(vid,kind,weekly){
+  const box=document.getElementById(vid+"-body");if(!box)return;
+  const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
+  const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
+  if(!e){box.innerHTML=head+`<div class="panel"><h2>Not out yet</h2><p class="note" style="margin:0">Today's post has not been published yet. Earlier posts are under <a class="post" href="#${weekly}">Weekly</a>.</p></div>`;return}
+  box.innerHTML=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`+postBody(e);
+}
+function renderWeekly(vid,country){
+  const box=document.getElementById(vid+"-body");if(!box)return;
+  const today=utcToday(),its=FEED.items.filter(x=>x.country===country&&x.day<today);
+  const days=[...new Set(its.map(x=>x.day))].sort().reverse().slice(0,7);
+  if(!days.length){box.innerHTML='<p class="note-p">No earlier posts yet.</p>';return}
+  box.innerHTML=days.map(d=>`<div class="wkday"><h2>${fmtDate(d,{weekday:"long",day:"numeric",month:"long"})}</h2>${its.filter(x=>x.day===d).sort((a,b)=>PORDER[a.kind]-PORDER[b.kind]).map(e=>`<details class="wk"><summary><span class="tag">${PK[e.kind]}</span><span class="hk">${esc(hookOf(e.text)||covers(e))}</span><span class="mono" style="color:var(--muted);font-size:12.5px">${covers(e)}</span></summary><div class="wkb">${postBody(e)}</div></details>`).join("")}</div>`).join("");
+}
+function renderPosts(){
+  FEED.day=utcToday();
+  renderDailyPost("tr-news","news","tr-weekly");
+  renderDailyPost("gb-analysis","gb_post1","gb-weekly");
+  renderDailyPost("gb-outlook","gb_post2","gb-weekly");
+  renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
+}
+function armTurnover(){const n=new Date(),ms=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime()+2000;setTimeout(()=>{renderPosts();armTurnover()},ms)}
+fetch("feed.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{FEED.items=j.items||[];renderPosts();armTurnover()})
+ .catch(()=>["tr-news","gb-analysis","gb-outlook","tr-weekly","gb-weekly"].forEach(v=>{const b=document.getElementById(v+"-body");if(b)b.innerHTML='<p class="note-p">Could not load the posts.</p>'}));
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&FEED.items.length&&FEED.day!==utcToday())renderPosts()});
 const tl=v=>Math.round(v).toLocaleString("en-GB");
 const $=id=>document.getElementById(id);
 const setT=(id,v)=>{const e=$(id);if(e)e.textContent=v};
