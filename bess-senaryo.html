@@ -95,20 +95,23 @@ main{display:grid;grid-template-columns:minmax(280px,26%) 1fr 240px;gap:10px;min
 .bats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:8px;min-height:0}
 .bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
 .bc.best{border:2px solid var(--accent)}
-.bats.all{display:flex;flex-direction:column;gap:6px}
+.bats.all{display:flex;flex-direction:column;gap:3px}
 .fam{flex:1;display:flex;flex-direction:column;min-height:0}
 .fh{font-size:11.5px;color:var(--muted);margin:0 0 3px 2px}
-.fg{flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;min-height:0}
-.mc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-s);padding:5px 6px;display:grid;grid-template-columns:14px minmax(0,1fr);gap:6px;min-height:0}
+.fg{flex:1;display:grid;grid-auto-rows:minmax(0,1fr);gap:6px;min-height:0}
+.mc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px;display:flex;flex-direction:column;gap:2px;min-height:0;min-width:0;overflow:hidden;font-size:11px;line-height:1.2}
+.mc>*{flex-shrink:0}
+.fam{flex-basis:0}
 .mc.best{border:2px solid var(--accent)}
-.mb{position:relative;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--bg)}
-.mt{display:flex;flex-direction:column;min-width:0;font-size:11px;line-height:1.3}
-.mn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mn .dot{width:7px;height:7px;margin-right:3px}
-.md{color:var(--muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ms{font-family:var(--font-mono);color:var(--muted)}
-main.allv{grid-template-columns:minmax(250px,21%) 1fr 230px}
-.ma{font-size:10.5px;border-radius:3px;padding:0 3px;margin:1px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:flex-start}
-.mp{margin-top:auto;font-family:var(--font-mono);font-weight:500;white-space:nowrap;font-size:10.5px}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.mn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.mn .dot{width:7px;height:7px;margin-right:3px}
+.ms{font-family:var(--font-mono);color:var(--muted);white-space:nowrap;font-size:10.5px}
+.hb{position:relative;flex:1 0 14px;max-height:36px;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--bg);margin:1px 0}
+.hb .z{top:0;bottom:0}
+.ma{font-size:10.5px;border-radius:3px;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:flex-start;max-width:100%}
+.mr{display:flex;justify-content:space-between;gap:6px;font-size:10.5px;color:var(--muted)}
+.mr span:last-child{font-family:var(--font-mono);white-space:nowrap}
+.mpn{color:var(--ink);margin-top:auto;border-top:1px solid var(--line);padding-top:2px}.mpn span:last-child{font-weight:500}
 .bats.v12{grid-template-rows:repeat(3,minmax(0,1fr))}
 .bats.v12 .bs{-webkit-line-clamp:1}
 .bc>.bn,.bc>.bs,.bc>.info,.bc>.pnl{flex-shrink:0}
@@ -387,10 +390,15 @@ function infoHTML(i){return VIEW==='st'?`<span>PFK limiti</span><span id="il${i}
 <span>Ort. satış</span><span id="os${i}">—</span>`;}
 function cycInfo(){if(!isCyc(VIEW))return;SC.forEach((sc,i)=>{$('ef'+i).textContent=n1(sc.st.efc);$('ob'+i).textContent=Math.round(sc.st.pb).toLocaleString('tr-TR')+' TL';$('os'+i).textContent=Math.round(sc.st.ps).toLocaleString('tr-TR')+' TL';});}
 function buildMini(){box.innerHTML='';box.classList.add('all');let i=0;
-  FAMS.forEach(v=>{const sec=document.createElement('div');sec.className='fam';sec.innerHTML='<div class="fh">'+FAMT[v]+'</div><div class="fg" style="grid-template-columns:repeat('+SC.filter(x=>x.fam===v).length+',minmax(0,1fr))"></div>';const g=sec.lastChild;
+  FAMS.forEach(v=>{const sec=document.createElement('div');sec.className='fam';sec.style.flexGrow=v==='st'?1.95:1;sec.innerHTML='<div class="fh">'+FAMT[v]+'</div><div class="fg" style="grid-template-columns:repeat('+(v==='st'?4:6)+',minmax(0,1fr))"></div>';const g=sec.lastChild;
     SC.forEach((sc,k)=>{if(sc.fam!==v)return;const id=sc.name.split(' · ')[0],ds=sc.short||sc.name.split(' · ')[1];
-      g.insertAdjacentHTML('beforeend',`<article class="mc" id="bx${k}" title="${sc.name}: ${sc.sub}"><div class="mb"><div class="z" style="bottom:0;height:5%;background:var(--dead)"></div><div class="z" style="bottom:95%;height:5%;background:var(--dead)"></div><div class="z" id="wa${k}" style="bottom:0;background:var(--soc)"></div><div class="z" id="dn${k}" style="background:var(--pad-dn)"></div><div class="z" id="up${k}" style="background:var(--pad-up)"></div><div class="z" id="ln${k}" style="height:2px;background:var(--marker)"></div></div>
-<div class="mt"><div class="mn"><span class="dot" style="background:var(${sc.col})"></span><b>${id}</b></div><div class="md">${ds}</div><div class="ms" id="ls${k}">—</div><div class="ma" id="pi${k}">—</div><div class="mp" id="pn${k}">0</div></div></article>`);});
+      g.insertAdjacentHTML('beforeend',`<article class="mc" id="bx${k}" title="${sc.name}: ${sc.sub}">
+<div class="mh"><span class="mn"><span class="dot" style="background:var(${sc.col})"></span><b>${id}</b> ${v==='st'?ds:''}</span><span class="ms" id="ls${k}">—</span></div>
+<div class="hb"><div class="z" style="left:0;width:5%;background:var(--dead);z-index:1"></div><div class="z" style="left:95%;width:5%;background:var(--dead);z-index:1"></div><div class="z" id="wa${k}" style="left:0;background:var(--soc)"></div><div class="z" id="dn${k}" style="background:var(--pad-dn)"></div><div class="z" id="up${k}" style="background:var(--pad-up);border:1px dashed var(--pad-edge)"></div><div class="z" id="ln${k}" style="width:2px;background:var(--marker)"></div></div>
+<div class="ma" id="pi${k}">—</div>
+<div class="mr mpn"><span>PnL</span><span id="pn${k}">0 TL</span></div>
+<div class="mr"><span>Satış</span><span id="sa${k}" style="color:var(--live)">0 TL</span></div>
+<div class="mr"><span>Alış</span><span id="al${k}" style="color:var(--bad)">0 TL</span></div></article>`);});
     box.appendChild(sec);});}
 function buildCards(){box.classList.remove('all');document.querySelector('main').classList.toggle('allv',VIEW==='all');if(VIEW==='all')return buildMini();box.innerHTML='';SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="bx${i}">
 <div class="bn"><span class="dot" style="background:var(${sc.col})"></span>${sc.name}</div><div class="bs" id="bs${i}" title="${sc.sub}">${sc.sub}</div>
@@ -466,11 +474,16 @@ function render(){
   $('hr').textContent=done?'Gün sonu':String(h).padStart(2,'0')+':'+String(Math.floor(frac*60)).padStart(2,'0');
   SC.forEach((sc,i)=>{
     const o=sc.hrs[h];const s=sc.soc[m]+(sc.soc[m+1]-sc.soc[m])*((frac*60)%1);const pad=o.R*1.25/2;
+    if(VIEW==='all'){const lo=Math.max(5,s-pad),hi=Math.min(95,s+pad),fr=done?0:frac;
+      $('wa'+i).style.width=s+'%';$('ln'+i).style.left='calc('+s+'% - 1px)';
+      $('dn'+i).style.left=lo+'%';$('dn'+i).style.width=(o.R?s-lo:0)+'%';
+      $('up'+i).style.left=s+'%';$('up'+i).style.width=(o.R?hi-s:0)+'%';$('up'+i).style.borderWidth=o.R?'1px':'0';
+      $('ls'+i).textContent='SoC '+n1(s);const pe=$('pi'+i),kk=PILL[o.kind];pe.textContent=o.lab;pe.style.color=kk==='idle'?'var(--muted)':'var(--pill-'+kk+'-ink)';pe.style.background='var(--pill-'+kk+'-bg)';
+      $('pn'+i).textContent=fmt(cum[i]+o.cash*fr);$('sa'+i).textContent=fmt(cs[i]+o.sell*fr);$('al'+i).textContent=fmt(cb[i]+o.buy*fr);if($('ce'+i))$('ce'+i).textContent=fmt(cp[i]+o.pen*fr);return;}
     $('wa'+i).style.height=s+'%';$('ln'+i).style.bottom=s+'%';
     const lo=Math.max(5,s-pad),hi=Math.min(95,s+pad);
     $('dn'+i).style.bottom=lo+'%';$('dn'+i).style.height=(o.R?s-lo:0)+'%';
-    $('up'+i).style.bottom=s+'%';$('up'+i).style.height=(o.R?hi-s:0)+'%';
-    if(VIEW==='all'){$('ls'+i).textContent='SoC '+n1(s);const pe=$('pi'+i),kk=PILL[o.kind];pe.textContent=o.lab;pe.style.color=kk==='idle'?'var(--muted)':'var(--pill-'+kk+'-ink)';pe.style.background='var(--pill-'+kk+'-bg)';$('pn'+i).textContent=fk(cum[i]+o.cash*(done?0:frac));return;}$('up'+i).style.borderWidth=o.R?'1px':'0';
+    $('up'+i).style.bottom=s+'%';$('up'+i).style.height=(o.R?hi-s:0)+'%';$('up'+i).style.borderWidth=o.R?'1px':'0';
     $('cl'+i).style.bottom=(5+pad)+'%';$('cu'+i).style.bottom=(95-pad)+'%';
     $('cl'+i).style.borderTopWidth=o.R?'1px':'0';$('cu'+i).style.borderTopWidth=o.R?'1px':'0';
     const big=o.R&&pad>=8;
