@@ -113,6 +113,7 @@ td.num{font-family:var(--font-mono)}
 tr:last-child td{border-bottom:0}
 a.post{color:var(--b1);text-decoration:none}
 a.post:hover{text-decoration:underline}
+.li-embed iframe{display:block;width:100%;max-width:560px;height:720px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
 .tag{font-family:var(--font-body);font-size:11px;padding:2px 7px;border-radius:var(--r-s);border:1px solid var(--line);color:var(--muted)}
 .ok{color:var(--b2)} .bad{color:var(--b5)}
 
@@ -421,6 +422,7 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
+        <a href="#tr-news"    data-view="tr-news"    style="--c:var(--b1)"><span class="bar"></span>Energy news</a>
       </div>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub" aria-expanded="true">Simulations<span class="chev"></span></button>
@@ -431,6 +433,11 @@ a.btn{display:inline-block;text-decoration:none}
 
     <button class="grp" aria-expanded="true">GREAT BRITAIN<span class="chev"></span></button>
     <div class="items">
+      <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
+      <div class="leaves">
+        <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
+        <a href="#gb-outlook"  data-view="gb-outlook"  style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
+      </div>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
   </div>
@@ -679,6 +686,63 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 </section>
 
+<section class="view" id="tr-news">
+  <div class="eyebrow">Türkiye, daily energy news</div>
+  <h1>Energy news</h1>
+  <p class="lede">The day's energy headlines from Türkiye in one short post, in Turkish and English.</p>
+  <p class="note-p">Only news that can move power prices or the grid makes the cut. Each post is checked against its sources before it goes out.</p>
+  <div class="panel">
+    <h2 id="tr-news-t">Latest post</h2>
+    <p class="note" id="tr-news-n">Loading…</p>
+    <div class="li-embed" id="tr-news-e"></div>
+  </div>
+  <div class="panel">
+    <h2>Earlier posts</h2>
+    <table>
+      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
+      <tbody id="tr-news-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="view" id="gb-analysis">
+  <div class="eyebrow">Great Britain, daily, closed day</div>
+  <h1>Market analysis</h1>
+  <p class="lede">What happened in the British power market yesterday, compared with the same day a week earlier.</p>
+  <p class="note-p">The system price is what generators pay or receive for being out of balance. Energy by fuel shows which sources kept the lights on.</p>
+  <div class="panel">
+    <h2 id="gb-analysis-t">Latest post</h2>
+    <p class="note" id="gb-analysis-n">Loading…</p>
+    <div class="li-embed" id="gb-analysis-e"></div>
+  </div>
+  <div class="panel">
+    <h2>Earlier posts</h2>
+    <table>
+      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
+      <tbody id="gb-analysis-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="view" id="gb-outlook">
+  <div class="eyebrow">Great Britain, daily, before the day starts</div>
+  <h1>Day-ahead outlook</h1>
+  <p class="lede">How tomorrow looks for British power before it happens, led by the wind forecast.</p>
+  <p class="note-p">Wind is the swing source in Great Britain: a windy day pushes prices down, a still day pushes them up. Read it as an outlook, not a promise.</p>
+  <div class="panel">
+    <h2 id="gb-outlook-t">Latest post</h2>
+    <p class="note" id="gb-outlook-n">Loading…</p>
+    <div class="li-embed" id="gb-outlook-e"></div>
+  </div>
+  <div class="panel">
+    <h2>Earlier posts</h2>
+    <table>
+      <thead><tr><th>Day covered</th><th>Published</th><th class="num">Post</th></tr></thead>
+      <tbody id="gb-outlook-rows"><tr><td colspan="3" style="color:var(--muted)">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
 <!-- ===== GB STRUCTURE ===== -->
 <section class="view" id="gb-structure">
   <div class="eyebrow">Great Britain, market structure</div>
@@ -804,7 +868,7 @@ function renderArchive(rows){
   body.innerHTML=rows.map(r=>{
     const id=(r.post_id||"").replace("urn:li:share:","");
     const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
-    const kind={post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook"}[r.kind]||"Market analysis";
+    const kind={post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook",news:"Energy news"}[r.kind]||"Market analysis";
     return `<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td><span class="tag">${kind}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`;
   }).join("");
 }
@@ -932,6 +996,25 @@ function fmtDate(d,o){return new Date(d+"T00:00:00").toLocaleDateString("en-GB",
 const sd=d=>fmtDate(d,{day:"numeric",month:"short"});
 function num(x){const n=typeof x==="number"?x:parseFloat(String(x||"").replace(/,/g,""));return isNaN(n)?null:n}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+/* ---------- series pages: GB post1, GB post2, News (fed by published.json) ---------- */
+function renderSeries(vid,kind,all){
+  const rows=all.filter(r=>r.kind===kind&&r.post_id);
+  const n=document.getElementById(vid+"-n"),e=document.getElementById(vid+"-e"),b=document.getElementById(vid+"-rows");
+  const short=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+  const url=r=>"https://www.linkedin.com/feed/update/"+r.post_id;
+  if(!rows.length){n.textContent="Nothing published yet.";b.innerHTML='<tr><td colspan="3" style="color:var(--muted)">Nothing published yet.</td></tr>';return}
+  const top=rows[0];
+  document.getElementById(vid+"-t").textContent=fmtDate(top.analysis_date);
+  n.innerHTML=`The newest post, shown as it appears on LinkedIn. If it does not load, <a class="post" href="${url(top)}" target="_blank" rel="noopener">open it on LinkedIn ↗</a>.`;
+  e.innerHTML=`<iframe src="https://www.linkedin.com/embed/feed/update/${esc(top.post_id)}" title="LinkedIn post" loading="lazy" allowfullscreen></iframe>`;
+  const rest=rows.slice(1);
+  b.innerHTML=rest.length?rest.map(r=>`<tr><td class="mono">${short(new Date(r.analysis_date+"T00:00:00"))}</td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url(r)}" target="_blank" rel="noopener">open ↗</a></td></tr>`).join(""):'<tr><td colspan="3" style="color:var(--muted)">Only one post so far.</td></tr>';
+}
+fetch("published.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+  const all=Object.entries(j).map(([d,v])=>({...v,analysis_date:v.analysis_date||d.split("#")[0]})).sort((a,b)=>(b.analysis_date+(b.at||"")).localeCompare(a.analysis_date+(a.at||"")));
+  renderSeries("tr-news","news",all);renderSeries("gb-analysis","gb_post1",all);renderSeries("gb-outlook","gb_post2",all);
+}).catch(()=>["tr-news","gb-analysis","gb-outlook"].forEach(v=>{const n=document.getElementById(v+"-n");if(n)n.textContent="Could not load the post list."}));
 const tl=v=>Math.round(v).toLocaleString("en-GB");
 const $=id=>document.getElementById(id);
 const setT=(id,v)=>{const e=$(id);if(e)e.textContent=v};
