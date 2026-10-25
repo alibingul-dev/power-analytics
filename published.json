@@ -561,6 +561,13 @@
     "post_id": "urn:li:share:7520093808487874560",
     "source": "manual"
   },
+  "2026-10-25#news": {
+    "analysis_date": "2026-10-25",
+    "at": "2026-10-25T13:12:18.576505Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7520109985750523904",
+    "source": "manual"
+  },
   "2026-10-26#gb_post2": {
     "analysis_date": "2026-10-26",
     "at": "2026-10-25T08:15:13.854384Z",
