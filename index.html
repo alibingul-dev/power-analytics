@@ -119,6 +119,26 @@ a.post{color:var(--b1);text-decoration:none}
 a.post:hover{text-decoration:underline}
 .view.stale>:not(.eyebrow):not(.gatebox){display:none}
 .gatebox .pday{margin-top:10px}
+.wanim .wa-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.wanim .wa-date{font-family:var(--font-display);font-size:24px;font-weight:700;letter-spacing:-.02em}
+.wanim .wa-stats{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.wanim .wa-stats b{display:block;font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text)}
+.wanim .wa-btn{font:inherit;font-size:13px;color:var(--text);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-pill);padding:6px 14px;cursor:pointer}
+.wanim .wa-btn:focus-visible,.wanim .wa-days button:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+.wa-cur{stroke-dasharray:1;stroke-dashoffset:0;animation:wadraw 1.3s var(--ease-out)}
+@keyframes wadraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.wa-ghost{transition:opacity .6s var(--ease-out)}
+.wa-mix{display:flex;height:22px;border-radius:var(--r-s);overflow:hidden;margin-top:6px;background:var(--surface-2)}
+.wa-mix span{display:block;height:100%;transition:flex-basis .8s var(--ease-out);flex:0 0 0}
+.wa-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
+.wa-days button{font:inherit;text-align:left;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-s);padding:7px 9px;color:var(--muted);cursor:pointer;font-size:12px;line-height:1.35}
+.wa-days button b{display:block;font-family:var(--font-mono);font-weight:500;color:var(--text);font-size:13px}
+.wa-days button.on{border-color:var(--b1);box-shadow:inset 0 0 0 1px var(--b1)}
+.wa-days button.seen b{color:var(--text)}.wa-days button:not(.seen):not(.on){opacity:.5}
+.wa-prog{height:3px;background:var(--surface-2);border-radius:var(--r-xs);margin-top:10px;overflow:hidden}
+.wa-prog i{display:block;height:100%;width:0;background:var(--b1)}
+@media (max-width:640px){.wa-days{grid-template-columns:repeat(4,1fr)}}
+@media (prefers-reduced-motion:reduce){.wa-cur{animation:none}.wa-mix span{transition:none}}
 .pday{font-size:13px;color:var(--muted);margin:0 0 18px}
 .pday b{color:var(--text);font-weight:600}
 .posttext{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--text);max-width:66ch;margin:0}
@@ -1140,12 +1160,72 @@ function renderDailyPost(vid,kind,weekly){
   if(!e){box.innerHTML=head+`<div class="panel"><h2>Not out yet</h2><p class="note" style="margin:0">Today's post has not been published yet. Earlier posts are under <a class="post" href="#${weekly}">Weekly</a>.</p></div>`;return}
   box.innerHTML=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`+postBody(e);
 }
+
+/* ---------- weekly animated chart: plays the week's closed days one by one ---------- */
+const WA_FUEL={tr:[["hydro","Hydro","var(--b1)"],["wind","Wind","var(--b2)"],["solar","Solar","var(--b3)"],["gas","Gas","var(--b4)"],["coal","Coal","var(--b5)"],["other","Other","var(--muted)"]],
+  gb:[["nuclear","Nuclear","var(--b1)"],["wind","Wind","var(--b2)"],["solar","Solar","var(--b3)"],["gas","Gas","var(--b4)"],["rest","Biomass, hydro, storage, other","var(--muted)"]]};
+const WA_TIMERS={};
+function weeklyAnim(vid,country,days){
+  const kind=country==="tr"?"post1":"gb_post1",cur=country==="tr"?v=>Math.round(v).toLocaleString("en-GB")+" TL":v=>gbp(v);
+  const list=FEED.items.filter(e=>e.kind===kind&&e.data&&days.includes(e.day)).sort((a,b)=>a.analysis_date.localeCompare(b.analysis_date));
+  if(list.length<2)return "";
+  const D=list.map(e=>{const d=e.data,p=d.price,pv=p.filter(v=>v!=null),F=Object.assign({},d.fuels);
+    if(country==="gb")F.rest=d.t.map((_,i)=>(F.biomass[i]||0)+(F.hydro[i]||0)+(F.ps[i]||0)+(F.other[i]||0));
+    const tot={};WA_FUEL[country].forEach(([k])=>tot[k]=(F[k]||[]).reduce((a,v)=>a+Math.max(0,v||0),0));
+    const all=Object.values(tot).reduce((a,b)=>a+b,0)||1;
+    return {date:e.analysis_date,t:d.t,p,avg:pv.reduce((a,b)=>a+b,0)/(pv.length||1),min:Math.min(...pv),max:Math.max(...pv),iMin:p.indexOf(Math.min(...pv)),iMax:p.indexOf(Math.max(...pv)),mix:Object.fromEntries(Object.entries(tot).map(([k,v])=>[k,v/all]))}});
+  const unit=country==="tr"?"TL/MWh, hourly":"£/MWh, half-hourly",label=country==="tr"?"day-ahead price (PTF)":"system price";
+  const head=`<div class="panel wanim" id="${vid}-wa">
+    <h2>The week in motion</h2>
+    <p class="note">How to read: the ${label} of each closed day is drawn in turn, oldest first. Earlier days stay behind as faint lines, so the week builds up on one chart. The bar underneath is that day's generation mix. Press a day to jump to it.</p>
+    <div class="wa-top"><div><div class="wa-date" id="${vid}-wa-d"></div><div class="wa-stats" id="${vid}-wa-s"></div></div><button class="wa-btn" id="${vid}-wa-b" type="button">Pause</button></div>
+    <svg class="chart" id="${vid}-wa-c" viewBox="0 0 900 300" role="img" aria-label="${esc(label)} by day, animated through the week"></svg>
+    <div class="legend" style="margin-top:2px"><span>${esc(unit)}, local time</span></div>
+    <div class="wa-mix" id="${vid}-wa-m">${WA_FUEL[country].map(([k,n,c])=>`<span data-k="${k}" style="background:${c}" title="${esc(n)}"></span>`).join("")}</div>
+    <div class="legend" id="${vid}-wa-l"></div>
+    <div class="wa-prog"><i id="${vid}-wa-p"></i></div>
+    <div class="wa-days" id="${vid}-wa-days">${D.map((d,i)=>`<button type="button" data-i="${i}">${fmtDate(d.date,{weekday:"short",day:"numeric",month:"short"})}<b>${cur(d.avg)}</b></button>`).join("")}</div>
+  </div>`;
+  setTimeout(()=>waRun(vid,country,D,cur),0);
+  return head;
+}
+function waRun(vid,country,D,cur){
+  const svg=document.getElementById(vid+"-wa-c");if(!svg)return;
+  const all=D.flatMap(d=>d.p.filter(v=>v!=null)),tk=axisY(Math.min(0,...all),Math.max(...all));
+  const W=900,H=300,L=64,R=16,T=16,B=30,lab=D[0].t,every=lab.length>30?8:4;
+  const f=frame(W,H,L,R,T,B,tk,v=>(country==="tr"?"":"£")+Math.round(v).toLocaleString("en-GB"),lab,every);
+  const x=i=>L+(W-L-R)*i/((D[0].t.length-1)||1);
+  const path=d=>segs(d.p.map(v=>v!=null)).map(sg=>sg.map((i,k)=>(k?"L":"M")+x(i).toFixed(1)+","+f.y(d.p[i]).toFixed(1)).join("")).join("");
+  let at=0,playing=!matchMedia("(prefers-reduced-motion: reduce)").matches,timer=null;
+  const btn=document.getElementById(vid+"-wa-b"),chips=[...document.querySelectorAll(`#${vid}-wa-days button`)];
+  function show(i){
+    at=i;const d=D[i];
+    const ghosts=D.slice(0,i).map((g,j)=>`<path class="wa-ghost" d="${path(g)}" fill="none" stroke="var(--muted)" stroke-width="1.4" opacity="${(0.18+0.32*(j+1)/i).toFixed(2)}"/>`).join("");
+    const dot=(k,txt,up)=>d.p[k]==null?"":`<circle cx="${x(k)}" cy="${f.y(d.p[k])}" r="4.5" fill="var(--bg)" stroke="var(--b1)" stroke-width="2"/><text x="${Math.min(W-R-4,Math.max(L+40,x(k)))}" y="${(up||f.y(d.p[k])+20>H-B-4)?f.y(d.p[k])-10:f.y(d.p[k])+20}" text-anchor="middle" font-size="12.5" fill="var(--text)" font-family="var(--font-mono)">${txt}</text>`;
+    svg.innerHTML=f.g+ghosts+`<path class="wa-cur" pathLength="1" d="${path(d)}" fill="none" stroke="var(--b1)" stroke-width="2.6" stroke-linejoin="round"/>`+dot(d.iMax,cur(d.max)+" at "+d.t[d.iMax],true)+dot(d.iMin,cur(d.min)+" at "+d.t[d.iMin],false);
+    document.getElementById(vid+"-wa-d").textContent=fmtDate(d.date,{weekday:"long",day:"numeric",month:"long"});
+    document.getElementById(vid+"-wa-s").innerHTML=`<span>Average<b>${cur(d.avg)}</b></span><span>Lowest<b>${cur(d.min)}</b></span><span>Highest<b>${cur(d.max)}</b></span>`;
+    document.querySelectorAll(`#${vid}-wa-m span`).forEach(sp=>sp.style.flexBasis=(100*(d.mix[sp.dataset.k]||0)).toFixed(2)+"%");
+    document.getElementById(vid+"-wa-l").innerHTML=WA_FUEL[country].map(([k,n,c])=>`<span><i style="background:${c}"></i>${esc(n)} ${Math.round(100*(d.mix[k]||0))}%</span>`).join("");
+    chips.forEach((c,j)=>{c.classList.toggle("on",j===i);c.classList.toggle("seen",j<i)});
+    document.getElementById(vid+"-wa-p").style.width=(100*(i+1)/D.length)+"%";
+  }
+  function tick(){clearTimeout(timer);if(!playing)return;timer=setTimeout(()=>{show(at>=D.length-1?0:at+1);tick()},at>=D.length-1?4200:2800)}
+  function setPlay(v){playing=v;btn.textContent=v?"Pause":"Play";v?tick():clearTimeout(timer)}
+  btn.onclick=()=>setPlay(!playing);
+  chips.forEach((c,j)=>c.onclick=()=>{setPlay(false);show(j)});
+  clearTimeout(WA_TIMERS[vid]);WA_TIMERS[vid]=null;
+  if(!playing){btn.textContent="Play";show(D.length-1);return}
+  show(0);
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)clearTimeout(timer);else if(playing)tick()}),{threshold:.3});
+  io.observe(svg);
+}
 function renderWeekly(vid,country){
   const box=document.getElementById(vid+"-body");if(!box)return;
   const today=utcToday(),its=FEED.items.filter(x=>x.country===country&&x.day<today);
   const days=[...new Set(its.map(x=>x.day))].sort().reverse().slice(0,7);
   if(!days.length){box.innerHTML='<p class="note-p">No earlier posts yet.</p>';return}
-  box.innerHTML=days.map(d=>`<div class="wkday"><h2>${fmtDate(d,{weekday:"long",day:"numeric",month:"long"})}</h2>${its.filter(x=>x.day===d).sort((a,b)=>PORDER[a.kind]-PORDER[b.kind]).map(e=>`<details class="wk"><summary><span class="tag">${PK[e.kind]}</span><span class="hk">${esc(hookOf(e.text)||covers(e))}</span><span class="mono" style="color:var(--muted);font-size:12.5px">${covers(e)}</span></summary><div class="wkb">${postBody(e)}</div></details>`).join("")}</div>`).join("");
+  box.innerHTML=weeklyAnim(vid,country,days)+days.map(d=>`<div class="wkday"><h2>${fmtDate(d,{weekday:"long",day:"numeric",month:"long"})}</h2>${its.filter(x=>x.day===d).sort((a,b)=>PORDER[a.kind]-PORDER[b.kind]).map(e=>`<details class="wk"><summary><span class="tag">${PK[e.kind]}</span><span class="hk">${esc(hookOf(e.text)||covers(e))}</span><span class="mono" style="color:var(--muted);font-size:12.5px">${covers(e)}</span></summary><div class="wkb">${postBody(e)}</div></details>`).join("")}</div>`).join("");
 }
 function renderTRPage(vid,kind){
   const sec=document.getElementById(vid),gate=document.getElementById(vid+"-gate"),box=document.getElementById(vid+"-post");if(!sec)return;
