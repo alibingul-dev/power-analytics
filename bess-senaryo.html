@@ -150,7 +150,15 @@ footer{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted
 footer .sq{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border-radius:2px}
 footer a{color:var(--accent)}
 .note{margin-left:auto}
+@media (min-width:1101px) and (max-width:1320px){
+  #fq{display:none}.ctrl{gap:8px}#sp{width:60px!important}.chip.opt{display:none}
+  main{grid-template-columns:minmax(230px,22%) 1fr 210px}main.allv{grid-template-columns:minmax(220px,20%) 1fr 210px}
+  .rbox{width:360px}h1{font-size:18px}
+  .app{height:auto;min-height:100vh}main{height:max(940px,calc(100vh - 150px))}
+  .info{font-size:10.5px}
+}
 @media (max-width:1100px){
+  .seg{flex-wrap:wrap}
   .app{height:auto}
   main{grid-template-columns:1fr}
   .charts{grid-template-rows:200px 160px 160px 240px}
@@ -164,7 +172,7 @@ footer a{color:var(--accent)}
 <div class="app">
 <header>
   <div>
-    <div class="sub" style="font-size:12px"><a class="home" href="./">← Power Analytics</a> · BESS: Battery Energy Storage System</div>
+    <div class="sub" style="font-size:12px">BESS: Battery Energy Storage System</div>
     <h1 id="ttl">Bir batarya, sekiz senaryo</h1>
     <div class="sub" id="tsub">Son 30 günün gerçek fiyatlarıyla aynı bataryanın dört stratejide ne kazandığı ve dört hata senaryosunda ne kaybettiği</div>
   </div>
@@ -187,7 +195,7 @@ footer a{color:var(--accent)}
   <div class="specs">
     <span class="chip">Güç <b>100 MW</b></span>
     <span class="chip">Enerji <b>100 MWh</b></span>
-    <span class="chip">Kullanılabilir <b>5–95 MWh</b></span>
+    <span class="chip opt">Kullanılabilir <b>5–95 MWh</b></span>
     <span class="chip">Verim <b>%90</b></span>
     <span class="chip">PFK oranı <b>≥ 1,25</b></span>
   </div>

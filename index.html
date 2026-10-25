@@ -84,6 +84,10 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 /* ---------- main ---------- */
 main{margin-left:var(--rail);padding:44px 44px 90px;max-width:1060px}
 .view{display:none}.view.on{display:block}
+body.full main{max-width:none;padding:0}
+body.full #ab-home{display:none!important}
+.view.frame iframe{display:block;width:100%;height:100vh;border:0}
+@media (max-width:880px){.view.frame iframe{height:calc(100vh - 56px)}}
 .eyebrow{font-family:var(--font-body);font-size:12px;letter-spacing:0;color:var(--muted)}
 h1{font-size:clamp(27px,3.2vw,37px);font-weight:800;margin:10px 0 14px}
 .lede{color:var(--text);font-size:18px;line-height:1.6;max-width:64ch;margin:0 0 12px}
@@ -427,7 +431,7 @@ a.btn{display:inline-block;text-decoration:none}
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves">
-        <a href="bess-senaryo.html" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Scenarios</a>
+        <a href="#tr-bess" data-view="tr-bess" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Scenarios</a>
       </div>
     </div>
 
@@ -744,6 +748,8 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <!-- ===== GB STRUCTURE ===== -->
+<section class="view frame" id="tr-bess"><iframe data-src="bess-senaryo.html" title="BESS Scenarios: battery strategy simulation"></iframe></section>
+
 <section class="view" id="gb-structure">
   <div class="eyebrow">Great Britain, market structure</div>
   <h1>Two markets, four differences</h1>
@@ -895,6 +901,8 @@ const views=[...document.querySelectorAll(".view")],links=[...document.querySele
 function go(id){
   if(!views.some(v=>v.id===id))id="tr-netload";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
+  document.body.classList.toggle("full",id==="tr-bess");
+  if(id==="tr-bess"){const f=document.querySelector("#tr-bess iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`);
   if(owner){
