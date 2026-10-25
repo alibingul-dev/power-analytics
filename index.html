@@ -117,6 +117,8 @@ td.num{font-family:var(--font-mono)}
 tr:last-child td{border-bottom:0}
 a.post{color:var(--b1);text-decoration:none}
 a.post:hover{text-decoration:underline}
+.view.stale>:not(.eyebrow):not(.gatebox){display:none}
+.gatebox .pday{margin-top:10px}
 .pday{font-size:13px;color:var(--muted);margin:0 0 18px}
 .pday b{color:var(--text);font-weight:600}
 .posttext{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--text);max-width:66ch;margin:0}
@@ -487,6 +489,7 @@ a.btn{display:inline-block;text-decoration:none}
 <!-- ===== NET LOAD OUTLOOK ===== -->
 <section class="view on" id="tr-netload">
   <div class="eyebrow">Türkiye, daily, published before the day-ahead result</div>
+  <div class="gatebox" id="tr-netload-gate"></div>
   <h1 id="d-title">Loading…</h1>
   <p class="note-p" id="d-record" hidden></p>
   <p class="lede">Net load is the load plan with wind and solar taken out. It is what dispatchable plant actually has to cover, and it is the curve that decides which hours are tight.</p>
@@ -520,6 +523,7 @@ a.btn{display:inline-block;text-decoration:none}
       <dt>SCOPE</dt><dd>Descriptive analysis of published data. Not advice, not a forecast, not a trading recommendation.</dd>
     </dl>
   </div>
+  <div id="tr-netload-post"></div>
 </section>
 
 <!-- ===== ACTUAL VS OUTLOOK ===== -->
@@ -543,6 +547,7 @@ a.btn{display:inline-block;text-decoration:none}
 <!-- ===== DAILY MARKET ANALYSIS ===== -->
 <section class="view" id="tr-daily">
   <div class="eyebrow">Türkiye, daily, closed day</div>
+  <div class="gatebox" id="tr-daily-gate"></div>
   <h1 id="m-title">Loading…</h1>
   <p class="lede" id="m-lede"></p>
   <p class="note-p">Published after settlement data lands, from EPİAŞ open data. Every number is read from tool output rather than typed from memory, and the balancing figures separate market imbalance from grid constraints.</p>
@@ -572,6 +577,7 @@ a.btn{display:inline-block;text-decoration:none}
       <tbody id="m-cmp"></tbody>
     </table>
   </div>
+  <div id="tr-daily-post"></div>
 </section>
 
 <!-- ===== MARKET DASHBOARD ===== -->
@@ -1141,8 +1147,22 @@ function renderWeekly(vid,country){
   if(!days.length){box.innerHTML='<p class="note-p">No earlier posts yet.</p>';return}
   box.innerHTML=days.map(d=>`<div class="wkday"><h2>${fmtDate(d,{weekday:"long",day:"numeric",month:"long"})}</h2>${its.filter(x=>x.day===d).sort((a,b)=>PORDER[a.kind]-PORDER[b.kind]).map(e=>`<details class="wk"><summary><span class="tag">${PK[e.kind]}</span><span class="hk">${esc(hookOf(e.text)||covers(e))}</span><span class="mono" style="color:var(--muted);font-size:12.5px">${covers(e)}</span></summary><div class="wkb">${postBody(e)}</div></details>`).join("")}</div>`).join("");
 }
+function renderTRPage(vid,kind){
+  const sec=document.getElementById(vid),gate=document.getElementById(vid+"-gate"),box=document.getElementById(vid+"-post");if(!sec)return;
+  const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
+  const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
+  sec.classList.toggle("stale",!e);
+  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;box.innerHTML="";return}
+  gate.innerHTML=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
+  let h="";
+  if(e.media)h+=panel("The clip","The animation that went out with the post. Tap to play.",`<div class="clip"><video controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
+  h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  box.innerHTML=h;
+}
 function renderPosts(){
   FEED.day=utcToday();
+  renderTRPage("tr-netload","post2");renderTRPage("tr-daily","post1");
   renderDailyPost("tr-news","news","tr-weekly");
   renderDailyPost("gb-analysis","gb_post1","gb-weekly");
   renderDailyPost("gb-outlook","gb_post2","gb-weekly");
