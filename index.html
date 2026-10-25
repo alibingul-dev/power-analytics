@@ -133,7 +133,7 @@ a.post:hover{text-decoration:underline}
 .wa-mix{display:flex;height:22px;border-radius:var(--r-s);overflow:hidden;margin-top:6px;background:var(--surface-2)}
 .wa-mix span{display:block;height:100%;transition:flex-basis .8s var(--ease-out);flex:0 0 0}
 .wa-rows{display:grid;gap:7px;margin-top:14px}
-.wa-row{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.wa-row{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
 .wa-track{position:relative;height:24px;background:var(--surface-2);border-radius:var(--r-s);overflow:hidden}
 .wa-fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:var(--r-s);transition:width .8s var(--ease-out)}
 .wa-val{position:absolute;top:0;bottom:0;display:flex;align-items:center;padding:0 8px;font-family:var(--font-mono);font-size:12.5px;white-space:nowrap;color:var(--bg);font-weight:500;transition:left .8s var(--ease-out)}
@@ -146,7 +146,7 @@ a.post:hover{text-decoration:underline}
 .wa-days button.seen b{color:var(--text)}.wa-days button:not(.seen):not(.on){opacity:.5}
 .wa-prog{height:3px;background:var(--surface-2);border-radius:var(--r-xs);margin-top:10px;overflow:hidden}
 .wa-prog i{display:block;height:100%;width:0;background:var(--b1)}
-@media (max-width:640px){.wa-days{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:640px){.wa-days{grid-template-columns:repeat(4,1fr)}.wa-row{grid-template-columns:1fr;gap:3px}.wa-rows{gap:9px}}
 @media (prefers-reduced-motion:reduce){.wa-cur{animation:none}.wa-mix span{transition:none}}
 .pday{font-size:13px;color:var(--muted);margin:0 0 18px}
 .pday b{color:var(--text);font-weight:600}
@@ -1180,25 +1180,25 @@ function renderDailyPost(vid,kind,weekly){
 
 /* ---------- weekly animated chart: plays the week's closed days one by one ---------- */
 const WA_FUEL={tr:[["hydro","Hydro","var(--b1)"],["wind","Wind","var(--b2)"],["solar","Solar","var(--b3)"],["gas","Gas","var(--b4)"],["coal","Coal","var(--b5)"],["other","Other","var(--muted)"]],
-  gb:[["nuclear","Nuclear","var(--b1)"],["wind","Wind","var(--b2)"],["solar","Solar","var(--b3)"],["gas","Gas","var(--b4)"],["rest","Biomass, hydro, storage, other","var(--muted)"]]};
+  gb:[["nuclear","Nuclear","var(--b1)"],["wind","Wind","var(--b2)"],["solar","Solar","var(--b3)"],["gas","Gas","var(--b4)"],["biomass","Biomass","var(--b5)"],["ps","Pumped hydro","var(--muted)"],["rest","Hydro/other","var(--b1-a45)"]]};
 const WA_TIMERS={};
 function weeklyAnim(vid,country,days){
   const kind=country==="tr"?"post1":"gb_post1",cur=country==="tr"?v=>Math.round(v).toLocaleString("en-GB")+" TL":v=>gbp(v);
   const list=FEED.items.filter(e=>e.kind===kind&&e.data&&days.includes(e.day)).sort((a,b)=>a.analysis_date.localeCompare(b.analysis_date));
   if(list.length<2)return "";
   const D=list.map(e=>{const d=e.data,p=d.price,pv=p.filter(v=>v!=null),F=Object.assign({},d.fuels);
-    if(country==="gb")F.rest=d.t.map((_,i)=>(F.biomass[i]||0)+(F.hydro[i]||0)+(F.ps[i]||0)+(F.other[i]||0));
+    if(country==="gb")F.rest=d.t.map((_,i)=>(F.hydro[i]==null&&F.other[i]==null)?null:(F.hydro[i]||0)+(F.other[i]||0));
     const tot={};WA_FUEL[country].forEach(([k])=>tot[k]=(F[k]||[]).reduce((a,v)=>a+Math.max(0,v||0),0));
     const all=Object.values(tot).reduce((a,b)=>a+b,0)||1;
-    return {date:e.analysis_date,gwh:Object.fromEntries(Object.entries(tot).map(([k,v])=>[k,v/1000])),t:d.t,p,avg:pv.reduce((a,b)=>a+b,0)/(pv.length||1),min:Math.min(...pv),max:Math.max(...pv),iMin:p.indexOf(Math.min(...pv)),iMax:p.indexOf(Math.max(...pv)),mix:Object.fromEntries(Object.entries(tot).map(([k,v])=>[k,v/all]))}});
+    return {date:e.analysis_date,gwh:Object.fromEntries(Object.entries(tot).map(([k,v])=>[k,v/1000*(country==="gb"?0.5:1)])),t:d.t,p,avg:pv.reduce((a,b)=>a+b,0)/(pv.length||1),min:Math.min(...pv),max:Math.max(...pv),iMin:p.indexOf(Math.min(...pv)),iMax:p.indexOf(Math.max(...pv)),mix:Object.fromEntries(Object.entries(tot).map(([k,v])=>[k,v/all]))}});
   const unit=country==="tr"?"TL/MWh, hourly":"£/MWh, half-hourly",label=country==="tr"?"day-ahead price (PTF)":"system price";
   const head=`<div class="panel wanim" id="${vid}-wa">
     <h2>The week in motion</h2>
-    <p class="note">How to read: the ${label} of each closed day is drawn in turn, oldest first. Earlier days stay behind as faint lines, so the week builds up on one chart. ${country==="tr"?"The bars underneath show how much each source generated that day, in GWh and as a share of the total; bar length is on one scale for the whole week.":"The bar underneath is that day's generation mix."} Press a day to jump to it.</p>
+    <p class="note">How to read: the ${label} of each closed day is drawn in turn, oldest first. Earlier days stay behind as faint lines, so the week builds up on one chart. ${true?"The bars underneath show how much each source generated that day, in GWh and as a share of the total; bar length is on one scale for the whole week.":"The bar underneath is that day's generation mix."} Press a day to jump to it.</p>
     <div class="wa-top"><div><div class="wa-date" id="${vid}-wa-d"></div><div class="wa-stats" id="${vid}-wa-s"></div></div><button class="wa-btn" id="${vid}-wa-b" type="button">Pause</button></div>
     <svg class="chart" id="${vid}-wa-c" viewBox="0 0 900 300" role="img" aria-label="${esc(label)} by day, animated through the week"></svg>
     <div class="legend" style="margin-top:2px"><span>${esc(unit)}, local time</span></div>
-    ${country==="tr"?`<div class="wa-rows" id="${vid}-wa-r">${WA_FUEL.tr.map(([k,n,c])=>`<div class="wa-row"><span>${esc(n)}</span><div class="wa-track"><span class="wa-fill" data-k="${k}" style="background:${c}"></span><span class="wa-val" data-k="${k}"></span></div></div>`).join("")}</div>`:
+    ${true?`<div class="wa-rows" id="${vid}-wa-r">${WA_FUEL[country].map(([k,n,c])=>`<div class="wa-row"><span>${esc(n)}</span><div class="wa-track"><span class="wa-fill" data-k="${k}" style="background:${c}"></span><span class="wa-val" data-k="${k}"></span></div></div>`).join("")}</div>`:
     `<div class="wa-mix" id="${vid}-wa-m">${WA_FUEL[country].map(([k,n,c])=>`<span data-k="${k}" style="background:${c}" title="${esc(n)}"></span>`).join("")}</div>
     <div class="legend" id="${vid}-wa-l"></div>`}
     <div class="wa-prog"><i id="${vid}-wa-p"></i></div>
@@ -1223,12 +1223,14 @@ function waRun(vid,country,D,cur){
     svg.innerHTML=f.g+ghosts+`<path class="wa-cur" pathLength="1" d="${path(d)}" fill="none" stroke="var(--b1)" stroke-width="2.6" stroke-linejoin="round"/>`+dot(d.iMax,cur(d.max)+" at "+d.t[d.iMax],true)+dot(d.iMin,cur(d.min)+" at "+d.t[d.iMin],false);
     document.getElementById(vid+"-wa-d").textContent=fmtDate(d.date,{weekday:"long",day:"numeric",month:"long"});
     document.getElementById(vid+"-wa-s").innerHTML=`<span>Average<b>${cur(d.avg)}</b></span><span>Lowest<b>${cur(d.min)}</b></span><span>Highest<b>${cur(d.max)}</b></span>`;
-    if(country==="tr"){
+    if(true){
       const top=Math.max(...D.flatMap(x=>Object.values(x.gwh)))||1;
       document.querySelectorAll(`#${vid}-wa-r .wa-fill`).forEach(el=>el.style.width=(100*(d.gwh[el.dataset.k]||0)/top).toFixed(2)+"%");
-      document.querySelectorAll(`#${vid}-wa-r .wa-val`).forEach(el=>{const k=el.dataset.k,w=100*(d.gwh[k]||0)/top,out=w<34;
+      document.querySelectorAll(`#${vid}-wa-r .wa-val`).forEach(el=>{const k=el.dataset.k,w=100*(d.gwh[k]||0)/top;
         el.textContent=Math.round(d.gwh[k]||0).toLocaleString("en-GB")+" GWh · "+(100*(d.mix[k]||0)).toFixed(1)+"%";
-        el.classList.toggle("out",out);el.style.left=out?w.toFixed(2)+"%":"0"});
+        const out=el.offsetWidth>el.parentElement.clientWidth*w/100;  // text wider than the bar it would sit in
+        const room=el.parentElement.clientWidth*(1-w/100)>=el.offsetWidth;  // fits to the right of the bar
+        el.classList.toggle("out",out);el.style.left=out?(room?w.toFixed(2)+"%":"auto"):"0";el.style.right=out&&!room?"0":"auto"});
     }else{
     document.querySelectorAll(`#${vid}-wa-m span`).forEach(sp=>sp.style.flexBasis=(100*(d.mix[sp.dataset.k]||0)).toFixed(2)+"%");
     document.getElementById(vid+"-wa-l").innerHTML=WA_FUEL[country].map(([k,n,c])=>`<span><i style="background:${c}"></i>${esc(n)} ${Math.round(100*(d.mix[k]||0))}%</span>`).join("");
