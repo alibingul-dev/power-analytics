@@ -82,6 +82,20 @@ main{display:grid;grid-template-columns:minmax(280px,26%) 1fr 240px;gap:10px;min
 .bats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:8px;min-height:0}
 .bc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:8px 10px;display:flex;flex-direction:column;min-height:0}
 .bc.best{border:2px solid var(--accent)}
+.bats.all{display:flex;flex-direction:column;gap:6px}
+.fam{flex:1;display:flex;flex-direction:column;min-height:0}
+.fh{font-size:11.5px;color:var(--muted);margin:0 0 3px 2px}
+.fg{flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;min-height:0}
+.mc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-s);padding:5px 6px;display:grid;grid-template-columns:14px minmax(0,1fr);gap:6px;min-height:0}
+.mc.best{border:2px solid var(--accent)}
+.mb{position:relative;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--bg)}
+.mt{display:flex;flex-direction:column;min-width:0;font-size:11px;line-height:1.3}
+.mn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mn .dot{width:7px;height:7px;margin-right:3px}
+.md{color:var(--muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms{font-family:var(--font-mono);color:var(--muted)}
+main.allv{grid-template-columns:minmax(250px,21%) 1fr 230px}
+.ma{font-size:10.5px;border-radius:3px;padding:0 3px;margin:1px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:flex-start}
+.mp{margin-top:auto;font-family:var(--font-mono);font-weight:500}
 .bats.v12{grid-template-rows:repeat(3,minmax(0,1fr))}
 .bats.v12 .bs{-webkit-line-clamp:1}
 .bc>.bn,.bc>.bs,.bc>.info,.bc>.pnl{flex-shrink:0}
@@ -134,7 +148,7 @@ footer a{color:var(--accent)}
     <span class="chip">PFK oranı <b>≥ 1,25</b></span>
   </div>
   <div class="ctrl">
-    <div class="seg" id="vw"><button data-v="st" class="on">Stratejiler</button><button data-v="cy">Arbitraj çevrim</button><button data-v="mx">Mix çevrim</button><button data-v="dg">DGP çevrim</button></div>
+    <div class="seg" id="vw"><button data-v="all" class="on">Tümü</button><button data-v="st">Stratejiler</button><button data-v="cy">Arbitraj</button><button data-v="mx">Mix</button><button data-v="dg">DGP kusursuz</button><button data-v="dt">DGP tahminli</button></div>
     <label>Gün <span class="dd" id="dd"><button type="button" id="dayb" aria-haspopup="listbox" aria-expanded="false"><span id="dayt">—</span></button><span class="ddl scr" id="dayl" role="listbox"></span></span></label>
     <button id="pl">Durdur</button>
     <button id="rs">Başa al</button>
@@ -204,6 +218,7 @@ function sim(name,sub,Rf,act,opt){
     const trip=opt.trip&&opt.trip.includes(h);
     let R=Rf(h);
     const a=act(h,s);let d=0,mk='p';if(a){d=Math.round((a[0]-s)*10)/10;mk=a[1];}
+    let noI=0;if(mk==='g'){if((d>0&&SMF[h]<PTF[h])||(d<0&&SMF[h]>PTF[h]))mk='s';else{noI=d;d=0;}}
     const err=opt.err&&opt.err[h]!==undefined;if(err)d=opt.err[h];
     const bad=trip||err,dPhys=bad?0:d;
     for(let k=0;k<60;k++){const P=trip?0:resp(R,F[h*60+k]);const e=P/60;s+=dPhys/60+(e>0?-e/ETA:-e*ETA);s=Math.max(5,Math.min(95,s));soc.push(s);}
@@ -217,6 +232,7 @@ function sim(name,sub,Rf,act,opt){
     if(d){const m=mk==='s'?(d>0?'DGP YAT alış':'DGP YAL satış'):(d>0?'GÖP alış':'GÖP satış');lab+=(lab?' + ':'')+m+' '+(d>0?'+':'')+n1(d)+' MWh';}
     if(err){kind='miss';lab='Yön hatası · alış yerine satış '+n1(d)+' MWh, teslim edilemedi';}
     if(trip){kind='miss';lab='Arıza · '+(d<0?'satış teslim edilemedi':'işlem yapılamadı');}
+    if(noI){kind='miss';lab='DGP '+(noI>0?'YAT':'YAL')+' teklifi talimat almadı, işlem yok';}
     hrs.push({R,cash:R*PFK[h]+tc-pen,sell:tc>0?tc:0,buy:tc<0?-tc:0,pen,kind,lab:lab||'Bekle',d,db:false});
   }
   return {name,sub,soc,hrs};
@@ -266,8 +282,11 @@ const NS=[2,4,6,8,10,12];
 const CYK={
   cy:{p:'A',t:'Arbitraj',R:0,lo:5,hi:95,dgp:false,sub:n=>'Yalnız GÖP: günde tam '+n+' satış saati, al/sat saatleri optimize. SoC 5–50–95 MWh. PFK yok.'},
   mx:{p:'M',t:'Mix',R:8,lo:10,hi:90,dgp:false,sub:n=>'8 MW sürekli PFK + günde tam '+n+' GÖP satış saati, 10–50–90 MWh koridorunda.'},
-  dg:{p:'D',t:'GÖP+DGP',R:0,lo:5,hi:95,dgp:true,sub:n=>'Günde tam '+n+' satış saati; alışta PTF ile SMF’nin düşüğü, satışta yükseği (YAT/YAL).'}};
-const mkCyc=v=>(i,S0)=>{setDay(i);const K=CYK[v];return NS.map((n,j)=>{const s0=S0?S0[j]:50;const sc=sim(K.p+n+' · '+n+' çevrim',K.sub(n),h=>K.R,cycPlan(n,K.lo,K.hi,K.dgp,s0),{s0});
+  dg:{p:'D',t:'GÖP+DGP',R:0,lo:5,hi:95,dgp:true,sub:n=>'Kusursuz öngörü: günde tam '+n+' satış saati; alışta PTF ile SMF’nin düşüğü, satışta yükseği. Üst sınırdır.'},
+  dt:{p:'G',t:'DGP tahminli',R:0,lo:5,hi:95,dgp:false,guess:true,sub:n=>'Günde tam '+n+' satış saati, saatler PTF ile seçilir. Dün aynı saatte sistem uygun yöndeyse DGP teklifi verilir; yön tutmazsa talimat gelmez, işlem olmaz.'}};
+const mkCyc=v=>(i,S0)=>{setDay(i);const K=CYK[v];return NS.map((n,j)=>{const s0=S0?S0[j]:50;let act=cycPlan(n,K.lo,K.hi,K.dgp,s0);
+  if(K.guess&&i>0){const pl=act,yd=DAYS[i-1];act=(h,s)=>{const a=pl(h,s);if(!a)return a;const up=a[0]>s;return [a[0],(up?yd.smf[h]<yd.ptf[h]:yd.smf[h]>yd.ptf[h])?'g':'p'];};}
+  const sc=sim(K.p+n+' · '+n+' çevrim',K.sub(n),h=>K.R,act,{s0});sc.fam=v;
   sc.col='--q'+n;sc.dash=false;sc.n=n;sc.st=cycStat(sc);return sc;});};
 function buildDay(i,S0){const o=(k,x)=>Object.assign({s0:S0?S0[k]:50},x||{});
   setDay(i);
@@ -286,7 +305,11 @@ function buildDay(i,S0){const o=(k,x)=>Object.assign({s0:S0?S0[k]:50},x||{});
     sim('S8 · Teslim edilemeyen satış','S2 stratejisi; '+fmtD(DAYS[ERRDAY].date)+' sabah satış saatinde arıza, açık dengesizlikten kapanır.',h=>0,p2.act,o(7,tr8))
   ].map((sc,k)=>(sc.col='--s'+k,sc.dash=k>=5,sc));
 }
-const BUILD={st:buildDay,cy:mkCyc('cy'),mx:mkCyc('mx'),dg:mkCyc('dg')};
+const FAMS=['st','cy','mx','dg','dt'],CYCV=['cy','mx','dg','dt'],isCyc=v=>CYCV.includes(v);
+const FAMT={st:'Stratejiler (S1–S8)',cy:'Arbitraj · yalnız GÖP',mx:'Mix · 8 MW PFK + GÖP',dg:'GÖP+DGP · kusursuz öngörü (üst sınır)',dt:'GÖP+DGP · tahminli (dünün yönü)'};
+const SHORT=['Tam PFK','Arbitraj','Mix','GÖP+DGP','Ardışık PFK','PFK + ceza','Yön hatası','Teslim hatası'];
+const BUILD={st:buildDay,cy:mkCyc('cy'),mx:mkCyc('mx'),dg:mkCyc('dg'),dt:mkCyc('dt'),
+  all:i=>FAMS.flatMap(v=>BUILD[v](i,START[v][i]).map((sc,k)=>{sc.fam=v;if(v==='st')sc.short=SHORT[k];return sc;}))};
 function fmtD(iso){const [y,m,d]=iso.split('-');return d+'.'+m+'.'+y;}
 
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -321,8 +344,8 @@ function drawCharts(cur){
   chart($('cF'),[{data:F,color:'--c-freq',w:1}],{min:49.8,max:50.2,ticks:[49.8,49.9,50,50.1,50.2],fmt:v=>v.toFixed(1).replace('.',','),xstep:3,band:[49.99,50.01],cursor:cur});
   const xl=[];DAYS.forEach((d,i)=>{if(i%7===0&&i<DAYS.length-3||i===DAYS.length-1)xl.push([i+1,d.date.slice(8)+'.'+d.date.slice(5,7)]);});
   const M=MC[VIEW];
-  chart($('cS'),M.cum.map((a,i)=>({data:a,color:SC[i].col,w:SC[i].dash?1.6:2,dash:SC[i].dash?[5,3]:[]})),{n:DAYS.length+1,min:M.min,max:M.max,ticks:M.ticks,fmt:v=>(v/1e6).toLocaleString('tr-TR')+' mn',xlab:xl,cursorX:DI+1,zero:true});
-  if(VIEW!=='st')drawCyc();
+  chart($('cS'),M.cum.map((a,i)=>({data:a,color:SC[i].col,w:VIEW==='all'?1.1:SC[i].dash?1.6:2,dash:SC[i].dash?[5,3]:[]})),{n:DAYS.length+1,min:M.min,max:M.max,ticks:M.ticks,fmt:v=>(v/1e6).toLocaleString('tr-TR')+' mn',xlab:xl,cursorX:DI+1,zero:true});
+  if(isCyc(VIEW))drawCyc();
 }
 
 const box=$('bats');
@@ -333,8 +356,14 @@ function infoHTML(i){return VIEW==='st'?`<span>PFK limiti</span><span id="il${i}
 <span>Frekans ölü bandı</span><span id="fd${i}">—</span>`:`<span>Tam çevrim</span><span id="ef${i}">—</span>
 <span>Ort. alış</span><span id="ob${i}">—</span>
 <span>Ort. satış</span><span id="os${i}">—</span>`;}
-function cycInfo(){if(VIEW==='st')return;SC.forEach((sc,i)=>{$('ef'+i).textContent=n1(sc.st.efc);$('ob'+i).textContent=Math.round(sc.st.pb).toLocaleString('tr-TR')+' TL';$('os'+i).textContent=Math.round(sc.st.ps).toLocaleString('tr-TR')+' TL';});}
-function buildCards(){box.innerHTML='';SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="bx${i}">
+function cycInfo(){if(!isCyc(VIEW))return;SC.forEach((sc,i)=>{$('ef'+i).textContent=n1(sc.st.efc);$('ob'+i).textContent=Math.round(sc.st.pb).toLocaleString('tr-TR')+' TL';$('os'+i).textContent=Math.round(sc.st.ps).toLocaleString('tr-TR')+' TL';});}
+function buildMini(){box.innerHTML='';box.classList.add('all');let i=0;
+  FAMS.forEach(v=>{const sec=document.createElement('div');sec.className='fam';sec.innerHTML='<div class="fh">'+FAMT[v]+'</div><div class="fg" style="grid-template-columns:repeat('+SC.filter(x=>x.fam===v).length+',minmax(0,1fr))"></div>';const g=sec.lastChild;
+    SC.forEach((sc,k)=>{if(sc.fam!==v)return;const id=sc.name.split(' · ')[0],ds=sc.short||sc.name.split(' · ')[1];
+      g.insertAdjacentHTML('beforeend',`<article class="mc" id="bx${k}" title="${sc.name}: ${sc.sub}"><div class="mb"><div class="z" style="bottom:0;height:5%;background:var(--dead)"></div><div class="z" style="bottom:95%;height:5%;background:var(--dead)"></div><div class="z" id="wa${k}" style="bottom:0;background:var(--soc)"></div><div class="z" id="dn${k}" style="background:var(--pad-dn)"></div><div class="z" id="up${k}" style="background:var(--pad-up)"></div><div class="z" id="ln${k}" style="height:2px;background:var(--marker)"></div></div>
+<div class="mt"><div class="mn"><span class="dot" style="background:var(${sc.col})"></span><b>${id}</b></div><div class="md">${ds}</div><div class="ms" id="ls${k}">—</div><div class="ma" id="pi${k}">—</div><div class="mp" id="pn${k}">0</div></div></article>`);});
+    box.appendChild(sec);});}
+function buildCards(){box.classList.remove('all');document.querySelector('main').classList.toggle('allv',VIEW==='all');if(VIEW==='all')return buildMini();box.innerHTML='';SC.forEach((sc,i)=>{box.insertAdjacentHTML('beforeend',`<article class="bc" id="bx${i}">
 <div class="bn"><span class="dot" style="background:var(${sc.col})"></span>${sc.name}</div><div class="bs" id="bs${i}" title="${sc.sub}">${sc.sub}</div>
 <div class="wrap"><div class="bar">
 <div class="z" style="bottom:0;height:5%;background:var(--dead)"></div><div class="z" style="bottom:95%;height:5%;background:var(--dead)"></div>
@@ -358,7 +387,7 @@ function buildCards(){box.innerHTML='';SC.forEach((sc,i)=>{box.insertAdjacentHTM
 <span>Alış</span><span id="al${i}" style="color:var(--bad)">0 bin</span>
 <span>Ceza / kayıp</span><span id="ce${i}" style="color:var(--bad)">0 bin</span>
 </div></article>`);});
-  if(VIEW!=='st')box.insertAdjacentHTML('beforeend',`<article class="bc panel cyc" id="bxS"><div class="bn">Çevrim ve 30 gün PnL</div>
+  if(isCyc(VIEW))box.insertAdjacentHTML('beforeend',`<article class="bc panel cyc" id="bxS"><div class="bn">Çevrim ve 30 gün PnL</div>
 <div class="bs">Çerçeveli çubuk seçili günün en iyisi.</div>
 <div class="cv"><canvas id="cC" role="img" aria-label="Çevrim sayısına göre 30 günlük toplam PnL"></canvas></div>
 <div class="row"><span>30 gün en iyi</span><b id="cyB">—</b></div><div class="row"><span>Bugün en iyi</span><b id="cyD">—</b></div>
@@ -379,6 +408,11 @@ let FILT=new Set();let logN=0,LL=[],userScrolled=false;
 {const L=document.getElementById('log');const mark=()=>{userScrolled=L.scrollHeight-L.scrollTop-L.clientHeight>30;};L.addEventListener('wheel',()=>setTimeout(mark,50));L.addEventListener('touchmove',()=>setTimeout(mark,50));L.addEventListener('scroll',()=>{if(L.scrollHeight-L.scrollTop-L.clientHeight<=30)userScrolled=false;});}
 function applyFilter(){document.querySelectorAll('#log .le').forEach(e=>{const s=e.dataset.s;e.classList.toggle('hide',s!==''&&s!==undefined&&!FILT.has(+s));});const L=$('log');if(!userScrolled)L.scrollTop=L.scrollHeight;}
 function buildFilter(){const f=$('flt');f.innerHTML='';
+  if(VIEW==='all'){const fam=v=>SC.map((sc,i)=>sc.fam===v?i:-1).filter(i=>i>=0);
+    const sync=()=>{FAMS.forEach(v=>$('ff'+v).classList.toggle('off',!fam(v).some(i=>FILT.has(i))));applyFilter();};
+    const all=document.createElement('button');all.textContent='Tümü';all.onclick=()=>{const on=FILT.size<SC.length;FILT.clear();if(on)SC.forEach((_,i)=>FILT.add(i));sync();};f.appendChild(all);
+    FAMS.forEach(v=>{const b=document.createElement('button');b.id='ff'+v;b.textContent={st:'S',cy:'A',mx:'M',dg:'D',dt:'G'}[v]+' serisi';b.title=FAMT[v];
+      b.onclick=()=>{const ix=fam(v),on=ix.some(i=>FILT.has(i));ix.forEach(i=>on?FILT.delete(i):FILT.add(i));sync();};f.appendChild(b);});sync();return;}
   const all=document.createElement('button');all.textContent='Tümü';all.onclick=()=>{const on=FILT.size<SC.length;FILT.clear();if(on)SC.forEach((_,i)=>FILT.add(i));sync();};f.appendChild(all);
   SC.forEach((sc,i)=>{const b=document.createElement('button');b.id='fb'+i;b.innerHTML='<span class="dot" style="background:var('+sc.col+');margin:0"></span>'+sc.name.split(' · ')[0];b.title=sc.name;
     b.onclick=()=>{FILT.has(i)?FILT.delete(i):FILT.add(i);sync();};f.appendChild(b);});
@@ -406,7 +440,8 @@ function render(){
     $('wa'+i).style.height=s+'%';$('ln'+i).style.bottom=s+'%';
     const lo=Math.max(5,s-pad),hi=Math.min(95,s+pad);
     $('dn'+i).style.bottom=lo+'%';$('dn'+i).style.height=(o.R?s-lo:0)+'%';
-    $('up'+i).style.bottom=s+'%';$('up'+i).style.height=(o.R?hi-s:0)+'%';$('up'+i).style.borderWidth=o.R?'1px':'0';
+    $('up'+i).style.bottom=s+'%';$('up'+i).style.height=(o.R?hi-s:0)+'%';
+    if(VIEW==='all'){$('ls'+i).textContent='SoC '+n1(s);const pe=$('pi'+i),kk=PILL[o.kind];pe.textContent=o.lab;pe.style.color=kk==='idle'?'var(--muted)':'var(--pill-'+kk+'-ink)';pe.style.background='var(--pill-'+kk+'-bg)';$('pn'+i).textContent=fk(cum[i]+o.cash*(done?0:frac));return;}$('up'+i).style.borderWidth=o.R?'1px':'0';
     $('cl'+i).style.bottom=(5+pad)+'%';$('cu'+i).style.bottom=(95-pad)+'%';
     $('cl'+i).style.borderTopWidth=o.R?'1px':'0';$('cu'+i).style.borderTopWidth=o.R?'1px':'0';
     const big=o.R&&pad>=8;
@@ -434,8 +469,8 @@ function render(){
   if(m!==lastM){drawCharts(h+frac);lastM=m;}
 }
 function finish(){done=true;endWait=2500;const best=cum.indexOf(Math.max(...cum));
-  logAdd('24:00','Gün bitti. Günlük sıralama:','sum');
-  SC.map((sc,i)=>[cum[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([v,i],r)=>logAdd((r+1)+'.',tag(i)+fmt(v),r===0?'sum':'',i));
+  logAdd('24:00','Gün bitti. Günlük sıralama'+(VIEW==='all'?' (ilk 10)':'')+':','sum');
+  SC.map((sc,i)=>[cum[i],i]).sort((a,b)=>b[0]-a[0]).slice(0,VIEW==='all'?10:99).forEach(([v,i],r)=>logAdd((r+1)+'.',tag(i)+fmt(v),r===0?'sum':'',i));
   SC.forEach((sc,i)=>$('bx'+i).classList.toggle('best',i===best));render();}
 function tick(now){const dt=Math.max(0,Math.min(250,now-last));last=now;
   if(run&&done&&$('lp').checked){endWait-=dt;if(endWait<=0)reset();}
@@ -443,7 +478,7 @@ function tick(now){const dt=Math.max(0,Math.min(250,now-last));last=now;
     if(hold>0)hold-=dt;else{frac+=dt/D;
       if(frac>=1){SC.forEach((sc,i)=>{cum[i]+=sc.hrs[h].cash;cs[i]+=sc.hrs[h].sell;cb[i]+=sc.hrs[h].buy;cp[i]+=sc.hrs[h].pen;});
         if(h>=23){frac=0.999;finish();requestAnimationFrame(tick);return;}
-        h++;frac=0;logHour(h);if(SC.some(sc=>sc.hrs[h].kind==='chg'))hold=VIEW!=='st'?250:900;}}
+        h++;frac=0;logHour(h);if(SC.some(sc=>sc.hrs[h].kind==='chg'))hold=VIEW==='st'?900:250;}}
     render();}
   requestAnimationFrame(tick);}
 function selectDay(i){DI=i;SC=BUILD[VIEW](i,START[VIEW][i]);SC.forEach((sc,k)=>{const b=$('bs'+k);if(b){b.textContent=sc.sub;b.title=sc.sub;}});cycInfo();lastM=-1;
@@ -453,31 +488,36 @@ function selectDay(i){DI=i;SC=BUILD[VIEW](i,START[VIEW][i]);SC.forEach((sc,k)=>{
 async function init(){
   let data;try{data=await (await fetch('bess-data.json',{cache:'no-cache'})).json();}catch(e){$('hr').textContent='Veri yüklenemedi';return;}
   DAYS=data.days;ERRDAY=DAYS.length-1;
-  for(const v of ['st','cy','mx','dg']){const cum=[];
+  const scale=cum=>{const all=cum.flat();const span=Math.max(...all)-Math.min(0,...all);const raw=span/5,mag=Math.pow(10,Math.floor(Math.log10(raw))),nr=raw/mag;const stp=(nr<=1?1:nr<=2?2:nr<=5?5:10)*mag;
+    const min=Math.floor(Math.min(0,...all)/stp)*stp,max=Math.ceil(Math.max(...all)/stp)*stp,ticks=[];for(let x=min;x<=max+1;x+=stp)ticks.push(x);return {cum,min,max,ticks};};
+  for(const v of FAMS){const cum=[];
     START[v]=[];let s0=null;for(let i=0;i<DAYS.length;i++){START[v][i]=s0;const day=BUILD[v](i,s0);s0=day.map(x=>x.soc[x.soc.length-1]);day.forEach((s,k)=>{if(!cum[k])cum[k]=[0];const t=s.hrs.reduce((a,o)=>a+o.cash,0);cum[k].push(cum[k][cum[k].length-1]+t);});}
-    const all=cum.flat();const span=Math.max(...all)-Math.min(0,...all);const raw=span/5,mag=Math.pow(10,Math.floor(Math.log10(raw))),nr=raw/mag;const stp=(nr<=1?1:nr<=2?2:nr<=5?5:10)*mag;
-    const min=Math.floor(Math.min(0,...all)/stp)*stp,max=Math.ceil(Math.max(...all)/stp)*stp,ticks=[];for(let x=min;x<=max+1;x+=stp)ticks.push(x);MC[v]={cum,min,max,ticks};}
-  for(const v of ['cy','mx','dg']){let e=0;for(let i=0;i<DAYS.length;i++)e+=cycStat(BUILD[v](i,START[v][i])[NS.length-1]).efc;MC[v].efc12=e;}
+    MC[v]=scale(cum);}
+  MC.all=scale(FAMS.flatMap(v=>MC[v].cum));START.all=DAYS.map(()=>null);
+  for(const v of CYCV){let e=0;for(let i=0;i<DAYS.length;i++)e+=cycStat(BUILD[v](i,START[v][i])[NS.length-1]).efc;MC[v].efc12=e;}
   const dl=$('dayl'),dbt=$('dayb');
   DAYS.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.textContent=fmtD(d.date);b.onclick=()=>{ddClose();selectDay(i);dbt.focus();};dl.appendChild(b);});
   dbt.onclick=e=>{e.stopPropagation();dl.classList.contains('open')?ddClose():ddOpen();};
   document.addEventListener('click',e=>{if(!$('dd').contains(e.target))ddClose();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')ddClose();});
-  DI=DAYS.length-1;setView('st',true);requestAnimationFrame(tick);
+  DI=DAYS.length-1;setView('all',true);requestAnimationFrame(tick);
 }
 function ddOpen(){const dl=$('dayl');dl.classList.add('open');$('dayb').setAttribute('aria-expanded','true');const on=dl.children[DI];if(on){dl.scrollTop=on.offsetTop-dl.clientHeight/2;on.focus();}}
 function ddClose(){$('dayl').classList.remove('open');$('dayb').setAttribute('aria-expanded','false');}
 const TT={st:['Bir batarya, sekiz senaryo','Son 30 günün gerçek fiyatlarıyla aynı bataryanın dört stratejide ne kazandığı ve dört hata senaryosunda ne kaybettiği'],
   cy:['Arbitraj, altı çevrim planı','Yalnız GÖP arbitrajı; günde 2, 4, 6, 8, 10 ve 12 zorunlu satış saati. Fazla çevrim kazanç mı, kayıp mı?'],
   mx:['Mix, altı çevrim planı','8 MW sürekli PFK ve yanında GÖP arbitrajı; günde 2’den 12’ye çift sayılı çevrim.'],
-  dg:['GÖP+DGP, altı çevrim planı','Alışta PTF/SMF düşüğü, satışta yükseği; günde 2’den 12’ye çift sayılı çevrim.']};
+  dg:['GÖP+DGP kusursuz öngörü, altı çevrim','SMF yönünü önceden bilen model; ulaşılabilecek üst sınır, gerçekçi değil.'],
+  dt:['GÖP+DGP tahminli, altı çevrim','DGP kararı dünün aynı saatindeki sistem yönüne göre; yön tutmazsa talimat gelmez.'],
+  all:['Bir batarya, otuz iki senaryo','Aynı batarya, aynı 30 günün gerçek fiyatları; her senaryo ayrı bir batarya olarak paralel çalışıyor.']};
 function setView(v,first){VIEW=v;document.querySelectorAll('#vw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   $('ttl').textContent=TT[v][0];$('tsub').textContent=TT[v][1];
   SC=BUILD[v](DI,START[v][DI]);buildCards();FILT=new Set(SC.map((_,i)=>i));
-  const M=MC[v];$('pl8').innerHTML=SC.map((sc,i)=>'<span title="'+sc.name+' · 30 gün: '+fmt(M.cum[i][M.cum[i].length-1])+'"><i style="border-color:var('+sc.col+')'+(sc.dash?';border-top-style:dashed':'')+'"></i>'+sc.name.split(' · ')[0]+' '+(Math.round(M.cum[i][M.cum[i].length-1]/1e5)/10).toLocaleString('tr-TR')+'</span>').join('');
-  if(v!=='st'){const tot=M.cum.map(a=>a[a.length-1]),b=tot.indexOf(Math.max(...tot));$('cyB').textContent=SC[b].name.split(' · ')[0]+' · '+(tot[b]/1e6).toFixed(1).replace('.',',')+' mn';$('cyE').textContent=Math.round(M.efc12)+' çevrim';}
+  const M=MC[v];const ord=SC.map((_,i)=>i).sort((a,b)=>M.cum[b][M.cum[b].length-1]-M.cum[a][M.cum[a].length-1]).slice(0,v==='all'?8:99).sort((a,b)=>v==='all'?0:a-b);
+  $('pl8').innerHTML=(v==='all'?'<span>İlk 8:</span>':'')+ord.map(i=>[SC[i],i]).map(([sc,i])=>'<span title="'+sc.name+' · 30 gün: '+fmt(M.cum[i][M.cum[i].length-1])+'"><i style="border-color:var('+sc.col+')'+(sc.dash?';border-top-style:dashed':'')+'"></i>'+sc.name.split(' · ')[0]+' '+(Math.round(M.cum[i][M.cum[i].length-1]/1e5)/10).toLocaleString('tr-TR')+'</span>').join('');
+  if(isCyc(v)){const tot=M.cum.map(a=>a[a.length-1]),b=tot.indexOf(Math.max(...tot));$('cyB').textContent=SC[b].name.split(' · ')[0]+' · '+(tot[b]/1e6).toFixed(1).replace('.',',')+' mn';$('cyE').textContent=Math.round(M.efc12)+' çevrim';}
   buildFilter();selectDay(DI);}
-function cycDay(){if(VIEW==='st'||!$('cyD'))return;const day=SC.map(sc=>sc.hrs.reduce((a,o)=>a+o.cash,0)),b=day.indexOf(Math.max(...day));$('cyD').textContent=SC[b].name.split(' · ')[0]+' · '+fk(day[b]);}
+function cycDay(){if(!isCyc(VIEW)||!$('cyD'))return;const day=SC.map(sc=>sc.hrs.reduce((a,o)=>a+o.cash,0)),b=day.indexOf(Math.max(...day));$('cyD').textContent=SC[b].name.split(' · ')[0]+' · '+fk(day[b]);}
 $('pl').onclick=()=>{if(done&&!$('lp').checked)reset();run=!run;$('pl').textContent=run?'Durdur':'Başlat';};
 $('rs').onclick=()=>reset();
 document.querySelectorAll('#vw button').forEach(b=>b.onclick=()=>{if(b.dataset.v!==VIEW)setView(b.dataset.v);});
