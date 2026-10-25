@@ -1,0 +1,94 @@
+name: Android AAB
+
+# Builds the signed Play bundle for the Power Analytics app (android/).
+# The app shows the live site, so daily data commits never need a new build:
+# only changes under android/ (or this file) build one. Upload the .aab from the
+# release this run creates to Play Console.
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+    inputs:
+      notes:
+        description: 'What changed (goes into the run title only)'
+        required: false
+        default: ''
+
+run-name: AAB ${{ github.run_number }} ${{ inputs.notes || github.event.head_commit.message }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          missing=""
+          for n in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            [ -n "${!n}" ] || missing="$missing $n"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Repo secrets missing:$missing (Settings > Secrets and variables > Actions)"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          echo "KEYSTORE_PATH=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_ENV"
+          echo "VERSION_NAME=1.0.${{ github.run_number }}" >> "$GITHUB_ENV"
+
+      - name: Build
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          # on failure, surface Gradle's own error as annotations (the run's log is not always reachable)
+          if ! gradle --no-daemon bundleRelease > "$RUNNER_TEMP/gradle.log" 2>&1; then
+            grep -A25 "What went wrong" "$RUNNER_TEMP/gradle.log" | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+            grep -E "^e: |error:|Duplicate class" "$RUNNER_TEMP/gradle.log" | head -15 | while IFS= read -r l; do echo "::error::$l"; done
+            tail -30 "$RUNNER_TEMP/gradle.log"
+            exit 1
+          fi
+          tail -5 "$RUNNER_TEMP/gradle.log"
+
+      - name: Name the file
+        run: |
+          mkdir out
+          cp android/app/build/outputs/bundle/release/app-release.aab "out/PowerAnalytics-v${VERSION_NAME}-vc${{ github.run_number }}.aab"
+          rm -f "$RUNNER_TEMP/upload.keystore"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PowerAnalytics-aab-${{ github.run_number }}
+          path: out/*.aab
+          retention-days: 30
+
+      # a release keeps the signed file reachable without the Actions UI
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTES: ${{ inputs.notes || github.event.head_commit.message }}
+        run: |
+          gh release create "android-${{ github.run_number }}" out/*.aab \
+            --title "Android AAB vc${{ github.run_number }} (v${VERSION_NAME})" \
+            --notes "$NOTES" --target "${{ github.sha }}"

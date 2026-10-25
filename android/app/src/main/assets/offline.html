@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline</title>
+<style>
+  html,body{margin:0;height:100%;background:#0E1520;color:#E6EDF5;font:16px/1.5 system-ui,sans-serif}
+  main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 28px;text-align:center;box-sizing:border-box}
+  h1{font-size:20px;margin:0 0 8px}
+  p{margin:0 0 24px;color:#9AA8B8;max-width:320px}
+  button{font:inherit;font-weight:600;color:#0E1520;background:#38C0F8;border:0;border-radius:10px;padding:12px 28px}
+</style>
+</head>
+<body>
+<main>
+  <h1>No connection</h1>
+  <p>Power Analytics loads today's market data from the web. Check your connection and try again.</p>
+  <button onclick="window.PAAndroid&&PAAndroid.retry()">Try again</button>
+</main>
+</body>
+</html>
