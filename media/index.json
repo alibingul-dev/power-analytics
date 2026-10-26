@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-26T08:20:20Z",
+ "updated": "2026-10-26T10:23:50Z",
  "items": [
   {
    "kind": "gb",
@@ -263,6 +263,14 @@
    "date": "2026-10-24",
    "src": "media/tr-2026-10-24.mp4",
    "poster": "media/tr-2026-10-24.jpg",
+   "duration_s": 52.3
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-25",
+   "src": "media/tr-2026-10-25.mp4",
+   "poster": "media/tr-2026-10-25.jpg",
    "duration_s": 52.3
   },
   {
