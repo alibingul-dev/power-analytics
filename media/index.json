@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-28T09:37:28Z",
+ "updated": "2026-10-28T10:09:59Z",
  "items": [
   {
    "kind": "gb",
@@ -103,6 +103,14 @@
    "date": "2026-10-26",
    "src": "media/gb-2026-10-26.mp4",
    "poster": "media/gb-2026-10-26.jpg",
+   "duration_s": 43.7
+  },
+  {
+   "kind": "gb",
+   "label": "GB seven-day scorecard",
+   "date": "2026-10-27",
+   "src": "media/gb-2026-10-27.mp4",
+   "poster": "media/gb-2026-10-27.jpg",
    "duration_s": 43.7
   },
   {
