@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-28T06:27:10Z",
+ "updated": "2026-10-28T08:21:11Z",
  "items": [
   {
    "kind": "gb",
@@ -407,6 +407,14 @@
    "date": "2026-10-28",
    "src": "media/tr-outlook-2026-10-28.mp4",
    "poster": "media/tr-outlook-2026-10-28.jpg",
+   "duration_s": 33.8
+  },
+  {
+   "kind": "tr-outlook",
+   "label": "TR net load outlook",
+   "date": "2026-10-29",
+   "src": "media/tr-outlook-2026-10-29.mp4",
+   "poster": "media/tr-outlook-2026-10-29.jpg",
    "duration_s": 33.8
   }
  ]
