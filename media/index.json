@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-29T08:31:14Z",
+ "updated": "2026-10-29T09:22:06Z",
  "items": [
   {
    "kind": "gb",
@@ -328,6 +328,14 @@
    "src": "media/tr-2026-10-27.mp4",
    "poster": "media/tr-2026-10-27.jpg",
    "duration_s": 52.3
+  },
+  {
+   "kind": "tr",
+   "label": "TR day-end scorecard",
+   "date": "2026-10-28",
+   "src": "media/tr-2026-10-28.mp4",
+   "poster": "media/tr-2026-10-28.jpg",
+   "duration_s": 51.0
   },
   {
    "kind": "tr-outlook",
