@@ -12,7 +12,7 @@
     "date": "2026-10-22",
     "min": 573.3,
     "spread": -49.5,
-    "wind": 225.4
+    "wind": 225.5
   },
   "date": "2026-10-29",
   "figures": [
@@ -47,7 +47,7 @@
     {
       "c": "b3",
       "k": "Solar",
-      "v": 7.1
+      "v": 7.0
     },
     {
       "c": "b2",
@@ -71,7 +71,7 @@
   "solar_licensed_pct": 1.1,
   "solar_rooftop_pct": 5.9,
   "source": "EPIAS Transparency Platform",
-  "updated": "2026-10-30T09:18:52Z",
+  "updated": "2026-10-30T11:45:48Z",
   "worst_hours": [
     {
       "cost": 4025,
