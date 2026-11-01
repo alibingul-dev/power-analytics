@@ -86,6 +86,12 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 main{margin-left:var(--rail);padding:44px 44px 90px;max-width:1060px}
 .view{display:none}.view.on{display:block}
 body.full main{max-width:none;padding:0}
+body.wide main{max-width:1560px}
+.trgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.trgrid>.trL{position:sticky;top:24px}
+.trgrid .panel{margin-top:0}
+.trgrid>.trR>.panel+.panel{margin-top:18px}
+@media (max-width:1180px){.trgrid{grid-template-columns:1fr}.trgrid>.trL{position:static}}
 body.full #ab-home{display:none!important}
 .view.frame iframe{display:block;width:100%;height:100vh;border:0}
 @media (max-width:880px){.view.frame iframe{height:calc(100vh - 56px)}}
@@ -885,6 +891,7 @@ function go(id){
   if(!views.some(v=>v.id===id))id="tr-netload";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",id==="tr-bess");
+  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily");
   if(id==="tr-bess"){const f=document.querySelector("#tr-bess iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`);
@@ -1157,12 +1164,12 @@ function renderTRPage(vid,kind){
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
   sec.classList.toggle("stale",!e);
-  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;box.innerHTML="";return}
+  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
   const TRP=vid==="tr-netload"||vid==="tr-daily";
   gate.innerHTML=TRP?"":meta;
-  let h="";
-  if(e.media)h+=panel(TRP?"":"The clip",TRP?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  let h="",hc="";
+  if(e.media)hc=panel(TRP?"":"The clip",TRP?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
   let ptext=e.text||"";
   if(TRP){
@@ -1188,7 +1195,9 @@ function renderTRPage(vid,kind){
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
   }
   h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
-  box.innerHTML=h;
+  const mp=TRP&&mbox?mbox.closest(".panel"):null;
+  if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp)}
+  else{box.innerHTML=hc+h;if(mp)box.appendChild(mp)}
 }
 function renderPosts(){
   FEED.day=utcToday();
