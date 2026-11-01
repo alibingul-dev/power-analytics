@@ -943,7 +943,7 @@ a.btn{display:inline-block;text-decoration:none}
       <button type="submit" class="ea-go">Unlock</button>
     </form>
     <p class="note" id="pro-msg" role="status" style="margin:10px 0 0"></p>
-    <p class="pro-on" style="margin:0">Pro is active on this browser. <button type="button" class="linkbtn" id="pro-off">Remove code</button></p>
+    <p class="pro-on" style="margin:0"><span id="pro-tier">Pro</span> <span>is active on this browser.</span> <button type="button" class="linkbtn" id="pro-off">Remove code</button></p>
   </div>
 
   <div class="panel ea" id="ea">
@@ -998,22 +998,34 @@ a.btn{display:inline-block;text-decoration:none}
 <div class="minibar" id="k-mini" aria-hidden="true"><div class="mb-row"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">↑</button></div><div class="sc-track mb-track"><svg id="k-mmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-mwin"></div><input type="range" id="k-msa" min="0" max="0" value="0" aria-label="Window start"><input type="range" id="k-msb" min="0" max="0" value="0" aria-label="Window end"></div></div>
 
 <script>
-/* Pro access: the full history ships encrypted (pro.bundle.json). The code unlocks it in the browser; no server. */
+/* Pro access: the full history ships encrypted, one bundle per tier ({pro,max,ultra}.bundle.json). The code unlocks it in the browser; no server. */
 const PRO={code:null,data:null};
 try{PRO.code=localStorage.getItem("pa-pro")}catch(e){}
 document.documentElement.classList.toggle("is-pro",!!PRO.code);
-function proForget(){try{localStorage.removeItem("pa-pro")}catch(e){}PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
+try{const t=PRO.code&&localStorage.getItem("pa-tier");if(t)document.documentElement.dataset.tier=t}catch(e){}
+document.addEventListener("DOMContentLoaded",()=>{const t=document.documentElement.dataset.tier,el=document.getElementById("pro-tier");if(el&&t)el.textContent=t.charAt(0).toUpperCase()+t.slice(1)});
+function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier")}catch(e){}delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
 function pubJSON(f){return fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject())}
 const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const PRO_TIERS=["ultra","max","pro"];
 async function proOpen(code){
-  const B=await pubJSON("pro.bundle.json"),te=new TextEncoder(),sub=crypto.subtle;
-  const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
-  const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
-  for(const k of B.keys){
-    let raw;try{raw=await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct))}catch(e){continue}
-    const ck=await sub.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
-    const pt=await sub.decrypt({name:"AES-GCM",iv:b64u8(B.iv)},ck,b64u8(B.ct));
-    return JSON.parse(new TextDecoder().decode(pt));
+  const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
+  for(const t of PRO_TIERS){
+    let B;try{B=await pubJSON(t+".bundle.json")}catch(e){continue}
+    if(!wk||salt!==B.kdf.salt){
+      salt=B.kdf.salt;
+      const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
+      wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+    }
+    for(const k of B.keys){
+      let raw;try{raw=await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct))}catch(e){continue}
+      const ck=await sub.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
+      const d=JSON.parse(new TextDecoder().decode(await sub.decrypt({name:"AES-GCM",iv:b64u8(B.iv)},ck,b64u8(B.ct))));
+      d.tier=d.tier||t;
+      try{localStorage.setItem("pa-tier",d.tier)}catch(e){}
+      document.documentElement.dataset.tier=d.tier;
+      return d;
+    }
   }
   throw new Error("bad code");
 }
