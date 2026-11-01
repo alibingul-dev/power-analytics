@@ -87,6 +87,14 @@ main{margin-left:var(--rail);padding:44px 44px 90px;max-width:1060px}
 .view{display:none}.view.on{display:block}
 body.full main{max-width:none;padding:0}
 body.wide main{max-width:1560px}
+.hcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:26px 0 22px}
+.hcard{display:flex;flex-direction:column;gap:10px;padding:22px 22px 20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease-out),background .2s var(--ease-out)}
+.hcard:hover{border-color:var(--b1-a45);background:var(--surface-2)}
+.hcard:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+.hk-t{font-family:var(--font-display);font-weight:800;font-size:22px}
+.hk-d{color:var(--muted);font-size:15px;line-height:1.55}
+.hk-go{margin-top:auto;color:var(--b1);font-size:14.5px}
+.home-link{margin-bottom:6px}
 .trgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:sticky;top:24px}
 .trgrid .panel{margin-top:0}
@@ -465,7 +473,7 @@ a.btn{display:inline-block;text-decoration:none}
 
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
-  <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Net load outlook</em></div>
+  <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Home</em></div>
   <a class="back-top" href="https://alibingul-dev.github.io/#work">← All work</a>
 </header>
 <div class="scrim" id="scrim" hidden></div>
@@ -478,6 +486,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="nav">
+    <div class="items home-link"><a href="#home" data-view="home" style="--c:var(--text)"><span class="bar"></span>Home</a></div>
     <button class="grp" aria-expanded="true">TÜRKİYE<span class="chev"></span></button>
     <div class="items">
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
@@ -521,7 +530,26 @@ a.btn{display:inline-block;text-decoration:none}
 <main>
 
 <!-- ===== NET LOAD OUTLOOK ===== -->
-<section class="view on" id="tr-netload">
+<section class="view on" id="home">
+  <h1>Welcome</h1>
+  <p class="lede">Power markets, read plainly. Every day this site turns open market data into a short, checkable reading of what happened and what the next day looks like.</p>
+  <p class="note-p">Pick a market to start. Each page shows the day's chart first, then the written reading and how it was worked out. Nothing here is advice or a price forecast.</p>
+  <div class="hcards">
+    <a class="hcard" href="#tr-netload" data-view="tr-netload">
+      <span class="hk-t">Türkiye</span>
+      <span class="hk-d">Tomorrow's net load outlook, yesterday's day-end scorecard, energy news and a weekly view, built on EPİAŞ open data.</span>
+      <span class="hk-go">Open Türkiye →</span>
+    </a>
+    <a class="hcard" href="#gb-analysis" data-view="gb-analysis">
+      <span class="hk-t">Great Britain</span>
+      <span class="hk-d">The closed day's prices and generation, tomorrow's wind outlook and how the British market is built, from Elexon and NESO data.</span>
+      <span class="hk-go">Open Great Britain →</span>
+    </a>
+  </div>
+  <p class="note-p">New pages and markets are added over time. Use the menu on the left to move between them.</p>
+</section>
+
+<section class="view" id="tr-netload">
   <div class="gatebox" id="tr-netload-gate"></div>
   <h1 id="d-title">Loading…</h1>
   <p class="note-p" id="d-hook">Tomorrow evening sits in the very high net load band.</p>
@@ -888,7 +916,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
 /* routing */
 const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
 function go(id){
-  if(!views.some(v=>v.id===id))id="tr-netload";
+  if(!views.some(v=>v.id===id))id="home";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",id==="tr-bess");
   document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily");
@@ -909,7 +937,7 @@ function go(id){
 }
 links.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();history.replaceState(null,"","#"+a.dataset.view);go(a.dataset.view);setMenu(false)}));
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
-go(location.hash.slice(1)||"tr-netload");
+go(location.hash.slice(1)||"home");
 stamp(null);
 
 function pct(v){return v===null||v===undefined?"—":(v>0?"+":"")+v+"%"}
@@ -1561,5 +1589,6 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
   scan(document);
 })();
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>
