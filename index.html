@@ -1259,15 +1259,14 @@ function renderTRPage(vid,kind){
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
   sec.classList.toggle("stale",!e);
-  const eb=vid==="tr-netload"?`<div class="eyebrow">Türkiye, daily, published before the day-ahead result</div>`:"";
-  if(!e){gate.innerHTML=eb+`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;box.innerHTML="";return}
+  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
   gate.innerHTML=vid==="tr-netload"?"":meta;
   let h="";
   if(e.media)h+=panel("The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
   h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
-  if(vid==="tr-netload")h+=`<div class="panel"><h2>Note</h2>${eb}${meta}</div>`;
+  if(vid==="tr-netload")h+=`<div class="panel"><h2>Note</h2>${meta}</div>`;
   box.innerHTML=h;
 }
 function renderPosts(){
