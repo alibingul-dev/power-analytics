@@ -518,7 +518,7 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view on" id="tr-netload">
   <div class="gatebox" id="tr-netload-gate"></div>
   <h1 id="d-title">Loading…</h1>
-  <p class="note-p">Tomorrow evening sits in the very high net load band.</p>
+  <p class="note-p" id="d-hook">Tomorrow evening sits in the very high net load band.</p>
   <div id="tr-netload-post"></div>
   <div class="panel">
     <h2>Method</h2>
@@ -1211,6 +1211,12 @@ function renderTRPage(vid,kind){
   if(e.media)h+=panel(vid==="tr-netload"?"":"The clip",vid==="tr-netload"?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
   let ptext=e.text||"";
+  if(vid==="tr-netload"){
+    const ls=ptext.split("\n");
+    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById("d-hook");if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
+    const di=ptext.search(/(^|\n)Descriptive analysis of published data/);if(di>=0)ptext=ptext.slice(0,di);
+    ptext=ptext.trim();
+  }
   const mbox=document.getElementById("tr-netload-method");
   if(vid==="tr-netload"&&mbox){
     if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
