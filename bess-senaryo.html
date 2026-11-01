@@ -170,6 +170,7 @@ footer a{color:var(--accent)}
   .bats.all .fg{grid-auto-rows:auto;grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .bats.all .mc{min-height:118px}
 }
+.pro-lock-box{max-width:560px;margin:12vh auto;padding:28px;border:1px solid #263243;border-radius:10px;background:#16202E;color:#E6EDF3;font-family:system-ui,sans-serif}.pro-lock-box h2{margin:0 0 10px;font-size:22px}.pro-lock-box p{color:#93A1B3;line-height:1.55;margin:0 0 16px}.pro-lock-box a{color:#38BDF8}
 </style>
 </head>
 <body>
@@ -554,8 +555,30 @@ function selectDay(i){DI=i;SC=BUILD[VIEW](i,START[VIEW][i]);SC.forEach((sc,k)=>{
   $('dayt').textContent=fmtD(DAYS[i].date);[...$('dayl').children].forEach((b,k)=>{b.classList.toggle('on',k===i);b.setAttribute('aria-selected',k===i);});
   $('cP').setAttribute('aria-label',fmtD(DAYS[i].date)+' saatlik PTF ve SMF');cycDay();reset();}
 
+/* Pro gate: BESS data ships inside the encrypted tier bundles; the code saved on the main site unlocks it here. */
+const b64u8=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function proBess(){
+  let code=null;try{code=localStorage.getItem('pa-pro');}catch(e){}
+  if(!code)throw new Error('nocode');
+  const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
+  for(const t of ['ultra','max','pro']){
+    let B;try{const r=await fetch(t+'.bundle.json',{cache:'no-store'});if(!r.ok)continue;B=await r.json();}catch(e){continue;}
+    if(!wk||salt!==B.kdf.salt){salt=B.kdf.salt;const base=await sub.importKey('raw',te.encode(code),'PBKDF2',false,['deriveKey']);
+      wk=await sub.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:'AES-GCM',length:256},false,['decrypt']);}
+    for(const k of B.keys){let raw;try{raw=await sub.decrypt({name:'AES-GCM',iv:b64u8(k.iv)},wk,b64u8(k.ct));}catch(e){continue;}
+      const ck=await sub.importKey('raw',raw,'AES-GCM',false,['decrypt']);
+      const d=JSON.parse(new TextDecoder().decode(await sub.decrypt({name:'AES-GCM',iv:b64u8(B.iv)},ck,b64u8(B.ct))));
+      if(d.bess&&d.bess.days)return d.bess;}
+  }
+  throw new Error('badcode');
+}
+function proLocked(why){
+  const box=document.createElement('div');box.className='pro-lock-box';
+  box.innerHTML='<h2>BESS simülatörü Pro planında</h2><p>'+(why==='badcode'?'Kayıtlı kodun bu sayfayı açmıyor. ':'')+'Kodun varsa Plans sayfasından gir; yoksa planları incele.</p><a href="index.html#plans" target="_top">Plans sayfasına git →</a>';
+  document.body.innerHTML='';document.body.appendChild(box);
+}
 async function init(){
-  let data;try{data=await (await fetch('bess-data.json',{cache:'no-cache'})).json();}catch(e){$('hr').textContent='Veri yüklenemedi';return;}
+  let data;try{data=await proBess();}catch(e){proLocked(e&&e.message);return;}
   DAYS=data.days;ERRDAY=DAYS.length-1;
   const scale=cum=>{const all=cum.flat();const span=Math.max(...all)-Math.min(0,...all);const raw=span/5,mag=Math.pow(10,Math.floor(Math.log10(raw))),nr=raw/mag;const stp=(nr<=1?1:nr<=2?2:nr<=5?5:10)*mag;
     const min=Math.floor(Math.min(0,...all)/stp)*stp,max=Math.ceil(Math.max(...all)/stp)*stp,ticks=[];for(let x=min;x<=max+1;x+=stp)ticks.push(x);return {cum,min,max,ticks};};
