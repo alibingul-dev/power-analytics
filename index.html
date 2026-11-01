@@ -984,7 +984,7 @@ const PRO={base:"https://axi-epias-mcp.onrender.com",code:null};
 try{PRO.code=localStorage.getItem("pa-pro")}catch(e){}
 document.documentElement.classList.toggle("is-pro",!!PRO.code);
 function proForget(){try{localStorage.removeItem("pa-pro")}catch(e){}PRO.code=null;document.documentElement.classList.remove("is-pro")}
-function pubJSON(f){return fetch(f).then(r=>r.ok?r.json():Promise.reject())}
+function pubJSON(f){return fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject())}
 function proJSON(name,f){
   if(!PRO.code)return pubJSON(f);
   return fetch(PRO.base+"/pro/file/"+name,{headers:{"X-Pro-Code":PRO.code}})
