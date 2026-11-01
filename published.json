@@ -777,5 +777,12 @@
     "kind": "post2",
     "post_id": "urn:li:share:7522224193405415424",
     "source": "manual"
+  },
+  "2026-11-02#gb_post2": {
+    "analysis_date": "2026-11-02",
+    "at": "2026-11-01T07:28:03.126511Z",
+    "kind": "gb_post2",
+    "post_id": "urn:li:share:7522560066177232896",
+    "source": "manual"
   }
 }
