@@ -43,7 +43,6 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 .back{display:inline-block;font-size:12.5px;color:var(--muted);text-decoration:none;margin-bottom:12px}
 .back:hover{color:var(--text)}
 .in-app .back,.in-app .back-top{display:none!important}
-#d-record a{color:var(--text)}
 .brand .name{font-family:var(--font-display);font-weight:800;font-size:17px;line-height:1.2}
 .brand .role{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
 .nav{padding:8px 0;flex:1}
@@ -519,7 +518,6 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view on" id="tr-netload">
   <div class="gatebox" id="tr-netload-gate"></div>
   <h1 id="d-title">Loading…</h1>
-  <p class="note-p" id="d-record" hidden></p>
   <div id="tr-netload-post"></div>
   <div class="panel">
     <h2>Method</h2>
@@ -963,11 +961,6 @@ function renderMarket(d){
 function renderActual(j){
   const days=Object.values(j.days||{}).sort((a,b)=>b.date.localeCompare(a.date));
   const sm=j.summary||{};
-  const rec=document.getElementById("d-record");
-  if(rec&&sm.claims_total){
-    rec.innerHTML=`Track record: <strong>${sm.claims_held} of ${sm.claims_total}</strong> claims held over ${sm.days_checked} checked days (${Math.round(100*sm.claims_held/sm.claims_total)}%), misses included. <a href="#tr-actual">See every check</a>`;
-    rec.hidden=false;
-  }
   const figs=document.getElementById("x-figs");
   if(figs) figs.innerHTML=[
     {k:"Days checked",v:sm.days_checked??0,n:"outlooks verified after publication"},
