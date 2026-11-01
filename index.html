@@ -83,10 +83,10 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 .rail-foot a{color:var(--muted)}
 
 /* ---------- main ---------- */
-main{margin-left:var(--rail);padding:44px 44px 90px;max-width:1060px}
+main{margin-left:var(--rail);padding:44px clamp(24px,3vw,56px) 90px;max-width:none}
 .view{display:none}.view.on{display:block}
 body.full main{max-width:none;padding:0}
-body.wide main{max-width:1560px}
+body.wide main{max-width:none}
 .hcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:26px 0 22px}
 .hcard{display:flex;flex-direction:column;gap:10px;padding:22px 22px 20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease-out),background .2s var(--ease-out)}
 .hcard:hover{border-color:var(--b1-a45);background:var(--surface-2)}
@@ -105,9 +105,9 @@ body.full #ab-home{display:none!important}
 @media (max-width:880px){.view.frame iframe{height:calc(100vh - 56px)}}
 .eyebrow{font-family:var(--font-body);font-size:12px;letter-spacing:0;color:var(--muted)}
 h1{font-size:clamp(27px,3.2vw,37px);font-weight:800;margin:10px 0 14px}
-.lede{color:var(--text);font-size:18px;line-height:1.6;max-width:64ch;margin:0 0 12px}
-.note-p{color:var(--muted);max-width:66ch;margin:0 0 30px}
-p.body{color:var(--muted);max-width:66ch;margin:0 0 14px}
+.lede{color:var(--text);font-size:18px;line-height:1.6;max-width:88ch;margin:0 0 12px}
+.note-p{color:var(--muted);max-width:96ch;margin:0 0 30px}
+p.body{color:var(--muted);max-width:96ch;margin:0 0 14px}
 p.body:last-child{margin-bottom:0}
 p.body strong{color:var(--text);font-weight:600}
 
@@ -163,8 +163,8 @@ a.post:hover{text-decoration:underline}
 @media (prefers-reduced-motion:reduce){.wa-cur{animation:none}.wa-mix span{transition:none}}
 .pday{font-size:13px;color:var(--muted);margin:0 0 18px}
 .pday b{color:var(--text);font-weight:600}
-.posttext{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--text);max-width:66ch;margin:0}
-.clip video{display:block;width:100%;max-width:720px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--frame)}
+.posttext{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--text);max-width:none;margin:0}
+.clip video{display:block;width:100%;max-width:none;border-radius:var(--r-m);border:1px solid var(--line);background:var(--frame)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:10px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:var(--r-xs);margin-right:6px;vertical-align:-1px}
 .ncards{display:grid;gap:12px}
@@ -335,6 +335,7 @@ a.btn{display:inline-block;text-decoration:none}
 @media (max-width:880px){.minifigs{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr}.wd{gap:5px}.wd .col{height:90px}#k-figs{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.donut{grid-template-columns:120px 1fr}.donut svg{width:120px;height:120px}}
 
 /* ---------- mobile ---------- */
+@media (max-width:520px){.back-top{display:none}}
 .topbar{display:none}.scrim{display:none}
 @media (max-width:880px){
   .topbar{display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:40;height:56px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--line)}
@@ -350,6 +351,8 @@ a.btn{display:inline-block;text-decoration:none}
   .scrim{display:block;position:fixed;inset:0;background:var(--scrim);z-index:45}
   .scrim[hidden]{display:none}
   main{margin-left:0;padding:24px 18px 64px}
+  .view{scroll-margin-top:64px}
+  .topbar{padding-right:104px}
   h1{font-size:25px}
   .lede{font-size:16.5px}
   .figs{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
@@ -832,10 +835,6 @@ a.btn{display:inline-block;text-decoration:none}
 
 </section>
 
-<div class="foot">
-  <div id="updated" class="mono" style="color:var(--text);margin-bottom:6px">Last updated —</div>
-  Data: EPİAŞ Transparency Platform, Elexon Insights. Published in a personal capacity. Not advice, not a forecast, not a trading recommendation.
-</div>
 <!-- ===== PLANS AND EARLY ACCESS ===== -->
 <section class="view" id="plans">
 <style>
@@ -851,7 +850,7 @@ a.btn{display:inline-block;text-decoration:none}
 .pl-card ul{margin:4px 0 0;padding-left:18px;color:var(--text);font-size:15px;line-height:1.55}
 .pl-card li{margin-bottom:6px}
 .pl-soon{color:var(--muted);font-size:13px}
-.ea{max-width:680px}
+.ea{max-width:none}
 .ea fieldset{border:0;padding:0;margin:0 0 22px}
 .ea legend{font-weight:600;font-size:16px;margin-bottom:10px;padding:0}
 .ea-opts{display:flex;flex-wrap:wrap;gap:8px}
@@ -960,6 +959,10 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 </section>
 
+<div class="foot">
+  <div id="updated" class="mono" style="color:var(--text);margin-bottom:6px">Last updated —</div>
+  Data: EPİAŞ Transparency Platform, Elexon Insights. Published in a personal capacity. Not advice, not a forecast, not a trading recommendation.
+</div>
 </main>
 <div id="tip" role="tooltip"></div>
 <div class="minibar" id="k-mini" aria-hidden="true"><div class="mb-row"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">↑</button></div><div class="sc-track mb-track"><svg id="k-mmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-mwin"></div><input type="range" id="k-msa" min="0" max="0" value="0" aria-label="Window start"><input type="range" id="k-msb" min="0" max="0" value="0" aria-label="Window end"></div></div>
