@@ -1123,7 +1123,7 @@ function pBars(vals,labels,lo,hi,o){
     `<div class="legend"><span><i style="background:var(--b1)"></i>Lowest three hours</span><span><i style="background:var(--b4)"></i>Highest three hours</span></div>`;
 }
 const fig=(k,v,n)=>`<div class="fig"><div class="k">${k}</div><div class="v">${v}</div><div class="n">${n}</div></div>`;
-const panel=(h,note,body)=>`<div class="panel"><h2>${h}</h2>${note?`<p class="note">${note}</p>`:""}${body}</div>`;
+const panel=(h,note,body)=>`<div class="panel">${h?`<h2>${h}</h2>`:""}${note?`<p class="note">${note}</p>`:""}${body}</div>`;
 
 function nativeGB1(d){
   const p=d.price,t=d.t,F=d.fuels,n=p.length,pv=p.filter(v=>v!=null);
@@ -1263,9 +1263,9 @@ function renderTRPage(vid,kind){
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
   gate.innerHTML=vid==="tr-netload"?"":meta;
   let h="";
-  if(e.media)h+=panel("The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  if(e.media)h+=panel(vid==="tr-netload"?"":"The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
-  h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  h+=panel(vid==="tr-netload"?"":"The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   if(vid==="tr-netload")h+=`<div class="panel"><h2>Note</h2>${meta}</div>`;
   box.innerHTML=h;
 }
