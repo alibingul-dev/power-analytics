@@ -352,7 +352,8 @@ a.btn{display:inline-block;text-decoration:none}
   .scrim[hidden]{display:none}
   main{margin-left:0;padding:24px 18px 64px}
   .view{scroll-margin-top:64px}
-  .topbar{padding-right:104px}
+  .topbar{padding-right:196px}
+  .acct{top:10px;right:108px}
   h1{font-size:25px}
   .lede{font-size:16.5px}
   .figs{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
@@ -474,6 +475,7 @@ a.btn{display:inline-block;text-decoration:none}
 <!-- ===== /POWER ANALYTICS INTRO ===== -->
 
 
+<a class="acct" id="acct" href="#plans" data-view="plans" aria-label="Your plan"><span class="acct-l">Plan</span> <b id="acct-t">Free</b></a>
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
   <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Home</em></div>
@@ -862,6 +864,11 @@ a.btn{display:inline-block;text-decoration:none}
 .pl-card.soon>*:not(.pl-soonbadge){opacity:.45}
 .pl-card.soon{background:var(--frame)}
 .pl-soonbadge{position:absolute;top:18px;right:18px;font-size:12.5px;font-weight:600;color:var(--bg);background:var(--b3);border-radius:var(--r-pill);padding:3px 11px}
+.acct{position:fixed;top:12px;right:118px;z-index:46;display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--muted);font:500 12.5px/1 var(--font-body);text-decoration:none;box-shadow:0 2px 10px var(--shade-2)}
+.acct b{color:var(--text);font-weight:600}
+.acct:hover{border-color:var(--b1-a45)}
+.acct:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+.is-pro .acct{border-color:var(--b1-a45)}.is-pro .acct b{color:var(--b1)}
 .pl-plus{font-size:14.5px;font-weight:600;color:var(--text);margin-top:2px}
 .pl-soon{color:var(--muted);font-size:13px}
 .ea{max-width:none}
@@ -1003,11 +1010,12 @@ const PRO={code:null,data:null};
 try{PRO.code=localStorage.getItem("pa-pro")}catch(e){}
 document.documentElement.classList.toggle("is-pro",!!PRO.code);
 try{const t=PRO.code&&localStorage.getItem("pa-tier");if(t)document.documentElement.dataset.tier=t}catch(e){}
-document.addEventListener("DOMContentLoaded",()=>{const t=document.documentElement.dataset.tier,el=document.getElementById("pro-tier");if(el&&t)el.textContent=t.charAt(0).toUpperCase()+t.slice(1)});
+document.addEventListener("DOMContentLoaded",()=>acctPaint());
 function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier")}catch(e){}delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
 function pubJSON(f){return fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject())}
 const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const PRO_TIERS=["ultra","max","pro"];
+function acctPaint(){const el=document.getElementById("acct-t");if(!el)return;const t=PRO.code?(document.documentElement.dataset.tier||"pro"):"free";const n=t.charAt(0).toUpperCase()+t.slice(1);el.textContent=n;const pt=document.getElementById("pro-tier");if(pt&&PRO.code)pt.textContent=n}
 async function proOpen(code){
   const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
   for(const t of PRO_TIERS){
@@ -1024,6 +1032,7 @@ async function proOpen(code){
       d.tier=d.tier||t;
       try{localStorage.setItem("pa-tier",d.tier)}catch(e){}
       document.documentElement.dataset.tier=d.tier;
+      acctPaint();
       return d;
     }
   }
