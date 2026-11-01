@@ -1195,26 +1195,27 @@ function renderTRPage(vid,kind){
   const TRP=vid==="tr-netload"||vid==="tr-daily";
   gate.innerHTML=TRP?"":meta;
   let h="",hc="";
-  if(e.media)hc=panel(TRP?"":"The clip",TRP?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
+  const LG=!!(TRP&&window.paLang&&paLang.get()==="tr"),med=(LG&&e.media_tr)||e.media;
+  if(med)hc=panel(TRP?"":"The clip",TRP?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(med.poster)}" src="${esc(med.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
-  let ptext=e.text||"";
+  let ptext=(LG&&e.text_tr)||e.text||"";
   if(TRP){
     const ls=ptext.split("\n");
     if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById(vid==="tr-netload"?"d-hook":"m-hook");if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
-    const di=ptext.search(/(^|\n)Descriptive analysis of published data/);if(di>=0)ptext=ptext.slice(0,di);
+    const di=ptext.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)ptext=ptext.slice(0,di);
     ptext=ptext.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
   }
   const mbox=document.getElementById(vid+"-method");
   if(TRP&&mbox){
     if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
-    const mi=ptext.search(/(^|\n)METHOD\s*\n/),si=mi<0?-1:ptext.indexOf("Source:",mi);
+    const mi=ptext.search(/(^|\n)(METHOD|YÖNTEM)\s*\n/);let si=mi<0?-1:ptext.slice(mi).search(/(^|\n)(Source|Kaynak):/);if(si>=0)si+=mi;
     if(mi>=0){
       let end=si<0?ptext.indexOf("\n\n",ptext.indexOf("\n",mi+1)):ptext.indexOf("\n\n",si);if(end<0)end=ptext.length;
-      const m=ptext.slice(mi,end).replace(/^\n?METHOD\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:)/.test(l)).join("\n").trim();
+      const m=ptext.slice(mi,end).replace(/^\n?(METHOD|YÖNTEM)\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:|Kaynak:)/.test(l)).join("\n").trim();
       ptext=(ptext.slice(0,mi)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim();
       mbox.innerHTML=`<p class="posttext">${esc(m)}</p>`;
     }else{
-      const si2=ptext.search(/(^|\n)Source:/);let src="";
+      const si2=ptext.search(/(^|\n)(Source|Kaynak):/);let src="";
       if(si2>=0){let end=ptext.indexOf("\n\n",si2+1);if(end<0)end=ptext.length;src=ptext.slice(si2,end).trim();ptext=(ptext.slice(0,si2)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim()}
       mbox.innerHTML=mbox.dataset.def;
     }
@@ -1233,6 +1234,7 @@ function renderPosts(){
   renderDailyPost("gb-outlook","gb_post2","gb-weekly");
   renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
 }
+window.addEventListener("pa-lang",()=>{if(FEED.items.length)renderPosts()});
 function armTurnover(){const n=new Date(),ms=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime()+2000;setTimeout(()=>{renderPosts();armTurnover()},ms)}
 fetch("feed.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{FEED.items=j.items||[];renderPosts();armTurnover()})
  .catch(()=>["tr-news","gb-analysis","gb-outlook","tr-weekly","gb-weekly"].forEach(v=>{const b=document.getElementById(v+"-body");if(b)b.innerHTML='<p class="note-p">Could not load the posts.</p>'}));
