@@ -522,12 +522,12 @@ a.btn{display:inline-block;text-decoration:none}
   <div id="tr-netload-post"></div>
   <div class="panel">
     <h2>Method</h2>
-    <dl class="method">
+    <div id="tr-netload-method"><dl class="method">
       <dt>NET LOAD</dt><dd>Load plan minus wind forecast minus solar.</dd>
       <dt>SOLAR</dt><dd>No EPİAŞ forecast exists. Shaped from the mean realised profile of the seven preceding days, which includes distributed rooftop output derived as consumption minus metered generation.</dd>
       <dt>BANDS</dt><dd>Quintiles of the last thirty days, not of the target day.</dd>
       <dt>SCOPE</dt><dd>Descriptive analysis of published data. Not advice, not a forecast, not a trading recommendation.</dd>
-    </dl>
+    </dl></div>
   </div>
 </section>
 
@@ -1210,7 +1210,19 @@ function renderTRPage(vid,kind){
   let h="";
   if(e.media)h+=panel(vid==="tr-netload"?"":"The clip",vid==="tr-netload"?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
-  h+=panel(vid==="tr-netload"?"":"The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  let ptext=e.text||"";
+  const mbox=document.getElementById("tr-netload-method");
+  if(vid==="tr-netload"&&mbox){
+    if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
+    const mi=ptext.search(/(^|\n)METHOD\s*\n/),si=mi<0?-1:ptext.indexOf("Source:",mi);
+    if(mi>=0){
+      let end=si<0?ptext.indexOf("\n\n",ptext.indexOf("\n",mi+1)):ptext.indexOf("\n\n",si);if(end<0)end=ptext.length;
+      const m=ptext.slice(mi,end).replace(/^\n?METHOD\s*\n/,"").trim();
+      ptext=(ptext.slice(0,mi)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim();
+      mbox.innerHTML=`<p class="posttext">${esc(m)}</p>`;
+    }else mbox.innerHTML=mbox.dataset.def;
+  }
+  h+=panel(vid==="tr-netload"?"":"The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   if(vid==="tr-netload")h+=`<div class="panel"><h2>Note</h2>${meta}</div>`;
   box.innerHTML=h;
 }
