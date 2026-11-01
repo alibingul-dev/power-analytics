@@ -666,6 +666,7 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="trk-cap">Filter for everything in this box</div>
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
       <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
+      <p class="pro-note note" style="margin:6px 0 0">Free shows the last seven days. Older days are part of <a class="post" href="#plans" data-view="plans">Pro</a>.</p>
     <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
       <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
       <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
@@ -722,7 +723,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <details class="panel tview">
-    <summary><span>Checked days as a table <i class="wbadge"></i></span><button type="button" id="k-csv" class="btn">Download CSV</button></summary>
+    <summary><span>Checked days as a table <i class="wbadge"></i></span><button type="button" id="k-csv" class="btn">Download CSV<span class="pro-lock"> · Pro</span></button></summary>
     <div class="tscroll"><table>
       <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">4 h spread</th></tr></thead>
       <tbody id="k-rows"></tbody>
@@ -737,6 +738,7 @@ a.btn{display:inline-block;text-decoration:none}
   <h1>Published analysis</h1>
   <p class="lede">Every post, indexed by the day it analyses.</p>
   <p class="note-p">The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date. The day-end scorecard covers a closed day.</p>
+  <div class="pro-note panel"><p class="note" style="margin:0">Free shows the last seven days. The full archive is part of <a class="post" href="#plans" data-view="plans">Pro</a>.</p></div>
   <div id="a-rows"><p class="note-p">Loading…</p></div>
 </section>
 
@@ -849,6 +851,13 @@ a.btn{display:inline-block;text-decoration:none}
 .pl-alt .mono{color:var(--text)}
 .pl-card ul{margin:4px 0 0;padding-left:18px;color:var(--text);font-size:15px;line-height:1.55}
 .pl-card li{margin-bottom:6px}
+.pro-row{display:flex;gap:10px;flex-wrap:wrap}
+.pro-row input{flex:1 1 220px;max-width:340px;font:500 15px/1 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;padding:11px 13px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);color:var(--text)}
+.pro-row input:focus-visible{outline:2px solid var(--b1);outline-offset:1px}
+.linkbtn{background:none;border:0;padding:0;color:var(--b1);font:inherit;cursor:pointer;text-decoration:underline}
+.pro-on{display:none;color:var(--text)}
+.is-pro .pro-on{display:block}.is-pro #pro-form,.is-pro #pro-msg,.is-pro .pro-note,.is-pro .pro-lock{display:none}
+.pro-lock{color:var(--muted)}
 .pl-plus{font-size:14.5px;font-weight:600;color:var(--text);margin-top:2px}
 .pl-soon{color:var(--muted);font-size:13px}
 .ea{max-width:none}
@@ -909,6 +918,16 @@ a.btn{display:inline-block;text-decoration:none}
     </div>
   </div>
 
+  <div class="panel pro-box" id="pro-box">
+    <h2>Already have a Pro code?</h2>
+    <form id="pro-form" class="pro-row" novalidate>
+      <input id="pro-code" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PA-XXXX-XXXX" aria-label="Pro code">
+      <button type="submit" class="ea-go">Unlock</button>
+    </form>
+    <p class="note" id="pro-msg" role="status" style="margin:10px 0 0"></p>
+    <p class="pro-on" style="margin:0">Pro is active on this browser. <button type="button" class="linkbtn" id="pro-off">Remove code</button></p>
+  </div>
+
   <div class="panel ea" id="ea">
     <h2>Early access</h2>
     <p class="note-p" style="margin:6px 0 22px">Three quick questions. They decide which plan and which market come first.</p>
@@ -959,6 +978,23 @@ a.btn{display:inline-block;text-decoration:none}
 <div id="tip" role="tooltip"></div>
 <div class="minibar" id="k-mini" aria-hidden="true"><div class="mb-row"><span class="mb-l">Showing <b id="k-mini-lbl">—</b></span><div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0">All</button></div><button class="btn" id="k-mini-up" type="button">↑</button></div><div class="sc-track mb-track"><svg id="k-mmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-mwin"></div><input type="range" id="k-msa" min="0" max="0" value="0" aria-label="Window start"><input type="range" id="k-msb" min="0" max="0" value="0" aria-label="Window end"></div></div>
 
+<script>
+/* Pro access: with a valid code the full history comes from the Render server; without one, the public files (last 7 days). */
+const PRO={base:"https://axi-epias-mcp.onrender.com",code:null};
+try{PRO.code=localStorage.getItem("pa-pro")}catch(e){}
+document.documentElement.classList.toggle("is-pro",!!PRO.code);
+function proForget(){try{localStorage.removeItem("pa-pro")}catch(e){}PRO.code=null;document.documentElement.classList.remove("is-pro")}
+function pubJSON(f){return fetch(f).then(r=>r.ok?r.json():Promise.reject())}
+function proJSON(name,f){
+  if(!PRO.code)return pubJSON(f);
+  return fetch(PRO.base+"/pro/file/"+name,{headers:{"X-Pro-Code":PRO.code}})
+    .then(r=>{if(r.status===403){proForget();return Promise.reject()}return r.ok?r.json():Promise.reject()})
+    .catch(()=>pubJSON(f));
+}
+function proCheck(code){
+  return fetch(PRO.base+"/pro/check",{headers:{"X-Pro-Code":code}}).then(r=>r.status===200?true:r.status===429?"wait":false).catch(()=>"down");
+}
+</script>
 <script>
 const FALLBACK={
   date:"2026-08-28",
@@ -1091,12 +1127,12 @@ function renderActual(j){
 }
 
 /* data */
-fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(renderActual).catch(()=>renderActual({days:{},summary:{}}));
+proJSON("actual","actual.json").then(renderActual).catch(()=>renderActual({days:{},summary:{}}));
 fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket).catch(()=>{
   const t=document.getElementById("m-title"); if(t) t.textContent="No analysis published yet";
 });
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
-fetch("published.json").then(r=>r.ok?r.json():Promise.reject())
+proJSON("published","published.json")
  .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({...v,analysis_date:v.analysis_date||d.split("#")[0]})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
  .catch(()=>renderArchive([
    {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968",at:"2026-08-27T09:54:04Z"},
@@ -1553,6 +1589,7 @@ document.querySelectorAll(".sc-presets button").forEach(x=>x.addEventListener("c
 }));
 $("k-csv").addEventListener("click",e=>{
   e.preventDefault();e.stopPropagation();
+  if(!PRO.code){location.hash="plans";setTimeout(()=>{const b=document.getElementById("pro-code");if(b)b.focus()},300);return}
   const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
   const rows=[["date","low_block","top_block","held","of","spread_tl_mwh"].join(",")].concat((DASH.win||[]).map(d=>[d.date,q(d.low_block),q(d.top_block),d.held,d.of,d.spread_tl_mwh??""].join(",")));
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([rows.join("\n")],{type:"text/csv"}));a.download="outlook-record.csv";document.body.appendChild(a);a.click();a.remove();
@@ -1631,7 +1668,7 @@ $("k-csv").addEventListener("click",e=>{
     const pub=PUB[it.date+"#"+POSTKIND[k]],id=pub&&(pub.post_id||"").replace("urn:li:share:","");
     $("k-vlinks").innerHTML=(id?`<a class="btn" href="https://www.linkedin.com/feed/update/urn:li:share:${id}" target="_blank" rel="noopener">Read the LinkedIn post ↗</a>`:"")+`<a class="btn" href="${it.src}" download>Download MP4</a>`;
   }
-  fetch("published.json").then(r=>r.ok?r.json():{}).then(j=>{PUB=j||{};if(kind)pick(kind,day)}).catch(()=>{});
+  proJSON("published","published.json").then(j=>{PUB=j||{};if(kind)pick(kind,day)}).catch(()=>{});
   window._vRepick=()=>{if(kind)pick(kind,day)};
   fetch("media/index.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
     (j.items||[]).forEach(i=>{(M[i.kind]=M[i.kind]||[]).push(i)});
@@ -1647,7 +1684,7 @@ $("k-csv").addEventListener("click",e=>{
     pick(ks[0]);
   }).catch(()=>{document.querySelector(".panel.vid").innerHTML='<p class="note" style="margin:0">No animations published yet.</p>'});
 })();
-fetch("actual.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{DASH.actual=j;renderDashActual(j)}).catch(()=>renderDashActual({days:{},summary:{}}));
+proJSON("actual","actual.json").then(j=>{DASH.actual=j;renderDashActual(j)}).catch(()=>renderDashActual({days:{},summary:{}}));
 fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.daily=d;renderDashDaily(d)}).catch(()=>{setT("k-title","No analysis published yet");$("k-figs").innerHTML=""});
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;renderNext(d)}).catch(()=>{setT("k-nxt-note","No outlook published yet.")});
 </script>
@@ -1676,6 +1713,22 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
 </script>
 <!-- ===== /BACK TO HUB ===== -->
 <script>
+/* Pro code form */
+(function(){
+  var f=document.getElementById("pro-form"),inp=document.getElementById("pro-code"),msg=document.getElementById("pro-msg"),off=document.getElementById("pro-off");
+  if(!f)return;
+  function tr(){try{return localStorage.getItem("pa-lang")==="tr"}catch(e){return false}}
+  f.addEventListener("submit",function(ev){
+    ev.preventDefault();var c=(inp.value||"").trim().toUpperCase();
+    if(c.length<8){msg.textContent=tr()?"Kodu eksiksiz yaz.":"Enter the full code.";return}
+    msg.textContent=tr()?"Kontrol ediliyor… (sunucu uyanıyorsa 30 sn sürebilir)":"Checking… (up to 30 s if the server is waking up)";
+    proCheck(c).then(function(ok){
+      if(ok===true){try{localStorage.setItem("pa-pro",c)}catch(e){}location.reload();return}
+      msg.textContent=ok==="wait"?(tr()?"Çok fazla deneme. 10 dakika sonra tekrar dene.":"Too many attempts. Try again in 10 minutes."):ok==="down"?(tr()?"Sunucuya ulaşılamadı. Biraz sonra tekrar dene.":"Could not reach the server. Try again shortly."):(tr()?"Bu kod geçerli değil.":"That code is not valid.");
+    });
+  });
+  if(off)off.addEventListener("click",function(){proForget();location.reload()});
+})();
 /* Early access: anonymous intent counts via GoatCounter events. No name, no e-mail, nothing stored server-side beyond counts. */
 (function(){
   var box=document.getElementById("ea"),form=document.getElementById("ea-form"),err=document.getElementById("ea-err"),done=document.getElementById("ea-done");
