@@ -1183,7 +1183,7 @@ function renderTRPage(vid,kind){
     }else{
       const si2=ptext.search(/(^|\n)Source:/);let src="";
       if(si2>=0){let end=ptext.indexOf("\n\n",si2+1);if(end<0)end=ptext.length;src=ptext.slice(si2,end).trim();ptext=(ptext.slice(0,si2)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim()}
-      mbox.innerHTML=mbox.dataset.def+(src?`<p class="posttext" style="margin-top:14px">${esc(src)}</p>`:"");
+      mbox.innerHTML=mbox.dataset.def;
     }
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
   }
