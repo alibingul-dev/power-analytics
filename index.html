@@ -1177,7 +1177,7 @@ function renderTRPage(vid,kind){
     const mi=ptext.search(/(^|\n)METHOD\s*\n/),si=mi<0?-1:ptext.indexOf("Source:",mi);
     if(mi>=0){
       let end=si<0?ptext.indexOf("\n\n",ptext.indexOf("\n",mi+1)):ptext.indexOf("\n\n",si);if(end<0)end=ptext.length;
-      const m=ptext.slice(mi,end).replace(/^\n?METHOD\s*\n/,"").trim();
+      const m=ptext.slice(mi,end).replace(/^\n?METHOD\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:)/.test(l)).join("\n").trim();
       ptext=(ptext.slice(0,mi)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim();
       mbox.innerHTML=`<p class="posttext">${esc(m)}</p>`;
     }else{
