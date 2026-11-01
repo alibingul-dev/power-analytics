@@ -521,28 +521,6 @@ a.btn{display:inline-block;text-decoration:none}
   <h1 id="d-title">Loading…</h1>
   <p class="note-p" id="d-record" hidden></p>
   <div id="tr-netload-post"></div>
-  <p class="lede">Net load is the load plan with wind and solar taken out. It is what dispatchable plant actually has to cover, and it is the curve that decides which hours are tight.</p>
-  <p class="note-p">Two series are published while the day-ahead market is still open: the load plan and the wind forecast. EPİAŞ publishes no solar forecast, so solar is shaped from the mean realised profile of the seven preceding days. Bands are quintiles of the last thirty days rather than of the target day, so a flat day reads as flat instead of being rescaled to look dramatic.</p>
-
-  <div class="figs" id="d-figs"></div>
-
-  <div class="panel">
-    <h2>Hour by hour</h2>
-    <p class="note" id="d-note"></p>
-    <svg class="chart" id="d-chart" viewBox="0 0 900 320" role="img" aria-labelledby="d-chart-t"><title id="d-chart-t">Net load by hour with the lowest and highest blocks shaded</title></svg>
-    <div class="legend">
-      <span><i style="background:var(--b1)"></i>Lowest net load block</span>
-      <span><i style="background:var(--b5)"></i>Highest net load block</span>
-      <span><i style="background:var(--text)"></i>Net load</span>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>Why this curve and not demand</h2>
-    <p class="body">Demand peaks in the early afternoon in Türkiye through the summer. Net load usually does not: solar is at its strongest in exactly those hours, so the system is at its most comfortable when the meter reads highest. The tight hours arrive after sunset, when solar leaves in about an hour and demand is still near its plateau.</p>
-    <p class="body">That gap is the whole scheduling problem. On a typical August day the load plan peaks around 14:00 while net load peaks around 20:00, and between those two points the system has to climb roughly 2,400 MWh every hour for eight hours. Reading demand alone hides that climb entirely.</p>
-  </div>
-
   <div class="panel">
     <h2>Method</h2>
     <dl class="method">
@@ -869,30 +847,6 @@ const FALLBACK={
   note:"Six consecutive hours in the bottom band from 09:00, four in the top band from 18:00."
 };
 
-function drawChart(d){
-  const svg=document.getElementById("d-chart");
-  const W=900,H=320,L=54,R=14,T=16,B=30;
-  const v=d.netLoad,n=v.length;
-  const lo=Math.min(...v),hi=Math.max(...v);
-  const pad=(hi-lo)*0.14||1,y0=lo-pad,y1=hi+pad;
-  const step=(W-L-R)/(n-1);
-  const X=i=>L+step*i,Y=q=>T+(H-T-B)*(1-(q-y0)/(y1-y0));
-  let s="";
-  const band=(a,b,c)=>`<rect x="${X(a)-step/2}" y="${T}" width="${(b-a)*step+step}" height="${H-T-B}" fill="${c}" opacity=".14" rx="4"/>`;
-  if(d.lowBlock)s+=band(d.lowBlock[0],d.lowBlock[1],"#38BDF8");
-  if(d.topBlock)s+=band(d.topBlock[0],d.topBlock[1],"#F43F5E");
-  for(let g=0;g<=3;g++){
-    const q=y0+(y1-y0)*g/3;
-    s+=`<line x1="${L}" x2="${W-R}" y1="${Y(q)}" y2="${Y(q)}" stroke="#26364B"/>`;
-    s+=`<text x="${L-9}" y="${Y(q)+4}" text-anchor="end" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${Math.round(q/1000)}k</text>`;
-  }
-  s+=`<polyline fill="none" stroke="#E6EDF5" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" points="${v.map((q,i)=>X(i)+","+Y(q)).join(" ")}"/>`;
-  const iLo=v.indexOf(lo),iHi=v.indexOf(hi);
-  s+=`<circle cx="${X(iLo)}" cy="${Y(lo)}" r="4.5" fill="#38BDF8"/><circle cx="${X(iHi)}" cy="${Y(hi)}" r="4.5" fill="#F43F5E"/>`;
-  for(let i=0;i<n;i+=3)s+=`<text x="${X(i)}" y="${H-9}" text-anchor="middle" fill="#8A9BB0" font-size="11" font-family="IBM Plex Mono">${String(i).padStart(2,"0")}</text>`;
-  svg.innerHTML=svg.querySelector("title").outerHTML+s;
-}
-
 function stamp(iso){
   const el=document.getElementById("updated");
   if(!el) return;
@@ -906,9 +860,6 @@ function stamp(iso){
 function renderDaily(d){
   stamp(d.updated||d.retrieved||null);
   document.getElementById("d-title").textContent=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  document.getElementById("d-note").textContent=d.note||"";
-  document.getElementById("d-figs").innerHTML=(d.figures||[]).map(f=>`<div class="fig"><div class="k">${f.k}</div><div class="v">${f.v}</div><div class="n">${f.n}</div></div>`).join("");
-  drawChart(d);
 }
 
 function renderArchive(rows){
