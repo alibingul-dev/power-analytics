@@ -1229,7 +1229,6 @@ function renderTRPage(vid,kind){
     }else mbox.innerHTML=mbox.dataset.def;
   }
   h+=panel(vid==="tr-netload"?"":"The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
-  if(vid==="tr-netload")h+=`<div class="panel"><h2>Note</h2>${meta}</div>`;
   box.innerHTML=h;
 }
 function renderPosts(){
