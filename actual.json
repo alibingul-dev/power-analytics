@@ -1431,7 +1431,7 @@
       "top_block": null
     },
     "2026-10-30": {
-      "checked_at": "2026-10-31T09:19:03Z",
+      "checked_at": "2026-11-01T09:19:18Z",
       "checks": [
         {
           "claim": "Price low lands in the low block",
@@ -1497,6 +1497,6 @@
     "claims_held": 132,
     "claims_total": 184,
     "days_checked": 52,
-    "updated": "2026-11-01T09:19:09Z"
+    "updated": "2026-11-01T09:19:18Z"
   }
 }
