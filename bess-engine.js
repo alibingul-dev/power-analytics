@@ -16,9 +16,10 @@
   "use strict";
 
   function dayDispatch(price, o) {
-    // o: {P, Emin, Emax, etaC, etaD, steps, wear, start, reserveMW, buffer}
+    // o: {P, Emin, Emax, etaC, etaD, steps, wear, start, reserveMW, bufLo, bufHi}
+    // wear is charged per MWh taken out of storage (before discharge losses)
     const n = o.steps, dE = (o.Emax - o.Emin) / n;
-    const lo = o.Emin + (o.buffer || 0), hi = o.Emax - (o.buffer || 0);
+    const lo = o.Emin + (o.bufLo || 0), hi = o.Emax - (o.bufHi || 0);
     const pAvail = Math.max(0, o.P - (o.reserveMW || 0));
     const s0 = Math.round((o.start - o.Emin) / dE);
     const ok = i => { const e = o.Emin + i * dE; return e >= lo - 1e-9 && e <= hi + 1e-9; };
@@ -38,7 +39,7 @@
           if (de > 0) { grid = -de / o.etaC; if (-grid > pAvail + 1e-9) continue; }
           else if (de < 0) { grid = -de * o.etaD; if (grid > pAvail + 1e-9) continue; }
           else grid = 0;
-          const v = V[i] + grid * pr - (grid > 0 ? grid * o.wear : 0);
+          const v = V[i] + grid * pr - (de < 0 ? -de * o.wear : 0);
           if (v > W[j]) { W[j] = v; from[j] = i; }
         }
       }
@@ -68,7 +69,8 @@
   }
 
   // Forecast used by the realistic case: yesterday's prices (persistence), a standard naive benchmark.
-  function persistence(days, i, field) { return series(i > 0 ? days[i - 1] : days[i], field) || series(days[i], field); }
+  // Never falls back to the day's own prices: a day without a usable previous day is skipped in this mode.
+  function persistence(days, i, field) { return i > 0 ? series(days[i - 1], field) : null; }
 
   function settle(grid, price) { let c = 0; for (let h = 0; h < grid.length; h++) c += grid[h] * price[h]; return c; }
 
@@ -80,8 +82,12 @@
     const eta = Math.sqrt(batt.rte), Emin = batt.E * batt.socMin, Emax = batt.E * batt.socMax;
     const usable = Emax - Emin;
     const ratio = strat.service === "sfk" ? rules.sfkRatio : rules.pfkRatio;
-    let R = strat.service ? Math.min(strat.reserve, batt.P, usable / ratio) : 0;
-    const buffer = R * ratio / 2;   // required energy split evenly: stored for up-regulation, headroom for down-regulation
+    // Required energy = ratio x R (grid MWh), half deliverable upward and half absorbable downward.
+    // Upward side needs /etaD of stored energy, downward side needs *etaC of empty space.
+    const need = r => r * ratio / 2 / eta + r * ratio / 2 * eta;
+    let R = strat.service ? Math.min(strat.reserve, batt.P) : 0;
+    if (R && need(R) > usable) R = usable / need(1);
+    const bufLo = R * ratio / 2 / eta, bufHi = R * ratio / 2 * eta;
     const field = strat.market === "idm" ? "gip" : "ptf";
     const start = (Emin + Emax) / 2;
     const out = [];
@@ -90,19 +96,22 @@
       const actual = series(d, field);
       if (!actual) continue;
       const plan = strat.foresight === "persistence" ? persistence(days, i, field) : actual;
+      if (!plan && R < batt.P) continue;
+      // wear in TL: per-day FX when the data carries it, so a USD cell cost is priced at that day's rate
+      const wearTL = batt.wearUSDperMWh != null && d.fx ? batt.wearUSDperMWh * d.fx : batt.wearTLperMWh;
       let arb = 0, throughput = 0, dispatch = null;
-      if (actual && plan && R < batt.P) {
-        dispatch = dayDispatch(plan, { P: batt.P, Emin, Emax, etaC: eta, etaD: eta, steps: batt.steps || 20,
-          wear: batt.wearTLperMWh, start, reserveMW: R, buffer: R ? buffer : 0 });
+      if (plan && R < batt.P) {
+        dispatch = dayDispatch(plan, { P: batt.P, Emin, Emax, etaC: eta, etaD: eta, steps: batt.steps || 48,
+          wear: wearTL, start, reserveMW: R, bufLo, bufHi });
         if (dispatch) {
           arb = settle(dispatch.grid, actual);
-          for (const g of dispatch.grid) if (g > 0) throughput += g;
+          for (let h = 0; h < 24; h++) if (dispatch.soc[h + 1] < dispatch.soc[h]) throughput += dispatch.soc[h] - dispatch.soc[h + 1];
         }
       }
       let cap = 0;
       if (R && strat.service) { const cp = d[strat.service] || []; for (const v of cp) cap += (v || 0) * R; }
-      const wear = throughput * batt.wearTLperMWh;
-      out.push({ date: d.date, arb, cap, wear, net: arb + cap - wear, throughput, R, dispatch });
+      const wear = throughput * wearTL;
+      out.push({ date: d.date, fx: d.fx || null, arb, cap, wear, net: arb + cap - wear, throughput, R, dispatch });
     }
     return out;
   }
@@ -111,11 +120,14 @@
     const n = res.length || 1, k = 365 / n;
     const sum = f => res.reduce((a, r) => a + r[f], 0);
     const arb = sum("arb"), cap = sum("cap"), wear = sum("wear"), net = sum("net"), thr = sum("throughput");
+    const usd = (f, fx) => res.reduce((a, r) => a + r[f] / (r.fx || fx), 0) * k;
     return {
+      usd: fx => ({ arb: usd("arb", fx), cap: usd("cap", fx), wear: usd("wear", fx), net: usd("net", fx) }),
+      fxDaily: res.length > 0 && res.every(r => r.fx),
       days: res.length,
       annual: { arb: arb * k, cap: cap * k, wear: wear * k, net: net * k },
       perMWyr: net * k / batt.P,
-      cyclesPerYear: thr * k / ((batt.socMax - batt.socMin) * batt.E),
+      cyclesPerYear: thr * k / ((batt.socMax - batt.socMin) * batt.E),   // storage-side discharge / usable energy
       reserveMW: res.length ? res[res.length - 1].R : 0,
     };
   }
@@ -125,14 +137,21 @@
   function finance(netYear1, batt, f) {
     const capex = f.capexPerKWh * batt.E * 1000;
     const flows = [-capex]; let cum = -capex, payback = null;
+    const losses = [];   // tax losses carried forward up to lossYears (Türkiye: 5 years, KVK Md. 9)
+    const lossYears = f.lossYears == null ? 5 : f.lossYears, augPct = f.augmentPctPerYear || 0;
     for (let y = 1; y <= f.years; y++) {
       const fade = f.augment ? 1 : Math.pow(1 - f.degrPerYear, y - 1);
       const rev = netYear1 * fade;
       const om = capex * f.fixedOMpct;
       const depr = y <= f.deprYears ? capex / f.deprYears : 0;
-      const aug = f.augment ? capex * f.augmentPctPerYear : 0;
+      const aug = f.augment ? capex * augPct : 0;
       const ebit = rev - om - aug - depr;
-      const tax = Math.max(0, ebit) * f.tax;
+      let taxable = ebit;
+      if (taxable < 0) losses.push({ y, amt: -taxable });
+      else {
+        for (const l of losses) { if (y - l.y > lossYears || !l.amt) continue; const u = Math.min(l.amt, taxable); l.amt -= u; taxable -= u; }
+      }
+      const tax = Math.max(0, taxable) * f.tax;
       const cf = rev - om - aug - tax;
       const prev = cum; flows.push(cf); cum += cf;
       if (payback === null && cum >= 0 && cf > 0) payback = y - 1 + (-prev) / cf;
@@ -142,7 +161,7 @@
   }
 
   function irr(flows) {
-    let lo = -0.99, hi = 1.5;
+    let lo = -0.99, hi = 10;
     const f = r => flows.reduce((a, c, t) => a + c / Math.pow(1 + r, t), 0);
     if (f(lo) * f(hi) > 0) return null;
     for (let i = 0; i < 200; i++) { const m = (lo + hi) / 2; (f(lo) * f(m) <= 0) ? (hi = m) : (lo = m); }

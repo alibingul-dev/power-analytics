@@ -27,6 +27,7 @@
     /* 21 */ { publisher: "EPİAŞ", title: "Şeffaflık Platformu teknik dokümanı (electricity-service)", year: 2026, where: "market prices, GİP AOF, ancillary capacity prices and amounts", url: "https://seffaflik.epias.com.tr/electricity-service/technical/tr/index.html" },
     /* 22 */ { publisher: "Ember", title: "Türkiye: depolama", year: 2026, where: "installed and licensed storage, February 2026", url: "https://ember-energy.org/tr/chapter/depolama/" },
     /* 23 */ { publisher: "NREL", title: "Annual Technology Baseline 2024: Utility-Scale Battery Storage", year: 2024, where: "O&M: 2.5% of capex, augmentation not included", url: "https://atb.nrel.gov/electricity/2024/utility-scale_battery_storage" },
+    /* 25 */ { publisher: "Alomaliye", title: "Kurumlar vergisi yönünden zarar mahsubu (KVK Md. 9)", year: 2024, where: "losses carried forward for 5 years", url: "https://www.alomaliye.com/2024/03/12/kurumlar-vergisi-yonunden-zarar-mahsubu/" },
     /* 24 */ { publisher: "BloombergNEF", title: "Lithium-ion battery pack prices fall to $108 per kilowatt-hour", year: 2025, where: "December 2025 battery price survey", url: "https://about.bnef.com/insights/clean-energy/lithium-ion-battery-pack-prices-fall-to-108-per-kilowatt-hour" },
   ];
 
@@ -40,20 +41,20 @@
     om:    { name: "Fixed O&M", value: 0.025, label: "2.5% of capex per year, excluding augmentation", refs: [23, 1],
              note: "NREL ATB 2024: 2.5% of capex without augmentation. ATB 2025 moved to 4% because it folds augmentation in; here augmentation is paid through the wear cost instead, in proportion to how hard the battery is cycled, so 2.5% avoids counting it twice." },
     deg:   { name: "Capacity fade", value: 0.0, label: "0%/yr (lost capacity is bought back through the wear cost)", refs: [6, 8],
-             note: "The wear cost replaces the capacity each MWh uses up, so nameplate energy is held. To model a battery that is never topped up, set wear to near zero and fade to about 1.6%/yr (GHD 2025)." },
+             note: "The wear cost replaces the capacity each MWh uses up, so nameplate energy is held. Setting fade above 0 models a battery that is never topped up: the investment case then drops the wear cost and applies the fade instead (GHD 2025: about 1.6%/yr)." },
     pack:  { name: "Replacement cell cost", value: 108, label: "$108/kWh (battery pack, 2025)", refs: [24],
              note: "BNEF 2025 average lithium-ion pack price. Used only to price the capacity a cycle wears out." },
-    cyc:   { name: "Cycle life", value: 5000, label: "5,000 full cycles to 79% health", refs: [6, 7],
+    cyc:   { name: "Cycle life", value: 5000, soh: 0.79, label: "5,000 full cycles to 79% health", refs: [6, 7],
              note: "Modo (July 2026): state of health 79% after 5,000 equivalent full cycles. Wear cost per MWh discharged = cell cost × 21% ÷ 5,000 cycles ÷ usable share; at defaults about $5/MWh. The optimiser only trades when the spread beats this. PNNL counts to 60% health, which gives longer lives." },
     life:  { name: "Project life", value: 15, label: "15 years", refs: [1, 3],
              note: "NREL ATB uses 15 years; Lazard uses 20 with augmentation." },
     wacc:  { name: "Discount rate", value: 0.139, label: "13.9% (USD, all-equity)", refs: [9, 10],
              note: "US 10-year Treasury 4.98% (FRED, 29 Oct 2026) + Damodaran's total equity risk premium for Turkey 8.89% (January 2026). Revenue is held flat in USD, so this nominal rate is a conservative choice." },
-    tax:   { name: "Corporate tax", value: 0.25, label: "25%", refs: [11], note: "Kurumlar vergisi oranı, 2026." },
+    tax:   { name: "Corporate tax", value: 0.25, label: "25%, losses carried forward 5 years", refs: [11, 25], note: "Kurumlar vergisi oranı, 2026. Tax losses offset profits of the next 5 years (KVK Md. 9)." },
     depr:  { name: "Tax depreciation", value: 5, label: "5 years, straight line", refs: [12],
              note: "Faydalı ömür listesi line 3.14.7 (akümülatörler). There is no separate line for grid-scale battery systems." },
     fx:    { name: "USD/TRY", value: 49.77, label: "49.77 (TCMB, 30 Oct 2026)", refs: [13],
-             note: "Converts the TL revenue of the last year into USD for the investment case." },
+             note: "Each day's TL revenue converts at that day's TCMB rate when the data carries it; this spot rate is the fallback and prices the wear cost in the investment inputs." },
     ratio: { name: "Reserve energy rules", value: { pfk: 1.25, sfk: 2.25 },
              label: "PFK: 1.25 MWh per MW offered; SFK: 2.25 MWh per MW (1-hour block); held half above, half below the state of charge", refs: [15, 16, 17, 14],
              note: "PFK 1.25, split half as stored energy and half as charging headroom, from Ratio Energy and summaries of the TEİAŞ criteria; the 03.07.2026 reissue could not be opened, so treat as provisional. SFK 2.25 is derived, not published: sources give 6.75 / 9 / 11.25 for 3 / 4 / 5-hour blocks (hours × 2 directions × 1.125); 2.25 is the 1-hour case, matching hourly capacity prices. Both services pay reserve MW × hourly capacity price (Yan Hizmetler Md. 18–19, 26–27); penalties for non-delivery are not modelled." },
@@ -62,14 +63,14 @@
   const METHOD =
     "<p><b>Dispatch.</b> Each day is optimised separately with dynamic programming over the battery's state of charge (hourly steps). " +
     "The battery buys and sells in the chosen market (GÖP day-ahead price or GİP weighted average price), cannot exceed its power or usable energy, " +
-    "loses energy as set by the round-trip efficiency (split evenly between charging and discharging) and ends each day where it started.</p>" +
+    "loses energy as set by the round-trip efficiency (split evenly between charging and discharging) and ends each day where it started, at the middle of the usable range. The state of charge is split into 32–96 levels depending on duration (a modelling choice, not a sourced value).</p>" +
     "<p><b>Price knowledge.</b> 'Perfect foresight' plans each day on that day's actual prices, the theoretical maximum. " +
-    "'Plan on yesterday's prices' makes the plan with the previous day's prices and settles it at the actual prices: a simple, reproducible benchmark (persistence forecast). Real desks land between the two.</p>" +
+    "'Plan on yesterday's prices' makes the plan with the previous day's prices and settles it at the actual prices: a simple, reproducible benchmark (persistence forecast). Days without a usable previous day are left out, never filled with the day's own prices. Real desks land between the two.</p>" +
     "<p><b>Battery wear.</b> Every MWh discharged is charged the cost of buying back the capacity it wears out: cell price × capacity lost over the cycle life ÷ cycle life. The optimiser only cycles when the spread pays for this, and it is shown as a cost line. Fixed O&M excludes augmentation so the two are not counted twice.</p>" +
     "<p><b>Reserves.</b> The MW offered as PFK or SFK earns that hour's published capacity price for every hour. The same MW of power is held back from trading and the required energy (ratio × MW) is kept half above and half below the state of charge. " +
-    "Revenue assumes every offer is accepted at the published price; when the offer is a large share of what TEİAŞ procures, the page warns that the real price would likely be lower.</p>" +
-    "<p><b>Year 1 and the project.</b> The last 365 days are scaled to a year. Year-1 net revenue (after wear) is converted to USD at the stated rate and held flat over the project life, " +
-    "reduced by capacity fade if set. Cash flow = revenue − fixed O&M − tax; tax uses straight-line depreciation. NPV and IRR are in USD.</p>" +
+    "Revenue assumes every offer is accepted at the published price. If the energy rule does not allow the MW asked for, the reserve is cut to what fits and the page shows the MW actually used. When the offer is above 15% of what TEİAŞ procures on average, the page warns that the real price would likely be lower (15% is our rule of thumb, not a sourced value).</p>" +
+    "<p><b>Year 1 and the project.</b> The last 365 days are scaled to a year. Each day's net revenue (after wear) is converted to USD at that day's TCMB rate, and year 1 is held flat over the project life, " +
+    "reduced by capacity fade if set. Cash flow = revenue − fixed O&M − tax; tax uses straight-line depreciation, and tax losses are carried forward for up to 5 years. NPV and IRR are in USD.</p>" +
     "<p><b>Not modelled.</b> Grid connection and transmission charges, imbalance penalties, reserve non-delivery penalties, financing structure, Turkish customs, " +
     "inflation and FX changes. These are left out because no public source was found that fixes them for a standalone battery in 2026.</p>";
 

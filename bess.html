@@ -211,9 +211,10 @@ function read(){
   const capexKWh=S.capexFor(D,+$("capex").value);
   const rte=$("rte").value/100,dod=$("dod").value/100,socMin=(1-dod)/2,socMax=1-socMin;
   const cyc=+$("cyc").value,fx=+$("fx").value;
-  // wear cost: buying back the capacity one MWh of throughput wears out (cell price x 21% lost over cycle life / cycles / usable share), in TL
-  const wearUSD=A.pack.value*1000*0.21/(cyc*dod), wearTL=wearUSD*fx;
-  return {P,D,E:P*D,rte,socMin,socMax,capexKWh,cyc,fx,wearTL,svc,mkt:STATE.mkt,fs:STATE.fs,R:svc?Math.min(+$("R").value,P):0,
+  // wear cost per MWh taken out of storage: buying back the capacity it wears out
+  // (cell price x share lost over the cycle life / cycles / usable share)
+  const wearUSD=A.pack.value*1000*(1-A.cyc.soh)/(cyc*dod), wearTL=wearUSD*fx;
+  return {P,D,E:P*D,rte,socMin,socMax,capexKWh,cyc,fx,wearUSD,wearTL,svc,mkt:STATE.mkt,fs:STATE.fs,R:svc?Math.min(+$("R").value,P):0,
     om:$("om").value/100,deg:$("deg").value/100,life:+$("life").value,wacc:$("wacc").value/100,tax:$("tax").value/100};
 }
 function paint(){for(const k in IN){const [id,f]=IN[k];$(id+"v").textContent=f($(id).value)}$("Dv").textContent=$("D").value+" h";$("fxv").textContent=(+$("fx").value).toFixed(2);
@@ -221,22 +222,26 @@ function paint(){for(const k in IN){const [id,f]=IN[k];$(id+"v").textContent=f($
 
 /* ---------- model ---------- */
 function run(x,strat){
-  const batt={P:x.P,E:x.E,rte:x.rte,socMin:x.socMin,socMax:x.socMax,wearTLperMWh:x.wearTL,steps:x.D>=4?24:18};
+  const usable=(x.socMax-x.socMin)*x.E,steps=Math.max(32,Math.min(96,Math.round(usable/(x.P*Math.sqrt(x.rte))*16)));
+  const batt={P:x.P,E:x.E,rte:x.rte,socMin:x.socMin,socMax:x.socMax,wearUSDperMWh:x.wearUSD,wearTLperMWh:x.wearTL,steps};
   const rules={pfkRatio:A.ratio.value.pfk,sfkRatio:A.ratio.value.sfk};
   const s={market:strat.mkt==="none"?"dam":strat.mkt,foresight:strat.fs,service:strat.svc||null,reserve:strat.svc?strat.R:0};
   const res=BESS.simulate(DAYS,s,strat.mkt==="none"?Object.assign({},batt,{P:strat.svc?Math.min(strat.R,x.P):0.0001}):batt,rules);
   if(strat.mkt==="none")res.forEach(r=>{r.net-=r.arb-r.wear;r.arb=0;r.wear=0;r.throughput=0});
   const sum=BESS.summarise(res,batt);
-  const netUSD=sum.annual.net/x.fx;
+  // USD at each day's TCMB rate when the data carries it (spot rate otherwise).
+  // With capacity fade on, the battery is not topped up, so wear is not also charged in the investment case.
+  const u=sum.usd(x.fx),netUSD=x.deg>0?u.arb+u.cap:u.net;
+  const Reff=res.length?res[res.length-1].R:0;
   const fin=BESS.finance(netUSD,{E:x.E},{capexPerKWh:x.capexKWh,fixedOMpct:x.om,years:x.life,wacc:x.wacc,tax:x.tax,deprYears:A.depr.value,degrPerYear:x.deg,augment:false});
-  return {res,sum,fin,netUSD};
+  return {res,sum,fin,netUSD,Reff};
 }
 function recompute(){
   paint();const x=read();
   const r=run(x,{mkt:x.mkt,svc:x.svc,fs:x.fs,R:x.R});RES=r.res;SUM=r.sum;FIN=r.fin;
-  const perKWyrUSD=r.netUSD/(x.P*1000);
+  const perKWyrUSD=r.netUSD/(x.P*1000);x.Reff=r.Reff;
   const k=[
-    ["Net revenue, year 1",fmt(r.sum.annual.net/1e6,1)+"m TL","≈ $"+fmt(r.netUSD/1e6,2)+"m"],
+    ["Net revenue, year 1",fmt(r.sum.annual.net/1e6,1)+"m TL","≈ $"+fmt(r.netUSD/1e6,2)+"m"+(r.sum.fxDaily?" at daily rates":"")],
     ["Per MW of power",fmt(r.sum.perMWyr/1e6,2)+"m TL","≈ $"+fmt(perKWyrUSD,0)+" per kW-year"],
     ["Full cycles per year",fmt(r.sum.cyclesPerYear,0),"wear cost "+fmt(x.wearTL,0)+" TL/MWh"],
     ["Investment",fmt(r.fin.capex/1e6,1)+"m USD","$"+fmt(x.capexKWh,0)+"/kWh, "+x.D+" h"],
@@ -249,12 +254,12 @@ function recompute(){
   clearTimeout(recompute.t);recompute.t=setTimeout(()=>compare(x),60);
 }
 function depth(x){
-  const el=$("depth");if(!x.svc||!x.R){el.hidden=true;return}
+  const el=$("depth");if(!x.svc||!x.Reff){el.hidden=true;return}
   const f=x.svc==="pfk"?"pfq":"sfq",vals=DAYS.flatMap(d=>d[f]||[]).filter(v=>v!=null);
   if(!vals.length){el.hidden=true;return}
-  const avg=vals.reduce((a,b)=>a+b,0)/vals.length,share=x.R/avg*100;
+  const avg=vals.reduce((a,b)=>a+b,0)/vals.length,share=x.Reff/avg*100;
   el.hidden=false;
-  el.innerHTML=`<b>Market depth:</b> TEİAŞ procured on average <b>${fmt(avg,0)} MW</b> of ${x.svc==="pfk"?"primary":"secondary"} reserve per hour over the last year. Offering ${x.R} MW is <b>${fmt(share,0)}%</b> of that. `+
+  el.innerHTML=`<b>Market depth:</b> TEİAŞ procured on average <b>${fmt(avg,0)} MW</b> of ${x.svc==="pfk"?"primary":"secondary"} reserve per hour over the last year. Offering ${fmt(x.Reff,0)} MW${x.Reff<x.R-0.5?" (capped by energy: "+x.R+" MW asked)":""} is <b>${fmt(share,0)}%</b> of that. `+
     (share>15?"A bid this large would likely move the clearing price down, so the revenue shown is optimistic for this size.":"At this share the clearing price is unlikely to move much.");
 }
 
@@ -302,9 +307,9 @@ function cashChart(){
 }
 function compare(x){
   const opts=[["GÖP arbitrage","dam",""],["GİP arbitrage","idm",""],["PFK only","none","pfk"],["SFK only","none","sfk"],["PFK + GÖP","dam","pfk"],["SFK + GÖP","dam","sfk"]];
-  const rows=opts.map(([n,m,s])=>{const R=s?Math.min(x.R||Math.round(x.P/2),x.P):0;const r=run(x,{mkt:m,svc:s,fs:x.fs,R});return {n,R,r}});
+  const rows=opts.map(([n,m,s])=>{const R=s?Math.min(x.R||Math.round(x.P/2),x.P):0;const r=run(x,{mkt:m,svc:s,fs:x.fs,R});return {n,R:r.Reff,r}});
   $("cmp").innerHTML=`<table><thead><tr><th>Stack</th><th class="num">Reserve</th><th class="num">Net revenue, yr 1</th><th class="num">USD per kW-yr</th><th class="num">Cycles/yr</th><th class="num">NPV</th><th class="num">IRR</th></tr></thead><tbody>`+
-    rows.map(({n,R,r})=>`<tr><td>${n}</td><td class="num">${R?R+" MW":"—"}</td><td class="num">${fmt(r.sum.annual.net/1e6,1)}m TL</td><td class="num">$${fmt(r.netUSD/(x.P*1000),0)}</td><td class="num">${fmt(r.sum.cyclesPerYear,0)}</td><td class="num">$${fmt(r.fin.npv/1e6,1)}m</td><td class="num">${r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%"}</td></tr>`).join("")+
+    rows.map(({n,R,r})=>`<tr><td>${n}</td><td class="num">${R?fmt(R,0)+" MW":"—"}</td><td class="num">${fmt(r.sum.annual.net/1e6,1)}m TL</td><td class="num">$${fmt(r.netUSD/(x.P*1000),0)}</td><td class="num">${fmt(r.sum.cyclesPerYear,0)}</td><td class="num">$${fmt(r.fin.npv/1e6,1)}m</td><td class="num">${r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%"}</td></tr>`).join("")+
     `</tbody></table><p class="note" style="margin:10px 0 0">Reserve stacks offer ${x.svc?x.R+" MW (your setting)":"half the power"}; energy trading uses whatever power the reserve leaves free.</p>`;
 }
 function exportCSV(){
