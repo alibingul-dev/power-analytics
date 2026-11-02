@@ -243,7 +243,7 @@ function recompute(){
   const k=[
     ["Net revenue, year 1",fmt(r.sum.annual.net/1e6,1)+"m TL","≈ $"+fmt(r.netUSD/1e6,2)+"m"+(r.sum.fxDaily?" at daily rates":"")],
     ["Per MW of power",fmt(r.sum.perMWyr/1e6,2)+"m TL","≈ $"+fmt(perKWyrUSD,0)+" per kW-year"],
-    ["Full cycles per year",fmt(r.sum.cyclesPerYear,0),"wear cost "+fmt(x.wearTL,0)+" TL/MWh"],
+    ["Full cycles per year",fmt(r.sum.cyclesPerYear,0),"wear cost $"+fmt(x.wearUSD,1)+"/MWh"],
     ["Investment",fmt(r.fin.capex/1e6,1)+"m USD","$"+fmt(x.capexKWh,0)+"/kWh, "+x.D+" h"],
     ["NPV",fmt(r.fin.npv/1e6,1)+"m USD","at "+(x.wacc*100).toFixed(1)+"%",r.fin.npv>=0?"good":"bad"],
     ["IRR",r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%","USD",r.fin.irr!=null&&r.fin.irr>=x.wacc?"good":"bad"],
