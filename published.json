@@ -236,5 +236,12 @@
     "kind": "gb_post2",
     "post_id": "urn:li:share:7522924081093169152",
     "source": "manual"
+  },
+  "2026-11-03#post2": {
+    "analysis_date": "2026-11-03",
+    "at": "2026-11-02T09:17:02.422909Z",
+    "kind": "post2",
+    "post_id": "urn:li:share:7522949882412728321",
+    "source": "manual"
   }
 }
