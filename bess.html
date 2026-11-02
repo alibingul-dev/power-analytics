@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BESS Investment Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0E1520;--surface:#16202E;--surface-2:#1D2A3B;--line:#26364B;
+  --text:#E6EDF5;--muted:#8A9BB0;
+  --b1:#38BDF8;--b2:#34D399;--b3:#FBBF24;--b4:#FB923C;--b5:#F43F5E;
+  --frame:#0B111A;--b1-a12:rgba(56,189,248,.12);--b1-a45:rgba(56,189,248,.45);--scrim:rgba(6,11,18,.72);
+  --font-display:Archivo,system-ui,sans-serif;--font-body:"Source Sans 3",system-ui,sans-serif;--font-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --r-s:6px;--r-m:10px;--r-pill:999px;--ease-out:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
+.mono,.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+a{color:var(--b1)}
+.wrap{padding:28px clamp(16px,3vw,48px) 60px}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.head h1{font-size:28px}
+.sub{color:var(--muted);margin:6px 0 0;max-width:90ch}
+.stamp{color:var(--muted);font-size:13px;margin-top:6px}
+.btn{font:600 14px var(--font-body);border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:var(--r-s);padding:8px 14px;cursor:pointer}
+.btn:hover{border-color:var(--b1-a45)}
+.btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--b1);outline-offset:1px}
+.btn.pri{background:var(--b1);color:var(--bg);border-color:var(--b1)}
+.grid{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:18px}
+.panel+.panel{margin-top:16px}
+.panel h2{font-size:16px;margin-bottom:12px}
+.side{position:sticky;top:16px}
+@media (max-width:980px){.side{position:static}}
+.f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;margin:0 0 12px}
+.f label{font-size:13.5px;color:var(--muted)}
+.f .v{font-family:var(--font-mono);font-size:13px;color:var(--text);text-align:right;min-width:72px}
+.f input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--b1)}
+.f select,.f input[type=number]{grid-column:1/-1;width:100%;font:500 14px var(--font-body);background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:var(--r-s);padding:7px 9px}
+.src{font-size:11.5px;color:var(--muted);grid-column:1/-1}
+.src button{background:none;border:0;color:var(--b1);font:inherit;padding:0;cursor:pointer;text-decoration:underline}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px}
+.kpi .k{font-size:12.5px;color:var(--muted)}
+.kpi .v{font-family:var(--font-mono);font-size:22px;margin-top:4px}
+.kpi .n{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi.good .v{color:var(--b2)}.kpi.bad .v{color:var(--b5)}
+.warn{border:1px solid rgba(251,191,36,.45);background:rgba(251,191,36,.08);color:var(--text);border-radius:var(--r-m);padding:12px 14px;font-size:14px;margin-top:14px}
+.warn[hidden]{display:none}
+svg.chart{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.note{font-size:13px;color:var(--muted);margin:0 0 12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:1200px){.row2{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:500 13px var(--font-body);border:1px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:var(--r-pill);padding:5px 11px;cursor:pointer}
+.seg button[aria-pressed=true]{border-color:var(--b1);color:var(--text);background:var(--b1-a12)}
+/* modal */
+.modal{position:fixed;inset:0;background:var(--scrim);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:4vh 12px;overflow:auto}
+.modal.on{display:flex}
+.dlg{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);max-width:1100px;width:100%;padding:22px}
+.dlg h2{font-size:20px}
+.dlg h3{font-size:15px;margin:18px 0 8px}
+.dlg .x{float:right}
+.lock{max-width:560px;margin:14vh auto;padding:28px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
+.lock p{color:var(--muted)}
+.busy{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app" hidden>
+  <div class="head">
+    <div>
+      <h1>BESS Investment Simulator</h1>
+      <p class="sub">A battery in the Turkish power market, run hour by hour on the last year of real EPİAŞ prices: what it earns in each market, what it costs, and whether it pays back. Every assumption has a public source.</p>
+      <div class="stamp" id="stamp"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="info" type="button">ⓘ Sources and method</button>
+      <button class="btn" id="csv" type="button">Download results (CSV)</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <aside class="side">
+      <div class="panel">
+        <h2>Battery</h2>
+        <div class="f"><label for="P">Power</label><span class="v" id="Pv"></span><input type="range" id="P" min="10" max="300" step="10" value="100"></div>
+        <div class="f"><label for="D">Duration</label><span class="v" id="Dv"></span>
+          <select id="D"><option value="1">1 hour</option><option value="2" selected>2 hours</option><option value="4">4 hours</option></select></div>
+        <div class="f"><label for="rte">Round-trip efficiency</label><span class="v" id="rtev"></span><input type="range" id="rte" min="75" max="95" step="1"><div class="src" data-src="rte"></div></div>
+        <div class="f"><label for="dod">Usable state of charge</label><span class="v" id="dodv"></span><input type="range" id="dod" min="70" max="100" step="5"><div class="src" data-src="dod"></div></div>
+      </div>
+      <div class="panel">
+        <h2>Revenue stack</h2>
+        <div class="f"><label>Energy market</label><span></span>
+          <div class="seg" id="mkt" style="grid-column:1/-1"><button type="button" data-v="dam" aria-pressed="true">Day-ahead (GÖP)</button><button type="button" data-v="idm" aria-pressed="false">Intraday (GİP)</button><button type="button" data-v="none" aria-pressed="false">None</button></div></div>
+        <div class="f"><label>Reserve service</label><span></span>
+          <div class="seg" id="svc" style="grid-column:1/-1"><button type="button" data-v="" aria-pressed="true">None</button><button type="button" data-v="pfk" aria-pressed="false">Primary (PFK)</button><button type="button" data-v="sfk" aria-pressed="false">Secondary (SFK)</button></div><div class="src" data-src="ratio"></div></div>
+        <div class="f" id="Rrow"><label for="R">Reserve offered</label><span class="v" id="Rv"></span><input type="range" id="R" min="0" max="100" step="5" value="50"></div>
+        <div class="f"><label>Price knowledge</label><span></span>
+          <div class="seg" id="fs" style="grid-column:1/-1"><button type="button" data-v="persistence" aria-pressed="true">Plan on yesterday's prices</button><button type="button" data-v="perfect" aria-pressed="false">Perfect foresight</button></div>
+          <div class="src">Perfect foresight is the upper bound; planning on yesterday's prices is a simple, honest benchmark.</div></div>
+      </div>
+      <div class="panel">
+        <h2>Cost and finance</h2>
+        <div class="f"><label for="capex">Installed cost (USD/kWh)</label><span class="v" id="capexv"></span><input type="range" id="capex" min="100" max="600" step="10"><div class="src" data-src="capex"></div></div>
+        <div class="f"><label for="om">Fixed O&amp;M (% of capex / yr)</label><span class="v" id="omv"></span><input type="range" id="om" min="0.5" max="5" step="0.1"><div class="src" data-src="om"></div></div>
+        <div class="f"><label for="cyc">Cycle life to end of life</label><span class="v" id="cycv"></span><input type="range" id="cyc" min="2000" max="10000" step="500"><div class="src" data-src="cyc"></div></div>
+        <div class="f"><label for="deg">Capacity fade (% / yr)</label><span class="v" id="degv"></span><input type="range" id="deg" min="0" max="5" step="0.1"><div class="src" data-src="deg"></div></div>
+        <div class="f"><label for="life">Project life (years)</label><span class="v" id="lifev"></span><input type="range" id="life" min="10" max="25" step="1"><div class="src" data-src="life"></div></div>
+        <div class="f"><label for="wacc">Discount rate, USD real (%)</label><span class="v" id="waccv"></span><input type="range" id="wacc" min="4" max="20" step="0.5"><div class="src" data-src="wacc"></div></div>
+        <div class="f"><label for="tax">Corporate tax (%)</label><span class="v" id="taxv"></span><input type="range" id="tax" min="0" max="35" step="1"><div class="src" data-src="tax"></div></div>
+        <div class="f"><label for="fx">USD/TRY</label><span class="v" id="fxv"></span><input type="number" id="fx" step="0.01" min="1"><div class="src" data-src="fx"></div></div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="kpis" id="kpis"></div>
+      <div class="warn" id="depth" hidden></div>
+      <div class="panel" style="margin-top:16px">
+        <h2>Revenue by month</h2>
+        <p class="note">Net revenue after battery wear, per month of the last year, split by source.</p>
+        <svg class="chart" id="cMonth" viewBox="0 0 900 260" role="img" aria-label="Monthly revenue by source"></svg>
+        <div class="legend" id="lMonth"></div>
+      </div>
+      <div class="row2" style="margin-top:16px">
+        <div class="panel">
+          <h2>One day, hour by hour</h2>
+          <p class="note">Prices and the battery's state of charge on the chosen day. <label>Day <select id="day"></select></label></p>
+          <svg class="chart" id="cDay" viewBox="0 0 900 300" role="img" aria-label="Prices and state of charge for one day"></svg>
+          <div class="legend" id="lDay"></div>
+        </div>
+        <div class="panel">
+          <h2>Cash flow over the project</h2>
+          <p class="note">Year 0 is the investment; later years are revenue minus O&amp;M and tax, in constant USD.</p>
+          <svg class="chart" id="cCash" viewBox="0 0 900 300" role="img" aria-label="Annual and cumulative cash flow"></svg>
+          <div class="legend"><span><i style="background:var(--b2)"></i>Annual cash flow</span><span><i style="background:var(--b1)"></i>Cumulative</span></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h2>Compare strategies</h2>
+        <p class="note">Same battery and costs, every revenue stack side by side.</p>
+        <div id="cmp"><p class="busy">Calculating…</p></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="dlg">
+    <button class="btn x" id="mx" type="button">Close</button>
+    <h2 id="mt">Sources and method</h2>
+    <div id="mbody"></div>
+  </div>
+</div>
+
+<script src="bess-engine.js"></script>
+<script src="bess-sources.js"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const fmt=(v,d=0)=>v==null||!isFinite(v)?"—":v.toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
+const S=window.BESS_SOURCES,A=S.assumptions;
+let DAYS=[],RES=null,SUM=null,FIN=null,STATE={mkt:"dam",svc:"",fs:"persistence"};
+
+/* ---------- Pro gate: data ships inside the encrypted tier bundles ---------- */
+const b64u8=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function loadData(){
+  let code=null;try{code=localStorage.getItem("pa-pro")}catch(e){}
+  if(!code)throw new Error("nocode");
+  const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
+  for(const t of["ultra","max","pro"]){
+    let B;try{const r=await fetch(t+".bundle.json",{cache:"no-store"});if(!r.ok)continue;B=await r.json()}catch(e){continue}
+    if(!wk||salt!==B.kdf.salt){salt=B.kdf.salt;const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
+      wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"])}
+    for(const k of B.keys){let raw;try{raw=await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct))}catch(e){continue}
+      const ck=await sub.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
+      const d=JSON.parse(new TextDecoder().decode(await sub.decrypt({name:"AES-GCM",iv:b64u8(B.iv)},ck,b64u8(B.ct))));
+      if(d.bess&&d.bess.days)return d.bess}
+  }
+  throw new Error("badcode");
+}
+function locked(why){
+  document.body.innerHTML='<div class="lock"><h2>The BESS simulator is part of Pro</h2><p>'+(why==="badcode"?"The code saved in this browser does not open this page. ":"")+'Enter your code on the Plans page, or see what Pro includes.</p><a href="index.html#plans" target="_top">Go to Plans →</a></div>';
+}
+
+/* ---------- inputs ---------- */
+const IN={P:["P",v=>v+" MW"],rte:["rte",v=>v+"%"],dod:["dod",v=>v+"%"],R:["R",v=>v+" MW"],capex:["capex",v=>"$"+v],om:["om",v=>(+v).toFixed(1)+"%"],
+  cyc:["cyc",v=>(+v).toLocaleString("en-GB")],deg:["deg",v=>(+v).toFixed(1)+"%"],life:["life",v=>v+" yr"],wacc:["wacc",v=>(+v).toFixed(1)+"%"],tax:["tax",v=>v+"%"]};
+function setDefaults(){
+  $("rte").value=A.rte.value*100;$("dod").value=A.dod.value*100;$("capex").value=A.capex.value[2];
+  $("om").value=(A.om.value*100).toFixed(1);$("cyc").value=A.cyc.value;$("deg").value=(A.deg.value*100).toFixed(1);
+  $("life").value=A.life.value;$("wacc").value=(A.wacc.value*100).toFixed(1);$("tax").value=A.tax.value*100;$("fx").value=A.fx.value;
+  document.querySelectorAll(".src[data-src]").forEach(el=>{const a=A[el.dataset.src];if(!a)return;
+    el.innerHTML='Default: '+a.label+' · <button type="button" data-ref="'+el.dataset.src+'">source</button>'});
+}
+function read(){
+  const D=+$("D").value,P=+$("P").value,svc=STATE.svc;
+  const capexKWh=S.capexFor(D,+$("capex").value);
+  const rte=$("rte").value/100,dod=$("dod").value/100,socMin=(1-dod)/2,socMax=1-socMin;
+  const cyc=+$("cyc").value,fx=+$("fx").value;
+  // wear cost: replacing the energy that one MWh of throughput uses up (capex per usable MWh / cycle life), in TL
+  const wearUSD=capexKWh*1000/(cyc*dod), wearTL=wearUSD*fx;
+  return {P,D,E:P*D,rte,socMin,socMax,capexKWh,cyc,fx,wearTL,svc,mkt:STATE.mkt,fs:STATE.fs,R:svc?Math.min(+$("R").value,P):0,
+    om:$("om").value/100,deg:$("deg").value/100,life:+$("life").value,wacc:$("wacc").value/100,tax:$("tax").value/100};
+}
+function paint(){for(const k in IN){const [id,f]=IN[k];$(id+"v").textContent=f($(id).value)}$("Dv").textContent=$("D").value+" h";$("fxv").textContent=(+$("fx").value).toFixed(2);
+  $("Rrow").style.display=STATE.svc?"":"none";$("R").max=$("P").value}
+
+/* ---------- model ---------- */
+function run(x,strat){
+  const batt={P:x.P,E:x.E,rte:x.rte,socMin:x.socMin,socMax:x.socMax,wearTLperMWh:x.wearTL,steps:x.D>=4?24:18};
+  const rules={pfkRatio:A.ratio.value.pfk,sfkRatio:A.ratio.value.sfk,holdH:A.ratio.value.holdH};
+  const s={market:strat.mkt==="none"?"dam":strat.mkt,foresight:strat.fs,service:strat.svc||null,reserve:strat.svc?strat.R:0};
+  const res=BESS.simulate(DAYS,s,strat.mkt==="none"?Object.assign({},batt,{P:strat.svc?Math.min(strat.R,x.P):0.0001}):batt,rules);
+  if(strat.mkt==="none")res.forEach(r=>{r.net-=r.arb-r.wear;r.arb=0;r.wear=0;r.throughput=0});
+  const sum=BESS.summarise(res,batt);
+  const netUSD=sum.annual.net/x.fx;
+  const fin=BESS.finance(netUSD,{E:x.E},{capexPerKWh:x.capexKWh,fixedOMpct:x.om,years:x.life,wacc:x.wacc,tax:x.tax,deprYears:A.depr.value,degrPerYear:x.deg,augment:false});
+  return {res,sum,fin,netUSD};
+}
+function recompute(){
+  paint();const x=read();
+  const r=run(x,{mkt:x.mkt,svc:x.svc,fs:x.fs,R:x.R});RES=r.res;SUM=r.sum;FIN=r.fin;
+  const perKWyrUSD=r.netUSD/(x.P*1000);
+  const k=[
+    ["Net revenue, year 1",fmt(r.sum.annual.net/1e6,1)+"m TL","≈ $"+fmt(r.netUSD/1e6,2)+"m"],
+    ["Per MW of power",fmt(r.sum.perMWyr/1e6,2)+"m TL","≈ $"+fmt(perKWyrUSD,0)+" per kW-year"],
+    ["Full cycles per year",fmt(r.sum.cyclesPerYear,0),"wear cost "+fmt(x.wearTL,0)+" TL/MWh"],
+    ["Investment",fmt(r.fin.capex/1e6,1)+"m USD","$"+fmt(x.capexKWh,0)+"/kWh, "+x.D+" h"],
+    ["NPV",fmt(r.fin.npv/1e6,1)+"m USD","at "+(x.wacc*100).toFixed(1)+"%",r.fin.npv>=0?"good":"bad"],
+    ["IRR",r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%","USD, real",r.fin.irr!=null&&r.fin.irr>=x.wacc?"good":"bad"],
+    ["Payback",r.fin.payback==null?"not within life":fmt(r.fin.payback,1)+" yr",""]
+  ];
+  $("kpis").innerHTML=k.map(([a,b,c,cl])=>`<div class="kpi ${cl||""}"><div class="k">${a}</div><div class="v">${b}</div><div class="n">${c}</div></div>`).join("");
+  depth(x);monthChart();dayChart();cashChart();
+  clearTimeout(recompute.t);recompute.t=setTimeout(()=>compare(x),60);
+}
+function depth(x){
+  const el=$("depth");if(!x.svc||!x.R){el.hidden=true;return}
+  const f=x.svc==="pfk"?"pfq":"sfq",vals=DAYS.flatMap(d=>d[f]||[]).filter(v=>v!=null);
+  if(!vals.length){el.hidden=true;return}
+  const avg=vals.reduce((a,b)=>a+b,0)/vals.length,share=x.R/avg*100;
+  el.hidden=false;
+  el.innerHTML=`<b>Market depth:</b> TEİAŞ procured on average <b>${fmt(avg,0)} MW</b> of ${x.svc==="pfk"?"primary":"secondary"} reserve per hour over the last year. Offering ${x.R} MW is <b>${fmt(share,0)}%</b> of that. `+
+    (share>15?"A bid this large would likely move the clearing price down, so the revenue shown is optimistic for this size.":"At this share the clearing price is unlikely to move much.");
+}
+
+/* ---------- charts (hand-drawn SVG) ---------- */
+function axisTicks(lo,hi){const span=hi-lo||1,raw=span/4,m=Math.pow(10,Math.floor(Math.log10(Math.abs(raw)||1))),st=[1,2,2.5,5,10].map(z=>z*m).find(z=>z>=raw)||raw;const a=Math.floor(lo/st)*st,b=Math.ceil(hi/st)*st,t=[];for(let v=a;v<=b+st/2;v+=st)t.push(+v.toFixed(6));return t}
+function frame(svg,W,H,L,R,T,B,ticks,yf){const y=v=>T+(H-T-B)*(1-(v-ticks[0])/(ticks[ticks.length-1]-ticks[0]||1));
+  let g=ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--font-mono)">${yf(v)}</text>`).join("");return {g,y}}
+function monthChart(){
+  const m={};for(const r of RES){const k=r.date.slice(0,7);(m[k]=m[k]||{arb:0,cap:0,wear:0});m[k].arb+=r.arb;m[k].cap+=r.cap;m[k].wear+=r.wear}
+  const keys=Object.keys(m).sort(),vals=keys.map(k=>m[k]);
+  const hi=Math.max(1,...vals.map(v=>v.arb+v.cap)),lo=Math.min(0,...vals.map(v=>-v.wear));
+  const W=900,H=260,L=70,R=10,T=12,B=28,tk=axisTicks(lo/1e6,hi/1e6),f=frame(null,W,H,L,R,T,B,tk,v=>fmt(v,v%1?1:0)+"m");
+  const bw=(W-L-R)/keys.length;let s=f.g;
+  keys.forEach((k,i)=>{const v=vals[i],x=L+i*bw+bw*.15,w=bw*.7;
+    const y0=f.y(0),ya=f.y(v.arb/1e6),yc=f.y((v.arb+v.cap)/1e6),yw=f.y(-v.wear/1e6);
+    if(v.arb>0)s+=`<rect x="${x}" y="${ya}" width="${w}" height="${y0-ya}" fill="var(--b1)"><title>${k}: energy ${fmt(v.arb/1e6,2)}m TL</title></rect>`;
+    if(v.cap>0)s+=`<rect x="${x}" y="${yc}" width="${w}" height="${ya-yc}" fill="var(--b2)"><title>${k}: reserve ${fmt(v.cap/1e6,2)}m TL</title></rect>`;
+    if(v.wear>0)s+=`<rect x="${x}" y="${y0}" width="${w}" height="${yw-y0}" fill="var(--b5)" opacity=".8"><title>${k}: wear −${fmt(v.wear/1e6,2)}m TL</title></rect>`;
+    s+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--font-mono)">${k.slice(2).replace("-","/")}</text>`});
+  $("cMonth").innerHTML=s;
+  $("lMonth").innerHTML='<span><i style="background:var(--b1)"></i>Energy trading</span><span><i style="background:var(--b2)"></i>Reserve capacity</span><span><i style="background:var(--b5)"></i>Battery wear (cost)</span>';
+}
+function dayChart(){
+  const i=+$("day").value,r=RES[i]||RES[RES.length-1],d=DAYS.find(x=>x.date===r.date);if(!d)return;
+  const fld=STATE.mkt==="idm"?"gip":"ptf",pr=d[fld].map((v,h)=>v==null?d.ptf[h]:v);
+  const W=900,H=300,L=70,R=60,T=12,B=28,tk=axisTicks(0,Math.max(...pr,...d.smf)),f=frame(null,W,H,L,R,T,B,tk,v=>fmt(v,0));
+  const x=h=>L+(W-L-R)*(h+.5)/24,line=(a,c,w,dash)=>`<path d="${a.map((v,h)=>(h?"L":"M")+x(h).toFixed(1)+","+f.y(v).toFixed(1)).join("")}" fill="none" stroke="${c}" stroke-width="${w}" ${dash?'stroke-dasharray="5 4"':""}/>`;
+  let s=f.g+line(pr,"var(--b1)",2.4)+line(d.smf,"var(--muted)",1.4,true);
+  if(r.dispatch){const soc=r.dispatch.soc,E=read().E,ys=v=>T+(H-T-B)*(1-v/E);
+    s+=`<path d="${soc.map((v,h)=>(h?"L":"M")+(L+(W-L-R)*h/24).toFixed(1)+","+ys(v).toFixed(1)).join("")}" fill="none" stroke="var(--b3)" stroke-width="2"/>`;
+    s+=`<text x="${W-R+8}" y="${T+10}" font-size="11" fill="var(--b3)" font-family="var(--font-mono)">${fmt(E,0)} MWh</text><text x="${W-R+8}" y="${H-B}" font-size="11" fill="var(--b3)" font-family="var(--font-mono)">0</text>`;
+    r.dispatch.grid.forEach((g,h)=>{if(Math.abs(g)<.01)return;s+=`<rect x="${x(h)-5}" y="${H-B-6}" width="10" height="6" fill="${g>0?"var(--b2)":"var(--b5)"}"><title>${String(h).padStart(2,"0")}:00 ${g>0?"sell":"buy"} ${fmt(Math.abs(g),1)} MWh</title></rect>`})}
+  for(let h=0;h<24;h+=3)s+=`<text x="${x(h)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--font-mono)">${String(h).padStart(2,"0")}</text>`;
+  $("cDay").innerHTML=s;
+  $("lDay").innerHTML=`<span><i style="background:var(--b1)"></i>${fld==="gip"?"Intraday (GİP)":"Day-ahead (PTF)"} TL/MWh</span><span><i style="background:var(--muted)"></i>System price (SMF)</span><span><i style="background:var(--b3)"></i>State of charge (right)</span><span><i style="background:var(--b2)"></i>Sell</span><span><i style="background:var(--b5)"></i>Buy</span>`;
+}
+function cashChart(){
+  const fl=FIN.flows,cum=[];fl.reduce((a,c,i)=>(cum[i]=a+c,a+c),0);
+  const lo=Math.min(...fl,...cum)/1e6,hi=Math.max(...fl,...cum,0)/1e6,W=900,H=300,L=70,R=10,T=12,B=28,tk=axisTicks(lo,hi),f=frame(null,W,H,L,R,T,B,tk,v=>"$"+fmt(v,v%1?1:0)+"m");
+  const bw=(W-L-R)/fl.length;let s=f.g;
+  fl.forEach((v,i)=>{const x=L+i*bw+bw*.2,w=bw*.6,y0=f.y(0),y1=f.y(v/1e6);s+=`<rect x="${x}" y="${Math.min(y0,y1)}" width="${w}" height="${Math.abs(y1-y0)}" fill="${v<0?"var(--b5)":"var(--b2)"}"><title>Year ${i}: $${fmt(v/1e6,2)}m</title></rect>`;
+    if(i%2===0)s+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--font-mono)">${i}</text>`});
+  s+=`<path d="${cum.map((v,i)=>(i?"L":"M")+(L+i*bw+bw/2).toFixed(1)+","+f.y(v/1e6).toFixed(1)).join("")}" fill="none" stroke="var(--b1)" stroke-width="2.2"/>`;
+  $("cCash").innerHTML=s;
+}
+function compare(x){
+  const opts=[["GÖP arbitrage","dam",""],["GİP arbitrage","idm",""],["PFK only","none","pfk"],["SFK only","none","sfk"],["PFK + GÖP","dam","pfk"],["SFK + GÖP","dam","sfk"]];
+  const rows=opts.map(([n,m,s])=>{const R=s?Math.min(x.R||Math.round(x.P/2),x.P):0;const r=run(x,{mkt:m,svc:s,fs:x.fs,R});return {n,R,r}});
+  $("cmp").innerHTML=`<table><thead><tr><th>Stack</th><th class="num">Reserve</th><th class="num">Net revenue, yr 1</th><th class="num">USD per kW-yr</th><th class="num">Cycles/yr</th><th class="num">NPV</th><th class="num">IRR</th></tr></thead><tbody>`+
+    rows.map(({n,R,r})=>`<tr><td>${n}</td><td class="num">${R?R+" MW":"—"}</td><td class="num">${fmt(r.sum.annual.net/1e6,1)}m TL</td><td class="num">$${fmt(r.netUSD/(x.P*1000),0)}</td><td class="num">${fmt(r.sum.cyclesPerYear,0)}</td><td class="num">$${fmt(r.fin.npv/1e6,1)}m</td><td class="num">${r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%"}</td></tr>`).join("")+
+    `</tbody></table><p class="note" style="margin:10px 0 0">Reserve stacks offer ${x.svc?x.R+" MW (your setting)":"half the power"}; energy trading uses whatever power the reserve leaves free.</p>`;
+}
+function exportCSV(){
+  const x=read(),q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const rows=[["date","energy_TL","reserve_TL","wear_TL","net_TL","throughput_MWh","reserve_MW"]].concat(RES.map(r=>[r.date,r.arb.toFixed(0),r.cap.toFixed(0),r.wear.toFixed(0),r.net.toFixed(0),r.throughput.toFixed(2),r.R]));
+  rows.push([],["assumption","value"],["power_MW",x.P],["energy_MWh",x.E],["round_trip_eff",x.rte],["usable_soc",(x.socMax-x.socMin).toFixed(2)],["capex_USD_per_kWh",x.capexKWh],["fixed_OM_pct",x.om],["cycle_life",x.cyc],["fade_pct_yr",x.deg],["life_yr",x.life],["discount_rate",x.wacc],["tax",x.tax],["USD_TRY",x.fx],["market",x.mkt],["service",x.svc||"none"],["price_knowledge",x.fs]);
+  rows.push([],["NPV_USD",FIN.npv.toFixed(0)],["IRR",FIN.irr==null?"":FIN.irr.toFixed(4)],["payback_yr",FIN.payback==null?"":FIN.payback.toFixed(2)]);
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"}));a.download="bess-simulation.csv";document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- sources modal ---------- */
+function showSources(focus){
+  const rows=Object.entries(A).map(([k,a])=>`<tr id="src-${k}"><td>${a.name}</td><td>${a.label}</td><td>${a.note||""}</td><td>${(a.refs||[]).map(i=>`<a href="#ref-${i}">[${i}]</a>`).join(" ")}</td></tr>`).join("");
+  const refs=S.refs.map((r,i)=>`<li id="ref-${i+1}">${r.publisher}, <i>${r.title}</i>${r.year?", "+r.year:""}${r.where?", "+r.where:""}. <a href="${r.url}" target="_blank" rel="noopener">${r.url}</a></li>`).join("");
+  $("mbody").innerHTML=`<h3>Assumptions</h3><table><thead><tr><th>Assumption</th><th>Default</th><th>Notes</th><th>Source</th></tr></thead><tbody>${rows}</tbody></table>
+  <h3>Method</h3>${S.method}<h3>Data</h3><p>${S.data}</p><h3>References</h3><ol>${refs}</ol>`;
+  $("modal").classList.add("on");
+  if(focus){const el=document.getElementById("src-"+focus);if(el){el.scrollIntoView({block:"center"});el.style.background="var(--b1-a12)"}}
+}
+
+/* ---------- boot ---------- */
+async function boot(){
+  let data;try{data=await loadData()}catch(e){locked(e&&e.message);return}
+  DAYS=data.days.filter(d=>d.ptf&&d.ptf.every(v=>v!=null));
+  $("app").hidden=false;
+  $("stamp").textContent="EPİAŞ data: "+DAYS[0].date+" to "+DAYS[DAYS.length-1].date+" ("+DAYS.length+" days), refreshed daily.";
+  $("day").innerHTML=DAYS.map((d,i)=>`<option value="${i}">${d.date}</option>`).join("");$("day").value=DAYS.length-1;
+  setDefaults();
+  document.querySelectorAll("input,select#D").forEach(el=>el.addEventListener("input",recompute));
+  $("day").addEventListener("input",dayChart);
+  for(const id of["mkt","svc","fs"])$(id).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;STATE[id]=b.dataset.v;
+    $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));recompute()});
+  $("info").onclick=()=>showSources();$("mx").onclick=()=>$("modal").classList.remove("on");
+  $("modal").addEventListener("click",e=>{if(e.target.id==="modal")$("modal").classList.remove("on")});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")$("modal").classList.remove("on")});
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-ref]");if(b)showSources(b.dataset.ref)});
+  $("csv").onclick=exportCSV;
+  recompute();
+}
+boot();
+})();
+</script>
+<script src="i18n.js"></script>
+</body>
+</html>
