@@ -11,7 +11,7 @@
      optimiser only cycles when the spread pays for the wear
    - the day must end at the state it started (no free energy carried over)
    - a reserve block of R MW sold as PFK/SFK capacity keeps R MW of power headroom in
-     both directions and an energy buffer of R * holdHours on both sides of the SoC */
+     both directions and an energy buffer on both sides of the SoC */
 (function (root) {
   "use strict";
 
@@ -75,14 +75,13 @@
   /* Simulate one strategy over all days.
      strat: {market: "dam"|"idm", reserve: 0..P MW, service: "pfk"|"sfk"|null, foresight: "perfect"|"persistence"}
      batt:  {P, E, rte, socMin, socMax, wearTLperMWh, steps}
-     rules: {pfkRatio, sfkRatio, holdH} energy/reserve ratios and buffer hours from TEİAŞ criteria */
+     rules: {pfkRatio, sfkRatio} required MWh per MW of reserve (TEİAŞ criteria), kept half on each side of the SoC */
   function simulate(days, strat, batt, rules) {
     const eta = Math.sqrt(batt.rte), Emin = batt.E * batt.socMin, Emax = batt.E * batt.socMax;
     const usable = Emax - Emin;
     const ratio = strat.service === "sfk" ? rules.sfkRatio : rules.pfkRatio;
     let R = strat.service ? Math.min(strat.reserve, batt.P, usable / ratio) : 0;
-    const buffer = R * (rules.holdH || 0.25);
-    if (buffer * 2 > usable) R = usable / (2 * (rules.holdH || 0.25)), R = Math.min(R, batt.P);
+    const buffer = R * ratio / 2;   // required energy split evenly: stored for up-regulation, headroom for down-regulation
     const field = strat.market === "idm" ? "gip" : "ptf";
     const start = (Emin + Emax) / 2;
     const out = [];

@@ -82,7 +82,7 @@ td.num,th.num{text-align:right}
   <div class="head">
     <div>
       <h1>BESS Investment Simulator</h1>
-      <p class="sub">A battery in the Turkish power market, run hour by hour on the last year of real EPİAŞ prices: what it earns in each market, what it costs, and whether it pays back. Every assumption has a public source.</p>
+      <p class="sub">A battery in the Turkish power market, run hour by hour on the past 12 months of real EPİAŞ prices: what it earns in each market, what it costs, and whether it pays back. Every assumption has a public source.</p>
       <div class="stamp" id="stamp"></div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -119,7 +119,7 @@ td.num,th.num{text-align:right}
         <div class="f"><label for="cyc">Cycle life to end of life</label><span class="v" id="cycv"></span><input type="range" id="cyc" min="2000" max="10000" step="500"><div class="src" data-src="cyc"></div></div>
         <div class="f"><label for="deg">Capacity fade (% / yr)</label><span class="v" id="degv"></span><input type="range" id="deg" min="0" max="5" step="0.1"><div class="src" data-src="deg"></div></div>
         <div class="f"><label for="life">Project life (years)</label><span class="v" id="lifev"></span><input type="range" id="life" min="10" max="25" step="1"><div class="src" data-src="life"></div></div>
-        <div class="f"><label for="wacc">Discount rate, USD real (%)</label><span class="v" id="waccv"></span><input type="range" id="wacc" min="4" max="20" step="0.5"><div class="src" data-src="wacc"></div></div>
+        <div class="f"><label for="wacc">Discount rate, USD (%)</label><span class="v" id="waccv"></span><input type="range" id="wacc" min="4" max="20" step="0.1"><div class="src" data-src="wacc"></div></div>
         <div class="f"><label for="tax">Corporate tax (%)</label><span class="v" id="taxv"></span><input type="range" id="tax" min="0" max="35" step="1"><div class="src" data-src="tax"></div></div>
         <div class="f"><label for="fx">USD/TRY</label><span class="v" id="fxv"></span><input type="number" id="fx" step="0.01" min="1"><div class="src" data-src="fx"></div></div>
       </div>
@@ -143,7 +143,7 @@ td.num,th.num{text-align:right}
         </div>
         <div class="panel">
           <h2>Cash flow over the project</h2>
-          <p class="note">Year 0 is the investment; later years are revenue minus O&amp;M and tax, in constant USD.</p>
+          <p class="note">Year 0 is the investment; later years are revenue minus O&amp;M and tax, in USD with revenue held flat.</p>
           <svg class="chart" id="cCash" viewBox="0 0 900 300" role="img" aria-label="Annual and cumulative cash flow"></svg>
           <div class="legend"><span><i style="background:var(--b2)"></i>Annual cash flow</span><span><i style="background:var(--b1)"></i>Cumulative</span></div>
         </div>
@@ -200,7 +200,7 @@ function locked(why){
 const IN={P:["P",v=>v+" MW"],rte:["rte",v=>v+"%"],dod:["dod",v=>v+"%"],R:["R",v=>v+" MW"],capex:["capex",v=>"$"+v],om:["om",v=>(+v).toFixed(1)+"%"],
   cyc:["cyc",v=>(+v).toLocaleString("en-GB")],deg:["deg",v=>(+v).toFixed(1)+"%"],life:["life",v=>v+" yr"],wacc:["wacc",v=>(+v).toFixed(1)+"%"],tax:["tax",v=>v+"%"]};
 function setDefaults(){
-  $("rte").value=A.rte.value*100;$("dod").value=A.dod.value*100;$("capex").value=A.capex.value[2];
+  $("rte").value=A.rte.value*100;$("dod").value=A.dod.value*100;$("capex").value=A.capex.value;
   $("om").value=(A.om.value*100).toFixed(1);$("cyc").value=A.cyc.value;$("deg").value=(A.deg.value*100).toFixed(1);
   $("life").value=A.life.value;$("wacc").value=(A.wacc.value*100).toFixed(1);$("tax").value=A.tax.value*100;$("fx").value=A.fx.value;
   document.querySelectorAll(".src[data-src]").forEach(el=>{const a=A[el.dataset.src];if(!a)return;
@@ -211,8 +211,8 @@ function read(){
   const capexKWh=S.capexFor(D,+$("capex").value);
   const rte=$("rte").value/100,dod=$("dod").value/100,socMin=(1-dod)/2,socMax=1-socMin;
   const cyc=+$("cyc").value,fx=+$("fx").value;
-  // wear cost: replacing the energy that one MWh of throughput uses up (capex per usable MWh / cycle life), in TL
-  const wearUSD=capexKWh*1000/(cyc*dod), wearTL=wearUSD*fx;
+  // wear cost: buying back the capacity one MWh of throughput wears out (cell price x 21% lost over cycle life / cycles / usable share), in TL
+  const wearUSD=A.pack.value*1000*0.21/(cyc*dod), wearTL=wearUSD*fx;
   return {P,D,E:P*D,rte,socMin,socMax,capexKWh,cyc,fx,wearTL,svc,mkt:STATE.mkt,fs:STATE.fs,R:svc?Math.min(+$("R").value,P):0,
     om:$("om").value/100,deg:$("deg").value/100,life:+$("life").value,wacc:$("wacc").value/100,tax:$("tax").value/100};
 }
@@ -222,7 +222,7 @@ function paint(){for(const k in IN){const [id,f]=IN[k];$(id+"v").textContent=f($
 /* ---------- model ---------- */
 function run(x,strat){
   const batt={P:x.P,E:x.E,rte:x.rte,socMin:x.socMin,socMax:x.socMax,wearTLperMWh:x.wearTL,steps:x.D>=4?24:18};
-  const rules={pfkRatio:A.ratio.value.pfk,sfkRatio:A.ratio.value.sfk,holdH:A.ratio.value.holdH};
+  const rules={pfkRatio:A.ratio.value.pfk,sfkRatio:A.ratio.value.sfk};
   const s={market:strat.mkt==="none"?"dam":strat.mkt,foresight:strat.fs,service:strat.svc||null,reserve:strat.svc?strat.R:0};
   const res=BESS.simulate(DAYS,s,strat.mkt==="none"?Object.assign({},batt,{P:strat.svc?Math.min(strat.R,x.P):0.0001}):batt,rules);
   if(strat.mkt==="none")res.forEach(r=>{r.net-=r.arb-r.wear;r.arb=0;r.wear=0;r.throughput=0});
@@ -241,7 +241,7 @@ function recompute(){
     ["Full cycles per year",fmt(r.sum.cyclesPerYear,0),"wear cost "+fmt(x.wearTL,0)+" TL/MWh"],
     ["Investment",fmt(r.fin.capex/1e6,1)+"m USD","$"+fmt(x.capexKWh,0)+"/kWh, "+x.D+" h"],
     ["NPV",fmt(r.fin.npv/1e6,1)+"m USD","at "+(x.wacc*100).toFixed(1)+"%",r.fin.npv>=0?"good":"bad"],
-    ["IRR",r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%","USD, real",r.fin.irr!=null&&r.fin.irr>=x.wacc?"good":"bad"],
+    ["IRR",r.fin.irr==null?"—":fmt(r.fin.irr*100,1)+"%","USD",r.fin.irr!=null&&r.fin.irr>=x.wacc?"good":"bad"],
     ["Payback",r.fin.payback==null?"not within life":fmt(r.fin.payback,1)+" yr",""]
   ];
   $("kpis").innerHTML=k.map(([a,b,c,cl])=>`<div class="kpi ${cl||""}"><div class="k">${a}</div><div class="v">${b}</div><div class="n">${c}</div></div>`).join("");
