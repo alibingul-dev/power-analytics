@@ -956,7 +956,7 @@ a.btn{display:inline-block;text-decoration:none}
 
   <div class="panel ea" id="ea">
     <h2>Early access</h2>
-    <p class="note-p" style="margin:6px 0 22px">Three quick questions. They decide which plan and which market come first.</p>
+    <p class="note-p" style="margin:6px 0 22px">Two quick questions. They decide which plan and which market come first.</p>
     <form id="ea-form" novalidate>
       <fieldset>
         <legend>Which plan would you use?</legend>
@@ -977,13 +977,6 @@ a.btn{display:inline-block;text-decoration:none}
           <label><input type="checkbox" name="mkt" value="it">Italy</label>
           <label><input type="checkbox" name="mkt" value="nordic">Nordics</label>
           <label><input type="checkbox" name="mkt" value="eu">All of Europe</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Who would pay?</legend>
-        <div class="ea-opts">
-          <label><input type="radio" name="payer" value="me">I would, from my own pocket</label>
-          <label><input type="radio" name="payer" value="company">My company would</label>
         </div>
       </fieldset>
       <button type="submit" class="ea-go">Count me in</button>
@@ -1794,16 +1787,14 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
   }
   form.addEventListener("submit",function(ev){
     ev.preventDefault();
-    var f=new FormData(form),plan=f.get("plan"),payer=f.get("payer"),mkts=f.getAll("mkt");
-    if(!plan||!payer||!mkts.length){
-      err.textContent=tr()?"Lütfen üç sorunun hepsini yanıtla.":"Please answer all three questions.";
+    var f=new FormData(form),plan=f.get("plan"),mkts=f.getAll("mkt");
+    if(!plan||!mkts.length){
+      err.textContent=tr()?"Lütfen iki soruyu da yanıtla.":"Please answer both questions.";
       return;
     }
     err.textContent="";
     var ok=hit("intent/plan/"+plan);
     mkts.forEach(function(m){hit("intent/market/"+m)});
-    hit("intent/payer/"+payer);
-    hit("intent/combo/"+plan+"-"+payer);
     if(!ok){
       /* counter blocked (ad blocker) or not loaded yet: still thank the visitor, but do not mark as sent so a retry can count */
       box.classList.add("sent");done.focus();return;
