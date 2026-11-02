@@ -507,8 +507,8 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-weekly" data-view="tr-weekly" style="--c:var(--b2)"><span class="bar"></span>Last seven post days</a>
       </div>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
-      <button class="sub" aria-expanded="true">Simulations<span class="chev"></span></button>
-      <div class="leaves">
+      <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
+      <div class="leaves pro-only">
         <a href="#tr-bess" data-view="tr-bess" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Simulator<span class="pro-lock"> · Pro</span></a>
       </div>
     </div>
@@ -858,6 +858,7 @@ a.btn{display:inline-block;text-decoration:none}
 .pro-row input:focus-visible{outline:2px solid var(--b1);outline-offset:1px}
 .linkbtn{background:none;border:0;padding:0;color:var(--b1);font:inherit;cursor:pointer;text-decoration:underline}
 .pro-on{display:none;color:var(--text)}
+html:not(.is-pro) .pro-only{display:none!important}
 .is-pro .pro-on{display:block}.is-pro #pro-form,.is-pro #pro-msg,.is-pro .pro-note,.is-pro .pro-lock{display:none}
 .pro-lock{color:var(--muted)}
 .pl-card{position:relative}
@@ -1115,6 +1116,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
 const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
 function go(id){
   if(!views.some(v=>v.id===id))id="home";
+  if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",id==="tr-bess");
   document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily");
