@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-02T06:27:45Z",
+ "updated": "2026-11-03T06:26:56Z",
  "items": [
   {
    "kind": "gb",
@@ -207,6 +207,14 @@
    "date": "2026-11-02",
    "src": "media/news-2026-11-02.mp4",
    "poster": "media/news-2026-11-02.jpg",
+   "duration_s": 72.2
+  },
+  {
+   "kind": "news",
+   "label": "TR energy news",
+   "date": "2026-11-03",
+   "src": "media/news-2026-11-03.mp4",
+   "poster": "media/news-2026-11-03.jpg",
    "duration_s": 72.2
   },
   {
