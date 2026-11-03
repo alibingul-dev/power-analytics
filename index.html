@@ -1771,11 +1771,11 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
   function tr(){try{return localStorage.getItem("pa-lang")==="tr"}catch(e){return false}}
   f.addEventListener("submit",function(ev){
     ev.preventDefault();var c=(inp.value||"").trim().toUpperCase();
-    if(c.length<8){msg.textContent=tr()?"Kodu eksiksiz yaz.":"Enter the full code.";return}
+    if(!/^PA(-[A-Z0-9]{4}){2,3}$/.test(c)){msg.textContent=tr()?"Kod eksik ya da hatalı yazılmış. Kodlar PA-XXXX-XXXX biçiminde; her bloğun 4 karakter olduğunu kontrol et.":"This code is incomplete or mistyped. Codes look like PA-XXXX-XXXX; check that every block has 4 characters.";return}
     msg.textContent=tr()?"Kontrol ediliyor…":"Checking…";
     proCheck(c).then(function(ok){
       if(ok===true){try{localStorage.setItem("pa-pro",c)}catch(e){}location.reload();return}
-      msg.textContent=ok==="wait"?(tr()?"Çok fazla deneme. 10 dakika sonra tekrar dene.":"Too many attempts. Try again in 10 minutes."):ok==="down"?(tr()?"Pro verisi yüklenemedi. Biraz sonra tekrar dene.":"Could not load the Pro data. Try again shortly."):(tr()?"Bu kod geçerli değil.":"That code is not valid.");
+      msg.textContent=ok==="wait"?(tr()?"Çok fazla deneme. 10 dakika sonra tekrar dene.":"Too many attempts. Try again in 10 minutes."):ok==="down"?(tr()?"Pro verisi yüklenemedi. Biraz sonra tekrar dene.":"Could not load the Pro data. Try again shortly."):(tr()?"Bu kod tanınmadı. Karakterleri kontrol et; doğruysa kodun süresi dolmuş ya da iptal edilmiş olabilir.":"This code was not recognised. Check each character; if it is right, the code may have expired or been cancelled.");
     });
   });
   if(off)off.addEventListener("click",function(){proForget();location.reload()});
