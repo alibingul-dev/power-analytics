@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" data-noi18n>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Price Outlook Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;
+ --bg:#0E1520;--card:#16202E;--surface-2:#1D2A3B;--line:#26364B;--fg:#E6EDF5;--muted:#8A9BB0;--accent:#FBBF24;--navy:#38BDF8;--good:#34D399;--bad:#F43F5E;--band:rgba(56,189,248,.14);--input:#1D2A3B;
+ --font:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;--display:Archivo,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:clip}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5;padding:24px clamp(16px,3vw,48px) 60px;-webkit-font-smoothing:antialiased}
+h1{font-family:var(--display);font-size:28px;margin:0;font-weight:800;letter-spacing:-.02em}
+h2{font-family:var(--display);font-size:15px;margin:0 0 10px;font-weight:600;letter-spacing:.02em;color:var(--muted)}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;margin:0 0 16px}
+.sub{color:var(--muted);font-size:14px;max-width:90ch}
+.wrap{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px}
+@media (max-width:980px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.rail{display:flex;flex-direction:column;gap:16px}
+.row{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center;margin-bottom:8px}
+.row label{font-size:13.5px;color:var(--fg)}
+.row small{display:block;color:var(--muted);font-size:11.5px}
+input[type=number],select{width:100%;font:500 14px var(--mono);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--fg)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 13px var(--font);padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);cursor:pointer}
+button.primary{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.kpi .v{font:500 24px/1.1 var(--mono);margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:4px}
+.chartbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}
+canvas{max-width:100%}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button[aria-selected=true]{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;background:var(--surface-2);color:var(--fg);font-weight:600;text-align:right;padding:8px 10px;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 10px;border-top:1px solid var(--line);text-align:right;font-family:var(--mono)}
+td.w{font-weight:500;background:var(--band)}
+tr.year td{font-weight:500}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.calm{background:rgba(52,211,153,.15);color:var(--good)}.pill.stormy{background:rgba(244,63,94,.15);color:var(--bad)}
+.news{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.news .nrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.news label{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center}
+.news .m{display:flex;align-items:center;gap:3px;font-family:var(--mono);color:var(--muted);font-size:12px}
+.news .m input{width:52px;padding:3px 4px;font-size:12px}
+.news .m em{font-style:normal;margin-right:4px}
+.diff{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
+.disc{font-size:12px;color:var(--muted);margin:18px 0 0;max-width:120ch}
+.lang{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+<div class="top">
+  <div><h1>Price Outlook Lab</h1><div class="sub" id="subtitle"></div></div>
+  <div class="lang"><button id="langTR" aria-pressed="true">TR</button><button id="langEN">EN</button></div>
+</div>
+<div class="wrap">
+ <aside class="rail">
+  <div class="panel">
+   <h2 data-i="inputs">Girdiler</h2>
+   <div class="row"><label data-i="tariff">BOTAŞ santral gaz tarifesi <small>TL/1000 Sm³</small></label><input type="number" id="tariff" step="100"></div>
+   <div class="row"><label data-i="fx0">Kur bugün <small>USD/TRY</small></label><input type="number" id="fx0" step="0.1"></div>
+   <div class="row"><label data-i="fx1">Kur Ara-26 <small>USD/TRY</small></label><input type="number" id="fx1" step="0.1"></div>
+   <div class="row"><label data-i="fx2">Kur Eyl-27 <small>USD/TRY</small></label><input type="number" id="fx2" step="0.1"></div>
+   <div class="row"><label data-i="fxg">Sonrası aylık kur artışı <small>%/ay</small></label><input type="number" id="fxg" step="0.1"></div>
+   <div class="row"><label data-i="kLR">k uzun dönem (PTF/G) <small>2017'den beri medyan</small></label><input type="number" id="kLR" step="0.01"></div>
+   <div class="row"><label data-i="rk">k geri dönüş hızı <small>aylık, 0–1</small></label><input type="number" id="rk" step="0.01" min="0.5" max="0.99"></div>
+   <div class="row"><label data-i="rg">G geri dönüş hızı <small>aylık, 0–1</small></label><input type="number" id="rg" step="0.01" min="0.5" max="0.99"></div>
+   <div class="row"><label data-i="w">Persistence w <small>son fiyatın ağırlığı</small></label><input type="number" id="w" step="0.05" min="0" max="1"></div>
+   <div class="row"><label data-i="hyd">Hidroloji senaryosu <small>Mar–Haz k çarpanı</small></label><select id="hyd"><option value="0.85" data-i="wet">Sulu (−%15)</option><option value="1" selected data-i="normal">Normal</option><option value="1.15" data-i="dry">Kurak (+%15)</option></select></div>
+   <div class="row"><label data-i="cap">Tavana yapışma oranı <small>aylık ort. / tavan</small></label><input type="number" id="cap" step="0.01" min="0.5" max="1"></div>
+   <div class="row"><label data-i="newsOn">Haber katmanı <small>seçili olaylar eğriye eklenir</small></label><select id="newsOn"><option value="0" data-i="off">Kapalı</option><option value="1" data-i="on">Açık</option></select></div>
+   <div class="btns"><button class="primary" id="run" data-i="run">Hesapla</button><button id="reset" data-i="reset">Motor varsayılanları</button></div>
+   <div class="diff" id="verify"></div>
+  </div>
+  <div class="panel"><h2 data-i="newsH">Haber katmanı (olasılık × etki)</h2><div class="note" data-i="newsNote" style="margin:0 0 8px"></div><div class="news" id="newsList"></div></div>
+ </aside>
+ <main style="min-width:0">
+  <div class="kpis">
+   <div class="kpi"><div class="l" data-i="k1">Gelecek ay beklenen</div><div class="v" id="k1v"></div><div class="d" id="k1d"></div></div>
+   <div class="kpi"><div class="l" data-i="k2">12 ay ortalaması</div><div class="v" id="k2v"></div><div class="d" id="k2d"></div></div>
+   <div class="kpi"><div class="l" data-i="k3">Cal-27 beklenen</div><div class="v" id="k3v"></div><div class="d" id="k3d"></div></div>
+   <div class="kpi"><div class="l" data-i="k4">Rejim bugün</div><div class="v" id="k4v"></div><div class="d" id="k4d"></div></div>
+  </div>
+  <div class="chartbox"><canvas id="chart" height="150"></canvas><div class="note" id="chartnote"></div></div>
+  <div class="tabs"><button id="tabM" aria-selected="true" data-i="tabM">Aylık</button><button id="tabY" aria-selected="false" data-i="tabY">Çeyrek ve yıl</button><button id="tabS" aria-selected="false" data-i="tabS">Karne</button></div>
+  <div class="tbl"><table id="table"></table></div>
+  <div class="note" id="tablenote"></div>
+ </main>
+</div>
+<p class="disc" id="disc"></p>
+<script>
+const P = {"cut":"2026-10","last_usd":59.31,"last_fx":49.3231,"tariff":18000,"shape":{"1":1.1391,"2":1.0021,"3":0.9107,"4":0.7605,"5":0.7534,"6":0.856,"7":1.0667,"8":1.1113,"9":1.0457,"10":1.0912,"11":1.1036,"12":1.1598},"k12":0.739,"kLR":1.0348,"G":65.959,"Gbar":66.749,"Dt":54.351,"w":0.8,"sigma":0.2994,"kband":2.0622,"skew":0.9048,"rk":0.92,"rg":0.9,"cap_ratio":0.87,"months":[{"j":1,"y":2026,"m":11,"hours":720,"cap50":89.97,"cap90":89.97},{"j":2,"y":2026,"m":12,"hours":744,"cap50":88.72,"cap90":88.72},{"j":3,"y":2027,"m":1,"hours":744,"cap50":87.49,"cap90":87.49},{"j":4,"y":2027,"m":2,"hours":672,"cap50":86.28,"cap90":86.28},{"j":5,"y":2027,"m":3,"hours":744,"cap50":85.09,"cap90":91.23},{"j":6,"y":2027,"m":4,"hours":720,"cap50":94.67,"cap90":102.4},{"j":7,"y":2027,"m":5,"hours":744,"cap50":93.74,"cap90":101.24},{"j":8,"y":2027,"m":6,"hours":720,"cap50":92.78,"cap90":100.23},{"j":9,"y":2027,"m":7,"hours":744,"cap50":92.04,"cap90":99.35},{"j":10,"y":2027,"m":8,"hours":744,"cap50":90.77,"cap90":97.97},{"j":11,"y":2027,"m":9,"hours":720,"cap50":89.51,"cap90":96.61},{"j":12,"y":2027,"m":10,"hours":744,"cap50":88.28,"cap90":95.32},{"j":13,"y":2027,"m":11,"hours":720,"cap50":87.08,"cap90":94.07},{"j":14,"y":2027,"m":12,"hours":744,"cap50":85.92,"cap90":92.92},{"j":15,"y":2028,"m":1,"hours":744,"cap50":85.28,"cap90":93.47},{"j":16,"y":2028,"m":2,"hours":696,"cap50":84.61,"cap90":93.83},{"j":17,"y":2028,"m":3,"hours":744,"cap50":84.14,"cap90":94.94},{"j":18,"y":2028,"m":4,"hours":720,"cap50":93.49,"cap90":101.93},{"j":19,"y":2028,"m":5,"hours":744,"cap50":93.06,"cap90":100.96},{"j":20,"y":2028,"m":6,"hours":720,"cap50":92.5,"cap90":100.12},{"j":21,"y":2028,"m":7,"hours":744,"cap50":92.05,"cap90":99.33},{"j":22,"y":2028,"m":8,"hours":744,"cap50":90.85,"cap90":98.04},{"j":23,"y":2028,"m":9,"hours":720,"cap50":89.67,"cap90":96.75},{"j":24,"y":2028,"m":10,"hours":744,"cap50":88.51,"cap90":95.58},{"j":25,"y":2028,"m":11,"hours":720,"cap50":87.35,"cap90":94.48},{"j":26,"y":2028,"m":12,"hours":744,"cap50":86.27,"cap90":93.45},{"j":27,"y":2029,"m":1,"hours":744,"cap50":85.88,"cap90":94.83},{"j":28,"y":2029,"m":2,"hours":672,"cap50":85.51,"cap90":95.83},{"j":29,"y":2029,"m":3,"hours":744,"cap50":85.37,"cap90":96.5},{"j":30,"y":2029,"m":4,"hours":720,"cap50":92.29,"cap90":101.58},{"j":31,"y":2029,"m":5,"hours":744,"cap50":92.21,"cap90":100.8},{"j":32,"y":2029,"m":6,"hours":720,"cap50":92.05,"cap90":100.16},{"j":33,"y":2029,"m":7,"hours":744,"cap50":91.68,"cap90":99.55},{"j":34,"y":2029,"m":8,"hours":744,"cap50":90.58,"cap90":98.4},{"j":35,"y":2029,"m":9,"hours":720,"cap50":89.42,"cap90":97.2},{"j":36,"y":2029,"m":10,"hours":744,"cap50":88.39,"cap90":96.07},{"j":37,"y":2029,"m":11,"hours":720,"cap50":87.34,"cap90":94.94},{"j":38,"y":2029,"m":12,"hours":744,"cap50":86.38,"cap90":94.14},{"j":39,"y":2030,"m":1,"hours":744,"cap50":86.21,"cap90":95.38},{"j":40,"y":2030,"m":2,"hours":672,"cap50":86.11,"cap90":96.26},{"j":41,"y":2030,"m":3,"hours":744,"cap50":86.17,"cap90":97.15},{"j":42,"y":2030,"m":4,"hours":720,"cap50":91.53,"cap90":101.04},{"j":43,"y":2030,"m":5,"hours":744,"cap50":91.65,"cap90":100.3},{"j":44,"y":2030,"m":6,"hours":720,"cap50":91.61,"cap90":99.79},{"j":45,"y":2030,"m":7,"hours":744,"cap50":91.47,"cap90":99.36},{"j":46,"y":2030,"m":8,"hours":744,"cap50":90.58,"cap90":98.34},{"j":47,"y":2030,"m":9,"hours":720,"cap50":89.51,"cap90":97.23},{"j":48,"y":2030,"m":10,"hours":744,"cap50":88.53,"cap90":96.34},{"j":49,"y":2030,"m":11,"hours":720,"cap50":87.55,"cap90":95.38},{"j":50,"y":2030,"m":12,"hours":744,"cap50":86.64,"cap90":94.69}],"cal1":[0.7358416996065952,0.8944549666273373,1.036210704166621,1.1094718465573394],"cal23":[0.6065901552350798,0.8632504026618453,1.049189816885393,1.114011193887493],"fx_dec26":51.57,"fx_sep27":58.6,"fx_g":0.0143,"engine":[{"j":1,"lo":53.91,"base":60.27,"hi":62.45,"w":60.27},{"j":2,"lo":54.7,"base":61.99,"hi":66.49,"w":63.37},{"j":3,"lo":53.62,"base":61.29,"hi":65.17,"w":62.12},{"j":4,"lo":42.89,"base":54.55,"hi":75.06,"w":56.77},{"j":5,"lo":38.44,"base":50.3,"hi":79.37,"w":54.6},{"j":6,"lo":31.79,"base":42.68,"hi":74.78,"w":47.98},{"j":7,"lo":31.25,"base":42.96,"hi":78.73,"w":48.97},{"j":8,"lo":35.29,"base":49.58,"hi":87.2,"w":55.41},{"j":9,"lo":43.72,"base":62.71,"hi":86.43,"w":63.89},{"j":10,"lo":45.29,"base":66.24,"hi":85.24,"w":65.75},{"j":11,"lo":42.38,"base":63.15,"hi":84.05,"w":63.18},{"j":12,"lo":43.97,"base":66.68,"hi":82.93,"w":65.07},{"j":13,"lo":44.19,"base":68.17,"hi":81.84,"w":65.59},{"j":14,"lo":46.14,"base":72.35,"hi":80.84,"w":67.92},{"j":15,"lo":45.01,"base":71.7,"hi":81.32,"w":67.44},{"j":16,"lo":39.32,"base":63.6,"hi":81.63,"w":62.04},{"j":17,"lo":35.47,"base":58.23,"hi":82.6,"w":58.63},{"j":18,"lo":29.4,"base":48.96,"hi":88.68,"w":54.0},{"j":19,"lo":28.89,"base":48.79,"hi":87.84,"w":53.58},{"j":20,"lo":32.56,"base":55.75,"hi":87.11,"w":57.79},{"j":21,"lo":40.25,"base":69.82,"hi":86.42,"w":66.58},{"j":22,"lo":41.58,"base":73.07,"hi":85.29,"w":68.25},{"j":23,"lo":38.8,"base":69.05,"hi":84.17,"w":65.27},{"j":24,"lo":40.14,"base":72.33,"hi":83.15,"w":66.99},{"j":25,"lo":40.24,"base":73.4,"hi":82.2,"w":67.31},{"j":26,"lo":41.92,"base":75.06,"hi":81.3,"w":68.33},{"j":27,"lo":40.81,"base":74.72,"hi":82.5,"w":68.19},{"j":28,"lo":35.59,"base":67.23,"hi":83.37,"w":63.36},{"j":29,"lo":32.06,"base":61.25,"hi":83.96,"w":59.63},{"j":30,"lo":26.54,"base":51.26,"hi":88.38,"w":54.36},{"j":31,"lo":26.05,"base":50.88,"hi":87.7,"w":53.88},{"j":32,"lo":29.34,"base":57.92,"hi":87.14,"w":58.08},{"j":33,"lo":36.24,"base":72.3,"hi":86.61,"w":66.86},{"j":34,"lo":37.42,"base":75.43,"hi":85.61,"w":68.48},{"j":35,"lo":34.91,"base":71.09,"hi":84.56,"w":65.41},{"j":36,"lo":36.11,"base":74.28,"hi":83.58,"w":67.06},{"j":37,"lo":36.2,"base":75.21,"hi":82.6,"w":67.3},{"j":38,"lo":37.71,"base":75.15,"hi":81.9,"w":67.48},{"j":39,"lo":36.72,"base":75.0,"hi":82.98,"w":67.42},{"j":40,"lo":32.02,"base":68.5,"hi":83.75,"w":63.19},{"j":41,"lo":28.85,"base":62.3,"hi":84.52,"w":59.49},{"j":42,"lo":23.89,"base":52.07,"hi":87.91,"w":53.98},{"j":43,"lo":23.47,"base":51.62,"hi":87.26,"w":53.49},{"j":44,"lo":26.44,"base":58.69,"hi":86.81,"w":57.66},{"j":45,"lo":32.67,"base":73.18,"hi":86.44,"w":66.37},{"j":46,"lo":33.75,"base":76.27,"hi":85.56,"w":67.96},{"j":47,"lo":31.5,"base":71.81,"hi":84.59,"w":64.93},{"j":48,"lo":32.6,"base":74.97,"hi":83.82,"w":66.59},{"j":49,"lo":32.7,"base":75.85,"hi":82.98,"w":66.85},{"j":50,"lo":34.08,"base":75.37,"hi":82.38,"w":66.8}],"news":[{"id":"H1","tr":"BOTAŞ Nisan-27 zammı kura yetişmez / ertelenir","p":0.3,"imp":-0.1,"a":6,"b":17},{"id":"H2","tr":"Ek sübvansiyon kesintisi: Nisan dışı ek santral gaz zammı","p":0.3,"imp":0.12,"a":9,"b":50},{"id":"H3","tr":"Rus kontratı hub (TTF) endeksli yenilenir","p":0.3,"imp":0.05,"a":6,"b":50},{"id":"H4","tr":"İran gazı kaybı → pahalı spot LNG ikamesi","p":0.5,"imp":0.04,"a":3,"b":14},{"id":"H5","tr":"Hürmüz anlaşması → gerilim azalır","p":0.35,"imp":-0.03,"a":6,"b":14},{"id":"H6","tr":"LNG bolluğu 2028–29: BOTAŞ TL tarifeyi dondurur, $ maliyet erir","p":0.5,"imp":-0.12,"a":15,"b":50},{"id":"H7","tr":"Erken seçim öncesi fiyat/tavan dondurma","p":0.4,"imp":-0.1,"a":11,"b":17},{"id":"H8","tr":"Islak bahar 2027 (rezerv taşıması + ılık/yağışlı kış)","p":0.4,"imp":-0.2,"a":5,"b":8},{"id":"H9","tr":"Kurak bahar 2027 (ılık kış, az kar)","p":0.25,"imp":0.12,"a":5,"b":8},{"id":"H10","tr":"Akkuyu 1. ünite 2027 başında devrede","p":0.45,"imp":-0.035,"a":3,"b":14},{"id":"H11","tr":"Akkuyu 1. ünite gecikmeli (2027 ortası)","p":0.4,"imp":-0.03,"a":9,"b":14},{"id":"H12","tr":"Akkuyu 1. ünite tam yıl (2028+)","p":0.85,"imp":-0.06,"a":15,"b":50},{"id":"H13","tr":"Akkuyu 2. ünite 2029'da","p":0.5,"imp":-0.05,"a":27,"b":50},{"id":"H14","tr":"2027 yaz sıcak dalgası","p":0.5,"imp":0.08,"a":9,"b":10},{"id":"H15","tr":"Karbon (ETS) maliyeti fiyata yansır","p":0.5,"imp":0.06,"a":15,"b":50}],"regime":"stormy","score":[{"k":"2025-11","said":66.4,"act":66.0},{"k":"2025-12","said":66.9,"act":69.8},{"k":"2026-01","said":69.6,"act":67.2},{"k":"2026-02","said":66.4,"act":47.7},{"k":"2026-03","said":49.1,"act":36.8},{"k":"2026-04","said":39.4,"act":20.7},{"k":"2026-05","said":30.1,"act":13.1},{"k":"2026-06","said":20.9,"act":26.9},{"k":"2026-07","said":33.8,"act":57.6},{"k":"2026-08","said":60.2,"act":61.0},{"k":"2026-09","said":59.8,"act":56.6},{"k":"2026-10","said":58.7,"act":59.3}]};
+const NEWS_EN = {"H1": "BOTAŞ April-27 hike lags FX / postponed", "H2": "Extra subsidy cut: gas hike outside April", "H3": "Russian contract renewed hub-indexed", "H4": "Loss of Iranian gas → costly spot LNG", "H5": "Hormuz agreement → tension eases", "H6": "LNG glut 2028–29: TL tariff frozen, $ cost erodes", "H7": "Price/cap freeze before an early election", "H8": "Wet spring 2027", "H9": "Dry spring 2027", "H10": "Akkuyu unit 1 online early 2027", "H11": "Akkuyu unit 1 delayed (mid-2027)", "H12": "Akkuyu unit 1 full year (2028+)", "H13": "Akkuyu unit 2 in 2029", "H14": "Summer 2027 heatwave", "H15": "Carbon (ETS) cost passes into prices"};
+const I = {
+ tr:{inputs:"Girdiler",tariff:"BOTAŞ santral gaz tarifesi",fx0:"Kur bugün",fx1:"Kur Ara-26",fx2:"Kur Eyl-27",fxg:"Sonrası aylık kur artışı",kLR:"k uzun dönem (PTF/G)",rk:"k geri dönüş hızı",rg:"G geri dönüş hızı",w:"Persistence w",hyd:"Hidroloji senaryosu",cap:"Tavana yapışma oranı",newsOn:"Haber katmanı",run:"Hesapla",reset:"Motor varsayılanları",newsH:"Haber katmanı (olasılık × etki)",newsNote:"Her olay için olasılık (%) ve gerçekleşirse fiyat etkisi (%) elle değiştirilebilir; hesaba yalnız \"Haber katmanı: Açık\" iken girer.",k1:"Gelecek ay beklenen",k2:"12 ay ortalaması",k3:"Cal-27 beklenen",k4:"Rejim bugün",tabM:"Aylık",tabY:"Çeyrek ve yıl",tabS:"Karne",wet:"Sulu (−%15)",normal:"Normal",dry:"Kurak (+%15)",off:"Kapalı",on:"Açık",
+  sub:"Türkiye PTF görünümü · veri kesimi {cut} · girdileri değiştir, eğri yeniden hesaplanır",
+  mon:["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"],
+  th:["Ay","Vade","Kur","Düşük $","Baz $","Yüksek $","Beklenen $","Beklenen TL","Motor $","Fark $"], thy:["Blok","Saat","Düşük $","Baz $","Yüksek $","Beklenen $","Beklenen TL","Motor $","Fark $"], ths:["Ay","Dedik","Oldu","Sapma"],
+  calm:"DURGUN",stormy:"HAREKETLİ",k1d:"bant {lo}–{hi} $ · son gerçekleşen {last} $",k2d:"motor: {e} $",k3d:"motor: {e} $",k4d:"gazın fiyat belirlediği saat payı ve oynaklık bayrakları",
+  chartnote:"Siyah = gerçekleşen (son 12 ay) · koyu = Beklenen · kesikli = Düşük/Yüksek bant · gri = motor varsayılanı",
+  tablenote:"Motor $ = Baseload Outlook motorunun bu ayki yayımlanmış değeri; Fark = sizin girdilerinizle oluşan beklenen − motor. Bant: gerçekleşenin yarısı içinde kalır (25.–75. yüzdelik).",
+  verify:"Doğrulama: varsayılanlarla motor eğrisine en büyük sapma {d} $",
+  disc:"Bu sayfa yalnız bilgi amaçlıdır; yatırım, alım-satım veya hedge tavsiyesi değildir. Hesap, 2018'den beri 107 tahmin gününde walk-forward test edilmiş Baseload Outlook motorunun bir ay için verdiği zincirin aynısıdır; tüm girdiler kamuya açıktır (EPİAŞ, BOTAŞ, TCMB, EPDK, MGM). Gelecek ay ortalama sapma ~9 $/MWh (durgun rejimde ~4, hareketlide ~11); 1 yıl ufkunda ±26 $. Baseload AI · power-analytics",
+  cnews:"Haber katmanı açık: Beklenen'e seçili olayların olasılık ağırlıklı etkisi eklendi.",
+  scoreN:"Son 12 ay: 1 ay vadeli tahmin ve gerçekleşen ($/MWh). Net sapma {b} $/MWh."},
+ en:{inputs:"Inputs",tariff:"BOTAŞ power-plant gas tariff",fx0:"FX today",fx1:"FX Dec-26",fx2:"FX Sep-27",fxg:"Monthly FX drift after",kLR:"k long run (PTF/G)",rk:"k reversion speed",rg:"G reversion speed",w:"Persistence w",hyd:"Hydrology scenario",cap:"Cap adherence ratio",newsOn:"News layer",run:"Calculate",reset:"Engine defaults",newsH:"News layer (probability × impact)",newsNote:"Probability (%) and price impact if it happens (%) can be edited for each event; they enter the calculation only when the news layer is On.",k1:"Next month expected",k2:"12-month average",k3:"Cal-27 expected",k4:"Regime today",tabM:"Monthly",tabY:"Quarters and years",tabS:"Scorecard",wet:"Wet (−15%)",normal:"Normal",dry:"Dry (+15%)",off:"Off",on:"On",
+  sub:"Turkey day-ahead price outlook · data cut-off {cut} · change an input, the curve recalculates",
+  mon:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  th:["Month","Horizon","FX","Low $","Base $","High $","Expected $","Expected TL","Engine $","Diff $"], thy:["Block","Hours","Low $","Base $","High $","Expected $","Expected TL","Engine $","Diff $"], ths:["Month","Said","Actual","Miss"],
+  calm:"CALM",stormy:"STORMY",k1d:"band {lo}–{hi} $ · last actual {last} $",k2d:"engine: {e} $",k3d:"engine: {e} $",k4d:"gas price-setting share and volatility flags",
+  chartnote:"Black = actual (last 12 months) · dark = Expected · dashed = Low/High band · grey = engine default",
+  tablenote:"Engine $ = the Baseload Outlook engine's published value this month; Diff = expected with your inputs − engine. Band: half of outcomes fall inside (25th–75th percentile).",
+  verify:"Check: with defaults, max deviation from the engine curve {d} $",
+  disc:"For information only; not investment, trading or hedging advice. The calculation is the same one-month chain used by the Baseload Outlook engine, walk-forward tested on 107 forecast dates since 2018; all inputs are public (EPİAŞ, BOTAŞ, TCMB, EPDK, MGM). Next-month mean miss ~$9/MWh (~4 in a calm regime, ~11 in a stormy one); ±$26 at a 1-year horizon. Baseload AI · power-analytics",
+  cnews:"News layer on: the probability-weighted effect of the selected events is added to Expected.",
+  scoreN:"Last 12 months: one-month-ahead call vs actual ($/MWh). Net miss {b} $/MWh."}
+};
+function siteLang(){try{return localStorage.getItem('pa-lang')==='tr'?'tr':'en'}catch(e){return 'en'}}
+let L=siteLang(), tab='M', chart=null;
+window.addEventListener('storage',e=>{if(e.key==='pa-lang'){L=siteLang();applyLang();run();}});
+const $=id=>document.getElementById(id);
+const Z=0.6745;
+function defaults(){ $('tariff').value=P.tariff; $('fx0').value=P.last_fx.toFixed(2); $('fx1').value=P.fx_dec26; $('fx2').value=P.fx_sep27; $('fxg').value=(P.fx_g*100).toFixed(2); $('kLR').value=P.kLR.toFixed(2); $('rk').value=P.rk; $('rg').value=P.rg; $('w').value=P.w; $('hyd').value="1"; $('cap').value=P.cap_ratio; $('newsOn').value="0"; P.news.forEach((e,k)=>{ $('n'+k).checked=true; $('np'+k).value=Math.round(e.p*100); $('ni'+k).value=Math.round(e.imp*100); }); }
+function fxpath(h,fx0,fx1,fx2,g){ const m=P.months[h-1]; const idx=(m.y-2026)*12+m.m; // 1..=Jan-26
+  const dec26=12, sep27=21; const h0=0; if(idx<=dec26) return fx0+(fx1-fx0)*(idx-10)/(dec26-10); if(idx<=sep27) return fx1+(fx2-fx1)*(idx-dec26)/9; return fx2*Math.pow(1+g,idx-sep27); }
+function compute(inp){
+  const G=inp.tariff/10.64/0.52/inp.fx0; const Gbar=P.Gbar; const out=[];
+  const newsOn=inp.newsOn; const sel=inp.news;
+  P.months.forEach((mo,i)=>{ const h=mo.j, m=mo.m;
+    const Lh=(P.k12*Math.pow(inp.rk,h)+inp.kLR*(1-Math.pow(inp.rk,h)))*(G*Math.pow(inp.rg,h)+Gbar*(1-Math.pow(inp.rg,h)));
+    const wh=Math.pow(inp.w,h); let hyd=(m>=3&&m<=6)?inp.hyd:1;
+    let base=P.shape[m]*(wh*P.Dt+(1-wh)*Lh)*hyd;
+    const sig=P.sigma*Math.sqrt(h/12); const sk=P.skew;
+    let lo=base*Math.exp(-Z*sig*P.kband*(1+Math.max(0,-sk))), hi=base*Math.exp(Z*sig*P.kband*(1+Math.max(0,sk)));
+    const c50=inp.cap*mo.cap50, c90=inp.cap*mo.cap90; base=Math.min(base,c50); lo=Math.min(lo,c50); hi=Math.min(hi,c90); lo=Math.min(lo,base); hi=Math.max(hi,base);
+    let w=0.25*lo+0.5*base+0.25*hi;
+    if(h===1){ w=0.5*w+0.5*P.last_usd; base=w; } if(h<=3){ const q=h===1?P.cal1:P.cal23; if(q){ lo=w*q[1]; hi=w*q[2]; } }
+    let nf=1; if(newsOn){ let s=0; P.news.forEach((e,k)=>{ const u=sel[k]; if(u.on&&e.a<=h&&h<=e.b&&u.imp>-1) s+=u.p*Math.log(1+u.imp); }); nf=Math.exp(s); }
+    const fx=fxpath(h,inp.fx0,inp.fx1,inp.fx2,inp.fxg);
+    out.push({h,y:mo.y,m,hours:mo.hours,lo:lo*nf,base:base*nf,hi:hi*nf,w:w*nf,fx,eng:P.engine[i].w});
+  }); return out; }
+function readInputs(){ return {tariff:+$('tariff').value,fx0:+$('fx0').value,fx1:+$('fx1').value,fx2:+$('fx2').value,fxg:+$('fxg').value/100,kLR:+$('kLR').value,rk:+$('rk').value,rg:+$('rg').value,w:+$('w').value,hyd:+$('hyd').value,cap:+$('cap').value,newsOn:$('newsOn').value==="1",news:P.news.map((e,k)=>({on:$('n'+k).checked,p:(+$('np'+k).value||0)/100,imp:(+$('ni'+k).value||0)/100}))}; }
+const f1=x=>L==='tr'?x.toFixed(1).replace('.',','):x.toFixed(1); const f0=x=>Math.round(x).toLocaleString(L==='tr'?'tr-TR':'en-GB'); const f2=x=>L==='tr'?x.toFixed(2).replace('.',','):x.toFixed(2);
+const lab=(y,m)=>I[L].mon[m-1]+'-'+String(y).slice(2);
+function blk(R,rows,k){ const H=rows.reduce((s,r)=>s+r.hours,0); return rows.reduce((s,r)=>s+r[k]*r.hours,0)/H; }
+function render(R){ const t=I[L]; const first=R[0]; const avg12=R.slice(0,12).reduce((s,r)=>s+r.w,0)/12; const e12=R.slice(0,12).reduce((s,r)=>s+r.eng,0)/12;
+  const y27=R.filter(r=>r.y===2027); const c27=blk(R,y27,'w'), e27=blk(R,y27,'eng');
+  $('k1v').textContent=f1(first.w)+' $'; $('k1d').textContent=t.k1d.replace('{lo}',f1(first.lo)).replace('{hi}',f1(first.hi)).replace('{last}',f1(P.last_usd));
+  $('k2v').textContent=f1(avg12)+' $'; $('k2d').textContent=t.k2d.replace('{e}',f1(e12)); $('k3v').textContent=f1(c27)+' $'; $('k3d').textContent=t.k3d.replace('{e}',f1(e27));
+  $('k4v').innerHTML='<span class="pill '+P.regime+'">'+(P.regime==='calm'?t.calm:t.stormy)+'</span>'; $('k4d').textContent=t.k4d;
+  // chart
+  const labels=P.score.map(s=>{const [y,m]=s.k.split('-');return lab(+y,+m);}).concat(R.slice(0,26).map(r=>lab(r.y,r.m)));
+  const n=P.score.length; const pad=k=>Array(n-1).fill(null);
+  const act=P.score.map(s=>s.act).concat(Array(26).fill(null));
+  const join=P.score[n-1].act;
+  const exp=pad().concat([join],R.slice(0,26).map(r=>r.w)), lo=pad().concat([join],R.slice(0,26).map(r=>r.lo)), hi=pad().concat([join],R.slice(0,26).map(r=>r.hi)), eng=pad().concat([join],R.slice(0,26).map(r=>r.eng));
+  const cs=getComputedStyle(document.documentElement); const navy=cs.getPropertyValue('--navy').trim(), fg=cs.getPropertyValue('--fg').trim(), muted=cs.getPropertyValue('--muted').trim(), band=cs.getPropertyValue('--band').trim(), line=cs.getPropertyValue('--line').trim();
+  const ds=[{label:L==='tr'?'Gerçekleşen':'Actual',data:act,borderColor:fg,borderWidth:2.5,pointRadius:2,tension:0},
+            {label:L==='tr'?'Beklenen':'Expected',data:exp,borderColor:navy,borderWidth:2.5,pointRadius:0,tension:0},
+            {label:L==='tr'?'Yüksek':'High',data:hi,borderColor:navy,borderDash:[4,4],borderWidth:1.2,pointRadius:0,fill:'+1',backgroundColor:band,tension:0},
+            {label:L==='tr'?'Düşük':'Low',data:lo,borderColor:navy,borderDash:[4,4],borderWidth:1.2,pointRadius:0,tension:0},
+            {label:L==='tr'?'Motor':'Engine',data:eng,borderColor:muted,borderWidth:1.5,pointRadius:0,tension:0}];
+  try{ if(chart) chart.destroy();
+  chart=new Chart($('chart'),{type:'line',data:{labels,datasets:ds},options:{responsive:true,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:fg,boxWidth:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'':f1(c.parsed.y))+' $/MWh'}}},scales:{x:{ticks:{color:muted,maxRotation:0,autoSkip:true},grid:{color:line}},y:{title:{display:true,text:'$/MWh',color:muted},ticks:{color:muted},grid:{color:line}}}}});
+  }catch(e){ $('chartnote').textContent='chart unavailable'; }
+  $('chartnote').textContent=t.chartnote+(readInputs().newsOn?' · '+t.cnews:'');
+  // table
+  let html='';
+  if(tab==='M'){ html='<thead><tr>'+t.th.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'; R.forEach(r=>{ html+=`<tr class="${r.m===12?'year':''}"><td>${lab(r.y,r.m)}</td><td>${r.h}</td><td>${f2(r.fx)}</td><td>${f1(r.lo)}</td><td>${f1(r.base)}</td><td>${f1(r.hi)}</td><td class="w">${f1(r.w)}</td><td>${f0(r.w*r.fx)}</td><td>${f1(r.eng)}</td><td style="color:${r.w-r.eng>0.05?'var(--good)':r.w-r.eng<-0.05?'var(--bad)':'inherit'}">${(r.w-r.eng>=0?'+':'−')+f1(Math.abs(r.w-r.eng))}</td></tr>`; }); html+='</tbody>'; $('tablenote').textContent=t.tablenote; }
+  else if(tab==='Y'){ html='<thead><tr>'+t.thy.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'; const blocks=[]; for(let q=1;q<=4;q++) blocks.push(['Q'+q+'-27',R.filter(r=>r.y===2027&&Math.ceil(r.m/3)===q)]); for(let y=2027;y<=2030;y++) blocks.push(['Cal-'+String(y).slice(2),R.filter(r=>r.y===y)]);
+    blocks.forEach(([nm,rows])=>{ const H=rows.reduce((s,r)=>s+r.hours,0); const tl=rows.reduce((s,r)=>s+r.w*r.fx*r.hours,0)/H; const w=blk(R,rows,'w'), e=blk(R,rows,'eng'); html+=`<tr class="${nm.startsWith('Cal')?'year':''}"><td>${nm}</td><td>${H}</td><td>${f1(blk(R,rows,'lo'))}</td><td>${f1(blk(R,rows,'base'))}</td><td>${f1(blk(R,rows,'hi'))}</td><td class="w">${f1(w)}</td><td>${f0(tl)}</td><td>${f1(e)}</td><td>${(w-e>=0?'+':'−')+f1(Math.abs(w-e))}</td></tr>`; }); html+='</tbody>'; $('tablenote').textContent=t.tablenote; }
+  else { html='<thead><tr>'+t.ths.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'; let b=0; P.score.forEach(s=>{ const [y,m]=s.k.split('-'); const d=s.act-s.said; b+=d; html+=`<tr><td>${lab(+y,+m)}</td><td>${f1(s.said)}</td><td>${f1(s.act)}</td><td style="color:${d>=0?'var(--good)':'var(--bad)'}">${(d>=0?'+':'−')+f1(Math.abs(d))}</td></tr>`; }); html+='</tbody>'; $('tablenote').textContent=t.scoreN.replace('{b}',(b/P.score.length>=0?'+':'−')+f1(Math.abs(b/P.score.length))); }
+  $('table').innerHTML=html; }
+function applyLang(){ const t=I[L]; document.querySelectorAll('[data-i]').forEach(el=>{ const k=el.dataset.i; if(t[k]!=null){ if(el.tagName==='LABEL'&&el.querySelector('small')){ el.childNodes[0].textContent=t[k]+' '; } else el.textContent=t[k]; } });
+  $('subtitle').textContent=t.sub.replace('{cut}',P.cut); $('disc').textContent=t.disc; $('langTR').setAttribute('aria-pressed',L==='tr'); $('langEN').setAttribute('aria-pressed',L==='en');
+  document.querySelectorAll('#newsList label span.t').forEach((s,k)=>{ s.textContent=L==='tr'?P.news[k].tr:NEWS_EN[P.news[k].id]; });
+  // verify
+  const sv=readInputs(); const R0=compute(Object.assign({},sv,{tariff:P.tariff,fx0:P.last_fx,fx1:P.fx_dec26,fx2:P.fx_sep27,fxg:P.fx_g,kLR:P.kLR,rk:P.rk,rg:P.rg,w:P.w,hyd:1,cap:P.cap_ratio,newsOn:false})); const d=Math.max(...R0.map(r=>Math.abs(r.w-r.eng))); $('verify').textContent=t.verify.replace('{d}',f2(d)); }
+function run(){ render(compute(readInputs())); }
+P.news.forEach((e,k)=>{ const l=document.createElement('div'); l.className='nrow'; l.innerHTML=`<label><input type="checkbox" id="n${k}" checked><span class="t"></span></label><span class="m"><input type="number" id="np${k}" value="${Math.round(e.p*100)}" min="0" max="100" step="5" aria-label="probability %"><em>%</em><input type="number" id="ni${k}" value="${Math.round(e.imp*100)}" min="-50" max="50" step="1" aria-label="impact %"><em>%</em></span>`; $('newsList').appendChild(l); });
+$('newsList').addEventListener('change',run);
+defaults(); applyLang(); run();
+['tariff','fx0','fx1','fx2','fxg','kLR','rk','rg','w','hyd','cap','newsOn'].forEach(id=>$(id).addEventListener('change',run)); 
+$('run').onclick=run; $('reset').onclick=()=>{defaults();run();};
+$('langTR').onclick=()=>{L='tr';applyLang();run();}; $('langEN').onclick=()=>{L='en';applyLang();run();};
+[['tabM','M'],['tabY','Y'],['tabS','S']].forEach(([id,v])=>$(id).onclick=()=>{tab=v;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.id===id));run();});
+</script>
+
+</body>
+</html>
