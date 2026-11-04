@@ -1,0 +1,7 @@
+{
+ "updated": "2026-11-04",
+ "months": [
+  "2026-10"
+ ],
+ "note": "One frozen engine snapshot per month: inputs known at that date, parameters calibrated on data up to that date. Never back-fill with later calibration."
+}

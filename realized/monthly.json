@@ -1,0 +1,72 @@
+{
+ "updated": "2026-11-04",
+ "unit": "USD/MWh",
+ "source": "EPİAŞ PTF aylık ortalaması, Baseload Outlook motoru karnesi",
+ "months": [
+  {
+   "month": "2025-11",
+   "ptf_usd_mwh": 66,
+   "complete": true
+  },
+  {
+   "month": "2025-12",
+   "ptf_usd_mwh": 69.8,
+   "complete": true
+  },
+  {
+   "month": "2026-01",
+   "ptf_usd_mwh": 67.2,
+   "complete": true
+  },
+  {
+   "month": "2026-02",
+   "ptf_usd_mwh": 47.7,
+   "complete": true
+  },
+  {
+   "month": "2026-03",
+   "ptf_usd_mwh": 36.8,
+   "complete": true
+  },
+  {
+   "month": "2026-04",
+   "ptf_usd_mwh": 20.7,
+   "complete": true
+  },
+  {
+   "month": "2026-05",
+   "ptf_usd_mwh": 13.1,
+   "complete": true
+  },
+  {
+   "month": "2026-06",
+   "ptf_usd_mwh": 26.9,
+   "complete": true
+  },
+  {
+   "month": "2026-07",
+   "ptf_usd_mwh": 57.6,
+   "complete": true
+  },
+  {
+   "month": "2026-08",
+   "ptf_usd_mwh": 61,
+   "complete": true
+  },
+  {
+   "month": "2026-09",
+   "ptf_usd_mwh": 56.6,
+   "complete": true
+  },
+  {
+   "month": "2026-10",
+   "ptf_usd_mwh": 59.3,
+   "complete": true
+  },
+  {
+   "month": "2026-11",
+   "ptf_usd_mwh": null,
+   "complete": false
+  }
+ ]
+}
