@@ -1,0 +1,18 @@
+
+== test 2020-01+ (MAE $/MWh; band = 25th–75th, target ~50%) ==
+h= 1 ay | v2  10.18 | naive   9.06 | geçen yıl  36.31 | bant kapsaması %48 | n=81
+h= 3 ay | v2  19.56 | naive  17.48 | geçen yıl  37.11 | bant kapsaması %51 | n=79
+h= 6 ay | v2  28.34 | naive  28.10 | geçen yıl  38.39 | bant kapsaması %51 | n=76
+h=12 ay | v2  41.34 | naive  40.68 | geçen yıl  40.68 | bant kapsaması %38 | n=70
+
+== test 2022-11+ (MAE $/MWh; band = 25th–75th, target ~50%) ==
+h= 1 ay | v2   9.12 | naive   8.96 | geçen yıl  36.40 | bant kapsaması %58 | n=48
+h= 3 ay | v2  17.04 | naive  17.33 | geçen yıl  36.40 | bant kapsaması %60 | n=48
+h= 6 ay | v2  24.75 | naive  28.43 | geçen yıl  36.40 | bant kapsaması %60 | n=48
+h=12 ay | v2  37.07 | naive  36.40 | geçen yıl  36.40 | bant kapsaması %38 | n=48
+
+== test 2025-11+ (MAE $/MWh; band = 25th–75th, target ~50%) ==
+h= 1 ay | v2   9.20 | naive   9.67 | geçen yıl  18.34 | bant kapsaması %42 | n=12
+h= 3 ay | v2  19.24 | naive  22.50 | geçen yıl  18.34 | bant kapsaması %33 | n=12
+h= 6 ay | v2  19.17 | naive  24.93 | geçen yıl  18.34 | bant kapsaması %42 | n=12
+h=12 ay | v2  20.65 | naive  18.34 | geçen yıl  18.34 | bant kapsaması %58 | n=12
