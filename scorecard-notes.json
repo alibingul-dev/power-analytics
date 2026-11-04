@@ -1,0 +1,36 @@
+{
+  "updated": "2026-11-04",
+  "near_threshold_usd_mwh": 3.2,
+  "notes": {
+    "2026-02": {
+      "tr": "Hidro payı %13,0'dan %29,6'ya çıktı (erken kar erimesi, dolu barajlar); 20 saat PTF 0 TL/MWh oldu; TTF 34,2 $/MWh'e geriledi. İlgili girdi: Hidroloji senaryosu (etki Mart–Haziran penceresinden önce başladı), BOTAŞ gaz tarifesi.",
+      "en": "Hydro share rose from 13.0% to 29.6% (early snowmelt, full reservoirs); 20 hours cleared at 0 TL/MWh; the gas price (TTF) fell to 34.2 $/MWh. Related input: Hydrology scenario (the effect began before the Mar–Jun window), BOTAŞ gas tariff.",
+      "src": [["TSKB Şubat 2026", "https://tskb.com.tr/uploads/file/enerji-bulteni-subat-20260306.pdf"], ["Marbaş Şubat 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-SUBAT-2026.pdf"]]
+    },
+    "2026-03": {
+      "tr": "Hidro payı %35,4'e çıktı; 22 saat PTF 0 TL/MWh oldu; bol hidro ve yenilenebilir varken gaz santralleri fiyatı daha az belirledi. İlgili girdi: Hidroloji senaryosu.",
+      "en": "Hydro share rose to 35.4%; 22 hours cleared at 0 TL/MWh; with plenty of hydro and renewables, gas plants set the price less often. Related input: Hydrology scenario.",
+      "src": [["TSKB Nisan 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"], ["EPİAŞ şeffaflık verisi", "https://seffaflik.epias.com.tr"]]
+    },
+    "2026-04": {
+      "tr": "Hidro payı %42,1'e, yenilenebilir payı %70,5'e çıktı; 95 saat PTF 0 TL/MWh oldu. 4 Nisan'da BOTAŞ santral gazı ortalama %19,42 zamlandı ve azami fiyat 3.400'den 4.500 TL/MWh'e çıktı; ikisi fiyatı yukarı itse de hidro baskın geldi. İlgili girdi: Hidroloji senaryosu, BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
+      "en": "Hydro share rose to 42.1% and renewables to 70.5%; 95 hours cleared at 0 TL/MWh. On 4 April BOTAŞ raised the power-plant gas price by 19.42% on average and the price cap went from 3,400 to 4,500 TL/MWh; both pushed up, but hydro dominated. Related input: Hydrology scenario, BOTAŞ gas tariff, Cap adherence ratio.",
+      "src": [["TSKB Nisan 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"], ["Turkish Minute", "https://turkishminute.com/2026/04/03/turkey-raises-electricity-and-natural-gas-prices-by-up-to-25-percent/"]]
+    },
+    "2026-05": {
+      "tr": "Yenilenebilir payı %73,2 ile 2024'ten beri en yüksek seviyeye çıktı; 214 saat PTF 0 TL/MWh oldu (196'sı gündüz); termik payı %26,8'e indi. İlgili girdi: Hidroloji senaryosu.",
+      "en": "Renewables reached a 73.2% share, the highest since 2024; 214 hours cleared at 0 TL/MWh (196 in daytime); thermal share fell to 26.8%. Related input: Hydrology scenario.",
+      "src": [["TSKB Mayıs 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mayis-20260605.pdf"], ["Marbaş Haziran 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"]]
+    },
+    "2026-06": {
+      "tr": "Hidro payı %43,5'ten yaklaşık %35'e geriledi; sıfır fiyatlı saat 214'ten 40'a indi; akşam pikinde 4 saat azami fiyat (4.500 TL/MWh) görüldü. İlgili girdi: Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "Hydro share fell from 43.5% to about 35%; zero-price hours dropped from 214 to 40; the evening peak hit the 4,500 TL/MWh cap in 4 hours. Related input: Hydrology scenario, Cap adherence ratio.",
+      "src": [["Marbaş Haziran 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"], ["EPİAŞ 26. hafta raporu", "https://www.epias.com.tr/wp-content/uploads/2026/06/26.Hafta-22.06.26-28.06.26-Haftalik_Rapor.pdf"]]
+    },
+    "2026-07": {
+      "tr": "Hidro payı %26,1'e düştü, termik payı %41,6'ya çıktı; TTF %19,7 artışla 61,6 $/MWh oldu; sıfır fiyatlı saat kalmadı, 31 saat ≥4.400 TL/MWh. İlgili girdi: Hidroloji senaryosu (etki Mart–Haziran penceresinden sonra sürdü), BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
+      "en": "Hydro share fell to 26.1% and thermal rose to 41.6%; the gas price (TTF) rose 19.7% to 61.6 $/MWh; no zero-price hours, 31 hours at ≥4,400 TL/MWh. Related input: Hydrology scenario (the effect ran past the Mar–Jun window), BOTAŞ gas tariff, Cap adherence ratio.",
+      "src": [["TSKB Temmuz 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20260807.pdf"], ["EPİAŞ şeffaflık verisi", "https://seffaflik.epias.com.tr"]]
+    }
+  }
+}
