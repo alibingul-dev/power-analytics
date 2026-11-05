@@ -76,7 +76,21 @@ def forecast(keys, y, fx, tar, t, h, p=P):
     else:
         k = max(0, t - 12)
         drift = (math.log(fx[t]) - math.log(fx[k])) / (t - k) if t > k else 0.0
-        gh = gas_cost(tar[t], fx[t] * math.exp(drift * h))
+        tariff_h = tar[t]
+        if p["gas_path"] in ("april_trail", "april_restore"):  # opt-in tariff path, tested 2026-11-05
+            for j in range(1, h + 1):
+                if v2.month_at(keys, t, j) != 4:
+                    continue
+                if p["gas_path"] == "april_trail":
+                    g = tar[t] / tar[t - 12] - 1 if t >= 12 and tar[t - 12] else 0.0
+                else:
+                    m = t
+                    while m > 0 and tar[m - 1] is not None and tar[m - 1] >= tar[m] - 1e-9:
+                        m -= 1  # back to the month of the last increase
+                    fx_a = fx[t] * math.exp(drift * j)
+                    g = max(0.0, (tar[m] / fx[m]) / (tariff_h / fx_a) - 1)
+                tariff_h *= (1 + g)
+        gh = gas_cost(tariff_h, fx[t] * math.exp(drift * h))
     return math.exp(Rf + s(v2.month_at(keys, t, h))) * gh
 
 

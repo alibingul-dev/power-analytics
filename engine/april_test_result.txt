@@ -1,0 +1,22 @@
+== MAE USD/MWh, 2022-11..2026-10, common sample ==
+varyant                                                        h=1     h=3     h=6    h=12    h=18    h=24
+bugünkü (TL'de sabit)                                         8.26   15.40   23.32   26.10   20.67   22.64
+(a) son 12 ay değişimi kadar Nisan zammı                      9.75   28.28   82.16  112.67  284.20  454.24
+(b) kaybedilen dolar değerini geri getiren Nisan zammı       10.26   19.57   30.65   50.27   50.62   60.94
+geçen ayın fiyatı                                             8.96   17.33   28.43   32.99   39.08   45.55
+n: {1: 48, 3: 48, 6: 48, 12: 46, 18: 40, 24: 34}
+
+== Bias h=6/12 (actual - forecast, USD/MWh) and DM vs today (positive = variant better) ==
+   (a) son 12 ay değişimi kadar Nisan zammı                 bias -56.93 -78.04 | h=6: -58.84 p=0.917 | h=12: -86.57 p=0.921 | h=24: -431.60 p=0.967
+   (b) kaybedilen dolar değerini geri getiren Nisan zammı   bias -14.45 -36.46 | h=6: -7.32 p=0.914 | h=12: -24.17 p=0.960 | h=24: -38.30 p=1.000
+   bugünkü bias h=6/12:  -2.18   4.01
+
+== Sub-period 2024-11..2026-10, MAE h=6/12 ==
+   bugünkü (TL'de sabit)                                      11.84   16.12
+   (a) son 12 ay değişimi kadar Nisan zammı                   15.36   20.47
+   (b) kaybedilen dolar değerini geri getiren Nisan zammı     14.01   14.20
+
+== Cal-27 from the 2026-10 run (USD/MWh) ==
+   bugünkü (TL'de sabit)                                     48.34
+   (a) son 12 ay değişimi kadar Nisan zammı                  55.44
+   (b) kaybedilen dolar değerini geri getiren Nisan zammı    54.88
