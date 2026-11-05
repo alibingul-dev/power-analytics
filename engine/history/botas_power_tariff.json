@@ -1,0 +1,395 @@
+{
+ "series_version": "2026-11-05.1",
+ "name": "BOTAŞ toptan satış tarifesi — elektrik üretimi amaçlı kullanım (KDV/ÖTV hariç)",
+ "units": {
+  "tl_per_1000sm3": "TL/1000 Sm3"
+ },
+ "method": "Ayın 1'inden geçerli tarife; ay içinde geçiş olan aylarda (2025-04-05, 2026-04-04) gün ağırlıklı ortalama. basis: pdf = BOTAŞ tarife PDF'i; news = haber; news_pct_calc = haberdeki yüzde değişimden hesaplandı; unchanged_news = 'değişiklik yok' haberi; inferred_between = iki yanı doğrulanmış, arada değişiklik haberi yok.",
+ "fetched": "2026-11-05",
+ "months": {
+  "2021-08": {
+   "tl_per_1000sm3": 2060.3,
+   "effective": "2021-08-01",
+   "basis": "news_pct_calc",
+   "src": "https://www.steelradar.com/dogalgaza-yuzde-15-zam"
+  },
+  "2021-09": {
+   "tl_per_1000sm3": 2369.0,
+   "effective": "2021-09-01",
+   "basis": "news",
+   "src": "https://www.steelradar.com/dogalgaza-yuzde-15-zam"
+  },
+  "2021-10": {
+   "tl_per_1000sm3": 2724.35,
+   "effective": "2021-10-01",
+   "basis": "news",
+   "src": "https://yatirimlar.com/haber/botas-2021-yili-ekim-ayi-dogal-gaz-toptan-satis-fiyat-tarifesini-acikladi_178489"
+  },
+  "2021-11": {
+   "tl_per_1000sm3": 4000.0,
+   "effective": "2021-11-01",
+   "basis": "news",
+   "src": "https://www.diken.com.tr/?p=1027632"
+  },
+  "2021-12": {
+   "tl_per_1000sm3": 4800.0,
+   "effective": "2021-12-01",
+   "basis": "news_pct_calc",
+   "src": "https://www.cumhuriyet.com.tr/turkiye/sanayi-ve-santrallerde-kullanilan-dogalgaza-zam-1889680"
+  },
+  "2022-01": {
+   "tl_per_1000sm3": 5520.0,
+   "effective": "2022-01-01",
+   "basis": "news",
+   "src": "https://www.tskb.com.tr/uploads/file/enerji-bulteni-aralik-2021-1.pdf"
+  },
+  "2022-02": {
+   "tl_per_1000sm3": 6300.0,
+   "effective": "2022-02-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/10212-ubat_2022_tarifesi.pdf"
+  },
+  "2022-03": {
+   "tl_per_1000sm3": 7450.0,
+   "effective": "2022-03-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/333970-mart_2022_tarifesi.pdf"
+  },
+  "2022-04": {
+   "tl_per_1000sm3": 10750.0,
+   "effective": "2022-04-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/666177-nisan_2022_tarifesi.pdf"
+  },
+  "2022-05": {
+   "tl_per_1000sm3": 10750.0,
+   "effective": "2022-05-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/827613-mayis_2022_tarifesi.pdf"
+  },
+  "2022-06": {
+   "tl_per_1000sm3": 12500.0,
+   "effective": "2022-06-01",
+   "basis": "news",
+   "src": "https://www.haberturk.com/dogalgazda-haziran-tarifesi-belli-oldu-3456550-ekonomi"
+  },
+  "2022-07": {
+   "tl_per_1000sm3": 12500.0,
+   "effective": "2022-07-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/551551-temmuz_2022_tarifesi.pdf"
+  },
+  "2022-08": {
+   "tl_per_1000sm3": 13750.0,
+   "effective": "2022-08-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/949372-agustos_2022_tarifesi.pdf"
+  },
+  "2022-09": {
+   "tl_per_1000sm3": 20625.0,
+   "effective": "2022-09-01",
+   "basis": "news",
+   "src": "https://tr.euronews.com/2022/09/12/botasin-dogal-gaz-satis-fiyati-18-ayda-elektrik-tarifesinde-yuzde-1330-sanayide-yuzde-997-"
+  },
+  "2022-10": {
+   "tl_per_1000sm3": 20625.0,
+   "effective": "2022-10-01",
+   "basis": "unchanged_news",
+   "src": "https://www.birgun.net/haber/elektrik-ve-dogalgaza-bu-ay-zam-yok-404538"
+  },
+  "2022-11": {
+   "tl_per_1000sm3": 20625.0,
+   "effective": "2022-11-01",
+   "basis": "unchanged_news",
+   "src": "https://www.haberturk.com/dogalgazda-aralik-tarifesi-sabit-kaldi-3543552-ekonomi"
+  },
+  "2022-12": {
+   "tl_per_1000sm3": 20625.0,
+   "effective": "2022-12-01",
+   "basis": "unchanged_news",
+   "src": "https://www.haberturk.com/dogalgazda-aralik-tarifesi-sabit-kaldi-3543552-ekonomi"
+  },
+  "2023-01": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2023-01-01",
+   "basis": "news",
+   "src": "https://www.hurriyet.com.tr/ekonomi/elektrik-uretim-amacli-dogalgazda-indirim-42197062"
+  },
+  "2023-02": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2023-02-01",
+   "basis": "news_pct_calc",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/686805-27.01.2023-tarihli-kamuoyu-duyurusu.pdf"
+  },
+  "2023-03": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2023-03-01",
+   "basis": "news",
+   "src": "https://www.turkiyegazetesi.com.tr/ekonomi/son-dakika-haberi-botas-elektrik-uretimi-ve-sanayide-kullanilan-dogal-gaz-fiyatina-indirim-yapti-951763"
+  },
+  "2023-04": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-04-01",
+   "basis": "news",
+   "src": "https://www.yenisafak.com/ekonomi/botastan-elektrik-uretim-amacli-dogalgaza-indirim-4519638"
+  },
+  "2023-05": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-05-01",
+   "basis": "unchanged_news",
+   "src": "https://haber.sol.org.tr/haber/dogalgazda-mayis-tarifesinde-degisiklige-gidilmedi-373165"
+  },
+  "2023-06": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-06-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-haziran-tarifesi-degismedi-2332271"
+  },
+  "2023-07": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-07-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-temmuz-tarifesinde-degisiklige-gidilmedi-2333825"
+  },
+  "2023-08": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-08-01",
+   "basis": "unchanged_news",
+   "src": "https://www.turkiyegazetesi.com.tr/ekonomi/dogal-gazda-agustos-tarifesinde-degisiklik-yapilmadi-980661"
+  },
+  "2023-09": {
+   "tl_per_1000sm3": 10000.0,
+   "effective": "2023-09-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-eylul-tarifesinde-degisiklige-gidilmedi-2337537"
+  },
+  "2023-10": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2023-10-01",
+   "basis": "news",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-296-ekim_2023_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2023-11": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2023-11-01",
+   "basis": "unchanged_news",
+   "src": "https://www.aa.com.tr/tr/ekonomi/dogal-gazda-kasim-tarifesinde-degisiklige-gidilmedi/3039616"
+  },
+  "2023-12": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2023-12-01",
+   "basis": "unchanged_news",
+   "src": "https://www.trthaber.com/haber/ekonomi/dogal-gazda-aralik-tarifesi-degismedi-816983.html"
+  },
+  "2024-01": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-01-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-309-ocak_2024_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2024-02": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-02-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-309-ocak_2024_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2024-03": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-03-01",
+   "basis": "inferred_between",
+   "src": "https://www.bloomberght.com/dogalgazda-nisan-tarifesi-degismedi-2350280"
+  },
+  "2024-04": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-04-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-nisan-tarifesi-degismedi-2350280"
+  },
+  "2024-05": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-05-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/494648-mayis_2024_tarifesi.pdf"
+  },
+  "2024-06": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-06-01",
+   "basis": "unchanged_news",
+   "src": "https://www.enerjigunlugu.net/botas-dogal-gazda-haziran-tarifesini-degistirmedi-58953h.htm"
+  },
+  "2024-07": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-07-01",
+   "basis": "inferred_between",
+   "src": "https://www.aa.com.tr/tr/enerjiterminali/dogal-gaz/botas-agustos-dogal-gaz-tarifesinde-fiyat-artisina-gidildigini-duyurdu/42754"
+  },
+  "2024-08": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-08-01",
+   "basis": "pdf",
+   "src": "https://www.anadoluosb.org.tr/wp-content/uploads/2024/09/60166-agustos_2024_tarifesi.pdf"
+  },
+  "2024-09": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-09-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-eylul-tarifesinde-degisiklige-gidilmedi-2359313"
+  },
+  "2024-10": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-10-01",
+   "basis": "unchanged_news",
+   "src": "https://www.trthaber.com/haber/ekonomi/dogal-gazda-ekim-tarifesinde-degisiklige-gidilmedi-880083.html"
+  },
+  "2024-11": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-11-01",
+   "basis": "unchanged_news",
+   "src": "https://www.capital.com.tr/haberler/tum-haberler/dogal-gazda-kasim-ayi-tarifesi-aciklandi"
+  },
+  "2024-12": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2024-12-01",
+   "basis": "inferred_between",
+   "src": "https://www.aa.com.tr/tr/ekonomi/dogal-gazda-ocak-tarifesinde-degisiklige-gidilmedi/3438907"
+  },
+  "2025-01": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2025-01-01",
+   "basis": "unchanged_news",
+   "src": "https://www.aa.com.tr/tr/ekonomi/dogal-gazda-ocak-tarifesinde-degisiklige-gidilmedi/3438907"
+  },
+  "2025-02": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2025-02-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bloomberght.com/dogalgazda-subat-tarifesinde-degisiklige-gidilmedi-3740517"
+  },
+  "2025-03": {
+   "tl_per_1000sm3": 12000.0,
+   "effective": "2025-03-01",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/286295-mart_2025_tarifesi.pdf"
+  },
+  "2025-04": {
+   "tl_per_1000sm3": 14600.0,
+   "effective": "2025-04-05",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/169807-5-nisan_2025_tarifesi.pdf"
+  },
+  "2025-05": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-05-01",
+   "basis": "unchanged_news",
+   "src": "https://aa.com.tr/tr/ekonomi/dogal-gazda-mayis-tarifesinde-degisiklige-gidilmedi/3206525"
+  },
+  "2025-06": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-06-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bcm.org.tr/bosb-duyuru-367-haziran_2025_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2025-07": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-07-02",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/128513-2_temmuz_2025_tarifesi.pdf"
+  },
+  "2025-08": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-08-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-391-eylul_2025_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2025-09": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-09-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-391-eylul_2025_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2025-10": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-10-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-415-ocak_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2025-11": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-11-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-415-ocak_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2025-12": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2025-12-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-415-ocak_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2026-01": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2026-01-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-415-ocak_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2026-02": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2026-02-01",
+   "basis": "unchanged_news",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-424-subat_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2026-03": {
+   "tl_per_1000sm3": 15000.0,
+   "effective": "2026-03-01",
+   "basis": "inferred_between",
+   "src": "https://www.bosb.org.tr/bosb-duyuru-424-subat_2026_donemi_aylik_olagan_dogal_gaz_tuketimleri_icin_fiyat_tarife_uygulamasi.html"
+  },
+  "2026-04": {
+   "tl_per_1000sm3": 17700.0,
+   "effective": "2026-04-04",
+   "basis": "pdf",
+   "src": "https://www.botas.gov.tr/uploads/dosyaYoneticisi/139364-4-nisan_2026_tarife.pdf"
+  },
+  "2026-05": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-05-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-06": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-06-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-07": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-07-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-08": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-08-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-09": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-09-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-10": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-10-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  },
+  "2026-11": {
+   "tl_per_1000sm3": 18000.0,
+   "effective": "2026-11-01",
+   "basis": "news",
+   "src": "https://www.borsatek.com/ziraat-yatirim-enerji-sektoru-3c26-raporu/"
+  }
+ }
+}

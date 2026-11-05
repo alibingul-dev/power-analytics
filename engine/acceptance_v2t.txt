@@ -1,0 +1,24 @@
+
+== test 2022-11+ | MAE in USD/MWh (lower is better) | band = 25th-75th pct, target ~50% ==
+h= 1 mo | n=48 | naive   8.96 | v2   9.12 | v2t_usd_flat   8.93 | blend_usd_flat   8.74 | v2t_tl_flat   8.26 | blend_tl_flat   8.55 | band coverage usd_flat:%54.17(n=48) tl_flat:%54.17(n=48)
+h= 3 mo | n=48 | naive  17.33 | v2  17.04 | v2t_usd_flat  17.91 | blend_usd_flat  16.32 | v2t_tl_flat  15.40 | blend_tl_flat  15.50 | band coverage usd_flat:%57.78(n=45) tl_flat:%62.22(n=45)
+h= 6 mo | n=48 | naive  28.43 | v2  24.75 | v2t_usd_flat  25.63 | blend_usd_flat  24.61 | v2t_tl_flat  23.32 | blend_tl_flat  22.41 | band coverage usd_flat:%66.67(n=39) tl_flat:%74.36(n=39)
+h=12 mo | n=46 | naive  32.99 | v2  32.50 | v2t_usd_flat  38.80 | blend_usd_flat  35.09 | v2t_tl_flat  26.10 | blend_tl_flat  24.56 | band coverage usd_flat:%37.04(n=27) tl_flat:%62.96(n=27)
+
+== test 2023-11+ | MAE in USD/MWh (lower is better) | band = 25th-75th pct, target ~50% ==
+h= 1 mo | n=36 | naive   6.79 | v2   7.02 | v2t_usd_flat   6.90 | blend_usd_flat   6.90 | v2t_tl_flat   6.61 | blend_tl_flat   6.67 | band coverage usd_flat:%52.78(n=36) tl_flat:%52.78(n=36)
+h= 3 mo | n=36 | naive  12.59 | v2  11.20 | v2t_usd_flat  10.64 | blend_usd_flat  10.49 | v2t_tl_flat  10.54 | blend_tl_flat  10.01 | band coverage usd_flat:%69.44(n=36) tl_flat:%75.00(n=36)
+h= 6 mo | n=36 | naive  14.65 | v2  13.95 | v2t_usd_flat  11.02 | blend_usd_flat  11.88 | v2t_tl_flat  11.63 | blend_tl_flat  10.63 | band coverage usd_flat:%72.22(n=36) tl_flat:%80.56(n=36)
+h=12 mo | n=36 | naive  24.14 | v2  24.89 | v2t_usd_flat  26.81 | blend_usd_flat  25.25 | v2t_tl_flat  21.41 | blend_tl_flat  17.57 | band coverage usd_flat:%37.04(n=27) tl_flat:%62.96(n=27)
+
+== test 2025-11+ | MAE in USD/MWh (lower is better) | band = 25th-75th pct, target ~50% ==
+h= 1 mo | n=12 | naive   9.67 | v2   9.20 | v2t_usd_flat   9.76 | blend_usd_flat   9.45 | v2t_tl_flat   9.53 | blend_tl_flat   9.37 | band coverage usd_flat:%25.00(n=12) tl_flat:%25.00(n=12)
+h= 3 mo | n=12 | naive  22.50 | v2  19.24 | v2t_usd_flat  19.47 | blend_usd_flat  19.29 | v2t_tl_flat  18.57 | blend_tl_flat  18.90 | band coverage usd_flat:%33.33(n=12) tl_flat:%33.33(n=12)
+h= 6 mo | n=12 | naive  24.93 | v2  19.17 | v2t_usd_flat  18.78 | blend_usd_flat  17.75 | v2t_tl_flat  14.36 | blend_tl_flat  16.50 | band coverage usd_flat:%50.00(n=12) tl_flat:%50.00(n=12)
+h=12 mo | n=12 | naive  18.34 | v2  20.65 | v2t_usd_flat  18.56 | blend_usd_flat  19.47 | v2t_tl_flat  13.44 | blend_tl_flat  14.73 | band coverage usd_flat:%50.00(n=12) tl_flat:%58.33(n=12)
+
+== v2t (tl_flat) vs naive, 2022-11+ | gain in USD/MWh ==
+h= 1 mo | n=48 | mean gain  0.70 USD/MWh | z=1.04 | one-sided p=0.150 | model closer 21/48
+h= 3 mo | n=48 | mean gain  1.94 USD/MWh | z=0.89 | one-sided p=0.188 | model closer 27/48
+h= 6 mo | n=48 | mean gain  5.10 USD/MWh | z=1.44 | one-sided p=0.074 | model closer 26/48
+h=12 mo | n=46 | mean gain  6.89 USD/MWh | z=0.69 | one-sided p=0.246 | model closer 23/46
