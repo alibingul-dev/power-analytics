@@ -17,6 +17,8 @@ from pathlib import Path
 
 import v2
 import v2t
+import profile as pf
+from calendar_tr import day_type
 from dm_test import dm
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -51,7 +53,22 @@ def state(keys, y, fx, tar, t):
                 R_last=round(R[-1], 6), fx_drift_log=round(drift, 6))
 
 
-def run_file(keys, y, fx, tar, t, tariff_version):
+def shapes(H, asof):
+    """Hourly shape inputs for the page (not an hourly forecast): last month's day-type x hour ratios
+    (used for the next month) and the 36-month calendar-month profile (used from month 2 on)."""
+    rows = H[asof]
+    mean = sum(r[3] for r in rows) / len(rows)
+    s, n = {}, {}
+    for d, h, tl, usd in rows:
+        k = (day_type(d), h)
+        s[k] = s.get(k, 0.0) + usd / mean
+        n[k] = n.get(k, 0) + 1
+    byh = {h: [s[(dt, h)] / n[(dt, h)] for dt in range(3) if n.get((dt, h))] for h in range(24)}
+    last = [[round(s[(dt, h)] / n[(dt, h)] if n.get((dt, h)) else sum(byh[h]) / len(byh[h]), 4) for h in range(24)] for dt in range(3)]
+    return dict(last=last, profile=pf.compact(pf.build(H, asof)))
+
+
+def run_file(keys, y, fx, tar, t, tariff_version, H=None):
     st = state(keys, y, fx, tar, t)
     months = []
     for h in range(1, HORIZON + 1):
@@ -76,6 +93,7 @@ def run_file(keys, y, fx, tar, t, tariff_version):
         cut=keys[t], last_usd=y[t], last_fx=fx[t], tariff=tar[t],
         gas_cost=round(v2t.gas_cost(tar[t], fx[t]), 3), conv=dict(mwh_per_ksm3=v2t.MWH_PER_KSM3, eff=v2t.EFF),
         state=st, regime=regime, months=months, score=score,
+        shape=shapes(H, keys[t]) if H is not None and keys[t] in H else None,
         method="Leak-free: inputs and band errors known by the end of " + keys[t] + " only; never re-run with later data.")
 
 
@@ -104,6 +122,7 @@ def summary(start="2022-11"):
 
 def main():
     keys, y, fx, tar = v2t.load_all()
+    H = pf.load_hourly()
     tv = json.load(open(v2t.TARIFF))["series_version"]
     OUT.mkdir(parents=True, exist_ok=True)
     runs = []
@@ -112,7 +131,7 @@ def main():
             continue
         if v2t.band_halfwidth(keys, y, fx, tar, t, 1, P) is None:
             continue
-        json.dump(run_file(keys, y, fx, tar, t, tv), open(OUT / f"{keys[t]}.json", "w"), ensure_ascii=False)
+        json.dump(run_file(keys, y, fx, tar, t, tv, H), open(OUT / f"{keys[t]}.json", "w"), ensure_ascii=False)
         runs.append(keys[t])
     json.dump(dict(updated=keys[-1], engine_version=ENGINE_VERSION, tariff_series_version=tv,
                    path="outlook/snapshots/v2t/", months=runs, backtest=summary(),
