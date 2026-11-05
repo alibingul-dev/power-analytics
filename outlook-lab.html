@@ -301,13 +301,29 @@ function whyCell(k,d){ const t=I[L]; const th=NOTES?NOTES.near_threshold_usd_mwh
 function run(){ if(!P) return; render(compute(readInputs())); }
 function buildNews(){ $('newsList').innerHTML=''; NEWS.forEach((e,k)=>{ const l=document.createElement('div'); l.className='nrow'; l.innerHTML=`<label><input type="checkbox" id="n${k}" checked><span class="t"></span></label><span class="m"><input type="number" id="np${k}" value="${Math.round(e.p*100)}" min="0" max="100" step="5" aria-label="probability %"><em>%</em><input type="number" id="ni${k}" value="${Math.round(e.imp*100)}" min="-50" max="50" step="1" aria-label="impact %"><em>%</em></span>`; $('newsList').appendChild(l); }); }
 function getJSON(u){ return fetch(u,{cache:'no-cache'}).then(r=>{ if(!r.ok) throw new Error(u); return r.json(); }); }
-function loadSnap(c){ return getJSON(IDX.path+c+'.json').then(j=>{ P=j; defaults(); applyLang(); run(); }); }
+/* Owner-only: the Lab's data ships inside the encrypted custom bundle (custom.bundle.json); the code unlocks it in the browser. */
+let LAB=null;
+const b64u8=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function labData(){
+  let code=null;try{code=localStorage.getItem("pa-pro")}catch(e){}
+  if(!code)throw new Error("nocode");
+  const te=new TextEncoder(),sub=crypto.subtle;
+  const r=await fetch("custom.bundle.json",{cache:"no-store"});if(!r.ok)throw new Error("nobundle");const B=await r.json();
+  const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
+  const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+  for(const k of B.keys){let raw;try{raw=await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct))}catch(e){continue}
+    const ck=await sub.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
+    const d=JSON.parse(new TextDecoder().decode(await sub.decrypt({name:"AES-GCM",iv:b64u8(B.iv)},ck,b64u8(B.ct))));
+    if(d.outlook_lab)return d.outlook_lab}
+  throw new Error("badcode");
+}
+function loadSnap(c){ const j=LAB&&LAB.snapshots[c]; if(!j) return Promise.reject(new Error(c)); P=j; defaults(); applyLang(); run(); return Promise.resolve(); }
 $('newsList').addEventListener('change',run);
 ['tariff','fx0','fxg','kLR','rk','hyd','newsOn'].forEach(id=>$(id).addEventListener('change',run));
 $('asof').addEventListener('change',()=>loadSnap($('asof').value).catch(()=>{}));
 $('run').onclick=run; $('reset').onclick=()=>{defaults();run();};
 $('langTR').onclick=()=>{L='tr';applyLang();run();}; $('langEN').onclick=()=>{L='en';applyLang();run();};
-Promise.all([getJSON('outlook/snapshots/index.json'), getJSON('realized/monthly.json').catch(()=>null), getJSON('outlook/news.json').catch(()=>({events:[]}))]).then(([idx,rl,nw])=>{ IDX=idx; REAL=rl; NEWS=nw.events||[]; buildNews(); SNAPS=idx.months.slice().sort(); LATEST=SNAPS[SNAPS.length-1]; $('asof').innerHTML=SNAPS.slice().reverse().map(c=>`<option value="${c}">${c}</option>`).join(''); return loadSnap(LATEST); }).catch(()=>{ $('subtitle').textContent='Data could not be loaded.'; });
+labData().then(lab=>{ LAB=lab; const idx=lab.index, rl=lab.realized, nw=lab.news||{events:[]}; IDX=idx; REAL=rl; NEWS=nw.events||[]; buildNews(); SNAPS=idx.months.slice().sort(); LATEST=SNAPS[SNAPS.length-1]; $('asof').innerHTML=SNAPS.slice().reverse().map(c=>`<option value="${c}">${c}</option>`).join(''); return loadSnap(LATEST); }).catch(()=>{ document.body.innerHTML='<div style="max-width:520px;margin:18vh auto;padding:0 16px;text-align:center;font-family:system-ui,sans-serif;color:#E6EDF5"><h2 style="margin:0 0 8px">Not available</h2><p style="color:#8A9BB0">This page is not open.</p></div>'; });
 const XL={
  tr:{file:"price-outlook-lab",sh:["Kapak","Tanımlar ve Varsayımlar","Aylık","Çeyrek ve yıl","Geriye dönük test","Karne","Kaynaklar","Günlük","Saatlik"],
   title:"Price Outlook Lab · Türkiye PTF aylık görünümü",

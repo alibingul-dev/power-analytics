@@ -181,7 +181,7 @@ async function loadData(){
   let code=null;try{code=localStorage.getItem("pa-pro")}catch(e){}
   if(!code)throw new Error("nocode");
   const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
-  for(const t of["ultra","max","pro"]){
+  for(const t of["custom","ultra","max","pro"]){
     let B;try{const r=await fetch(t+".bundle.json",{cache:"no-store"});if(!r.ok)continue;B=await r.json()}catch(e){continue}
     if(!wk||salt!==B.kdf.salt){salt=B.kdf.salt;const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
       wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"])}

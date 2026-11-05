@@ -1,2 +1,0 @@
-hourly: alternative 14.43 USD/MWh | naive 14.21 USD/MWh | profile (profile_test.py) 16.03 USD/MWh
-daily : alternative 11.05 USD/MWh | naive 11.18 USD/MWh | profile 11.21 USD/MWh

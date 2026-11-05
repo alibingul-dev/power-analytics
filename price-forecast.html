@@ -236,7 +236,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  h_slope:"Eğri dikliği (TL/MWh / GW)",
  snote:"Eğri dikliği geçen haftanın aynı saatteki alış-satış eğrisinden (EPİAŞ arz-talep eğrisi) gelir: talep 1 GW kayınca takas fiyatı ne kadar oynar. {thr} TL/MWh / GW ve üstü saatler dik işaretlidir: sicilde dik saatlerde fiyat haftadan haftaya {a} TL/MWh, düz saatlerde {b} TL/MWh oynadı; modelin kendi sapması da dik saatlerde daha büyük. Bu bir volatilite uyarısıdır, fiyat değil.",
  disc:"EPİAŞ'ın kamuya açık verisiyle yapılmış kişisel çalışma; hiçbir işverenin görüşü değildir. Yalnız bilgi amaçlıdır: yatırım, alım-satım ya da hedge tavsiyesi değildir. Canlı tahmin yayımlanmaz. Baseload AI · power-analytics",
- lockH:"Günlük Fiyat Tahmini Pro'ya dahil",lockP:"Kodunu Planlar sayfasına gir ya da Pro'da neler olduğuna bak.",lockBad:"Bu tarayıcıda kayıtlı kod bu sayfayı açmıyor. ",lockA:"Planlara git →",
+ naH:"Erişim yok",naP:"Bu sayfa açık değil.",lockH:"Günlük Fiyat Tahmini Pro'ya dahil",lockP:"Kodunu Planlar sayfasına gir ya da Pro'da neler olduğuna bak.",lockBad:"Bu tarayıcıda kayıtlı kod bu sayfayı açmıyor. ",lockA:"Planlara git →",
  empty:"Bu aralıkta puanlanmış gün yok."}
 };
 const t=()=>T[L];
@@ -254,7 +254,7 @@ async function loadData(){
   let code=null;try{code=localStorage.getItem("pa-pro")}catch(e){}
   if(!code)throw new Error("nocode");
   const te=new TextEncoder(),sub=crypto.subtle;let wk=null,salt=null;
-  for(const tier of["ultra","max","pro"]){
+  for(const tier of["custom","ultra","max","pro"]){
     let B;try{const r=await fetch(tier+".bundle.json",{cache:"no-store"});if(!r.ok)continue;B=await r.json()}catch(e){continue}
     if(!wk||salt!==B.kdf.salt){salt=B.kdf.salt;const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
       wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"])}
@@ -267,7 +267,7 @@ async function loadData(){
 }
 function locked(why){
   const x=t();
-  document.body.innerHTML='<div class="lock"><h2>'+x.lockH+'</h2><p>'+(why==="badcode"?x.lockBad:"")+x.lockP+'</p><a href="index.html#plans" target="_top">'+x.lockA+'</a></div>';
+  document.body.innerHTML='<div class="lock"><h2>'+(x.naH||"Not available")+'</h2><p>'+(x.naP||"This page is not open.")+'</p></div>';
 }
 
 /* ---------- charts ---------- */

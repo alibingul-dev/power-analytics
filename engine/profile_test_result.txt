@@ -1,5 +1,0 @@
-== profile test 2025-11..2026-10 | MAE (lower is better) ==
-hourly : model   16.03 USD/MWh | naive   14.21 USD/MWh | n=8760 hours
-hourly : model   725.0 TL/MWh  | naive   656.9 TL/MWh
-daily  : model   11.21 USD/MWh | naive   11.18 USD/MWh | n=365 days
-shape only (both scaled to the actual monthly mean): profile   13.34 | last month's shape   13.51 USD/MWh
