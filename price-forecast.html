@@ -82,7 +82,7 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
   <div class="grid2">
     <div class="panel">
       <h2 id="t-day"></h2>
-      <div class="ctl"><label><span id="t-pick"></span><select id="day"></select></label><span id="ytag"></span></div>
+      <div class="ctl"><label><span id="t-pick"></span><select id="day"></select></label><span id="ytag"></span><span id="stag"></span></div>
       <div class="cbox"><canvas id="cDay" role="img"></canvas></div>
       <p class="note" id="t-daynote"></p>
     </div>
@@ -97,6 +97,7 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
   <div class="panel">
     <div class="ctl" style="justify-content:space-between"><h2 id="t-hours" style="margin:0"></h2><button type="button" id="dl"></button></div>
     <div class="tbl"><table id="hours"></table></div>
+    <p class="note" id="t-snote"></p>
     <p class="note" id="t-dlnote"></p>
   </div>
 
@@ -158,9 +159,12 @@ en:{title:"Daily Price Forecast",
     "The weights are re-estimated every day on the previous {n} days only (a ridge regression with one baseline per hour), so the model never sees the day it forecasts. The forecast is kept between zero and the highest price of the last 30 days.",
     "Current weights: {coef}.",
     "Inputs come from a daily archive. The archive is meant to run before the 12:30 market close; on {late} of {n2} days it ran later, and those days are flagged, because the load plan and wind forecast may have been revised after clearing. From 5 November 2026 the archive tries from 09:00 and never overwrites a pre-12:30 capture. Days without an archive are not scored."],
- m_mo:"",
+ m_mo:"The bid-offer curve was also tested as a price: last week's curve shifted by the change in the net load plan (a potential merit-order price). On its own it missed by {mo} TL/MWh against {d7} TL/MWh for simply copying last week, because the hourly curve excludes block and flexible offers and a shift of several GW leaves its usable range. It is therefore not in the model; only its steepness is shown, as a volatility warning.",
  coef:{p_d1:"yesterday's price ×{v}",p_d7:"last week's price ×{v}",netload:"{v} TL/MWh per GW of net load",weekend:"weekend {v} TL/MWh",p_mo:"bid-offer price ×{v}"},
  late_tag:"inputs archived after 12:30",
+ stag:"Steep bid-offer curve · {n} hours",stag_off:"No steep-curve hours",stag_na:"No bid-offer curve for this day yet",
+ h_slope:"Curve steepness (TL/MWh per GW)",
+ snote:"Curve steepness comes from last week's same-hour bid-offer curve (the EPİAŞ supply and demand curve): how much the clearing price moves when demand shifts by 1 GW. Hours at or above {thr} TL/MWh per GW are marked steep: in the record, the price moved {a} TL/MWh week on week in steep hours against {b} TL/MWh in flat ones, and the model's own miss was larger too. It is a volatility warning, not a price.",
  disc:"Personal work on public EPİAŞ data; not the view of any employer. For information only: not investment, trading or hedging advice. No live forecast is published. Baseload AI · power-analytics",
  lockH:"Daily Price Forecast is part of Pro",lockP:"Enter your code on the Plans page, or see what Pro includes.",lockBad:"The code saved in this browser does not open this page. ",lockA:"Go to Plans →",
  empty:"No scored days in this range."},
@@ -206,9 +210,12 @@ tr:{title:"Günlük Fiyat Tahmini",
     "Ağırlıklar her gün yalnız önceki {n} günle yeniden hesaplanır (saat başına ayrı taban değerli ridge regresyon); model tahmin ettiği günü hiç görmez. Tahmin sıfır ile son 30 günün en yüksek fiyatı arasında tutulur.",
     "Güncel ağırlıklar: {coef}.",
     "Girdiler günlük bir arşivden gelir. Arşivin 12:30 kapanışından önce koşması hedeflenir; {n2} günün {late}'inde daha geç koştu ve o günler işaretli, çünkü yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir. 5 Kasım 2026'dan itibaren arşiv 09:00'dan başlayarak dener ve 12:30 öncesi kaydın üzerine yazmaz. Arşivi olmayan günler puanlanmaz."],
- m_mo:"",
+ m_mo:"Alış-satış eğrisi fiyat olarak da denendi: geçen haftanın eğrisi net yük planı farkı kadar kaydırıldı (potansiyel merit order fiyatı). Tek başına {mo} TL/MWh saptı; geçen haftayı aynen yazmak {d7} TL/MWh sapardı. Sebep: saatlik eğri blok ve esnek teklifleri içermiyor, birkaç GW'lık kayma eğrinin kullanılabilir aralığının dışına çıkıyor. Bu yüzden modelde yok; yalnız dikliği volatilite uyarısı olarak gösteriliyor.",
  coef:{p_d1:"dünün fiyatı ×{v}",p_d7:"geçen haftanın fiyatı ×{v}",netload:"net yükün her GW'ı için {v} TL/MWh",weekend:"hafta sonu {v} TL/MWh",p_mo:"alış-satış eğrisi fiyatı ×{v}"},
  late_tag:"girdiler 12:30'dan sonra arşivlendi",
+ stag:"Dik alış-satış eğrisi · {n} saat",stag_off:"Dik eğrili saat yok",stag_na:"Bu gün için alış-satış eğrisi henüz yok",
+ h_slope:"Eğri dikliği (TL/MWh / GW)",
+ snote:"Eğri dikliği geçen haftanın aynı saatteki alış-satış eğrisinden (EPİAŞ arz-talep eğrisi) gelir: talep 1 GW kayınca takas fiyatı ne kadar oynar. {thr} TL/MWh / GW ve üstü saatler dik işaretlidir: sicilde dik saatlerde fiyat haftadan haftaya {a} TL/MWh, düz saatlerde {b} TL/MWh oynadı; modelin kendi sapması da dik saatlerde daha büyük. Bu bir volatilite uyarısıdır, fiyat değil.",
  disc:"EPİAŞ'ın kamuya açık verisiyle yapılmış kişisel çalışma; hiçbir işverenin görüşü değildir. Yalnız bilgi amaçlıdır: yatırım, alım-satım ya da hedge tavsiyesi değildir. Canlı tahmin yayımlanmaz. Baseload AI · power-analytics",
  lockH:"Günlük Fiyat Tahmini Pro'ya dahil",lockP:"Kodunu Planlar sayfasına gir ya da Pro'da neler olduğuna bak.",lockBad:"Bu tarayıcıda kayıtlı kod bu sayfayı açmıyor. ",lockA:"Planlara git →",
  empty:"Bu aralıkta puanlanmış gün yok."}
@@ -287,11 +294,13 @@ function drawDay(){
   why(r,hrs);
   const at=new Date(r.captured_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   $("t-daynote").textContent=fill(x.daynote,{at:at,late:r.late_capture?x.late:""});
-  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" (TL/MWh)":i>=5?" (GW)":"")+'</th>').join("")+'</tr></thead><tbody>';
-  const yk=r.yekdem||{},rh=yk.risk_hours||[];
-  for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];
-    h+='<tr'+(rh.includes(i)?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+(rh.includes(i)?' <span class="tag" style="padding:0 6px;font-size:11px">&lt;100</span>':'')+'</td><td>'+n0(r.fc[i])+'</td><td>'+n0(r.actual[i])+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+n0(e)+'</td><td>'+n0(r.naive_d1[i])+'</td><td>'+n2(r.netload_fc[i])+'</td><td>'+(r.netload_act?n2(r.netload_act[i]):"—")+'</td></tr>'}
-  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+n0(avg(r.fc))+'</td><td>'+n0(avg(r.actual))+'</td><td>'+(r.bias>0?"+":"")+n0(r.bias)+'</td><td>'+n0(avg(r.naive_d1))+'</td><td>'+n2(avg(r.netload_fc))+'</td><td>'+(r.netload_act?n2(avg(r.netload_act)):"—")+'</td></tr>';
+  const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
+  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" (TL/MWh)":i>=5?" (GW)":"")+'</th>').join("")+'<th>'+x.h_slope+'</th></tr></thead><tbody>';
+  const yk=r.yekdem||{},rh=yk.risk_hours||[];let nsteep=0;
+  for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
+    h+='<tr'+(rh.includes(i)?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+(rh.includes(i)?' <span class="tag" style="padding:0 6px;font-size:11px">&lt;100</span>':'')+'</td><td>'+n0(r.fc[i])+'</td><td>'+n0(r.actual[i])+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+n0(e)+'</td><td>'+n0(r.naive_d1[i])+'</td><td>'+n2(r.netload_fc[i])+'</td><td>'+(r.netload_act?n2(r.netload_act[i]):"—")+'</td><td class="'+(steep?"bad":"")+'">'+(sv==null?"—":n0(sv)+(steep?" ▲":""))+'</td></tr>'}
+  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+n0(avg(r.fc))+'</td><td>'+n0(avg(r.actual))+'</td><td>'+(r.bias>0?"+":"")+n0(r.bias)+'</td><td>'+n0(avg(r.naive_d1))+'</td><td>'+n2(avg(r.netload_fc))+'</td><td>'+(r.netload_act?n2(avg(r.netload_act)):"—")+'</td><td>'+(sl?n0(avg(sl.filter(v=>v!=null))):"—")+'</td></tr>';
+  const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
   $("hours").innerHTML=h+'</tbody>';
   const ah=yk.actual_hours||[],el=$("ytag");
   if(rh.length&&ah.length){el.className="tag hit";el.textContent=fill(x.ytag_hit,{n:rh.length,m:ah.length})}
@@ -315,6 +324,7 @@ function score(){
   $("ramps").innerHTML=g+'</tbody>';
   const Y=S.yekdem||{};
   $("t-defs").textContent=x.defs+" "+fill(x.ynote,{f:n0(Y.days_flagged),d:n0(S.days),h:n0(Y.days_hit),miss:n0(Y.days_missed)});
+  const MO=S.mo||{};$("t-snote").textContent=MO.steep_from!=null?fill(x.snote,{thr:n0(MO.steep_from),a:n0(MO.steep_dptf),b:n0(MO.flat_dptf)}):"";
 }
 
 function csv(){
@@ -350,7 +360,9 @@ function why(r,hrs){
 function method(){
   const x=t(),c=D.latest_coef||{};
   const parts=Object.keys(x.coef).filter(k=>c[k]!=null).map(k=>fill(x.coef[k],{v:k==="p_d1"||k==="p_d7"?n2(c[k]):n0(c[k])}));
-  $("method").innerHTML=x.m.map(p=>'<p>'+fill(p,{n:n0(D.method.train_days),n2:n0(D.summary.days),late:n0(D.summary.late_capture_days),coef:parts.join(" · "),mo:x.m_mo})+'</p>').join("");
+  const MO=D.summary.mo||{};
+  const moTxt=MO.mae_mo!=null?fill(x.m_mo,{mo:n0(MO.mae_mo),d7:n0(MO.mae_d7_same_days)}):"";
+  $("method").innerHTML=x.m.map(p=>'<p>'+fill(p,{n:n0(D.method.train_days),n2:n0(D.summary.days),late:n0(D.summary.late_capture_days),coef:parts.join(" · "),mo:moTxt})+'</p>').join("");
 }
 
 function texts(){
