@@ -48,6 +48,7 @@ td{padding:5px 10px;border-top:1px solid var(--line);text-align:right;font-famil
 .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:rgba(251,191,36,.15);color:var(--accent);border:1px solid rgba(251,191,36,.4)}
 .tag.hit{background:rgba(244,63,94,.15);color:var(--bad);border-color:rgba(244,63,94,.4)}
 .tag.off{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+td .tag{padding:1px 8px;font-size:11.5px}
 td.dim,th.dim{color:var(--muted)}
 tr.avg td{font-weight:500;background:var(--band)}
 table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th{white-space:normal;min-width:84px}
@@ -99,6 +100,7 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
   <div class="panel">
     <div class="ctl" style="justify-content:space-between"><h2 id="t-hours" style="margin:0"></h2><button type="button" id="dl"></button></div>
     <div class="tbl"><table id="hours"></table></div>
+    <p class="note" id="t-yknote"></p>
     <p class="note" id="t-snote"></p>
     <p class="note" id="t-dlnote"></p>
   </div>
@@ -148,7 +150,9 @@ en:{title:"Daily Price Forecast",
  w_noshift:"No realistic flat change in {what} (within {lim} GW) would have fixed this day: the miss was in the shape across hours, not the level.",what_nl:"net load",what_gas:"gas generation",
  w_overfit:"An exact hit in all 24 hours would need 24 free numbers tuned to this day after the fact. That is an overfit: it explains yesterday perfectly and forecasts tomorrow badly, so the model is not built that way.",
  hours:"Hour by hour",
- h:["Hour","Forecast","Actual","Miss","Yesterday","Net load forecast","Net load actual"],
+ h:["Hour","Forecast","Actual","Miss","Yesterday","Net load forecast"],
+ h_yk:"YEKDEM curtailment risk",yk_risk:"flagged",yk_hit:"flagged · happened",yk_miss:"not flagged · happened",yk_none:"—",
+ yknote:"YEKDEM column: an hour is flagged at forecast time when the price could fall under 100 TL/MWh, the level below which a YEKDEM plant's output is not worth selling; 'happened' means the realised price did fall under 100 TL/MWh.",
  avg:"Average of the day",dl:"Download for Excel (CSV)",
  dlnote:"The CSV holds every scored day, one row per hour, with the unit in each column name (TL/MWh, GW). Prices are always in TL/MWh; the day's TCMB rates are in the usdtry and eurtry columns. It opens in Excel as UTF-8.",
  score:"Where the model is strong and where it is weak",
@@ -201,7 +205,9 @@ tr:{title:"Günlük Fiyat Tahmini",
  w_noshift:"{what} tek başına makul bir düz kaymayla ({lim} GW içinde) bu günü düzeltemezdi: sapma seviyede değil, saatler arasındaki biçimdeydi.",what_nl:"Net yük",what_gas:"Gaz üretimi",
  w_overfit:"24 saatin hepsini tam tutturmak, o güne sonradan ayarlanmış 24 serbest sayı ister. Buna aşırı uyum (overfit) denir: dünü kusursuz açıklar, yarını kötü tahmin eder. Model bu yüzden böyle kurulmadı.",
  hours:"Saat saat",
- h:["Saat","Tahmin","Gerçekleşen","Sapma","Dün","Net yük tahmini","Net yük gerçekleşen"],
+ h:["Saat","Tahmin","Gerçekleşen","Sapma","Dün","Net yük tahmini"],
+ h_yk:"YEKDEM kesinti riski",yk_risk:"işaretli",yk_hit:"işaretli · gerçekleşti",yk_miss:"işaretsiz · gerçekleşti",yk_none:"—",
+ yknote:"YEKDEM sütunu: fiyatın 100 TL/MWh altına inebileceği saatler tahmin anında işaretlenir; 100 TL/MWh, bir YEKDEM santralinin üretimini satmaya değmediği seviye. 'Gerçekleşti', gerçekleşen fiyatın 100 TL/MWh altına indiği anlamına gelir.",
  avg:"Günün ortalaması",dl:"Excel için indir (CSV)",
  dlnote:"CSV puanlanmış her günü, saat başına bir satır olarak taşır; birim her sütunun adında (TL/MWh, GW). Fiyatlar her zaman TL/MWh; günün TCMB kurları usdtry ve eurtry sütunlarında. Excel'de UTF-8 olarak açılır.",
  score:"Model nerede güçlü, nerede zayıf",
@@ -312,11 +318,12 @@ function drawDay(){
   $("t-whynote").textContent=rate(r)?uu(x.whynote):x.whynote;
   $("t-daynote").textContent=fill(x.daynote,{at:at,late:r.late_capture?x.late:""})+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
-  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" ("+Ud+")":i>=5?" (GW)":"")+'</th>').join("")+'<th>'+(rate(r)?uu(x.h_slope):x.h_slope)+'</th></tr></thead><tbody>';
-  const yk=r.yekdem||{},rh=yk.risk_hours||[];let nsteep=0;
+  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" ("+Ud+")":i>=5?" (GW)":"")+'</th>').join("")+'<th>'+x.h_yk+'</th></tr></thead><tbody>';
+  const yk=r.yekdem||{},rh=yk.risk_hours||[],ah0=yk.actual_hours||[];let nsteep=0;
   for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
-    h+='<tr'+(rh.includes(i)?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+(rh.includes(i)?' <span class="tag" style="padding:0 6px;font-size:11px">&lt;100</span>':'')+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td>'+nP(r.naive_d1[i],r)+'</td><td>'+n2(r.netload_fc[i])+'</td><td>'+(r.netload_act?n2(r.netload_act[i]):"—")+'</td><td class="'+(steep?"bad":"")+'">'+(sv==null?"—":nP(sv,r)+(steep?" ▲":""))+'</td></tr>'}
-  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td>'+nP(avg(r.naive_d1),r)+'</td><td>'+n2(avg(r.netload_fc))+'</td><td>'+(r.netload_act?n2(avg(r.netload_act)):"—")+'</td><td>'+(sl?nP(avg(sl.filter(v=>v!=null)),r):"—")+'</td></tr>';
+    const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
+    h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td>'+nP(r.naive_d1[i],r)+'</td><td>'+n2(r.netload_fc[i])+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td></tr>'}
+  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td>'+nP(avg(r.naive_d1),r)+'</td><td>'+n2(avg(r.netload_fc))+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
   $("hours").innerHTML=h+'</tbody>';
   const ah=yk.actual_hours||[],el=$("ytag");
@@ -388,7 +395,7 @@ function method(){
 function texts(){
   const x=t();document.documentElement.lang=L;document.title=x.title;
   ["title","sub","range","from","to","day","pick","why","hours","method","disc","score","bands","ramps","bandnote","rampnote","dlnote"].forEach(k=>{const e=$("t-"+k);if(e)e.textContent=x[k]});
-  $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-daynote").textContent="";
+  $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-daynote").textContent="";$("t-yknote").textContent=x.yknote;
   $("t-tlonly").hidden=true;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
   const cur=$("day").value;
   $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+nP(r.mae,r)+' '+(rate(r)?U():"TL/MWh")+(r.late_capture?' · ⚠':'')+'</option>').join("");
