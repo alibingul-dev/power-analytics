@@ -847,7 +847,7 @@ a.btn{display:inline-block;text-decoration:none}
 <!-- ===== PLANS AND EARLY ACCESS ===== -->
 <section class="view" id="plans">
 <style>
-.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:8px 0 34px}.pl-card.pl-custom{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 28px}.pl-custom ul{margin:0}.pl-custom .pl-name,.pl-custom .pl-price{margin:0}
+.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:8px 0 34px}
 .pl-card{display:flex;flex-direction:column;gap:12px;padding:22px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
 .pl-card.pro{border-color:var(--b1-a45);background:var(--surface-2)}
 .pl-name{font-family:var(--font-display);font-weight:800;font-size:22px}
@@ -947,7 +947,8 @@ html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]
         <li>Monthly deep-dive report</li>
       </ul>
     </div>
-    <div class="pl-card pl-custom">
+    <div class="pl-card soon">
+      <span class="pl-soonbadge">Coming soon</span>
       <span class="pl-tag">For your own questions</span>
       <div class="pl-name">Custom</div>
       <div class="pl-price"><span>On request</span></div>

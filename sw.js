@@ -1,7 +1,7 @@
 // Power Analytics service worker.
 // Network-first for everything: daily JSON must never be served stale while online.
 // Cache is only the offline fallback. Videos (media/*.mp4) are never cached.
-const CACHE = "pa-v2";
+const CACHE = "pa-v3";
 const SHELL = [
   "./",
   "index.html",
