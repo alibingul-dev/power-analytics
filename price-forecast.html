@@ -43,6 +43,13 @@ td{padding:5px 10px;border-top:1px solid var(--line);text-align:right;font-famil
 .method p{font-size:14px;margin:0 0 8px;max-width:110ch}
 .lock{max-width:560px;margin:12vh auto;text-align:center}.lock a{color:var(--navy)}
 .mono{font-family:var(--mono)}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:rgba(251,191,36,.15);color:var(--accent);border:1px solid rgba(251,191,36,.4)}
+.tag.hit{background:rgba(244,63,94,.15);color:var(--bad);border-color:rgba(244,63,94,.4)}
+.tag.off{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+td.dim,th.dim{color:var(--muted)}
+tr.avg td{font-weight:500;background:var(--band)}
+table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th{white-space:normal;min-width:84px}
+caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);background:var(--surface-2);caption-side:top}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -64,10 +71,18 @@ td{padding:5px 10px;border-top:1px solid var(--line);text-align:right;font-famil
     <p class="note" id="t-dailynote"></p>
   </div>
 
+  <div class="panel">
+    <h2 id="t-score"></h2>
+    <p class="note" id="t-devnote" style="margin:0 0 10px"></p>
+    <h2 id="t-bands"></h2><div class="tbl"><table id="bands" class="lbl"></table></div><p class="note" id="t-bandnote" style="margin-bottom:16px"></p>
+    <h2 id="t-ramps"></h2><div class="tbl"><table id="ramps" class="lbl"></table></div><p class="note" id="t-rampnote"></p>
+    <p class="note" id="t-defs"></p>
+  </div>
+
   <div class="grid2">
     <div class="panel">
       <h2 id="t-day"></h2>
-      <div class="ctl"><label><span id="t-pick"></span><select id="day"></select></label></div>
+      <div class="ctl"><label><span id="t-pick"></span><select id="day"></select></label><span id="ytag"></span></div>
       <div class="cbox"><canvas id="cDay" role="img"></canvas></div>
       <p class="note" id="t-daynote"></p>
     </div>
@@ -80,8 +95,9 @@ td{padding:5px 10px;border-top:1px solid var(--line);text-align:right;font-famil
   </div>
 
   <div class="panel">
-    <h2 id="t-hours"></h2>
+    <div class="ctl" style="justify-content:space-between"><h2 id="t-hours" style="margin:0"></h2><button type="button" id="dl"></button></div>
     <div class="tbl"><table id="hours"></table></div>
+    <p class="note" id="t-dlnote"></p>
   </div>
 
   <div class="panel method">
@@ -124,6 +140,20 @@ en:{title:"Daily Price Forecast",
  w_overfit:"An exact hit in all 24 hours would need 24 free numbers tuned to this day after the fact. That is an overfit: it explains yesterday perfectly and forecasts tomorrow badly, so the model is not built that way.",
  hours:"Hour by hour",
  h:["Hour","Forecast","Actual","Miss","Yesterday","Net load forecast","Net load actual"],
+ avg:"Average of the day",dl:"Download for Excel (CSV)",
+ dlnote:"The CSV holds every scored day, one row per hour, with the unit in each column name (TL/MWh, GW). It opens in Excel as UTF-8.",
+ score:"Where the model is strong and where it is weak",
+ devnote:"Deviation ratio: {dr}% — the model's average miss ({mae} TL/MWh) divided by the average price of the period ({mp} TL/MWh). Read it like a percentage error: 10% means a typical hour is off by a tenth of the price. Copying yesterday would have been {dr1}%. The ratio balloons on cheap days even when the miss in TL/MWh is small, so both numbers are shown.",
+ bands:"By price level, from the lowest to the highest hour",
+ bh:["Band (TL/MWh)","Hours","MAE (TL/MWh)","Yesterday MAE (TL/MWh)","Bias (TL/MWh)","BSR (%)","WSR (%)"],
+ bandnote:"The realised price is cut into five equal-width bands between the lowest and the highest hour in the record. The bands at the ends hold few hours: under 20 hours the numbers are marked grey and should not be trusted.",
+ ramps:"On climbs and declines",
+ rh:["Hours","Count","MAE (TL/MWh)","BSR (%)","WSR (%)","Real slope (TL/MWh per hour)","Forecast slope","Slope ratio"],
+ rl:{up:"Price climbs (change ≥ +{v} TL/MWh)",down:"Price declines (change ≤ {v} TL/MWh)",flat:"Flat hours",fc_up:"Model called a climb (≥ +{v} TL/MWh)",fc_down:"Model called a decline (≤ {v} TL/MWh)"},
+ rampnote:"Climbs and declines are the steepest fifth of hourly changes. Slope ratio = forecast slope ÷ real slope: 1.0 means the model moves as much as the market; 0.6 means it sees the move but draws it at 60% of its real size. The first three rows pick hours by what the market did; the last two by what the model said.",
+ defs:"MAE: average absolute miss per hour, in TL/MWh. Bias: average signed miss; positive = forecast too high. BSR: share of hours where the forecast got the direction of the hour-over-hour change right (hour 00:00 is compared with the previous day's 23:00). WSR: the same share weighted by the size of the real change, so big moves count more; WSR above BSR means the model gets the large moves right more often than the small ones.",
+ ytag_risk:"PTF below 100 TL/MWh risk · {n} hours flagged",ytag_hit:"PTF below 100 TL/MWh risk · {n} flagged, {m} happened",ytag_miss:"No flag, but {m} hours were under 100 TL/MWh",ytag_off:"No PTF below 100 TL/MWh risk flagged",
+ ynote:"The flag is for YEKDEM plants: an hour is flagged when the forecast minus the 80th percentile of the model's recent misses falls under 100 TL/MWh. Track record: flagged on {f} of {d} days; the price really went under 100 TL/MWh on {h} of those; {miss} days were under 100 TL/MWh without a flag.",
  method:"How the forecast is made",
  m:["Every day before 12:30, for the next day, the model takes four things that are public before 12:30: yesterday's price in the same hour, last week's price in the same hour, the forecast net load (EPİAŞ load plan minus the wind forecast minus planned solar) and the planned gas generation (first-version KGÜP). It also knows whether the day is a weekend.",
     "The weights are re-estimated every day on the previous {n} days only (a ridge regression with one baseline per hour), so the model never sees the day it forecasts. The forecast is kept between zero and the highest price of the last 30 days.",
@@ -157,6 +187,20 @@ tr:{title:"Günlük Fiyat Tahmini",
  w_overfit:"24 saatin hepsini tam tutturmak, o güne sonradan ayarlanmış 24 serbest sayı ister. Buna aşırı uyum (overfit) denir: dünü kusursuz açıklar, yarını kötü tahmin eder. Model bu yüzden böyle kurulmadı.",
  hours:"Saat saat",
  h:["Saat","Tahmin","Gerçekleşen","Sapma","Dün","Net yük tahmini","Net yük gerçekleşen"],
+ avg:"Günün ortalaması",dl:"Excel için indir (CSV)",
+ dlnote:"CSV puanlanmış her günü, saat başına bir satır olarak taşır; birim her sütunun adında (TL/MWh, GW). Excel'de UTF-8 olarak açılır.",
+ score:"Model nerede güçlü, nerede zayıf",
+ devnote:"Sapma oranı: %{dr} — modelin ortalama sapması ({mae} TL/MWh) bölü dönemin ortalama fiyatı ({mp} TL/MWh). Yüzde hata gibi oku: %10, tipik bir saatin fiyatın onda biri kadar şaştığı demek. Dünü kopyalamak %{dr1} olurdu. Ucuz günlerde TL/MWh sapması küçük olsa da oran şişer, bu yüzden ikisi birden gösteriliyor.",
+ bands:"Fiyat seviyesine göre, en düşük saatten en yükseğe",
+ bh:["Bant (TL/MWh)","Saat","MAE (TL/MWh)","Dün MAE (TL/MWh)","Yanlılık (TL/MWh)","BSR (%)","WSR (%)"],
+ bandnote:"Gerçekleşen fiyat, kayıttaki en düşük ve en yüksek saat arasında eşit genişlikte beş banda bölünür. Uç bantlarda az saat var: 20 saatin altındaki rakamlar gri işaretli, güvenilmez.",
+ ramps:"Tırmanış ve düşüşlerde",
+ rh:["Saatler","Adet","MAE (TL/MWh)","BSR (%)","WSR (%)","Gerçek eğim (TL/MWh / saat)","Tahmin eğimi","Eğim oranı"],
+ rl:{up:"Fiyat tırmanışı (değişim ≥ +{v} TL/MWh)",down:"Fiyat düşüşü (değişim ≤ {v} TL/MWh)",flat:"Düz saatler",fc_up:"Model tırmanış dedi (≥ +{v} TL/MWh)",fc_down:"Model düşüş dedi (≤ {v} TL/MWh)"},
+ rampnote:"Tırmanış ve düşüş, saatlik değişimlerin en dik beşte biri. Eğim oranı = tahmin eğimi ÷ gerçek eğim: 1,0 model piyasa kadar hareket ediyor demek; 0,6 hareketi görüyor ama %60 boyunda çiziyor demek. İlk üç satır saatleri piyasanın yaptığına göre, son ikisi modelin dediğine göre seçer.",
+ defs:"MAE: saat başına ortalama mutlak sapma, TL/MWh. Yanlılık: işaretli ortalama sapma; artı = tahmin yüksek. BSR: saatten saate değişimin yönünü tahminin doğru bildiği saatlerin payı (00:00, önceki günün 23:00'üyle kıyaslanır). WSR: aynı pay, gerçek değişimin büyüklüğüyle ağırlıklı; büyük hareketler daha çok sayılır. WSR'nin BSR'den yüksek olması modelin büyük hareketleri küçüklerden daha sık tutturduğu anlamına gelir.",
+ ytag_risk:"PTF 100 TL/MWh altı riski · {n} saat işaretli",ytag_hit:"PTF 100 TL/MWh altı riski · {n} işaretli, {m} gerçekleşti",ytag_miss:"İşaret yok ama {m} saat 100 TL/MWh altındaydı",ytag_off:"PTF 100 TL/MWh altı riski işaretlenmedi",
+ ynote:"Etiket YEKDEM santralleri için: tahmin eksi modelin son sapmalarının %80'lik eşiği 100 TL/MWh altına inen saat işaretlenir. Sicil: {d} günün {f}'inde işaret yandı; bunların {h}'inde fiyat gerçekten 100 TL/MWh altına indi; {miss} gün işaretsiz 100 TL/MWh altı gördü.",
  method:"Tahmin nasıl yapılıyor",
  m:["Model her gün 12:30'dan önce, ertesi gün için kamuya açık dört şeye bakar: dünün aynı saatteki fiyatı, geçen haftanın aynı saatteki fiyatı, tahmini net yük (EPİAŞ yük planı eksi rüzgâr tahmini eksi planlanan güneş) ve planlanan gaz üretimi (ilk versiyon KGÜP). Günün hafta sonu olup olmadığını da bilir.",
     "Ağırlıklar her gün yalnız önceki {n} günle yeniden hesaplanır (saat başına ayrı taban değerli ridge regresyon); model tahmin ettiği günü hiç görmez. Tahmin sıfır ile son 30 günün en yüksek fiyatı arasında tutulur.",
@@ -239,10 +283,42 @@ function drawDay(){
     {label:x.s_fc,data:r.fc,borderColor:C.fc,backgroundColor:C.fc,pointRadius:0,borderWidth:2},
     {label:x.s_d1,data:r.naive_d1,borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.2,borderDash:[4,3]}]},options:base("TL/MWh")});
   why(r,hrs);
-  const H=x.h;let h='<thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" (TL/MWh)":i>=5?" (GW)":"")+'</th>').join("")+'</tr></thead><tbody>';
+  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" (TL/MWh)":i>=5?" (GW)":"")+'</th>').join("")+'</tr></thead><tbody>';
+  const yk=r.yekdem||{},rh=yk.risk_hours||[];
   for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];
-    h+='<tr><td>'+hrs[i]+'</td><td>'+n0(r.fc[i])+'</td><td>'+n0(r.actual[i])+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+n0(e)+'</td><td>'+n0(r.naive_d1[i])+'</td><td>'+n2(r.netload_fc[i])+'</td><td>'+(r.netload_act?n2(r.netload_act[i]):"—")+'</td></tr>'}
+    h+='<tr'+(rh.includes(i)?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+(rh.includes(i)?' <span class="tag" style="padding:0 6px;font-size:11px">&lt;100</span>':'')+'</td><td>'+n0(r.fc[i])+'</td><td>'+n0(r.actual[i])+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+n0(e)+'</td><td>'+n0(r.naive_d1[i])+'</td><td>'+n2(r.netload_fc[i])+'</td><td>'+(r.netload_act?n2(r.netload_act[i]):"—")+'</td></tr>'}
+  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+n0(avg(r.fc))+'</td><td>'+n0(avg(r.actual))+'</td><td>'+(r.bias>0?"+":"")+n0(r.bias)+'</td><td>'+n0(avg(r.naive_d1))+'</td><td>'+n2(avg(r.netload_fc))+'</td><td>'+(r.netload_act?n2(avg(r.netload_act)):"—")+'</td></tr>';
   $("hours").innerHTML=h+'</tbody>';
+  const ah=yk.actual_hours||[],el=$("ytag");
+  if(rh.length&&ah.length){el.className="tag hit";el.textContent=fill(x.ytag_hit,{n:rh.length,m:ah.length})}
+  else if(rh.length){el.className="tag";el.textContent=fill(x.ytag_risk,{n:rh.length})}
+  else if(ah.length){el.className="tag hit";el.textContent=fill(x.ytag_miss,{m:ah.length})}
+  else{el.className="tag off";el.textContent=x.ytag_off}
+}
+
+const pct=v=>v==null?"—":n0(100*v);
+function score(){
+  const x=t(),S=D.summary||{};if(!S.bands)return;
+  $("t-devnote").textContent=fill(x.devnote,{dr:n1(S.dev_ratio),mae:n0(S.mae),mp:n0(S.mean_price),dr1:n1(S.dev_ratio_d1)});
+  const MIN=20,dim=n=>n<MIN?' class="dim"':'';
+  let h='<thead><tr>'+x.bh.map(c=>'<th>'+c+'</th>').join("")+'</tr></thead><tbody>';
+  S.bands.forEach(b=>{const d=dim(b.hours);h+='<tr><td'+d+'>'+n0(b.lo)+' – '+n0(b.hi)+'</td><td'+d+'>'+n0(b.hours)+'</td><td'+d+'>'+n0(b.mae)+'</td><td'+d+'>'+n0(b.mae_d1)+'</td><td'+d+'>'+(b.bias>0?"+":"")+n0(b.bias)+'</td><td'+d+'>'+pct(b.bsr)+'</td><td'+d+'>'+pct(b.wsr)+'</td></tr>'});
+  h+='<tr class="avg"><td>'+n0(S.bands[0].lo)+' – '+n0(S.bands[S.bands.length-1].hi)+'</td><td>'+n0(S.days*24)+'</td><td>'+n0(S.mae)+'</td><td>'+n0(S.mae_d1)+'</td><td></td><td>'+pct(S.bsr)+'</td><td>'+pct(S.wsr)+'</td></tr>';
+  $("bands").innerHTML=h+'</tbody>';
+  const R=S.ramps;let g='<thead><tr>'+x.rh.map(c=>'<th>'+c+'</th>').join("")+'</tr></thead><tbody>';
+  [["up",R.up,R.up_from],["down",R.down,R.down_from],["flat",R.flat,null],["fc_up",R.fc_up,R.fc_up_from],["fc_down",R.fc_down,R.fc_down_from]].forEach(([k,c,v])=>{if(!c||!c.hours)return;
+    g+='<tr><td>'+fill(x.rl[k],{v:n0(v)})+'</td><td>'+n0(c.hours)+'</td><td>'+n0(c.mae)+'</td><td>'+pct(c.bsr)+'</td><td>'+pct(c.wsr)+'</td><td>'+(c.slope_act>0?"+":"")+n0(c.slope_act)+'</td><td>'+(c.slope_fc>0?"+":"")+n0(c.slope_fc)+'</td><td>'+(k==="flat"?"—":n2(c.slope_ratio))+'</td></tr>'});
+  $("ramps").innerHTML=g+'</tbody>';
+  const Y=S.yekdem||{};
+  $("t-defs").textContent=x.defs+" "+fill(x.ynote,{f:n0(Y.days_flagged),d:n0(S.days),h:n0(Y.days_hit),miss:n0(Y.days_missed)});
+}
+
+function csv(){
+  const cols=["date","hour","forecast_tl_mwh","actual_tl_mwh","miss_tl_mwh","naive_d1_tl_mwh","naive_d7_tl_mwh","netload_fc_gw","netload_act_gw","gas_fc_gw","gas_act_gw","yekdem_risk","yekdem_actual","model_version"];
+  const out=[cols.join(",")];
+  DAYS.forEach(r=>{const rh=(r.yekdem||{}).risk_hours||[],ah=(r.yekdem||{}).actual_hours||[];
+    for(let h=0;h<24;h++)out.push([r.date,h,r.fc[h],r.actual[h],(r.fc[h]-r.actual[h]).toFixed(1),r.naive_d1[h],r.naive_d7[h],r.netload_fc[h],r.netload_act?r.netload_act[h]:"",r.gas_fc[h],r.gas_act?r.gas_act[h]:"",rh.includes(h)?1:0,ah.includes(h)?1:0,D.version].join(","))});
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+out.join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="daily-price-forecast-"+DAYS[DAYS.length-1].date+".csv";document.body.appendChild(a);a.click();a.remove();
 }
 
 function why(r,hrs){
@@ -276,14 +352,14 @@ function method(){
 
 function texts(){
   const x=t();document.documentElement.lang=L;document.title=x.title;
-  ["title","sub","range","from","to","day","pick","why","hours","method","disc"].forEach(k=>{const e=$("t-"+k);if(e)e.textContent=x[k]});
-  $("all").textContent=x.all;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
+  ["title","sub","range","from","to","day","pick","why","hours","method","disc","score","bands","ramps","bandnote","rampnote","dlnote"].forEach(k=>{const e=$("t-"+k);if(e)e.textContent=x[k]});
+  $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
   const cur=$("day").value;
   $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+n0(r.mae)+' TL/MWh</option>').join("");
   if(cur)$("day").value=cur;
 }
 
-function render(){const rows=inRange();kpis(rows);drawDaily(rows);drawDay();method()}
+function render(){const rows=inRange();kpis(rows);drawDaily(rows);score();drawDay();method()}
 
 function init(dpf){
   D=dpf;DAYS=(dpf.days||[]).filter(r=>r.actual&&r.mae!=null);
@@ -294,7 +370,7 @@ function init(dpf){
   $("app").hidden=false;texts();$("day").value=l;render();
   $("from").onchange=$("to").onchange=render;
   $("all").onclick=()=>{$("from").value=f;$("to").value=l;render()};
-  $("day").onchange=drawDay;
+  $("day").onchange=drawDay;$("dl").onclick=csv;
 }
 
 window.addEventListener("storage",e=>{if(e.key==="pa-lang"&&D){L=siteLang();texts();render()}});
