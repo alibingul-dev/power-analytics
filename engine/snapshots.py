@@ -68,6 +68,10 @@ def shapes(H, asof):
     return dict(last=last, profile=pf.compact(pf.build(H, asof)))
 
 
+_HM = {m["month"]: m for m in json.load(open(ROOT / "engine" / "history" / "monthly_ptf.json"))["months"]}
+EURUSD = {k: round(m["ptf_usd_mwh"] / m["ptf_eur_mwh"], 5) for k, m in _HM.items() if m.get("ptf_eur_mwh")}
+
+
 def run_file(keys, y, fx, tar, t, tariff_version, H=None):
     st = state(keys, y, fx, tar, t)
     months = []
@@ -91,6 +95,9 @@ def run_file(keys, y, fx, tar, t, tariff_version, H=None):
         engine_version=ENGINE_VERSION, data_cutoff=keys[t], tariff_series_version=tariff_version,
         units=dict(price="USD/MWh", tariff="TL/1000 Sm3", fx="TRY per USD"),
         cut=keys[t], last_usd=y[t], last_fx=fx[t], tariff=tar[t],
+        fx=dict(usdtry_run=fx[t], usdtry_monthly_drift_pct=round((math.exp(st["fx_drift_log"]) - 1) * 100, 4),
+                eurusd_run=EURUSD.get(keys[t]), source="EPİAŞ PTF in TL, USD and EUR (implied rates, run month)",
+                note="One conversion path for every TL and EUR figure on the page; EUR/USD held flat."),
         gas_cost=round(v2t.gas_cost(tar[t], fx[t]), 3), conv=dict(mwh_per_ksm3=v2t.MWH_PER_KSM3, eff=v2t.EFF),
         state=st, regime=regime, months=months, score=score,
         shape=shapes(H, keys[t]) if H is not None and keys[t] in H else None,
@@ -140,7 +147,8 @@ def main():
               open(ROOT / "outlook" / "snapshots" / "index.json", "w"), ensure_ascii=False, indent=1)
     hist = json.load(open(ROOT / "engine" / "history" / "monthly_ptf.json"))
     json.dump(dict(updated=hist["fetched"], unit="USD/MWh", source="EPİAŞ PTF aylık ortalaması (engine/history/monthly_ptf.json)",
-                   months=[dict(month=m["month"], ptf_usd_mwh=m["ptf_usd_mwh"], complete=m.get("complete", True))
+                   units=dict(ptf_usd_mwh="USD/MWh", ptf_tl_mwh="TL/MWh", ptf_eur_mwh="EUR/MWh"),
+                   months=[dict(month=m["month"], ptf_usd_mwh=m["ptf_usd_mwh"], ptf_tl_mwh=m["ptf_tl_mwh"], ptf_eur_mwh=m.get("ptf_eur_mwh"), complete=m.get("complete", True))
                            for m in hist["months"] if m["month"] >= "2021-01"]),
               open(ROOT / "realized" / "monthly.json", "w"), ensure_ascii=False, indent=1)
     print(f"{len(runs)} runs: {runs[0]} .. {runs[-1]} | engine {ENGINE_VERSION} | tariff series {tv}")
