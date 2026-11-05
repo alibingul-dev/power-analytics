@@ -1,16 +1,306 @@
 {
  "updated": "2026-11-04",
  "unit": "USD/MWh",
- "source": "EPİAŞ PTF aylık ortalaması, Baseload Outlook motoru karnesi",
+ "source": "EPİAŞ PTF aylık ortalaması (engine/history/monthly_ptf.json)",
  "months": [
   {
+   "month": "2021-01",
+   "ptf_usd_mwh": 40.28,
+   "complete": true
+  },
+  {
+   "month": "2021-02",
+   "ptf_usd_mwh": 40.54,
+   "complete": true
+  },
+  {
+   "month": "2021-03",
+   "ptf_usd_mwh": 41.11,
+   "complete": true
+  },
+  {
+   "month": "2021-04",
+   "ptf_usd_mwh": 38.24,
+   "complete": true
+  },
+  {
+   "month": "2021-05",
+   "ptf_usd_mwh": 43.3,
+   "complete": true
+  },
+  {
+   "month": "2021-06",
+   "ptf_usd_mwh": 46.77,
+   "complete": true
+  },
+  {
+   "month": "2021-07",
+   "ptf_usd_mwh": 60.28,
+   "complete": true
+  },
+  {
+   "month": "2021-08",
+   "ptf_usd_mwh": 65.78,
+   "complete": true
+  },
+  {
+   "month": "2021-09",
+   "ptf_usd_mwh": 61.33,
+   "complete": true
+  },
+  {
+   "month": "2021-10",
+   "ptf_usd_mwh": 73.1,
+   "complete": true
+  },
+  {
+   "month": "2021-11",
+   "ptf_usd_mwh": 80.27,
+   "complete": true
+  },
+  {
+   "month": "2021-12",
+   "ptf_usd_mwh": 74.88,
+   "complete": true
+  },
+  {
+   "month": "2022-01",
+   "ptf_usd_mwh": 87.27,
+   "complete": true
+  },
+  {
+   "month": "2022-02",
+   "ptf_usd_mwh": 103.15,
+   "complete": true
+  },
+  {
+   "month": "2022-03",
+   "ptf_usd_mwh": 114.65,
+   "complete": true
+  },
+  {
+   "month": "2022-04",
+   "ptf_usd_mwh": 124.73,
+   "complete": true
+  },
+  {
+   "month": "2022-05",
+   "ptf_usd_mwh": 112.94,
+   "complete": true
+  },
+  {
+   "month": "2022-06",
+   "ptf_usd_mwh": 138.01,
+   "complete": true
+  },
+  {
+   "month": "2022-07",
+   "ptf_usd_mwh": 134.15,
+   "complete": true
+  },
+  {
+   "month": "2022-08",
+   "ptf_usd_mwh": 170.33,
+   "complete": true
+  },
+  {
+   "month": "2022-09",
+   "ptf_usd_mwh": 210.84,
+   "complete": true
+  },
+  {
+   "month": "2022-10",
+   "ptf_usd_mwh": 186.97,
+   "complete": true
+  },
+  {
+   "month": "2022-11",
+   "ptf_usd_mwh": 184.99,
+   "complete": true
+  },
+  {
+   "month": "2022-12",
+   "ptf_usd_mwh": 199.86,
+   "complete": true
+  },
+  {
+   "month": "2023-01",
+   "ptf_usd_mwh": 182.96,
+   "complete": true
+  },
+  {
+   "month": "2023-02",
+   "ptf_usd_mwh": 148.92,
+   "complete": true
+  },
+  {
+   "month": "2023-03",
+   "ptf_usd_mwh": 112.18,
+   "complete": true
+  },
+  {
+   "month": "2023-04",
+   "ptf_usd_mwh": 91.8,
+   "complete": true
+  },
+  {
+   "month": "2023-05",
+   "ptf_usd_mwh": 97.12,
+   "complete": true
+  },
+  {
+   "month": "2023-06",
+   "ptf_usd_mwh": 70.33,
+   "complete": true
+  },
+  {
+   "month": "2023-07",
+   "ptf_usd_mwh": 74.95,
+   "complete": true
+  },
+  {
+   "month": "2023-08",
+   "ptf_usd_mwh": 83.6,
+   "complete": true
+  },
+  {
+   "month": "2023-09",
+   "ptf_usd_mwh": 74.57,
+   "complete": true
+  },
+  {
+   "month": "2023-10",
+   "ptf_usd_mwh": 81.0,
+   "complete": true
+  },
+  {
+   "month": "2023-11",
+   "ptf_usd_mwh": 72.37,
+   "complete": true
+  },
+  {
+   "month": "2023-12",
+   "ptf_usd_mwh": 71.52,
+   "complete": true
+  },
+  {
+   "month": "2024-01",
+   "ptf_usd_mwh": 64.84,
+   "complete": true
+  },
+  {
+   "month": "2024-02",
+   "ptf_usd_mwh": 63.85,
+   "complete": true
+  },
+  {
+   "month": "2024-03",
+   "ptf_usd_mwh": 68.71,
+   "complete": true
+  },
+  {
+   "month": "2024-04",
+   "ptf_usd_mwh": 54.66,
+   "complete": true
+  },
+  {
+   "month": "2024-05",
+   "ptf_usd_mwh": 63.59,
+   "complete": true
+  },
+  {
+   "month": "2024-06",
+   "ptf_usd_mwh": 64.58,
+   "complete": true
+  },
+  {
+   "month": "2024-07",
+   "ptf_usd_mwh": 78.82,
+   "complete": true
+  },
+  {
+   "month": "2024-08",
+   "ptf_usd_mwh": 76.76,
+   "complete": true
+  },
+  {
+   "month": "2024-09",
+   "ptf_usd_mwh": 70.56,
+   "complete": true
+  },
+  {
+   "month": "2024-10",
+   "ptf_usd_mwh": 68.36,
+   "complete": true
+  },
+  {
+   "month": "2024-11",
+   "ptf_usd_mwh": 71.7,
+   "complete": true
+  },
+  {
+   "month": "2024-12",
+   "ptf_usd_mwh": 70.14,
+   "complete": true
+  },
+  {
+   "month": "2025-01",
+   "ptf_usd_mwh": 70.82,
+   "complete": true
+  },
+  {
+   "month": "2025-02",
+   "ptf_usd_mwh": 68.75,
+   "complete": true
+  },
+  {
+   "month": "2025-03",
+   "ptf_usd_mwh": 59.11,
+   "complete": true
+  },
+  {
+   "month": "2025-04",
+   "ptf_usd_mwh": 64.58,
+   "complete": true
+  },
+  {
+   "month": "2025-05",
+   "ptf_usd_mwh": 63.6,
+   "complete": true
+  },
+  {
+   "month": "2025-06",
+   "ptf_usd_mwh": 55.99,
+   "complete": true
+  },
+  {
+   "month": "2025-07",
+   "ptf_usd_mwh": 73.96,
+   "complete": true
+  },
+  {
+   "month": "2025-08",
+   "ptf_usd_mwh": 72.2,
+   "complete": true
+  },
+  {
+   "month": "2025-09",
+   "ptf_usd_mwh": 66.24,
+   "complete": true
+  },
+  {
+   "month": "2025-10",
+   "ptf_usd_mwh": 65.67,
+   "complete": true
+  },
+  {
    "month": "2025-11",
-   "ptf_usd_mwh": 66,
+   "ptf_usd_mwh": 66.05,
    "complete": true
   },
   {
    "month": "2025-12",
-   "ptf_usd_mwh": 69.8,
+   "ptf_usd_mwh": 69.84,
    "complete": true
   },
   {
@@ -20,53 +310,48 @@
   },
   {
    "month": "2026-02",
-   "ptf_usd_mwh": 47.7,
+   "ptf_usd_mwh": 47.73,
    "complete": true
   },
   {
    "month": "2026-03",
-   "ptf_usd_mwh": 36.8,
+   "ptf_usd_mwh": 36.81,
    "complete": true
   },
   {
    "month": "2026-04",
-   "ptf_usd_mwh": 20.7,
+   "ptf_usd_mwh": 20.66,
    "complete": true
   },
   {
    "month": "2026-05",
-   "ptf_usd_mwh": 13.1,
+   "ptf_usd_mwh": 13.05,
    "complete": true
   },
   {
    "month": "2026-06",
-   "ptf_usd_mwh": 26.9,
+   "ptf_usd_mwh": 26.89,
    "complete": true
   },
   {
    "month": "2026-07",
-   "ptf_usd_mwh": 57.6,
+   "ptf_usd_mwh": 57.56,
    "complete": true
   },
   {
    "month": "2026-08",
-   "ptf_usd_mwh": 61,
+   "ptf_usd_mwh": 60.96,
    "complete": true
   },
   {
    "month": "2026-09",
-   "ptf_usd_mwh": 56.6,
+   "ptf_usd_mwh": 56.57,
    "complete": true
   },
   {
    "month": "2026-10",
-   "ptf_usd_mwh": 59.3,
+   "ptf_usd_mwh": 59.31,
    "complete": true
-  },
-  {
-   "month": "2026-11",
-   "ptf_usd_mwh": null,
-   "complete": false
   }
  ]
 }

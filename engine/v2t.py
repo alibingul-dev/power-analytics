@@ -73,15 +73,78 @@ def forecast(keys, y, fx, tar, t, h, p=P):
     return math.exp(Rf + s(v2.month_at(keys, t, h))) * gh
 
 
-def band(keys, y, fx, tar, t, h, p=P, lookback=36, min_err=8):
-    """25th/75th percentile multipliers from this model's own past h-step errors (as of t)."""
-    errs = []
-    for u in range(max(0, t - lookback - h), t - h + 1):
-        f = forecast(keys, y, fx, tar, u, h, p)
+BAND_HALF_LIFE = 3  # months; chosen 2026-11-05 from 3/6/12 by 1-6 month coverage over 2022-11+
+_FC = {}
+
+
+def _fc(keys, y, fx, tar, u, h, p):
+    k = (u, h, p["gas_path"], p["level_window"], p["min_hist"], len(y))
+    if k not in _FC:
+        _FC[k] = forecast(keys, y, fx, tar, u, h, p)
+    return _FC[k]
+
+
+def _abs_log_errs(keys, y, fx, tar, t, h, p):
+    """(|log actual - log forecast|, weight) for h-step forecasts whose outcome was known by month t.
+
+    Weight halves every BAND_HALF_LIFE months of age, so the band follows the current regime.
+    """
+    out = []
+    for u in range(0, t - h + 1):
+        f = _fc(keys, y, fx, tar, u, h, p)
         if f:
-            errs.append(math.log(max(y[u + h], 0.5)) - math.log(f))
-    if len(errs) < min_err:
-        return None
-    errs.sort()
-    q = lambda a: errs[min(len(errs) - 1, max(0, int(round(a * (len(errs) - 1)))))]
-    return math.exp(q(0.25)), math.exp(q(0.75))
+            age = t - (u + h)
+            out.append((abs(math.log(max(y[u + h], 0.5)) - math.log(f)), 0.5 ** (age / BAND_HALF_LIFE)))
+    return out
+
+
+def _wmedian(pairs):
+    pairs = sorted(pairs)
+    tot = sum(w for _, w in pairs)
+    acc = 0.0
+    for v, w in pairs:
+        acc += w
+        if acc >= tot / 2:
+            return v
+
+
+def _median(v):
+    return _wmedian([(x, 1.0) for x in v])
+
+
+_HW = {}
+
+
+def band_halfwidth(keys, y, fx, tar, t, h, p=P, min_err=8):
+    """Non-decreasing in h: uncertainty cannot shrink with horizon (max of raw widths up to h)."""
+    k = (t, h, p["gas_path"], min_err, len(y))
+    if k not in _HW:
+        raw = _raw_halfwidth(keys, y, fx, tar, t, h, p, min_err)
+        prev = band_halfwidth(keys, y, fx, tar, t, h - 1, p, min_err) if h > 1 else None
+        _HW[k] = raw if prev is None else (prev if raw is None else max(raw, prev))
+    return _HW[k]
+
+
+def _raw_halfwidth(keys, y, fx, tar, t, h, p=P, min_err=8):
+    """Half-width in log space: decay-weighted median of past |log error| at horizon h.
+
+    Symmetric around the point forecast, so the band always contains it (fix of 2026-11-05:
+    the old 25th/75th error-quantile band could exclude the point when errors were one-sided,
+    e.g. Sep-2026 in the Jan-2026 run). Only outcomes known by month t are used.
+    With fewer than `min_err` errors at horizon h, the widest horizon that has enough
+    is scaled by sqrt(h / h0).
+    """
+    e = _abs_log_errs(keys, y, fx, tar, t, h, p)
+    if len(e) >= min_err:
+        return _wmedian(e)
+    for h0 in range(h - 1, 0, -1):
+        e0 = _abs_log_errs(keys, y, fx, tar, t, h0, p)
+        if len(e0) >= min_err:
+            return _wmedian(e0) * math.sqrt(h / h0)
+    return None
+
+
+def band(keys, y, fx, tar, t, h, p=P, min_err=8):
+    """(low, high) multipliers around the point forecast; ~50% of past outcomes inside."""
+    w = band_halfwidth(keys, y, fx, tar, t, h, p, min_err)
+    return None if w is None else (math.exp(-w), math.exp(w))
