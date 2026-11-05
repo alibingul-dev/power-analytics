@@ -121,7 +121,7 @@ const I = {
   rAll:"Tüm geriye dönük test ({from} sonrası, her ay yalnız o ayın verisiyle): {rows}. Motor ortalamada geçen ayın fiyatından daha az saptı, ama fark hiçbir vadede istatistiksel olarak anlamlı değil (en düşük tek yönlü p = {p}).",
   rRow:"{h} ay vadede {m} $/MWh'e karşı {n} $/MWh, bant kapsaması %{c}",
   actAfter:"Gerçekleşen (çalıştırmadan sonra)",naiveL:"Geçen ayın fiyatı",wet:"Sulu (−%15)",normal:"Normal",dry:"Kurak (+%15)",off:"Kapalı",on:"Açık",
-  sub:"Türkiye PTF görünümü · veri kesimi {cut} · girdileri değiştir, eğri yeniden hesaplanır",
+  sub:"Türkiye Piyasa Takas Fiyatı (PTF) görünümü · {end} ve öncesindeki veri kullanılmıştır, sonrası kullanılmamıştır · girdileri değiştir, eğri yeniden hesaplanır",
   ver:"Motor {e} · veri kesimi {c} · tarife serisi {t} · çalıştırma dosyası outlook/snapshots/v2t/{c}.json. Geçmiş çalıştırmalar sonradan güncellenmez; motor değişirse hepsi aynı komutla yeniden üretilir ve sürüm numarası değişir.",
   mon:["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"],
   th:["Ay","Vade (ay)","Kur USD/TRY","Düşük $/MWh","Beklenen $/MWh","Yüksek $/MWh","Beklenen TL/MWh","Motor $/MWh","Fark $/MWh"], thy:["Blok","Saat","Düşük $/MWh","Beklenen $/MWh","Yüksek $/MWh","Beklenen TL/MWh","Motor $/MWh","Fark $/MWh"], ths:["Ay","Beklenti $/MWh","Geçen ayın fiyatı $/MWh","Gerçekleşen $/MWh","Sapma $/MWh","Fiyatı ne oynattı"],near:"Beklentiye yakın (±{t} $/MWh içinde).",nowhy:"Dış neden net değil.",srcW:"kaynak",
@@ -140,7 +140,7 @@ const I = {
   rAll:"Full backtest (after {from}, each month with that month's data only): {rows}. On average the engine missed by less than last month's price, but the difference is not statistically significant at any horizon (lowest one-sided p = {p}).",
   rRow:"{h}-month horizon {m} vs {n} $/MWh, band coverage {c}%",
   actAfter:"Actual (after run)",naiveL:"Last month's price",wet:"Wet (−15%)",normal:"Normal",dry:"Dry (+15%)",off:"Off",on:"On",
-  sub:"Turkey day-ahead price outlook · data cut-off {cut} · change an input, the curve recalculates",
+  sub:"Turkey Market Clearing Price (PTF) outlook · uses data up to and including {end}, nothing after it · change an input, the curve recalculates",
   ver:"Engine {e} · data cut-off {c} · tariff series {t} · run file outlook/snapshots/v2t/{c}.json. Past runs are never updated afterwards; if the engine changes, all runs are rebuilt with one command and the version number changes.",
   mon:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   th:["Month","Horizon (months)","FX USD/TRY","Low $/MWh","Expected $/MWh","High $/MWh","Expected TL/MWh","Engine $/MWh","Diff $/MWh"], thy:["Block","Hours","Low $/MWh","Expected $/MWh","High $/MWh","Expected TL/MWh","Engine $/MWh","Diff $/MWh"], ths:["Month","Expected $/MWh","Last month's price $/MWh","Actual $/MWh","Miss $/MWh","What moved the price"],near:"Close to expected (within ±{t} $/MWh).",nowhy:"No clear external driver.",srcW:"source",
@@ -258,7 +258,7 @@ function render(R){ const t=I[L]; const first=R[0]; const R12=R.slice(0,12); con
   if(tab!=='D'&&tab!=='H') drawShape(null,null);
   $('table').innerHTML=html; $('table').parentElement.classList.toggle('tall',tab==='H'); const ms=$('mSel'); ms.style.display=(tab==='D'||tab==='H')?'':'none'; if(ms.dataset.k!==P.cut+L){ const v=ms.value; ms.innerHTML=R.map((x,i)=>`<option value="${i}">${lab(x.y,x.m)}</option>`).join(''); ms.value=(v&&+v<R.length)?v:'0'; ms.dataset.k=P.cut+L; } }
 function applyLang(){ if(!P) return; const t=I[L]; document.querySelectorAll('[data-i]').forEach(el=>{ const k=el.dataset.i; if(t[k]!=null){ if(el.tagName==='LABEL'&&el.querySelector('small')){ el.childNodes[0].textContent=t[k]+' '; if(t.tips[k]){ el.dataset.tip=t.tips[k]; el.tabIndex=0; } if(t.subs[k]) el.querySelector('small').textContent=t.subs[k]; } else el.textContent=t[k]; } });
-  $('subtitle').textContent=t.sub.replace('{cut}',P.cut); $('disc').textContent=t.disc; $('ver').textContent=t.ver.replace('{e}',P.engine_version).replace(/\{c\}/g,P.data_cutoff).replace('{t}',P.tariff_series_version); $('langTR').setAttribute('aria-pressed',L==='tr'); $('langEN').setAttribute('aria-pressed',L==='en');
+  const ce=new Date(Date.UTC(+P.cut.slice(0,4),+P.cut.slice(5,7),0)); $('subtitle').textContent=t.sub.replace('{end}',ce.toLocaleDateString(L==='tr'?'tr-TR':'en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})); $('disc').textContent=t.disc; $('ver').textContent=t.ver.replace('{e}',P.engine_version).replace(/\{c\}/g,P.data_cutoff).replace('{t}',P.tariff_series_version); $('langTR').setAttribute('aria-pressed',L==='tr'); $('langEN').setAttribute('aria-pressed',L==='en');
   document.querySelectorAll('#newsList label span.t').forEach((s,k)=>{ s.textContent=L==='tr'?NEWS[k].tr:NEWS_EN[NEWS[k].id]; }); }
 let NOTES=null; try{fetch('scorecard-notes.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{NOTES=j; if(tab==='S') run();}).catch(()=>{});}catch(e){}
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
