@@ -58,6 +58,13 @@ def forecast(keys, y, fx, tar, t, h, p=P):
         return None
     win = R[-p["level_window"]:]
     mu = sum(win) / len(win)
+    if p.get("mu_stat") == "median":  # stress-test option, not the default
+        sw = sorted(R[-p["mu_window"]:] if p.get("mu_window") else R)
+        mu = sw[len(sw) // 2] if len(sw) % 2 else (sw[len(sw) // 2 - 1] + sw[len(sw) // 2]) / 2
+    elif p.get("mu_stat") == "expanding":
+        mu = sum(R) / len(R)
+    if p.get("mu_fixed") is not None:  # stress-test option: hold the long-run ratio fixed
+        mu = math.log(p["mu_fixed"])
     x, z = [a - mu for a in win[:-1]], [a - mu for a in win[1:]]
     den = sum(a * a for a in x)
     phi = sum(a * b for a, b in zip(x, z)) / den if den else 0.8

@@ -1,0 +1,84 @@
+== MAE (USD/MWh) by horizon, common sample, test 2022-11..2026-10 | lower is better ==
+varyant                                     h=1      h=3      h=6     h=12     h=18     h=24  ort.sıra
+bugünkü: ort. son 24 ay (0,82)             8.26    15.40    23.32    26.10    20.67    22.64       5.7
+ort. son 6 ay                              8.45    15.46    21.84    23.93    19.67    21.86       3.5
+ort. son 12 ay                             8.52    15.31    22.72    26.05    20.22    22.85       5.5
+ort. son 36 ay                             8.39    15.25    22.85    25.55    20.46    22.37       3.3
+ort. genişleyen                            8.40    15.25    22.87    25.59    20.48    22.32       3.7
+medyan son 24 ay                           8.34    15.61    23.88    26.67    21.29    23.03       7.8
+medyan son 36 ay                           8.37    15.25    23.03    25.81    20.93    22.60       5.0
+medyan genişleyen                          8.44    15.23    22.98    25.78    20.92    22.56       4.7
+sabit 1,0348 (eski, geriye bakış)          8.34    15.45    22.89    26.00    21.20    23.58       6.3
+sabit 0,82 (geriye bakış)                  8.44    15.91    23.61    27.33    24.01    27.90       9.5
+geçen ayın fiyatı (naive)                  8.96    17.33    28.43    32.99    39.08    45.55
+n (ay): {1: 48, 3: 48, 6: 48, 12: 46, 18: 40, 24: 34}
+
+== Sub-periods, MAE USD/MWh at h=1 / 6 / 12 ==
+-- 2022-11..2024-10
+   bugünkü: ort. son 24 ay (0,82)          9.55(n=24)   34.81(n=24)   36.99(n=22)
+   ort. son 6 ay                           9.33(n=24)   32.25(n=24)   32.05(n=22)
+   ort. son 12 ay                         10.07(n=24)   33.22(n=24)   36.18(n=22)
+   ort. son 36 ay                          9.75(n=24)   34.34(n=24)   36.88(n=22)
+   ort. genişleyen                         9.62(n=24)   34.43(n=24)   36.89(n=22)
+   medyan son 24 ay                        9.58(n=24)   35.90(n=24)   37.99(n=22)
+   medyan son 36 ay                        9.72(n=24)   35.24(n=24)   37.92(n=22)
+   medyan genişleyen                       9.73(n=24)   35.24(n=24)   37.92(n=22)
+   sabit 1,0348 (eski, geriye bakış)       9.51(n=24)   34.25(n=24)   37.39(n=22)
+   sabit 0,82 (geriye bakış)               9.93(n=24)   33.47(n=24)   35.42(n=22)
+-- 2024-11..2026-10
+   bugünkü: ort. son 24 ay (0,82)          6.98(n=24)   11.84(n=24)   16.12(n=24)
+   ort. son 6 ay                           7.57(n=24)   11.43(n=24)   16.49(n=24)
+   ort. son 12 ay                          6.98(n=24)   12.21(n=24)   16.76(n=24)
+   ort. son 36 ay                          7.03(n=24)   11.36(n=24)   15.17(n=24)
+   ort. genişleyen                         7.18(n=24)   11.32(n=24)   15.24(n=24)
+   medyan son 24 ay                        7.09(n=24)   11.86(n=24)   16.30(n=24)
+   medyan son 36 ay                        7.02(n=24)   10.81(n=24)   14.70(n=24)
+   medyan genişleyen                       7.15(n=24)   10.73(n=24)   14.64(n=24)
+   sabit 1,0348 (eski, geriye bakış)       7.17(n=24)   11.53(n=24)   15.56(n=24)
+   sabit 0,82 (geriye bakış)               6.96(n=24)   13.74(n=24)   19.92(n=24)
+-- 2026 çöküş yılı
+   bugünkü: ort. son 24 ay (0,82)         10.98(n=10)   16.65(n=10)   13.84(n=10)
+   ort. son 6 ay                          12.58(n=10)   17.03(n=10)   14.51(n=10)
+   ort. son 12 ay                         10.46(n=10)   17.02(n=10)   14.58(n=10)
+   ort. son 36 ay                         11.27(n=10)   17.00(n=10)   13.68(n=10)
+   ort. genişleyen                        11.43(n=10)   17.46(n=10)   14.21(n=10)
+   medyan son 24 ay                       11.35(n=10)   17.04(n=10)   14.06(n=10)
+   medyan son 36 ay                       11.23(n=10)   16.86(n=10)   13.86(n=10)
+   medyan genişleyen                      11.47(n=10)   17.33(n=10)   14.07(n=10)
+   sabit 1,0348 (eski, geriye bakış)      11.43(n=10)   17.11(n=10)   13.75(n=10)
+   sabit 0,82 (geriye bakış)               9.56(n=10)   17.10(n=10)   13.56(n=10)
+
+== Bias (mean actual - forecast, USD/MWh) at h=6 / 12; + = model too low ==
+   bugünkü: ort. son 24 ay (0,82)         -2.18    4.01
+   ort. son 6 ay                           0.45    6.12
+   ort. son 12 ay                         -1.04    4.86
+   ort. son 36 ay                         -2.83    3.52
+   ort. genişleyen                        -3.25    3.10
+   medyan son 24 ay                       -2.35    4.07
+   medyan son 36 ay                       -3.07    3.35
+   medyan genişleyen                      -3.41    3.04
+   sabit 1,0348 (eski, geriye bakış)      -0.30    6.04
+   sabit 0,82 (geriye bakış)               8.01   15.94
+
+== Diebold-Mariano vs today's engine (positive = variant better), one-sided p ==
+   ort. son 6 ay                        h=1:  -0.19 p=0.627 | h=6:  +1.48 p=0.195 | h=12:  +2.17 p=0.099
+   ort. son 12 ay                       h=1:  -0.26 p=0.750 | h=6:  +0.61 p=0.200 | h=12:  +0.06 p=0.462
+   ort. son 36 ay                       h=1:  -0.13 p=0.836 | h=6:  +0.47 p=0.071 | h=12:  +0.55 p=0.031
+   ort. genişleyen                      h=1:  -0.14 p=0.853 | h=6:  +0.45 p=0.126 | h=12:  +0.51 p=0.071
+   medyan son 24 ay                     h=1:  -0.07 p=0.839 | h=6:  -0.56 p=0.955 | h=12:  -0.57 p=0.991
+   medyan son 36 ay                     h=1:  -0.11 p=0.773 | h=6:  +0.30 p=0.322 | h=12:  +0.30 p=0.330
+   medyan genişleyen                    h=1:  -0.18 p=0.854 | h=6:  +0.34 p=0.312 | h=12:  +0.33 p=0.322
+   sabit 1,0348 (eski, geriye bakış)    h=1:  -0.07 p=0.619 | h=6:  +0.43 p=0.336 | h=12:  +0.10 p=0.446
+   sabit 0,82 (geriye bakış)            h=1:  -0.18 p=0.591 | h=6:  -0.28 p=0.533 | h=12:  -1.23 p=0.635
+
+== Cal-27 (USD/MWh, hour-weighted 2027 average) from the 2026-10 run ==
+   bugünkü: ort. son 24 ay (0,82)         48.34 USD/MWh
+   ort. son 6 ay                          34.68 USD/MWh
+   ort. son 12 ay                         39.17 USD/MWh
+   ort. son 36 ay                         50.90 USD/MWh
+   ort. genişleyen                        54.31 USD/MWh
+   medyan son 24 ay                       53.31 USD/MWh
+   medyan son 36 ay                       54.13 USD/MWh
+   medyan genişleyen                      56.28 USD/MWh
+   sabit 1,0348 (eski, geriye bakış)      56.97 USD/MWh
+   sabit 0,82 (geriye bakış)              48.31 USD/MWh
