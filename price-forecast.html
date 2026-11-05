@@ -122,6 +122,8 @@ const U=()=>CUR==="try"?"TL/MWh":CUR.toUpperCase()+"/MWh";
 const rate=r=>CUR==="try"?1:(r&&r.fx&&r.fx[CUR])||null;
 const nP=(v,r)=>{const k=rate(r);if(k==null||v==null)return "—";return CUR==="try"?n0(v):n1(v/k)};
 const uu=str=>CUR==="try"?str:str.replace(/TL\/MWh/g,U());
+const nC=v=>CUR==="try"?n0(v):n1(v);
+const SUM=()=>CUR==="try"?D.summary:((D.summary_fx||{})[CUR]||D.summary);
 
 const T={
 en:{title:"Daily Price Forecast",
@@ -273,25 +275,27 @@ function inRange(){const f=$("from").value,to=$("to").value;return DAYS.filter(r
 function kpis(rows){
   const x=t();
   if(!rows.length){$("kpis").innerHTML='<div class="kpi"><div class="l">'+x.empty+'</div></div>';return}
-  const m=avg(rows.map(r=>r.mae)),d1=avg(rows.map(r=>r.mae_d1)),d7=avg(rows.map(r=>r.mae_d7)),b=avg(rows.map(r=>r.bias));
-  const beat=rows.filter(r=>r.mae<r.mae_d1).length,pct=100*beat/rows.length;
+  const rr=rows.filter(r=>rate(r));if(!rr.length){$("kpis").innerHTML='<div class="kpi"><div class="l">'+x.fxmissing+'</div></div>';return}
+  const c=(r,k)=>r[k]/rate(r);
+  const m=avg(rr.map(r=>c(r,"mae"))),d1=avg(rr.map(r=>c(r,"mae_d1"))),d7=avg(rr.map(r=>c(r,"mae_d7"))),b=avg(rr.map(r=>c(r,"bias")));
+  const beat=rr.filter(r=>r.mae<r.mae_d1).length,pct=100*beat/rr.length,rows_n=rr.length;
   const k=(l,v,d,cls)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v '+(cls||"")+'">'+v+'</div><div class="d">'+d+'</div></div>';
   $("kpis").innerHTML=
-    k(x.k_mae,n0(m)+" TL/MWh",x.d_mae,m<d1?"good":"bad")+
-    k(x.k_d1,n0(d1)+" TL/MWh",x.d_naive)+
-    k(x.k_d7,n0(d7)+" TL/MWh",x.d_naive)+
-    k(x.k_beat,n0(pct)+"%",fill(x.d_beat,{n:n0(rows.length)}),pct>=50?"good":"bad")+
-    k(x.k_bias,(b>0?"+":"")+n0(b)+" TL/MWh",x.d_bias);
+    k(x.k_mae,nC(m)+" "+U(),x.d_mae,m<d1?"good":"bad")+
+    k(x.k_d1,nC(d1)+" "+U(),x.d_naive)+
+    k(x.k_d7,nC(d7)+" "+U(),x.d_naive)+
+    k(x.k_beat,n0(pct)+"%",fill(x.d_beat,{n:n0(rows_n)}),pct>=50?"good":"bad")+
+    k(x.k_bias,(b>0?"+":"")+nC(b)+" "+U(),x.d_bias);
 }
 
 function drawDaily(rows){
   const x=t();if(cD)cD.destroy();
   cD=new Chart($("cDaily"),{type:"line",data:{labels:rows.map(r=>dlab(r.date)),datasets:[
-    {label:x.s_model,data:rows.map(r=>r.mae),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2},
-    {label:x.s_d1,data:rows.map(r=>r.mae_d1),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.5},
-    {label:x.s_d7,data:rows.map(r=>r.mae_d7),borderColor:C.d7,backgroundColor:C.d7,pointRadius:0,borderWidth:1.5,borderDash:[4,3]}]},
-    options:Object.assign(base("TL/MWh"),{onClick:(e,els)=>{if(els.length){$("day").value=rows[els[0].index].date;drawDay()}}})});
-  $("cDaily").setAttribute("aria-label",x.dailynote);
+    {label:x.s_model,data:rows.map(r=>rate(r)?r.mae/rate(r):null),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2},
+    {label:x.s_d1,data:rows.map(r=>rate(r)?r.mae_d1/rate(r):null),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.5},
+    {label:x.s_d7,data:rows.map(r=>rate(r)?r.mae_d7/rate(r):null),borderColor:C.d7,backgroundColor:C.d7,pointRadius:0,borderWidth:1.5,borderDash:[4,3]}]},
+    options:Object.assign(base(U()),{onClick:(e,els)=>{if(els.length){$("day").value=rows[els[0].index].date;drawDay()}}})});
+  $("cDaily").setAttribute("aria-label",uu(x.dailynote));$("t-dailynote").textContent=uu(x.dailynote);
 }
 
 function drawDay(){
@@ -324,20 +328,21 @@ function drawDay(){
 
 const pct=v=>v==null?"—":n0(100*v);
 function score(){
-  const x=t(),S=D.summary||{};if(!S.bands)return;
-  $("t-devnote").textContent=fill(x.devnote,{dr:n1(S.dev_ratio),mae:n0(S.mae),mp:n0(S.mean_price),dr1:n1(S.dev_ratio_d1)});
+  const x=t(),S=SUM()||{};if(!S.bands)return;
+  $("t-devnote").textContent=uu(fill(x.devnote,{dr:n1(S.dev_ratio),mae:nC(S.mae),mp:nC(S.mean_price),dr1:n1(S.dev_ratio_d1)}));
+  $("t-bands").textContent=x.bands;$("t-bandnote").textContent=x.bandnote;$("t-ramps").textContent=x.ramps;$("t-rampnote").textContent=uu(x.rampnote);
   const MIN=20,dim=n=>n<MIN?' class="dim"':'';
-  let h='<thead><tr>'+x.bh.map(c=>'<th>'+c+'</th>').join("")+'</tr></thead><tbody>';
-  S.bands.forEach(b=>{const d=dim(b.hours);h+='<tr><td'+d+'>'+n0(b.lo)+' – '+n0(b.hi)+'</td><td'+d+'>'+n0(b.hours)+'</td><td'+d+'>'+n0(b.mae)+'</td><td'+d+'>'+n0(b.mae_d1)+'</td><td'+d+'>'+(b.bias>0?"+":"")+n0(b.bias)+'</td><td'+d+'>'+pct(b.bsr)+'</td><td'+d+'>'+pct(b.wsr)+'</td></tr>'});
-  h+='<tr class="avg"><td>'+n0(S.bands[0].lo)+' – '+n0(S.bands[S.bands.length-1].hi)+'</td><td>'+n0(S.days*24)+'</td><td>'+n0(S.mae)+'</td><td>'+n0(S.mae_d1)+'</td><td></td><td>'+pct(S.bsr)+'</td><td>'+pct(S.wsr)+'</td></tr>';
+  let h='<thead><tr>'+x.bh.map(c=>'<th>'+uu(c)+'</th>').join("")+'</tr></thead><tbody>';
+  S.bands.forEach(b=>{const d=dim(b.hours);h+='<tr><td'+d+'>'+nC(b.lo)+' – '+nC(b.hi)+'</td><td'+d+'>'+n0(b.hours)+'</td><td'+d+'>'+nC(b.mae)+'</td><td'+d+'>'+nC(b.mae_d1)+'</td><td'+d+'>'+(b.bias>0?"+":"")+nC(b.bias)+'</td><td'+d+'>'+pct(b.bsr)+'</td><td'+d+'>'+pct(b.wsr)+'</td></tr>'});
+  h+='<tr class="avg"><td>'+nC(S.bands[0].lo)+' – '+nC(S.bands[S.bands.length-1].hi)+'</td><td>'+n0(S.days*24)+'</td><td>'+nC(S.mae)+'</td><td>'+nC(S.mae_d1)+'</td><td></td><td>'+pct(S.bsr)+'</td><td>'+pct(S.wsr)+'</td></tr>';
   $("bands").innerHTML=h+'</tbody>';
-  const R=S.ramps;let g='<thead><tr>'+x.rh.map(c=>'<th>'+c+'</th>').join("")+'</tr></thead><tbody>';
+  const R=S.ramps;let g='<thead><tr>'+x.rh.map(c=>'<th>'+uu(c)+'</th>').join("")+'</tr></thead><tbody>';
   [["up",R.up,R.up_from],["down",R.down,R.down_from],["flat",R.flat,null],["fc_up",R.fc_up,R.fc_up_from],["fc_down",R.fc_down,R.fc_down_from]].forEach(([k,c,v])=>{if(!c||!c.hours)return;
-    g+='<tr><td>'+fill(x.rl[k],{v:n0(v)})+'</td><td>'+n0(c.hours)+'</td><td>'+n0(c.mae)+'</td><td>'+pct(c.bsr)+'</td><td>'+pct(c.wsr)+'</td><td>'+(c.slope_act>0?"+":"")+n0(c.slope_act)+'</td><td>'+(c.slope_fc>0?"+":"")+n0(c.slope_fc)+'</td><td>'+(k==="flat"?"—":n2(c.slope_ratio))+'</td></tr>'});
+    g+='<tr><td>'+uu(fill(x.rl[k],{v:nC(v)}))+'</td><td>'+n0(c.hours)+'</td><td>'+nC(c.mae)+'</td><td>'+pct(c.bsr)+'</td><td>'+pct(c.wsr)+'</td><td>'+(c.slope_act>0?"+":"")+nC(c.slope_act)+'</td><td>'+(c.slope_fc>0?"+":"")+nC(c.slope_fc)+'</td><td>'+(k==="flat"?"—":n2(c.slope_ratio))+'</td></tr>'});
   $("ramps").innerHTML=g+'</tbody>';
-  const Y=S.yekdem||{};
-  $("t-defs").textContent=x.defs+" "+fill(x.ynote,{f:n0(Y.days_flagged),d:n0(S.days),h:n0(Y.days_hit),miss:n0(Y.days_missed)});
-  const MO=S.mo||{};$("t-snote").textContent=MO.steep_from!=null?fill(x.snote,{thr:n0(MO.steep_from),a:n0(MO.steep_dptf),b:n0(MO.flat_dptf)}):"";
+  const Y=S.yekdem||{},T0=D.summary;
+  $("t-defs").textContent=uu(x.defs)+" "+fill(x.ynote,{f:n0(Y.days_flagged),d:n0(S.days),h:n0(Y.days_hit),miss:n0(Y.days_missed)});
+  const MO=T0.mo||{};$("t-snote").textContent=MO.steep_from!=null?fill(x.snote,{thr:n0(MO.steep_from),a:n0(MO.steep_dptf),b:n0(MO.flat_dptf)}):"";
 }
 
 function csv(){
@@ -384,7 +389,7 @@ function texts(){
   const x=t();document.documentElement.lang=L;document.title=x.title;
   ["title","sub","range","from","to","day","pick","why","hours","method","disc","score","bands","ramps","bandnote","rampnote","dlnote"].forEach(k=>{const e=$("t-"+k);if(e)e.textContent=x[k]});
   $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-daynote").textContent="";
-  $("t-tlonly").textContent=x.tlonly;$("t-tlonly").hidden=CUR==="try";$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
+  $("t-tlonly").hidden=true;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
   const cur=$("day").value;
   $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+nP(r.mae,r)+' '+(rate(r)?U():"TL/MWh")+(r.late_capture?' · ⚠':'')+'</option>').join("");
   if(cur)$("day").value=cur;
@@ -404,7 +409,7 @@ function init(dpf){
   $("day").onchange=drawDay;$("dl").onclick=csv;
   const hasFx=DAYS.some(r=>r.fx&&r.fx.usd&&r.fx.eur);
   if(hasFx){$("cur").hidden=false;[...document.querySelectorAll("#cur button")].forEach(b=>{b.setAttribute("aria-pressed",b.dataset.cur===CUR);
-    b.onclick=()=>{CUR=b.dataset.cur;try{localStorage.setItem("pa-dpf-cur",CUR)}catch(e){}[...document.querySelectorAll("#cur button")].forEach(z=>z.setAttribute("aria-pressed",z.dataset.cur===CUR));texts();drawDay()}})}
+    b.onclick=()=>{CUR=b.dataset.cur;try{localStorage.setItem("pa-dpf-cur",CUR)}catch(e){}[...document.querySelectorAll("#cur button")].forEach(z=>z.setAttribute("aria-pressed",z.dataset.cur===CUR));texts();render()}})}
   else CUR="try";
 }
 
