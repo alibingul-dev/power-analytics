@@ -117,24 +117,23 @@ let L=siteLang(),D=null,DAYS=[],cD=null,cH=null,cW=null;
 
 const T={
 en:{title:"Daily Price Forecast",
- sub:"A next-day forecast of Türkiye's day-ahead price (PTF), hour by hour, scored against what the price actually did. Every forecast uses only what EPİAŞ had published before the day-ahead market closed at 12:30. Today's forecast for tomorrow is not shown: this page is a track record, not a trading signal.",
+ sub:"A next-day forecast of Türkiye's day-ahead price (PTF), hour by hour, scored against what the price actually did. Each forecast uses the EPİAŞ load plan and wind forecast as archived the day before; the archive time is shown for every day, and days archived after the 12:30 market close are flagged, because those inputs may have been revised after clearing. Today's forecast for tomorrow is not shown: this page is a track record, not a trading signal.",
  range:"Track record",from:"From",to:"To",all:"Whole history",
  k_mae:"Model miss",k_d1:"Same hour yesterday",k_d7:"Same hour last week",k_beat:"Days the model beat yesterday",k_bias:"Average direction of miss",
  d_mae:"average absolute miss per hour",d_naive:"miss if you had just copied it",d_beat:"of {n} days",d_bias:"positive = forecast too high",
  dailynote:"Each point is one day's average absolute miss per hour (TL/MWh). Lower is better. The two grey lines are the simplest possible forecasts: copy yesterday's price, or last week's. A model that cannot beat them adds nothing.",
  day:"One day up close",pick:"Day",
- daynote:"Forecast made the day before with inputs frozen at 11:45. Actual is the price EPİAŞ published for that day.",
+ daynote:"Actual is the price EPİAŞ published for that day. Inputs archived {at}{late}.",late:" — after the 12:30 market close, so the load plan and wind forecast may have been revised after clearing",
  s_fc:"Forecast",s_act:"Actual",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
  why:"Why the forecast missed",
- whynote:"Bars split the hourly miss (TL/MWh): the part caused by the load plan being off, by the wind forecast being off, by the gas plan being off, and what the inputs cannot explain (bidding, outages, interconnection, price floor or cap). Solar is not split out: EPİAŞ publishes realised output for licensed plants only, which cannot be compared with the plan. This is an after-the-fact analysis, not a forecast.",
- c_load:"Load plan was off",c_wind:"Wind forecast was off",c_gas:"Gas plan was off",c_left:"Not explained by the inputs",
- nowhy:"Realised load, wind, solar and gas for this day are not in yet. The breakdown appears once EPİAŞ publishes them, usually within two days.",
+ whynote:"Bars split the hourly miss (TL/MWh): the part caused by the load plan being off, by the wind forecast being off, and what the inputs cannot explain (solar, gas availability, bidding, outages, interconnection, price floor or cap). This is an after-the-fact analysis, not a forecast.",
+ c_load:"Load plan was off",c_wind:"Wind forecast was off",c_left:"Not explained by the inputs",
+ nowhy:"Realised load and wind for this day are not in yet. The breakdown appears once EPİAŞ publishes them, usually within two days.",
  w_miss:"The forecast missed by {mae} TL/MWh per hour on average and was {dir} by {bias} TL/MWh.",
  w_high:"too high",w_low:"too low",
- w_parts:"Per hour on average, the load plan error moved the forecast by {ld} TL/MWh, the wind forecast error by {wd} TL/MWh and the gas plan error by {gas} TL/MWh. With perfect load, wind and gas inputs the same model would have missed by {perf} TL/MWh.",
+ w_parts:"Per hour on average, the load plan error moved the forecast by {ld} TL/MWh and the wind forecast error by {wd} TL/MWh. With perfect load and wind inputs the same model would have missed by {perf} TL/MWh.",
  w_hit:"What would have made it hit:",
  w_shift_nl:"Net load {dir} by {gw} GW in every hour would have cut the miss to {after} TL/MWh.",
- w_shift_gas:"Gas generation {dir} by {gw} GW in every hour would have cut the miss to {after} TL/MWh.",
  up:"higher",down:"lower",
  w_noshift:"No realistic flat change in {what} (within {lim} GW) would have fixed this day: the miss was in the shape across hours, not the level.",what_nl:"net load",what_gas:"gas generation",
  w_overfit:"An exact hit in all 24 hours would need 24 free numbers tuned to this day after the fact. That is an overfit: it explains yesterday perfectly and forecasts tomorrow badly, so the model is not built that way.",
@@ -155,33 +154,34 @@ en:{title:"Daily Price Forecast",
  ytag_risk:"PTF below 100 TL/MWh risk · {n} hours flagged",ytag_hit:"PTF below 100 TL/MWh risk · {n} flagged, {m} happened",ytag_miss:"No flag, but {m} hours were under 100 TL/MWh",ytag_off:"No PTF below 100 TL/MWh risk flagged",
  ynote:"The flag is for YEKDEM plants: an hour is flagged when the forecast minus the 80th percentile of the model's recent misses falls under 100 TL/MWh. Track record: flagged on {f} of {d} days; the price really went under 100 TL/MWh on {h} of those; {miss} days were under 100 TL/MWh without a flag.",
  method:"How the forecast is made",
- m:["Every day before 12:30, for the next day, the model takes four things that are public before 12:30: yesterday's price in the same hour, last week's price in the same hour, the forecast net load (EPİAŞ load plan minus the wind forecast minus planned solar) and the planned gas generation (first-version KGÜP). It also knows whether the day is a weekend.",
+ m:["For the next day, the model takes three public things: yesterday's price in the same hour, last week's price in the same hour and the forecast net load (EPİAŞ load plan minus the wind forecast). It also knows whether the day is a weekend. Generation plans (KGÜP) are not used: they are submitted after the market clears, so they would leak the result into the forecast. {mo}",
     "The weights are re-estimated every day on the previous {n} days only (a ridge regression with one baseline per hour), so the model never sees the day it forecasts. The forecast is kept between zero and the highest price of the last 30 days.",
     "Current weights: {coef}.",
-    "Inputs come from a daily archive taken at 11:45 Istanbul time. Days without that archive are not scored, because back-filled inputs would have been revised after the fact."],
- coef:{p_d1:"yesterday's price ×{v}",p_d7:"last week's price ×{v}",netload:"{v} TL/MWh per GW of net load",gas:"{v} TL/MWh per GW of gas",weekend:"weekend {v} TL/MWh"},
+    "Inputs come from a daily archive. The archive is meant to run before the 12:30 market close; on {late} of {n2} days it ran later, and those days are flagged, because the load plan and wind forecast may have been revised after clearing. From 5 November 2026 the archive tries from 09:00 and never overwrites a pre-12:30 capture. Days without an archive are not scored."],
+ m_mo:"",
+ coef:{p_d1:"yesterday's price ×{v}",p_d7:"last week's price ×{v}",netload:"{v} TL/MWh per GW of net load",weekend:"weekend {v} TL/MWh",p_mo:"bid-offer price ×{v}"},
+ late_tag:"inputs archived after 12:30",
  disc:"Personal work on public EPİAŞ data; not the view of any employer. For information only: not investment, trading or hedging advice. No live forecast is published. Baseload AI · power-analytics",
  lockH:"Daily Price Forecast is part of Pro",lockP:"Enter your code on the Plans page, or see what Pro includes.",lockBad:"The code saved in this browser does not open this page. ",lockA:"Go to Plans →",
  empty:"No scored days in this range."},
 tr:{title:"Günlük Fiyat Tahmini",
- sub:"Türkiye gün öncesi fiyatının (PTF) ertesi gün için saat saat tahmini ve fiyatın gerçekte ne yaptığıyla karşılaştırması. Her tahmin yalnız EPİAŞ'ın GÖP 12:30'da kapanmadan önce yayımladığı veriyle yapılır. Bugün yapılan yarın tahmini gösterilmez: bu sayfa bir sicil, al-sat sinyali değil.",
+ sub:"Türkiye gün öncesi fiyatının (PTF) ertesi gün için saat saat tahmini ve fiyatın gerçekte ne yaptığıyla karşılaştırması. Her tahmin EPİAŞ yük planı ve rüzgâr tahmininin bir gün önce arşivlenen hâlini kullanır; her günün arşiv saati gösterilir, GÖP'ün 12:30 kapanışından sonra arşivlenen günler işaretlidir, çünkü o girdiler kapanıştan sonra revize edilmiş olabilir. Bugün yapılan yarın tahmini gösterilmez: bu sayfa bir sicil, al-sat sinyali değil.",
  range:"Sicil",from:"Başlangıç",to:"Bitiş",all:"Tüm geçmiş",
  k_mae:"Modelin sapması",k_d1:"Dünün aynı saati",k_d7:"Geçen haftanın aynı saati",k_beat:"Modelin dünü geçtiği gün",k_bias:"Sapmanın ortalama yönü",
  d_mae:"saat başına ortalama mutlak sapma",d_naive:"sadece onu kopyalasaydın sapma",d_beat:"{n} günün",d_bias:"artı = tahmin yüksek kaldı",
  dailynote:"Her nokta bir günün saat başına ortalama mutlak sapması (TL/MWh). Düşük olan iyi. İki gri çizgi en basit tahminler: dünün fiyatını ya da geçen haftanınkini aynen yazmak. Bunları geçemeyen model hiçbir şey katmaz.",
  day:"Bir güne yakından bak",pick:"Gün",
- daynote:"Tahmin bir gün önce, girdiler 11:45'te dondurularak yapıldı. Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat.",
+ daynote:"Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat. Girdiler {at}{late} arşivlendi.",late:" — yani 12:30 kapanışından sonra; yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir",
  s_fc:"Tahmin",s_act:"Gerçekleşen",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
  why:"Tahmin neden saptı",
- whynote:"Çubuklar saatlik sapmayı (TL/MWh) böler: yük planının, rüzgâr tahmininin ve gaz planının şaşmasından gelen kısımlar ile girdilerin açıklayamadığı kısım (teklif davranışı, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Güneş ayrılmadı: EPİAŞ yalnız lisanslı santrallerin gerçekleşen üretimini yayımlıyor, bu planla kıyaslanamıyor. Bu bir gün sonu analizidir, tahmin değildir.",
- c_load:"Yük planı şaştı",c_wind:"Rüzgâr tahmini şaştı",c_gas:"Gaz planı şaştı",c_left:"Girdilerle açıklanamayan",
- nowhy:"Bu gün için gerçekleşen tüketim, rüzgâr, güneş ve gaz üretimi henüz gelmedi. EPİAŞ yayımlayınca, genelde iki gün içinde, ayrıştırma burada görünür.",
+ whynote:"Çubuklar saatlik sapmayı (TL/MWh) böler: yük planının ve rüzgâr tahmininin şaşmasından gelen kısımlar ile girdilerin açıklayamadığı kısım (güneş, gaz kullanılabilirliği, teklif davranışı, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Bu bir gün sonu analizidir, tahmin değildir.",
+ c_load:"Yük planı şaştı",c_wind:"Rüzgâr tahmini şaştı",c_left:"Girdilerle açıklanamayan",
+ nowhy:"Bu gün için gerçekleşen tüketim ve rüzgâr henüz gelmedi. EPİAŞ yayımlayınca, genelde iki gün içinde, ayrıştırma burada görünür.",
  w_miss:"Tahmin saat başına ortalama {mae} TL/MWh saptı ve ortalamada {bias} TL/MWh {dir} kaldı.",
  w_high:"yüksek",w_low:"düşük",
- w_parts:"Saat başına ortalamada yük planı hatası tahmini {ld} TL/MWh, rüzgâr tahmini hatası {wd} TL/MWh, gaz planı hatası {gas} TL/MWh oynattı. Yük, rüzgâr ve gaz girdileri kusursuz olsaydı aynı model {perf} TL/MWh sapardı.",
+ w_parts:"Saat başına ortalamada yük planı hatası tahmini {ld} TL/MWh, rüzgâr tahmini hatası {wd} TL/MWh oynattı. Yük ve rüzgâr girdileri kusursuz olsaydı aynı model {perf} TL/MWh sapardı.",
  w_hit:"Bire bir tutması için ne gerekirdi:",
  w_shift_nl:"Net yük her saatte {gw} GW daha {dir} olsaydı sapma {after} TL/MWh'a inerdi.",
- w_shift_gas:"Gaz üretimi her saatte {gw} GW daha {dir} olsaydı sapma {after} TL/MWh'a inerdi.",
  up:"yüksek",down:"düşük",
  w_noshift:"{what} tek başına makul bir düz kaymayla ({lim} GW içinde) bu günü düzeltemezdi: sapma seviyede değil, saatler arasındaki biçimdeydi.",what_nl:"Net yük",what_gas:"Gaz üretimi",
  w_overfit:"24 saatin hepsini tam tutturmak, o güne sonradan ayarlanmış 24 serbest sayı ister. Buna aşırı uyum (overfit) denir: dünü kusursuz açıklar, yarını kötü tahmin eder. Model bu yüzden böyle kurulmadı.",
@@ -202,11 +202,13 @@ tr:{title:"Günlük Fiyat Tahmini",
  ytag_risk:"PTF 100 TL/MWh altı riski · {n} saat işaretli",ytag_hit:"PTF 100 TL/MWh altı riski · {n} işaretli, {m} gerçekleşti",ytag_miss:"İşaret yok ama {m} saat 100 TL/MWh altındaydı",ytag_off:"PTF 100 TL/MWh altı riski işaretlenmedi",
  ynote:"Etiket YEKDEM santralleri için: tahmin eksi modelin son sapmalarının %80'lik eşiği 100 TL/MWh altına inen saat işaretlenir. Sicil: {d} günün {f}'inde işaret yandı; bunların {h}'inde fiyat gerçekten 100 TL/MWh altına indi; {miss} gün işaretsiz 100 TL/MWh altı gördü.",
  method:"Tahmin nasıl yapılıyor",
- m:["Model her gün 12:30'dan önce, ertesi gün için kamuya açık dört şeye bakar: dünün aynı saatteki fiyatı, geçen haftanın aynı saatteki fiyatı, tahmini net yük (EPİAŞ yük planı eksi rüzgâr tahmini eksi planlanan güneş) ve planlanan gaz üretimi (ilk versiyon KGÜP). Günün hafta sonu olup olmadığını da bilir.",
+ m:["Model ertesi gün için kamuya açık üç şeye bakar: dünün aynı saatteki fiyatı, geçen haftanın aynı saatteki fiyatı ve tahmini net yük (EPİAŞ yük planı eksi rüzgâr tahmini). Günün hafta sonu olup olmadığını da bilir. Üretim planları (KGÜP) kullanılmaz: piyasa kapandıktan sonra verilir, sonucu tahmine sızdırırdı. {mo}",
     "Ağırlıklar her gün yalnız önceki {n} günle yeniden hesaplanır (saat başına ayrı taban değerli ridge regresyon); model tahmin ettiği günü hiç görmez. Tahmin sıfır ile son 30 günün en yüksek fiyatı arasında tutulur.",
     "Güncel ağırlıklar: {coef}.",
-    "Girdiler her gün İstanbul saatiyle 11:45'te alınan bir arşivden gelir. Bu arşivi olmayan günler puanlanmaz, çünkü sonradan doldurulan girdiler revize edilmiş olur."],
- coef:{p_d1:"dünün fiyatı ×{v}",p_d7:"geçen haftanın fiyatı ×{v}",netload:"net yükün her GW'ı için {v} TL/MWh",gas:"gazın her GW'ı için {v} TL/MWh",weekend:"hafta sonu {v} TL/MWh"},
+    "Girdiler günlük bir arşivden gelir. Arşivin 12:30 kapanışından önce koşması hedeflenir; {n2} günün {late}'inde daha geç koştu ve o günler işaretli, çünkü yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir. 5 Kasım 2026'dan itibaren arşiv 09:00'dan başlayarak dener ve 12:30 öncesi kaydın üzerine yazmaz. Arşivi olmayan günler puanlanmaz."],
+ m_mo:"",
+ coef:{p_d1:"dünün fiyatı ×{v}",p_d7:"geçen haftanın fiyatı ×{v}",netload:"net yükün her GW'ı için {v} TL/MWh",weekend:"hafta sonu {v} TL/MWh",p_mo:"alış-satış eğrisi fiyatı ×{v}"},
+ late_tag:"girdiler 12:30'dan sonra arşivlendi",
  disc:"EPİAŞ'ın kamuya açık verisiyle yapılmış kişisel çalışma; hiçbir işverenin görüşü değildir. Yalnız bilgi amaçlıdır: yatırım, alım-satım ya da hedge tavsiyesi değildir. Canlı tahmin yayımlanmaz. Baseload AI · power-analytics",
  lockH:"Günlük Fiyat Tahmini Pro'ya dahil",lockP:"Kodunu Planlar sayfasına gir ya da Pro'da neler olduğuna bak.",lockBad:"Bu tarayıcıda kayıtlı kod bu sayfayı açmıyor. ",lockA:"Planlara git →",
  empty:"Bu aralıkta puanlanmış gün yok."}
@@ -283,6 +285,8 @@ function drawDay(){
     {label:x.s_fc,data:r.fc,borderColor:C.fc,backgroundColor:C.fc,pointRadius:0,borderWidth:2},
     {label:x.s_d1,data:r.naive_d1,borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.2,borderDash:[4,3]}]},options:base("TL/MWh")});
   why(r,hrs);
+  const at=new Date(r.captured_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  $("t-daynote").textContent=fill(x.daynote,{at:at,late:r.late_capture?x.late:""});
   const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0&&i<5?" (TL/MWh)":i>=5?" (GW)":"")+'</th>').join("")+'</tr></thead><tbody>';
   const yk=r.yekdem||{},rh=yk.risk_hours||[];
   for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];
@@ -314,10 +318,10 @@ function score(){
 }
 
 function csv(){
-  const cols=["date","hour","forecast_tl_mwh","actual_tl_mwh","miss_tl_mwh","naive_d1_tl_mwh","naive_d7_tl_mwh","netload_fc_gw","netload_act_gw","gas_fc_gw","gas_act_gw","yekdem_risk","yekdem_actual","model_version"];
+  const cols=["date","hour","forecast_tl_mwh","actual_tl_mwh","miss_tl_mwh","naive_d1_tl_mwh","naive_d7_tl_mwh","netload_fc_gw","netload_act_gw","late_capture","yekdem_risk","yekdem_actual","model_version"];
   const out=[cols.join(",")];
   DAYS.forEach(r=>{const rh=(r.yekdem||{}).risk_hours||[],ah=(r.yekdem||{}).actual_hours||[];
-    for(let h=0;h<24;h++)out.push([r.date,h,r.fc[h],r.actual[h],(r.fc[h]-r.actual[h]).toFixed(1),r.naive_d1[h],r.naive_d7[h],r.netload_fc[h],r.netload_act?r.netload_act[h]:"",r.gas_fc[h],r.gas_act?r.gas_act[h]:"",rh.includes(h)?1:0,ah.includes(h)?1:0,D.version].join(","))});
+    for(let h=0;h<24;h++)out.push([r.date,h,r.fc[h],r.actual[h],(r.fc[h]-r.actual[h]).toFixed(1),r.naive_d1[h],r.naive_d7[h],r.netload_fc[h],r.netload_act?r.netload_act[h]:"",r.late_capture?1:0,rh.includes(h)?1:0,ah.includes(h)?1:0,D.version].join(","))});
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+out.join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="daily-price-forecast-"+DAYS[DAYS.length-1].date+".csv";document.body.appendChild(a);a.click();a.remove();
 }
 
@@ -327,11 +331,11 @@ function why(r,hrs){
   if(!w){$("why").innerHTML=s+'<p class="note">'+x.nowhy+'</p>';$("cWhy").parentElement.hidden=true;return}
   $("cWhy").parentElement.hidden=false;
   const ma=a=>avg(a.map(Math.abs));
-  s+='<p>'+fill(x.w_parts,{ld:n0(ma(w.c_load)),wd:n0(ma(w.c_wind)),gas:n0(ma(w.c_gas)),perf:n0(w.mae_perfect_inputs)})+'</p>';
+  s+='<p>'+fill(x.w_parts,{ld:n0(ma(w.c_load)),wd:n0(ma(w.c_wind)),perf:n0(w.mae_perfect_inputs)})+'</p>';
   s+='<p><b>'+x.w_hit+'</b></p><ul>';
   const fs=w.flat_shift||{};
   const LIM=3;
-  [["netload",x.w_shift_nl,x.what_nl],["gas",x.w_shift_gas,x.what_gas]].forEach(([k,tx,what])=>{const f=fs[k];if(!f)return;
+  [["netload",x.w_shift_nl,x.what_nl]].forEach(([k,tx,what])=>{const f=fs[k];if(!f)return;
     if(Math.abs(f.delta_gw)<=LIM&&f.mae_after<r.mae*0.9)s+='<li>'+fill(tx,{gw:n2(Math.abs(f.delta_gw)),dir:f.delta_gw>0?x.up:x.down,after:n0(f.mae_after)})+'</li>';
     else s+='<li>'+fill(x.w_noshift,{what:what,lim:n0(LIM)})+'</li>';});
   s+='<li>'+x.w_overfit+'</li></ul>';
@@ -339,7 +343,6 @@ function why(r,hrs){
   cW=new Chart($("cWhy"),{type:"bar",data:{labels:hrs,datasets:[
     {label:x.c_load,data:w.c_load,backgroundColor:C.nl,stack:"s"},
     {label:x.c_wind,data:w.c_wind,backgroundColor:C.fc,stack:"s"},
-    {label:x.c_gas,data:w.c_gas,backgroundColor:C.gas,stack:"s"},
     {label:x.c_left,data:w.unexplained,backgroundColor:C.left,stack:"s"}]},
     options:Object.assign(base("TL/MWh"),{scales:Object.assign(base("TL/MWh").scales,{x:{stacked:true,ticks:{color:C.tick,maxRotation:0,autoSkip:true},grid:{color:C.grid}},y:{stacked:true,title:{display:true,text:"TL/MWh",color:C.tick},ticks:{color:C.tick,callback:v=>n0(v)},grid:{color:C.grid}}})})});
 }
@@ -347,15 +350,15 @@ function why(r,hrs){
 function method(){
   const x=t(),c=D.latest_coef||{};
   const parts=Object.keys(x.coef).filter(k=>c[k]!=null).map(k=>fill(x.coef[k],{v:k==="p_d1"||k==="p_d7"?n2(c[k]):n0(c[k])}));
-  $("method").innerHTML=x.m.map(p=>'<p>'+fill(p,{n:n0(D.method.train_days),coef:parts.join(" · ")})+'</p>').join("");
+  $("method").innerHTML=x.m.map(p=>'<p>'+fill(p,{n:n0(D.method.train_days),n2:n0(D.summary.days),late:n0(D.summary.late_capture_days),coef:parts.join(" · "),mo:x.m_mo})+'</p>').join("");
 }
 
 function texts(){
   const x=t();document.documentElement.lang=L;document.title=x.title;
   ["title","sub","range","from","to","day","pick","why","hours","method","disc","score","bands","ramps","bandnote","rampnote","dlnote"].forEach(k=>{const e=$("t-"+k);if(e)e.textContent=x[k]});
-  $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
+  $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-daynote").textContent="";$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
   const cur=$("day").value;
-  $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+n0(r.mae)+' TL/MWh</option>').join("");
+  $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+n0(r.mae)+' TL/MWh'+(r.late_capture?' · ⚠':'')+'</option>').join("");
   if(cur)$("day").value=cur;
 }
 
