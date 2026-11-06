@@ -62,16 +62,6 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
   <div class="top"><h1 id="t-title"></h1><div class="cur" id="cur" hidden><button type="button" data-cur="try" aria-pressed="true">TL</button><button type="button" data-cur="usd">USD</button><button type="button" data-cur="eur">EUR</button></div></div>
   <div class="sub" id="t-sub"></div>
 
-  <div class="panel" id="livep" style="margin-top:16px;border-color:var(--navy)">
-    <div class="ctl" style="justify-content:space-between"><h2 id="t-live" style="margin:0"></h2><span id="ltag"></span></div>
-    <p class="note" id="t-livenote" style="margin:0 0 10px"></p>
-    <div class="grid2">
-      <div class="cbox" style="height:260px"><canvas id="cLive" role="img"></canvas></div>
-      <div class="tbl" style="margin:0;max-height:260px;overflow:auto"><table id="livet"></table></div>
-    </div>
-    <p class="note" id="t-livedisc"></p>
-  </div>
-
   <div class="panel">
     <h2 id="t-range"></h2>
     <div class="ctl">
@@ -188,7 +178,8 @@ en:{title:"Daily Price Forecast",
  m_mo:"The bid-offer curve was also tested as a price: last week's curve shifted by the change in the net load plan (a potential merit-order price). On its own it missed by {mo} TL/MWh against {d7} TL/MWh for simply copying last week, because the hourly curve excludes block and flexible offers and a shift of several GW leaves its usable range. It is therefore not in the model; only its steepness is shown, as a volatility warning.",
  coef:{p_d1:"yesterday's price ×{v}",p_d7:"last week's price ×{v}",netload:"{v} TL/MWh per GW of net load",weekend:"weekend {v} TL/MWh",p_mo:"bid-offer price ×{v}"},
  late_tag:"inputs archived after 12:30",
- live:"Tomorrow (D+1) price forecast · {d}",live_none:"No forecast for tomorrow today",
+ live_opt:"Tomorrow · {d} · forecast",live_cap:"tomorrow, forecast made before the market close",
+ livewhy:"This is tomorrow's forecast: there is no actual price yet, so there is nothing to explain. EPİAŞ publishes tomorrow's price at about 14:00 today; this day then gets its actual, its miss and the breakdown.",
  livenote:"Made {at} from the EPİAŞ load plan and wind forecast archived at {cap}. Tomorrow's actual price is published by EPİAŞ at about 14:00 today; this row then moves into the record below and is scored.",
  livenone:"Today's inputs were not archived before the 12:30 market close, so no forecast is published for tomorrow. The forecast is normally here by about 11:00. The last scored day is {d}.",
  livedisc:"Personal work on public data; my own view, not my employer's. For information only: not investment, trading or hedging advice, and not a buy or sell signal.",
@@ -250,7 +241,8 @@ tr:{title:"Günlük Fiyat Tahmini",
  m_mo:"Alış-satış eğrisi fiyat olarak da denendi: geçen haftanın eğrisi net yük planı farkı kadar kaydırıldı (potansiyel merit order fiyatı). Tek başına {mo} TL/MWh saptı; geçen haftayı aynen yazmak {d7} TL/MWh sapardı. Sebep: saatlik eğri blok ve esnek teklifleri içermiyor, birkaç GW'lık kayma eğrinin kullanılabilir aralığının dışına çıkıyor. Bu yüzden modelde yok; yalnız dikliği volatilite uyarısı olarak gösteriliyor.",
  coef:{p_d1:"dünün fiyatı ×{v}",p_d7:"geçen haftanın fiyatı ×{v}",netload:"net yükün her GW'ı için {v} TL/MWh",weekend:"hafta sonu {v} TL/MWh",p_mo:"alış-satış eğrisi fiyatı ×{v}"},
  late_tag:"girdiler 12:30'dan sonra arşivlendi",
- live:"Yarın (D+1) fiyat tahmini · {d}",live_none:"Bugün yarın için tahmin yok",
+ live_opt:"Yarın · {d} · tahmin",live_cap:"yarın, piyasa kapanışından önce yapılan tahmin",
+ livewhy:"Bu yarının tahmini: henüz gerçekleşen fiyat yok, açıklanacak bir sapma da yok. EPİAŞ yarının fiyatını bugün 14:00 civarı yayımlar; o zaman bu güne gerçekleşen, sapma ve ayrıştırma gelir.",
  livenote:"{at} yapıldı; EPİAŞ yük planı ve rüzgâr tahmini {cap} arşivlendi. Yarının gerçekleşen fiyatını EPİAŞ bugün 14:00 civarı yayımlar; bu satır sonra aşağıdaki sicile geçer ve puanlanır.",
  livenone:"Bugünün girdileri 12:30 kapanışından önce arşivlenemedi, bu yüzden yarın için tahmin yayımlanmıyor. Tahmin normalde 11:00 civarı burada olur. Son puanlanan gün: {d}.",
  livedisc:"Kamuya açık veriyle yapılmış kişisel çalışma; kendi görüşüm, işverenimin görüşü değil. Yalnız bilgi amaçlıdır: yatırım, alım-satım ya da hedge tavsiyesi değildir, al-sat sinyali değildir.",
@@ -302,6 +294,8 @@ function base(ylab){return{responsive:true,maintainAspectRatio:false,animation:f
   scales:{x:{ticks:{color:C.tick,maxRotation:0,autoSkip:true},grid:{color:C.grid}},y:{title:{display:true,text:ylab,color:C.tick},ticks:{color:C.tick,callback:v=>ylab==="TL/MWh"?n0(v):n1(v)},grid:{color:C.grid}}},unit:ylab}}
 
 function inRange(){const f=$("from").value,to=$("to").value;return DAYS.filter(r=>r.date>=f&&r.date<=to)}
+function liveRow(){const L=D.live;if(!L||!L.fc)return null;const tom=new Date(Date.now()+3*3600e3+86400e3).toISOString().slice(0,10);return L.date===tom?L:null}
+function findDay(v){return v==="live"?liveRow():DAYS.find(z=>z.date===v)}
 
 function kpis(rows){
   const x=t();
@@ -330,20 +324,21 @@ function drawDaily(rows){
 }
 
 function drawDay(){
-  const x=t(),r=DAYS.find(z=>z.date===$("day").value);if(!r)return;
+  const x=t(),r=findDay($("day").value);if(!r)return;const isLive=!r.actual;
   const hrs=[...Array(24).keys()].map(h=>String(h).padStart(2,"0")+":00");
   if(cH)cH.destroy();
   const k=rate(r)||1,cvt=a=>a.map(v=>v==null?null:v/k),Ud=rate(r)?U():"TL/MWh";
   cH=new Chart($("cDay"),{type:"line",data:{labels:hrs,datasets:[
-    {label:x.s_act,data:cvt(r.actual),borderColor:C.act,backgroundColor:C.act,pointRadius:0,borderWidth:2},
-    {label:x.s_fc,data:cvt(r.fc),borderColor:C.fc,backgroundColor:C.fc,pointRadius:0,borderWidth:2},
+    ...(isLive?[]:[{label:x.s_act,data:cvt(r.actual),borderColor:C.act,backgroundColor:C.act,pointRadius:0,borderWidth:2}]),
+    {label:x.s_fc,data:cvt(r.fc),borderColor:C.fc,backgroundColor:C.fc,pointRadius:isLive?2:0,borderWidth:2},
     {label:x.s_d1,data:cvt(r.naive_d1),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.2,borderDash:[4,3]}]},options:base(Ud)});
-  why(r,hrs);
+  if(isLive){if(cW){cW.destroy();cW=null}$("cWhy").parentElement.hidden=true;$("why").innerHTML='<p>'+x.livewhy+'</p><p class="note">'+x.livedisc+'</p>'}else why(r,hrs);
   const at=new Date(r.captured_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
-  $("t-whynote").textContent=rate(r)?uu(x.whynote):x.whynote;
-  $("t-daynote").textContent=fill(x.daynote,{at:at,late:r.late_capture?x.late:""})+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
+  $("t-whynote").textContent=isLive?"":(rate(r)?uu(x.whynote):x.whynote);
+  const made=r.made_at?new Date(r.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+  $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at}):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
-  const H=x.h;let h='<caption>'+dlab(r.date)+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th><th style="text-align:left">'+x.h_why+' ('+Ud+')</th></tr></thead><tbody>';
+  const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
   const W=r.why,sg=v=>(v>0?"+":"")+nP(v,r);
   const whyTxt=i=>{if(!W)return '<span class="dim">'+x.w_wait+'</span>';
     const parts=[[x.wl,W.c_load[i]],[x.ww,W.c_wind[i]],[x.wu,W.unexplained[i]]];const tot=Math.abs(r.fc[i]-r.actual[i]);
@@ -351,15 +346,18 @@ function drawDay(){
     const big=parts.reduce((a,b)=>Math.abs(b[1])>Math.abs(a[1])?b:a);
     return parts.map(([n,v])=>(n===big[0]?'<b>':'')+n+' '+sg(v)+(n===big[0]?'</b>':'')).join(' · ')};
   const yk=r.yekdem||{},rh=yk.risk_hours||[],ah0=yk.actual_hours||[];let nsteep=0;
-  for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
+  for(let i=0;i<24;i++){const e=isLive?0:r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
+    if(isLive){h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>';continue}
     h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="why" style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+whyTxt(i)+'</td></tr>'}
   const wavg=W?[[x.wl,avg(W.c_load)],[x.ww,avg(W.c_wind)],[x.wu,avg(W.unexplained)]].map(([n,v])=>n+' '+sg(v)).join(' · '):'<span class="dim">'+x.w_wait+'</span>';
-  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+wavg+'</td></tr>';
+  if(isLive)h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
+  else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
   $("hours").innerHTML=h+'</tbody>';
   const ah=yk.actual_hours||[],el=$("ytag");
-  if(rh.length&&ah.length){el.className="tag hit";el.textContent=fill(x.ytag_hit,{n:rh.length,m:ah.length})}
+  if(isLive){if(rh.length){el.className="tag";el.textContent=fill(x.ytag_risk,{n:rh.length})}else{el.className="tag off";el.textContent=x.ytag_off}}
+  else if(rh.length&&ah.length){el.className="tag hit";el.textContent=fill(x.ytag_hit,{n:rh.length,m:ah.length})}
   else if(rh.length){el.className="tag";el.textContent=fill(x.ytag_risk,{n:rh.length})}
   else if(ah.length){el.className="tag hit";el.textContent=fill(x.ytag_miss,{m:ah.length})}
   else{el.className="tag off";el.textContent=x.ytag_off}
@@ -430,34 +428,12 @@ function texts(){
   $("all").textContent=x.all;$("dl").textContent=x.dl;$("t-daynote").textContent="";$("t-yknote").textContent=x.yknote;$("t-whycol").textContent=x.whycol;
   $("t-tlonly").hidden=true;$("t-dailynote").textContent=x.dailynote;$("t-daynote").textContent=x.daynote;$("t-whynote").textContent=x.whynote;
   const cur=$("day").value;
-  $("day").innerHTML=DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+nP(r.mae,r)+' '+(rate(r)?U():"TL/MWh")+(r.late_capture?' · ⚠':'')+'</option>').join("");
+  const LV=liveRow();
+  $("day").innerHTML=(LV?'<option value="live">'+fill(x.live_opt,{d:dlab(LV.date)})+'</option>':'')+DAYS.slice().reverse().map(r=>'<option value="'+r.date+'">'+dlab(r.date)+' · '+nP(r.mae,r)+' '+(rate(r)?U():"TL/MWh")+(r.late_capture?' · ⚠':'')+'</option>').join("");
   if(cur)$("day").value=cur;
 }
 
-let cL=null;
-function liveView(){
-  const x=t();let L=D.live;const P=$("livep");
-  const tom=new Date(Date.now()+3*3600e3+86400e3).toISOString().slice(0,10);   // tomorrow in Europe/Istanbul (UTC+3)
-  if(L&&L.date!==tom)L=null;
-  if(!L||!L.fc){$("t-live").textContent=x.live_none;$("ltag").className="";$("ltag").textContent="";
-    $("t-livenote").textContent=fill(x.livenone,{d:DAYS.length?dlab(DAYS[DAYS.length-1].date):"—"});$("cLive").parentElement.hidden=true;$("livet").parentElement.hidden=true;$("t-livedisc").textContent="";return}
-  $("cLive").parentElement.hidden=false;$("livet").parentElement.hidden=false;
-  const hrs=[...Array(24).keys()].map(h=>String(h).padStart(2,"0")+":00");
-  const k=rate(L)||1,Ul=rate(L)?U():"TL/MWh";
-  $("t-live").textContent=fill(x.live,{d:dlab(L.date)});
-  const at=new Date(L.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}),cap=new Date(L.captured_at).toLocaleString(loc(),{hour:"2-digit",minute:"2-digit"});
-  $("t-livenote").textContent=fill(x.livenote,{at:at,cap:cap})+(CUR!=="try"&&L.fx?" "+fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(L.fx[CUR])}):"");
-  $("t-livedisc").textContent=x.livedisc;
-  const rh=(L.yekdem||{}).risk_hours||[],el=$("ltag");
-  if(rh.length){el.className="tag";el.textContent=fill(x.ytag_risk,{n:rh.length})}else{el.className="tag off";el.textContent=x.ytag_off}
-  if(cL)cL.destroy();
-  cL=new Chart($("cLive"),{type:"line",data:{labels:hrs,datasets:[{label:x.s_fc,data:L.fc.map(v=>v/k),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2}]},options:base(Ul)});
-  let h='<thead><tr><th>'+x.lh[0]+'</th><th>'+x.lh[1]+' ('+Ul+')</th><th>'+x.lh[2]+'</th></tr></thead><tbody>';
-  for(let i=0;i<24;i++){const fl=rh.includes(i);h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(L.fc[i],L)+'</td><td style="font-family:var(--font)">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>'}
-  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(L.fc),L)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
-  $("livet").innerHTML=h+'</tbody>';
-}
-function render(){liveView();const rows=inRange();kpis(rows);drawDaily(rows);score();drawDay();method()}
+function render(){const rows=inRange();kpis(rows);drawDaily(rows);score();drawDay();method()}
 
 function init(dpf){
   D=dpf;DAYS=(dpf.days||[]).filter(r=>r.actual&&r.mae!=null);
@@ -465,7 +441,7 @@ function init(dpf){
   const f=DAYS[0].date,l=DAYS[DAYS.length-1].date;
   ["from","to"].forEach(id=>{$(id).min=f;$(id).max=l});
   $("from").value=f;$("to").value=l;
-  $("app").hidden=false;texts();$("day").value=l;render();
+  $("app").hidden=false;texts();$("day").value=liveRow()?"live":l;render();
   $("from").onchange=$("to").onchange=render;
   $("all").onclick=()=>{$("from").value=f;$("to").value=l;render()};
   $("day").onchange=drawDay;$("dl").onclick=csv;
