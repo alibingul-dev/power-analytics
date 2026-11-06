@@ -1,36 +1,520 @@
 {
-  "updated": "2026-11-04",
+  "updated": "2026-11-06",
   "near_threshold_usd_mwh": 3.2,
   "notes": {
+    "2022-02": {
+      "tr": "1 Şubat'ta BOTAŞ santral gazı %14 zamlanarak 6.300 TL/1000 Sm³ oldu; modelin bilmediği bu artış maliyeti yukarı itti. PTF 1.404,5 TL/MWh'e çıktı ve yaklaşık 361 saat azami fiyat olan 1.524 TL/MWh'de kaldı; hidro payı %19,9'a yükselse de tarife ve tavan etkisi baskındı. İlgili girdi: BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
+      "en": "On 1 February BOTAŞ raised the power-plant gas price by 14% to 6,300 TL/1000 Sm³, a change the model could not know, pushing costs up. PTF reached 1,404.5 TL/MWh with about 361 hours at the 1,524 TL/MWh maximum; hydro share rose to 19.9%, but the tariff and cap effect dominated. Related input: BOTAŞ gas tariff, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Şubat 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-subat-2022.pdf"
+        ],
+        [
+          "İstiklal, Şubat 2022 santral gazı zammı",
+          "https://www.istiklal.com.tr/ekonomi/dogalgazda-subat-tarifesi-konut-ve-sanayi-sabit-kaldi-santrallere-yuzde-14-zam-669606h"
+        ]
+      ]
+    },
+    "2022-03": {
+      "tr": "1 Mart'ta BOTAŞ santral gazı %18,3 zamlanarak 7.450 TL/1000 Sm³ oldu ve USD/TRY 13,62'den 14,57'ye (%7,0) yükseldi. PTF 1.670,85 TL/MWh'e çıktı, 486 saat azami fiyat olan 1.745 TL/MWh'de kaldı; hidro payının artması bunu dengelemeye yetmedi. İlgili girdi: BOTAŞ gaz tarifesi, Aylık kur artışı, Tavana yapışma oranı.",
+      "en": "On 1 March BOTAŞ raised the power-plant gas price by 18.3% to 7,450 TL/1000 Sm³ and USD/TRY rose from 13.62 to 14.57 (7.0%). PTF reached 1,670.85 TL/MWh with 486 hours at the 1,745 TL/MWh maximum; the rise in hydro share did not offset this. Related input: BOTAŞ gas tariff, Monthly FX rise, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Mart 2022",
+          "https://tskb.com.tr/uploads/file/enerji-bulteni-mart-2022.pdf"
+        ],
+        [
+          "Capital, Mart 2022 santral gazı zammı",
+          "https://www.capital.com.tr/haberler/tum-haberler/elektrik-uretim-amacli-dogalgaz-tarifesine-zam"
+        ]
+      ]
+    },
+    "2022-04": {
+      "tr": "Azami saatlik fiyat 1.745'ten 2.500 TL/MWh'e çıktı (EPDK, 1 Nisan'dan itibaren 6 ay) ve PTF 83 saat bu tavanda kaldı; PTF ortalaması 1.830,55 TL/MWh oldu. BOTAŞ santral gazı 7.450'den 10.750 TL/1000 Sm³'e (%44,3) çıktı; hidro payı %33,9'a yükselip bazı saatlerde fiyatı 0 TL/MWh'e çekse de zam ve tavan baskın geldi. İlgili girdi: Tavana yapışma oranı, BOTAŞ gaz tarifesi, Hidroloji senaryosu.",
+      "en": "The maximum hourly price rose from 1,745 to 2,500 TL/MWh (EPDK, for six months from 1 April) and PTF stuck at this cap for 83 hours; the PTF average was 1,830.55 TL/MWh. BOTAŞ raised the power-plant gas price from 7,450 to 10,750 TL/1000 Sm³ (44.3%); hydro share rose to 33.9% and pulled some hours to 0 TL/MWh, but the tariff and cap dominated. Related input: Cap adherence ratio, BOTAŞ gas tariff, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Nisan 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-2022.pdf"
+        ],
+        [
+          "TSKB Enerji Bülteni Mart 2022 (tavan 2.500 TL/MWh)",
+          "https://tskb.com.tr/uploads/file/enerji-bulteni-mart-2022.pdf"
+        ],
+        [
+          "Bloomberg HT, EPDK azami uzlaştırma fiyatı",
+          "https://www.bloomberght.com/elektrikte-azami-uzlastirma-fiyati-karari-yayimlandi-2302766"
+        ]
+      ]
+    },
+    "2022-05": {
+      "tr": "BOTAŞ tarifesi 10.750 TL/1000 Sm³'te sabit kaldı; hidro payı yaklaşık %33-36 ile yüksek seyretti. PTF 1.831'den 1.763 TL/MWh'e (%3,7) geriledi, USD/TRY %6,3 yükseldiği için dolar fiyatı daha da düştü; azami fiyat 2.750 TL/MWh olsa da yalnızca 79 saat tavanda kaldı. İlgili girdi: Hidroloji senaryosu, Aylık kur artışı.",
+      "en": "The BOTAŞ tariff stayed flat at 10,750 TL/1000 Sm³; hydro share stayed high at roughly 33-36%. PTF fell from 1,831 to 1,763 TL/MWh (3.7%) and, with USD/TRY up 6.3%, the dollar price fell further; the maximum price was 2,750 TL/MWh but only 79 hours stuck at it. Related input: Hydrology scenario, Monthly FX rise.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Haziran 2022 (Mayıs karşılaştırması)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-haziran-2022.pdf"
+        ],
+        [
+          "EPİAŞ şeffaflık verisi",
+          "https://seffaflik.epias.com.tr"
+        ]
+      ]
+    },
+    "2022-06": {
+      "tr": "BOTAŞ santral gazı %16 zamlanarak 12.500 TL/1000 Sm³ oldu ve USD/TRY 15,61'den 16,96'ya (%8,6) yükseldi. Hidro payı Mayıs'taki %33,1'den %25,7'ye düştü, termik payı %44,4'ten %51,8'e çıktı; PTF ortalaması 2.370,7 TL/MWh oldu. İlgili girdi: BOTAŞ gaz tarifesi, Hidroloji senaryosu, Aylık kur artışı.",
+      "en": "BOTAŞ raised the power-plant gas price by 16% to 12,500 TL/1000 Sm³ and USD/TRY rose from 15.61 to 16.96 (8.6%). Hydro share fell from 33.1% in May to 25.7% and thermal share rose from 44.4% to 51.8%; the PTF average was 2,370.7 TL/MWh. Related input: BOTAŞ gas tariff, Hydrology scenario, Monthly FX rise.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Haziran 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-haziran-2022.pdf"
+        ]
+      ]
+    },
+    "2022-07": {
+      "tr": "Rüzgar payı %4,0 puan artarak %14,7'ye çıktı; BOTAŞ tarifesi 12.500 TL/1000 Sm³'te sabit kaldı. PTF 2.340'tan 2.330,4 TL/MWh'e yatay seyretti, USD/TRY %2,4 yükseldiği için dolar fiyatı beklentinin altında kaldı; hidro payı %19,7'ye düşse de rüzgar ve sabit tarife baskındı. İlgili girdi: Hidroloji senaryosu, Aylık kur artışı.",
+      "en": "Wind share rose by 4.0 points to 14.7% while the BOTAŞ tariff stayed flat at 12,500 TL/1000 Sm³. PTF was flat from 2,340 to 2,330.4 TL/MWh while USD/TRY rose 2.4%, so the dollar price came in below forecast; hydro share fell to 19.7%, but wind and the unchanged tariff dominated. Related input: Hydrology scenario, Monthly FX rise.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Temmuz 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-2022.pdf"
+        ]
+      ]
+    },
+    "2022-08": {
+      "tr": "BOTAŞ santral gazı %10 zamlanarak 13.750 TL/1000 Sm³ oldu ve azami fiyat 4.000 TL/MWh'e çıktı; PTF 146 saat bu tavanda kaldı. Rüzgar payı %8,8'e düştü, hidro payı %17,2'ye geriledi; PTF ortalaması 3.066,5 TL/MWh oldu. İlgili girdi: BOTAŞ gaz tarifesi, Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "BOTAŞ raised the power-plant gas price by 10% to 13,750 TL/1000 Sm³ and the maximum price rose to 4,000 TL/MWh; PTF stuck at this cap for 146 hours. Wind share fell to 8.8% and hydro to 17.2%; the PTF average was 3,066.5 TL/MWh. Related input: BOTAŞ gas tariff, Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Ağustos 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-agustos-2022.pdf"
+        ],
+        [
+          "TSKB Enerji Bülteni Temmuz 2022 (tavan 4.000 TL/MWh, 1 Ağustos)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-2022.pdf"
+        ]
+      ]
+    },
+    "2022-09": {
+      "tr": "BOTAŞ santral gazı 13.750'den 20.625 TL/1000 Sm³'e (%50,0) çıktı ve azami saatlik fiyat 4.800 TL/MWh oldu (68 saat tavanda). Hidro payı %14,3'e düştü, kömür payı %38,9'a çıktı; PTF ortalaması 3.850,6 TL/MWh oldu. İlgili girdi: BOTAŞ gaz tarifesi, Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "BOTAŞ raised the power-plant gas price from 13,750 to 20,625 TL/1000 Sm³ (50.0%) and the maximum hourly price was 4,800 TL/MWh (68 hours at the cap). Hydro share fell to 14.3% and coal rose to 38.9%; the PTF average was 3,850.6 TL/MWh. Related input: BOTAŞ gas tariff, Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Eylül 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-eylul-20221012.pdf"
+        ],
+        [
+          "TSKB Enerji Bülteni Ağustos 2022 (önceki tarife 13.750)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-agustos-2022.pdf"
+        ]
+      ]
+    },
+    "2022-10": {
+      "tr": "Tarife 20.625 TL/1000 Sm³'te sabit kaldı; rüzgar payı 3,4 puan artarak %12,4'e çıktı ve gaz payı %28,1'den %19,8'e düştü. PTF 3.851'den 3.470 TL/MWh'e (%9,9) geriledi; yaklaşık 90 saat 4.800 TL/MWh tavanında kalmasına rağmen fiyat düştü. İlgili girdi: Hidroloji senaryosu, BOTAŞ gaz tarifesi.",
+      "en": "The tariff stayed flat at 20,625 TL/1000 Sm³; wind share rose 3.4 points to 12.4% and gas share fell from 28.1% to 19.8%. PTF fell from 3,851 to 3,470 TL/MWh (9.9%); prices fell even though about 90 hours stuck at the 4,800 TL/MWh cap. Related input: Hydrology scenario, BOTAŞ gas tariff.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Ekim 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-ekim-20221121.pdf"
+        ],
+        [
+          "EPİAŞ şeffaflık verisi",
+          "https://seffaflik.epias.com.tr"
+        ]
+      ]
+    },
+    "2022-12": {
+      "tr": "Soğuk dönemde günlük tüketim bir önceki aya göre %4,4 artarak 867.163 MWh oldu, rüzgar payı %9,7'ye geriledi ve gaz payı %19,3'ten %24,8'e çıktı. PTF 3.438'den 3.724,4 TL/MWh'e yükseldi; 185 saat 4.800 TL/MWh tavanında kaldı, BOTAŞ tarifesi 20.625 TL/1000 Sm³'te sabitti. İlgili girdi: Talep (modelde yok), Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "In the cold season average daily consumption rose 4.4% month on month to 867,163 MWh, wind share fell to 9.7% and gas share rose from 19.3% to 24.8%. PTF rose from 3,438 to 3,724.4 TL/MWh; 185 hours stuck at the 4,800 TL/MWh cap while the BOTAŞ tariff stayed flat at 20,625 TL/1000 Sm³. Related input: Demand (not in model), Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Enerji Bülteni Aralık 2022",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-aralik-20230112.pdf"
+        ]
+      ]
+    },
+    "2023-01": {
+      "tr": "BOTAŞ santral gazı Ocak'ta %12,73 indirimle 18.000 TL/1000 Sm³ oldu; PTF %7,9 düşüp 3.431,5 TL/MWh'e (182,6 $/MWh) indi, kur neredeyse sabitti. Hidro payı %12,3'ten %11,0'a düştü ama günlük tüketim yıllık %6,4 azaldı ve fiyat 165 saat 4.200 TL/MWh tavanında kaldı. İlgili girdi: BOTAŞ gaz tarifesi, Talep (modelde yok).",
+      "en": "BOTAŞ cut the power-plant gas price by 12.73% to 18,000 TL/1000 Sm³ in January; PTF fell 7.9% to 3,431.5 TL/MWh (182.6 $/MWh) with USD/TRY almost flat. Hydro share slipped from 12.3% to 11.0%, but daily consumption was down 6.4% year on year and prices sat at the 4,200 TL/MWh cap for 165 hours. Related input: BOTAŞ gas tariff, Demand (not in model).",
+      "src": [
+        [
+          "TSKB Ocak 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-ocak-20230215.pdf"
+        ]
+      ]
+    },
+    "2023-02": {
+      "tr": "BOTAŞ 1 Şubat'ta santral gazı fiyatını %16,67 düşürdü; PTF %18,3 azalıp 2.802,7 TL/MWh'e (148,6 $/MWh) geriledi. Günlük tüketim 873.629 MWh ile Ocak'a göre %1,9, yıla göre %7,1 düştü; 6 Şubat depremi sonrası yaklaşık 30 TEİAŞ trafosu hasar gördü. Azami fiyat 3.650 TL/MWh, 105 saat tavanda. İlgili girdi: BOTAŞ gaz tarifesi, Talep (modelde yok), Arz kesintisi (modelde yok).",
+      "en": "On 1 February BOTAŞ cut the power-plant gas price by 16.67%; PTF fell 18.3% to 2,802.7 TL/MWh (148.6 $/MWh). Daily consumption was 873,629 MWh, down 1.9% month on month and 7.1% year on year, and about 30 TEİAŞ transformers were damaged after the 6 February earthquake. The cap was 3,650 TL/MWh with 105 hours at cap. Related input: BOTAŞ gas tariff, Demand (not in model), Supply outage (not in model).",
+      "src": [
+        [
+          "BOTAŞ kamuoyu duyurusu, 27.01.2023",
+          "https://www.botas.gov.tr/uploads/dosyaYoneticisi/686805-27.01.2023-tarihli-kamuoyu-duyurusu.pdf"
+        ],
+        [
+          "TSKB Şubat 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-subat-20230314.pdf"
+        ]
+      ]
+    },
+    "2023-03": {
+      "tr": "EPDK azami fiyatı 3.650'den 3.050 TL/MWh'e indirdi (Mart başında); BOTAŞ santral gazı 15.000'den 12.000 TL/1000 Sm³'e (%20) indi. Hidro payı %10,3'ten %21,1'e fırladı, PTF 2.803'ten 2.126 TL/MWh'e (%24,2) düştü; günlük tüketim aylık %3,1 azaldı. İlgili girdi: BOTAŞ gaz tarifesi, Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "EPDK cut the price cap from 3,650 to 3,050 TL/MWh at the start of March; BOTAŞ cut the power-plant gas price from 15,000 to 12,000 TL/1000 Sm³ (-20%). Hydro share jumped from 10.3% to 21.1% and PTF fell from 2,803 to 2,126 TL/MWh (-24.2%); daily consumption was down 3.1% month on month. Related input: BOTAŞ gas tariff, Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Mart 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mart-20230413.pdf"
+        ],
+        [
+          "Bloomberg HT, 1 Mart 2023 azami fiyat 3.050 TL/MWh",
+          "https://www.bloomberght.com/elektrikte-gun-oncesi-piyasasi-azami-fiyat-limitinde-indirim-2326099"
+        ]
+      ]
+    },
+    "2023-04": {
+      "tr": "1 Nisan'da azami fiyat 3.050'den 2.600 TL/MWh'e (%14,8) indi ve BOTAŞ santral gazı %16,67 ucuzlayarak 10.000 TL/1000 Sm³ oldu. Hidro payı %21,1'den %32,9'a çıktı, kömür payı %37,5'ten %30,6'ya düştü; PTF 2.126'dan 1.771 TL/MWh'e geriledi. İlgili girdi: BOTAŞ gaz tarifesi, Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "On 1 April the cap fell from 3,050 to 2,600 TL/MWh (-14.8%) and BOTAŞ cut the power-plant gas price by 16.67% to 10,000 TL/1000 Sm³. Hydro share rose from 21.1% to 32.9% and coal fell from 37.5% to 30.6%; PTF dropped from 2,126 to 1,771 TL/MWh. Related input: BOTAŞ gas tariff, Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Mart 2023 (1 Nisan tavan indirimi)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mart-20230413.pdf"
+        ],
+        [
+          "BirGün, BOTAŞ santral gazı indirimi Nisan 2023",
+          "https://www.birgun.net/haber/botas-sanayi-aboneleri-ve-elektrik-santrallerinin-dogal-gaz-tarifesinde-indirime-gidildi-426886"
+        ]
+      ]
+    },
+    "2023-05": {
+      "tr": "PTF %7,7 artıp 1.907,3 TL/MWh'e (96,7 $/MWh, Nisan'da 91,6) çıktı. Hidro payı %30,9'dan %28,8'e, rüzgâr %10,0'dan %9,0'a indi; termik pay %44,5'ten %48,4'e yükseldi, günlük tüketim aylık %5,1 arttı ve fiyat 97 saat 2.600 TL/MWh tavanında kaldı. İlgili girdi: Hidroloji senaryosu, Talep (modelde yok), Tavana yapışma oranı.",
+      "en": "PTF rose 7.7% to 1,907.3 TL/MWh (96.7 $/MWh versus 91.6 in April). Hydro share fell from 30.9% to 28.8% and wind from 10.0% to 9.0%; thermal share rose from 44.5% to 48.4%, daily consumption was up 5.1% month on month, and prices sat at the 2,600 TL/MWh cap for 97 hours. Related input: Hydrology scenario, Demand (not in model), Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Mayıs 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mayis-20230613.pdf"
+        ]
+      ]
+    },
+    "2023-06": {
+      "tr": "Seçim sonrası kur 19,64'ten 23,09'a (%17,6) sıçradı ama PTF 1.907'den 1.624 TL/MWh'e (%14,8) düştü; dolar bazında fiyat 70,3 $/MWh'e indi. Hidro payı %32,3, tavana yapışma yalnızca 10 saat; gaz payı %19,1'den %10,0'a çekildi. BOTAŞ tarifesi 10.000 TL/1000 Sm³'te sabit. İlgili girdi: Aylık kur artışı, Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "After the election USD/TRY jumped from 19.64 to 23.09 (+17.6%) but PTF fell from 1,907 to 1,624 TL/MWh (-14.8%), so the dollar price dropped to 70.3 $/MWh. Hydro share was 32.3%, only 10 hours were at the cap, and gas share fell from 19.1% to 10.0%. The BOTAŞ tariff stayed at 10,000 TL/1000 Sm³. Related input: Monthly FX rise, Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Temmuz 2023 (Haziran karşılaştırması)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20230809.pdf"
+        ]
+      ]
+    },
+    "2023-07": {
+      "tr": "4 Temmuz'da azami fiyat 2.600'den 2.700 TL/MWh'e çıkarıldı; PTF 1.624'ten 1.977 TL/MWh'e (%21,7) yükseldi, ancak kur artışı (%14,2) ve hidro payındaki düşüş (%32,3'ten %22,0'a) modelin beklediği kadar dolar fiyatını artırmadı: 74,95 $/MWh. Tavanda yalnızca 11 saat kaldı. İlgili girdi: Aylık kur artışı, Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "On 4 July the cap rose from 2,600 to 2,700 TL/MWh; PTF climbed from 1,624 to 1,977 TL/MWh (+21.7%), but with FX up 14.2% and hydro share down from 32.3% to 22.0% the dollar price still came in below the model at 74.95 $/MWh. Only 11 hours were at the cap. Related input: Monthly FX rise, Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Temmuz 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20230809.pdf"
+        ]
+      ]
+    },
+    "2023-09": {
+      "tr": "PTF 2.006,8 TL/MWh'e (74,4 $/MWh; Ağustos'ta 83,4) indi. Günlük üretim Ağustos'a göre %11,2 azaldı (toplam 33,2'den 28,5 TWh), hidro payı %16,3'ten %13,6'ya düştü ama rüzgâr payı 2,1 puan artıp %11,7 oldu; yalnızca 30 saat 2.700 TL/MWh tavanında kaldı. İlgili girdi: Talep (modelde yok), Tavana yapışma oranı.",
+      "en": "PTF eased to 2,006.8 TL/MWh (74.4 $/MWh versus 83.4 in August). Daily generation was 11.2% lower than August (total 33.2 to 28.5 TWh); hydro share fell from 16.3% to 13.6% but wind share rose 2.1 points to 11.7%, and only 30 hours were at the 2,700 TL/MWh cap. Related input: Demand (not in model), Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Eylül 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-eylul-20231006.pdf"
+        ]
+      ]
+    },
+    "2023-10": {
+      "tr": "BOTAŞ santral gazı 2 Ekim'de %20 zamlanıp 12.000 TL/1000 Sm³ oldu; PTF 2.249,8 TL/MWh'e (80,8 $/MWh, Eylül'de 74,4) çıktı. Rüzgâr payı 3,2 puan düşüp %8,6 oldu, termik pay %61,5'e yükseldi ve fiyat 111 saat 2.700 TL/MWh tavanında kaldı. İlgili girdi: BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
+      "en": "BOTAŞ raised the power-plant gas price 20% to 12,000 TL/1000 Sm³ on 2 October; PTF rose to 2,249.8 TL/MWh (80.8 $/MWh versus 74.4 in September). Wind share dropped 3.2 points to 8.6%, thermal share rose to 61.5%, and prices sat at the 2,700 TL/MWh cap for 111 hours. Related input: BOTAŞ gas tariff, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Ekim 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-ekim-20231105.pdf"
+        ]
+      ]
+    },
+    "2023-11": {
+      "tr": "PTF %8,1 düşüp 2.066,9 TL/MWh'e (72,2 $/MWh; Ekim'de 80,8) indi. Rüzgâr payı 3,7 puan artıp %12,4, hidro %15,7 oldu; termik pay %62,2'den %57,6'ya geriledi. Brent aylık %8,5, Henry Hub %9,1 düştü; BOTAŞ tarifesi 12.000 TL/1000 Sm³'te sabit. İlgili girdi: Arz kesintisi (modelde yok), Hidroloji senaryosu.",
+      "en": "PTF fell 8.1% to 2,066.9 TL/MWh (72.2 $/MWh versus 80.8 in October). Wind share rose 3.7 points to 12.4% and hydro to 15.7%; thermal share dropped from 62.2% to 57.6%. Brent fell 8.5% and Henry Hub 9.1% month on month; the BOTAŞ tariff stayed at 12,000 TL/1000 Sm³. Related input: Supply outage (not in model), Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Kasım 2023",
+          "https://tskb.com.tr/uploads/file/enerji-bulteni-kasim-20231218.pdf"
+        ]
+      ]
+    },
+    "2023-12": {
+      "tr": "Hidro payı %16,2'den %24,4'e fırladı (baraj %19,0), termik pay %59,5'ten %53,5'e düştü; rüzgâr 1,9 puan azalıp %10,9 oldu. PTF TL'de %0,3 artışla 2.075,0 TL/MWh'te yatay kalırken kur yükseldiği için dolar fiyatı 71,4 $/MWh'e indi; 78 saat tavanda (2.700 TL/MWh). İlgili girdi: Hidroloji senaryosu, Aylık kur artışı.",
+      "en": "Hydro share jumped from 16.2% to 24.4% (dams 19.0%) and thermal fell from 59.5% to 53.5%; wind dropped 1.9 points to 10.9%. PTF was flat in lira (+0.3%) at 2,075.0 TL/MWh, so with USD/TRY rising the dollar price eased to 71.4 $/MWh; 78 hours were at the 2,700 TL/MWh cap. Related input: Hydrology scenario, Monthly FX rise.",
+      "src": [
+        [
+          "TSKB Aralık 2023",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-aralik-20240109.pdf"
+        ]
+      ]
+    },
+    "2024-01": {
+      "tr": "Hidro payı %24,4'ten %28,3'e, rüzgâr payı 2,7 puan artarak %13,6'ya çıktı; termik pay %53,5'ten %47,8'e düştü. PTF aylık %6,4 azalarak 1.942,9 TL/MWh (65,6 $/MWh) oldu; hidro kapasite faktörleri son beş yılın en yüksek Ocak seviyesindeydi. İlgili girdi: Hidroloji senaryosu.",
+      "en": "Hydro share rose from 24.4% to 28.3% and wind share rose 2.7 points to 13.6%, while the thermal share fell from 53.5% to 47.8%. PTF fell 6.4% m/m to 1,942.9 TL/MWh (65.6 $/MWh); hydro capacity factors were the highest January levels in five years. Related input: Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Ocak 2024",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-ocak-20240209.pdf"
+        ]
+      ]
+    },
+    "2024-03": {
+      "tr": "Hidro payı %28,1'den %24,0'a, rüzgâr payı 2,8 puan düşüp %7,5'e indi; termik pay %49,8'den %52,8'e çıktı. PTF aylık %11,9 artarak 2.191 TL/MWh (68,4 $/MWh) oldu ve 61 saat 2.700 TL/MWh tavanında kaldı. İlgili girdi: Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "Hydro share fell from 28.1% to 24.0% and wind share fell 2.8 points to 7.5%, while thermal rose from 49.8% to 52.8%. PTF rose 11.9% m/m to 2,191 TL/MWh (68.4 $/MWh) with 61 hours at the 2,700 TL/MWh cap. Related input: Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Mart 2024",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mart-20240405.pdf"
+        ]
+      ]
+    },
+    "2024-05": {
+      "tr": "Hidro payı %33,3'ten %29,9'a düştü, termik pay %35,9'dan %43,3'e çıktı; rüzgâr payı yalnızca %8,9 oldu. PTF aylık %16,1 artarak 2.047 TL/MWh (63,5 $/MWh) oldu ve 57 saat 2.700 TL/MWh tavanında kaldı. İlgili girdi: Hidroloji senaryosu, Tavana yapışma oranı.",
+      "en": "Hydro share fell from 33.3% to 29.9% and thermal rose from 35.9% to 43.3%; wind supplied only 8.9%. PTF rose 16.1% m/m to 2,047 TL/MWh (63.5 $/MWh) with 57 hours at the 2,700 TL/MWh cap. Related input: Hydrology scenario, Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Mayıs 2024",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mayis-20240607.pdf"
+        ]
+      ]
+    },
+    "2024-07": {
+      "tr": "EPDK azami fiyatı 2.700'den 3.000 TL/MWh'e çıkardı ve fiyat 185 saat 3.000 TL/MWh'de kaldı; hidro payı %22,5'ten %18,3'e düştü, termik pay %49,0'dan %56,1'e çıktı. PTF aylık %23,6 artarak 2.589 TL/MWh (78,8 $/MWh) oldu. İlgili girdi: Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "EPDK raised the price cap from 2,700 to 3,000 TL/MWh and prices sat at 3,000 TL/MWh for 185 hours; hydro share fell from 22.5% to 18.3% and thermal rose from 49.0% to 56.1%. PTF rose 23.6% m/m to 2,589 TL/MWh (78.8 $/MWh). Related input: Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Temmuz 2024",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20240809.pdf"
+        ]
+      ]
+    },
+    "2024-11": {
+      "tr": "Termik pay %60,4'ten %65,0'e çıktı, yenilenebilir pay %39,6'dan %35,0'e düştü; TTF gazı aylık %11,0 artıp 44,8 $/MWh oldu. PTF aylık %5,5 artarak 2.463 TL/MWh (71,5 $/MWh) oldu ve 169 saat 3.000 TL/MWh tavanında kaldı. İlgili girdi: Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "Thermal share rose from 60.4% to 65.0% and renewables fell from 39.6% to 35.0%; TTF gas rose 11.0% m/m to 44.8 $/MWh. PTF rose 5.5% m/m to 2,463 TL/MWh (71.5 $/MWh) with 169 hours at the 3,000 TL/MWh cap. Related input: Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Kasım 2024",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-kasim-20241209.pdf"
+        ]
+      ]
+    },
+    "2025-02": {
+      "tr": "Hidro payı %16,9'dan %15,7'ye düştü ve Şubat için zayıf kaldı (Şubat 2026'da %29,6); gaz payı %29,1'e çıktı, TTF 50,3 $/MWh ile yüksekti. Model mevsimsel düşüş bekliyordu; PTF TL'de 2.509'dan 2.478 TL/MWh'e yalnız %1,2 geriledi ve 68,8 $/MWh'te kaldı. İlgili girdi: Hidroloji senaryosu, BOTAŞ gaz tarifesi.",
+      "en": "Hydro share fell from 16.9% to 15.7%, weak for a February (29.6% in February 2026); gas share rose to 29.1% and TTF was high at 50.3 $/MWh. The model expected a seasonal drop; PTF eased only 1.2% in TL, from 2,509 to 2,478 TL/MWh, and stayed at 68.8 $/MWh. Related input: Hydrology scenario, BOTAŞ gas tariff.",
+      "src": [
+        [
+          "TSKB Mart 2025 (Şubat verisi)",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mart-20250407.pdf"
+        ]
+      ]
+    },
+    "2025-04": {
+      "tr": "BOTAŞ santral gazını ortalama %24,2 zamladı ve azami fiyat 5 Nisan'dan itibaren 3.000'den 3.400 TL/MWh'e çıktı; fiyat 69 saat tavanda kaldı. PTF aylık %12,3 artarak 2.453 TL/MWh (64,4 $/MWh) oldu; hidro payı %18,8'den %27,5'e çıkması etkiyi sınırladı. İlgili girdi: BOTAŞ gaz tarifesi, Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "BOTAŞ raised the power-plant gas price by 24.2% on average and the cap went from 3,000 to 3,400 TL/MWh from 5 April; prices sat at the cap for 69 hours. PTF rose 12.3% m/m to 2,453 TL/MWh (64.4 $/MWh); hydro rising from 18.8% to 27.5% limited the effect. Related input: BOTAŞ gas tariff, Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Nisan 2025",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20250509.pdf"
+        ],
+        [
+          "CNBC-e: azami fiyat 3.400 TL/MWh, 5 Nisan 2025",
+          "https://www.cnbce.com/enerji/elektrikte-gun-oncesi-ve-dengeleme-guc-piyasasinda-azami-fiyat-yuzde-13-artirildi-h11272"
+        ],
+        [
+          "Ekonomi Gazetesi: azami fiyat artışı",
+          "https://www.ekonomigazetesi.com/ekonomi/elektrikte-gun-oncesi-ve-dengeleme-guc-piyasasinda-azami-fiyatta-artis-46923"
+        ],
+        [
+          "Bigpara: BOTAŞ santral gazı %24,2, Nisan 2025",
+          "https://bigpara.hurriyet.com.tr//ekonomi-haberleri/galeri-elektrik-ve-dogal-gaz-fiyatlari-4-nisan-2025-elektrige-zam-geldi-mi-elektrik-ve-dogal-gaz-fiyatlari-artti-mi-enerji_ID1609977"
+        ]
+      ]
+    },
+    "2025-06": {
+      "tr": "PTF aylık %10,4 azalarak 2.202 TL/MWh (55,9 $/MWh) oldu ve yalnızca 27 saat 3.400 TL/MWh tavanında kaldı; 34 saat PTF 0 TL/MWh'e indi. Hidro payı %26'dan %17,6'ya düşse de rüzgâr payı %11,2'den %15,7'ye çıktı (EPİAŞ haftalık rapor: 9–15 Haziran haftasında rüzgâr %16,0), bu da fiyatı aşağı çekti. İlgili girdi: Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "PTF fell 10.4% m/m to 2,202 TL/MWh (55.9 $/MWh), sat at the 3,400 TL/MWh cap for only 27 hours, and 34 hours cleared at 0 TL/MWh. Hydro share dropped from 26% to 17.6%, but wind share rose from 11.2% to 15.7% (EPİAŞ weekly report: wind 16.0% in 9–15 June), pulling the price down. Related input: Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Haziran 2025",
+          "https://hedeffiyat.com.tr/dosyalar/rapor/tskbaylikenerjibulteni442113-5916.pdf"
+        ],
+        [
+          "EPİAŞ haftalık rapor, 24. hafta 2025",
+          "https://www.epias.com.tr/wp-content/uploads/2025/06/24.Hafta-09.06.25-15.06.25-Haftalik_Rapor.pdf"
+        ]
+      ]
+    },
+    "2025-07": {
+      "tr": "Sıcak hava talebi aylık yaklaşık %26 artırdı; termik pay %46,6'dan %57,6'ya çıktı, yenilenebilir pay %51'den %40,4'e düştü. PTF aylık %34,6 artarak 2.965 TL/MWh (73,8 $/MWh) oldu ve 157 saat 3.400 TL/MWh tavanında kaldı. İlgili girdi: Talep (modelde yok), Tavana yapışma oranı, Hidroloji senaryosu.",
+      "en": "Hot weather lifted demand by about 26% m/m; thermal share rose from 46.6% to 57.6% and renewables fell from 51% to 40.4%. PTF rose 34.6% m/m to 2,965 TL/MWh (73.8 $/MWh) with 157 hours at the 3,400 TL/MWh cap. Related input: Demand (not in model), Cap adherence ratio, Hydrology scenario.",
+      "src": [
+        [
+          "TSKB Temmuz 2025",
+          "https://hedeffiyat.com.tr/dosyalar/rapor/tskbaylikenerjibulteni442123-6154.pdf"
+        ],
+        [
+          "İş Yatırım Elektrik Bülteni, 8 Ağustos 2025",
+          "https://arastirma.isyatirim.com.tr/wp-content/uploads/2025/08/Elektrik-Bulteni_TR_080825.pdf"
+        ]
+      ]
+    },
+    "2025-09": {
+      "tr": "Düşen sıcaklıklarla tüketim Ağustos'a göre yaklaşık %14 geriledi; aylık üretim 35,8'den 29,8 TWh'e indi. PTF aylık %7,2 azalarak 2.729 TL/MWh (66,1 $/MWh) oldu ve tavanda 56 saat kalındı. İlgili girdi: Talep (modelde yok), Tavana yapışma oranı.",
+      "en": "Falling temperatures cut consumption by about 14% from August; monthly generation fell from 35.8 to 29.8 TWh. PTF fell 7.2% m/m to 2,729 TL/MWh (66.1 $/MWh) with 56 hours at the cap. Related input: Demand (not in model), Cap adherence ratio.",
+      "src": [
+        [
+          "TSKB Eylül 2025",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-eylul-20251009.pdf"
+        ],
+        [
+          "İş Yatırım Elektrik Bülteni, Eylül 2025",
+          "https://hedeffiyat.com.tr/dosyalar/rapor/isyatirimelektrikbulteni50442-9606.pdf"
+        ]
+      ]
+    },
+    "2025-12": {
+      "tr": "Termik pay %62,8'den %66,1'e çıktı; doğalgaz santral tüketimi Kasım'a göre %36,7 arttı ve gaz %29,6 ile en büyük kaynak oldu. PTF aylık %6,8 artarak 2.973 TL/MWh oldu; 415 saat PTF 3.000 TL/MWh üzerinde, 189 saat 3.400 TL/MWh tavanında kaldı. İlgili girdi: Tavana yapışma oranı, Talep (modelde yok).",
+      "en": "Thermal share rose from 62.8% to 66.1%; gas burn for power rose 36.7% from November and gas became the largest source at 29.6%. PTF rose 6.8% m/m to 2,973 TL/MWh; 415 hours were above 3,000 TL/MWh and 189 hours sat at the 3,400 TL/MWh cap. Related input: Cap adherence ratio, Demand (not in model).",
+      "src": [
+        [
+          "TSKB Aralık 2025",
+          "https://hedeffiyat.com.tr/dosyalar/rapor/tskbaylikenerjibulteni445433-802.pdf"
+        ],
+        [
+          "Enerji Bakanlığı e-Bülten, Ocak 2026 (Aralık verisi)",
+          "https://enerji.gov.tr/Media/Dizin/SGB/tr/AYLIK_ENERJI_BULTENI/2026/OCAK/e-BULTEN_Ocak_2026.pdf"
+        ]
+      ]
+    },
     "2026-02": {
       "tr": "Hidro payı %13,0'dan %29,6'ya çıktı (erken kar erimesi, dolu barajlar); 20 saat PTF 0 TL/MWh oldu; TTF 34,2 $/MWh'e geriledi. İlgili girdi: Hidroloji senaryosu (etki Mart–Haziran penceresinden önce başladı), BOTAŞ gaz tarifesi.",
       "en": "Hydro share rose from 13.0% to 29.6% (early snowmelt, full reservoirs); 20 hours cleared at 0 TL/MWh; the gas price (TTF) fell to 34.2 $/MWh. Related input: Hydrology scenario (the effect began before the Mar–Jun window), BOTAŞ gas tariff.",
-      "src": [["TSKB Şubat 2026", "https://tskb.com.tr/uploads/file/enerji-bulteni-subat-20260306.pdf"], ["Marbaş Şubat 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-SUBAT-2026.pdf"]]
+      "src": [
+        [
+          "TSKB Şubat 2026",
+          "https://tskb.com.tr/uploads/file/enerji-bulteni-subat-20260306.pdf"
+        ],
+        [
+          "Marbaş Şubat 2026",
+          "https://marbas.com.tr/assets/ENERJI-BULTENI-SUBAT-2026.pdf"
+        ]
+      ]
     },
     "2026-03": {
       "tr": "Hidro payı %35,4'e çıktı; 22 saat PTF 0 TL/MWh oldu; bol hidro ve yenilenebilir varken gaz santralleri fiyatı daha az belirledi. İlgili girdi: Hidroloji senaryosu.",
       "en": "Hydro share rose to 35.4%; 22 hours cleared at 0 TL/MWh; with plenty of hydro and renewables, gas plants set the price less often. Related input: Hydrology scenario.",
-      "src": [["TSKB Nisan 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"], ["EPİAŞ şeffaflık verisi", "https://seffaflik.epias.com.tr"]]
+      "src": [
+        [
+          "TSKB Nisan 2026",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"
+        ],
+        [
+          "EPİAŞ şeffaflık verisi",
+          "https://seffaflik.epias.com.tr"
+        ]
+      ]
     },
     "2026-04": {
       "tr": "Hidro payı %42,1'e, yenilenebilir payı %70,5'e çıktı; 95 saat PTF 0 TL/MWh oldu. 4 Nisan'da BOTAŞ santral gazı ortalama %19,42 zamlandı ve azami fiyat 3.400'den 4.500 TL/MWh'e çıktı; ikisi fiyatı yukarı itse de hidro baskın geldi. İlgili girdi: Hidroloji senaryosu, BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
       "en": "Hydro share rose to 42.1% and renewables to 70.5%; 95 hours cleared at 0 TL/MWh. On 4 April BOTAŞ raised the power-plant gas price by 19.42% on average and the price cap went from 3,400 to 4,500 TL/MWh; both pushed up, but hydro dominated. Related input: Hydrology scenario, BOTAŞ gas tariff, Cap adherence ratio.",
-      "src": [["TSKB Nisan 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"], ["Turkish Minute", "https://turkishminute.com/2026/04/03/turkey-raises-electricity-and-natural-gas-prices-by-up-to-25-percent/"]]
+      "src": [
+        [
+          "TSKB Nisan 2026",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-nisan-20260508.pdf"
+        ],
+        [
+          "Turkish Minute",
+          "https://turkishminute.com/2026/04/03/turkey-raises-electricity-and-natural-gas-prices-by-up-to-25-percent/"
+        ]
+      ]
     },
     "2026-05": {
       "tr": "Yenilenebilir payı %73,2 ile 2024'ten beri en yüksek seviyeye çıktı; 214 saat PTF 0 TL/MWh oldu (196'sı gündüz); termik payı %26,8'e indi. İlgili girdi: Hidroloji senaryosu.",
       "en": "Renewables reached a 73.2% share, the highest since 2024; 214 hours cleared at 0 TL/MWh (196 in daytime); thermal share fell to 26.8%. Related input: Hydrology scenario.",
-      "src": [["TSKB Mayıs 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mayis-20260605.pdf"], ["Marbaş Haziran 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"]]
+      "src": [
+        [
+          "TSKB Mayıs 2026",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-mayis-20260605.pdf"
+        ],
+        [
+          "Marbaş Haziran 2026",
+          "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"
+        ]
+      ]
     },
     "2026-06": {
       "tr": "Hidro payı %43,5'ten yaklaşık %35'e geriledi; sıfır fiyatlı saat 214'ten 40'a indi; akşam pikinde 4 saat azami fiyat (4.500 TL/MWh) görüldü. İlgili girdi: Hidroloji senaryosu, Tavana yapışma oranı.",
       "en": "Hydro share fell from 43.5% to about 35%; zero-price hours dropped from 214 to 40; the evening peak hit the 4,500 TL/MWh cap in 4 hours. Related input: Hydrology scenario, Cap adherence ratio.",
-      "src": [["Marbaş Haziran 2026", "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"], ["EPİAŞ 26. hafta raporu", "https://www.epias.com.tr/wp-content/uploads/2026/06/26.Hafta-22.06.26-28.06.26-Haftalik_Rapor.pdf"]]
+      "src": [
+        [
+          "Marbaş Haziran 2026",
+          "https://marbas.com.tr/assets/ENERJI-BULTENI-HAZIRAN-2026.pdf"
+        ],
+        [
+          "EPİAŞ 26. hafta raporu",
+          "https://www.epias.com.tr/wp-content/uploads/2026/06/26.Hafta-22.06.26-28.06.26-Haftalik_Rapor.pdf"
+        ]
+      ]
     },
     "2026-07": {
       "tr": "Hidro payı %26,1'e düştü, termik payı %41,6'ya çıktı; TTF %19,7 artışla 61,6 $/MWh oldu; sıfır fiyatlı saat kalmadı, 31 saat ≥4.400 TL/MWh. İlgili girdi: Hidroloji senaryosu (etki Mart–Haziran penceresinden sonra sürdü), BOTAŞ gaz tarifesi, Tavana yapışma oranı.",
       "en": "Hydro share fell to 26.1% and thermal rose to 41.6%; the gas price (TTF) rose 19.7% to 61.6 $/MWh; no zero-price hours, 31 hours at ≥4,400 TL/MWh. Related input: Hydrology scenario (the effect ran past the Mar–Jun window), BOTAŞ gas tariff, Cap adherence ratio.",
-      "src": [["TSKB Temmuz 2026", "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20260807.pdf"], ["EPİAŞ şeffaflık verisi", "https://seffaflik.epias.com.tr"]]
+      "src": [
+        [
+          "TSKB Temmuz 2026",
+          "https://www.tskb.com.tr/uploads/file/enerji-bulteni-temmuz-20260807.pdf"
+        ],
+        [
+          "EPİAŞ şeffaflık verisi",
+          "https://seffaflik.epias.com.tr"
+        ]
+      ]
+    },
+    "2026-08": {
+      "tr": "Hidro Ağustos için rekor seviyede (9 TWh üzeri, üretimin yaklaşık %25'i), yenilenebilir pay %56,9 ile Ağustos rekoru; rüzgâr yaklaşık %13. Rekor tüketime (35,4 TWh) rağmen PTF TL'de 2.700'den 2.908 TL/MWh'e (%7,7) çıktı, dolarda beklentinin altında kaldı. İlgili girdi: Hidroloji senaryosu, Talep (modelde yok).",
+      "en": "Hydro was at a record for August (over 9 TWh, about 25% of generation), renewables hit a record 56.9% share, and wind was about 13%. Despite record consumption (35.4 TWh), PTF rose in TL only from 2,700 to 2,908 TL/MWh (7.7%) and stayed below the forecast in dollar terms. Related input: Hydrology scenario, Demand (not in model).",
+      "src": [
+        [
+          "EPİAŞ bülteni 8 Eylül 2026 (Ağustos PTF)",
+          "https://www.epias.com.tr/wp-content/uploads/2026/09/epias-bulten-08.09.2026.pdf"
+        ],
+        [
+          "Bloomberg HT: Ağustos elektrikte rekorlar, 4 Eylül 2026",
+          "https://www.bloomberght.com/agustos-elektrikte-rekorlarin-donemi-oldu-3787362"
+        ]
+      ]
+    },
+    "2026-09": {
+      "tr": "Yenilenebilir pay %57,6 ile rekor Eylül seviyesine çıktı (18 TWh); tüketim Ağustos'taki yaklaşık 35,4 TWh'den 30,6 TWh'e indi. PTF 2.908'den 2.742 TL/MWh'e (%5,7) geriledi ve tavanda yalnızca 7 saat kalındı. İlgili girdi: Hidroloji senaryosu, Talep (modelde yok), Tavana yapışma oranı.",
+      "en": "Renewables reached a record September share of 57.6% (18 TWh) and consumption fell from about 35.4 TWh in August to 30.6 TWh. PTF fell from 2,908 to 2,742 TL/MWh (5.7%) with only 7 hours at the cap. Related input: Hydrology scenario, Demand (not in model), Cap adherence ratio.",
+      "src": [
+        [
+          "Bloomberg HT: ilk 3 çeyrekte yenilenebilir rekoru, 5 Ekim 2026",
+          "https://www.bloomberght.com/ilk-3-ceyrekte-yenilenebilir-uretim-rekoru-kirdi-3790365"
+        ],
+        [
+          "Bloomberg HT: Ağustos elektrikte rekorlar, 4 Eylül 2026",
+          "https://www.bloomberght.com/agustos-elektrikte-rekorlarin-donemi-oldu-3787362"
+        ]
+      ]
+    },
+    "2026-10": {
+      "tr": "Gaz payı %10,8'den %13,1'e çıktı, rüzgâr %13,9'dan %12,1'e ve güneş %3,5'ten %2,5'e düştü; 43 saat 4.500 TL/MWh tavanı görüldü. PTF 2.742'den 2.925 TL/MWh'e (%6,7) yükseldi. İlgili girdi: Tavana yapışma oranı, Talep (modelde yok).",
+      "en": "Gas share rose from 10.8% to 13.1% while wind fell from 13.9% to 12.1% and solar from 3.5% to 2.5%; 43 hours hit the 4,500 TL/MWh cap. PTF rose from 2,742 to 2,925 TL/MWh (6.7%). Related input: Cap adherence ratio, Demand (not in model).",
+      "src": [
+        [
+          "EPİAŞ şeffaflık verisi",
+          "https://seffaflik.epias.com.tr"
+        ]
+      ]
     }
   }
 }
