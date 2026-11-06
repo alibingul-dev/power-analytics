@@ -1,30 +1,9 @@
 {
-  "2026-10-28#gb_post1": {
-    "analysis_date": "2026-10-28",
-    "at": "2026-10-29T17:16:45.284834Z",
-    "kind": "gb_post1",
-    "post_id": "urn:li:share:7521621053778046977",
-    "source": "manual"
-  },
-  "2026-10-28#post1": {
-    "analysis_date": "2026-10-28",
-    "at": "2026-10-29T12:55:29.701635Z",
-    "kind": "post1",
-    "post_id": "urn:li:share:7521555305999233024",
-    "source": "manual"
-  },
   "2026-10-29#gb_post1": {
     "analysis_date": "2026-10-29",
     "at": "2026-10-30T20:38:28.993398Z",
     "kind": "gb_post1",
     "post_id": "urn:li:share:7522034208240955393",
-    "source": "manual"
-  },
-  "2026-10-29#news": {
-    "analysis_date": "2026-10-29",
-    "at": "2026-10-29T06:27:07.523788Z",
-    "kind": "news",
-    "post_id": "urn:li:share:7521457569362771968",
     "source": "manual"
   },
   "2026-10-29#post1": {
@@ -34,13 +13,6 @@
     "post_id": "urn:li:share:7521909873199034369",
     "source": "manual"
   },
-  "2026-10-29#special": {
-    "analysis_date": "2026-10-29",
-    "at": "2026-10-29T14:02:45.704682Z",
-    "kind": "special",
-    "post_id": "urn:li:share:7521572235015491585",
-    "source": "manual"
-  },
   "2026-10-30#gb_post1": {
     "analysis_date": "2026-10-30",
     "at": "2026-10-31T11:14:01.823263Z",
@@ -48,25 +20,11 @@
     "post_id": "urn:li:share:7522254547365466112",
     "source": "manual"
   },
-  "2026-10-30#gb_post2": {
-    "analysis_date": "2026-10-30",
-    "at": "2026-10-29T07:28:49.508282Z",
-    "kind": "gb_post2",
-    "post_id": "urn:li:share:7521473097858990081",
-    "source": "manual"
-  },
   "2026-10-30#post1": {
     "analysis_date": "2026-10-30",
     "at": "2026-10-31T12:17:51.406580Z",
     "kind": "post1",
     "post_id": "urn:li:share:7522270610295578624",
-    "source": "manual"
-  },
-  "2026-10-30#post2": {
-    "analysis_date": "2026-10-30",
-    "at": "2026-10-29T10:52:50.538223Z",
-    "kind": "post2",
-    "post_id": "urn:li:share:7521524439965069312",
     "source": "manual"
   },
   "2026-10-31#gb_post1": {
@@ -256,6 +214,13 @@
     "at": "2026-11-05T07:30:19.893572Z",
     "kind": "gb_post2",
     "post_id": "urn:li:share:7524010191483240448",
+    "source": "manual"
+  },
+  "2026-11-06#news": {
+    "analysis_date": "2026-11-06",
+    "at": "2026-11-06T06:26:44.381753Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7524356576275505153",
     "source": "manual"
   },
   "2026-11-06#post2": {
