@@ -62,7 +62,17 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
   <div class="top"><h1 id="t-title"></h1><div class="cur" id="cur" hidden><button type="button" data-cur="try" aria-pressed="true">TL</button><button type="button" data-cur="usd">USD</button><button type="button" data-cur="eur">EUR</button></div></div>
   <div class="sub" id="t-sub"></div>
 
-  <div class="panel" style="margin-top:16px">
+  <div class="panel" id="livep" style="margin-top:16px;border-color:var(--navy)">
+    <div class="ctl" style="justify-content:space-between"><h2 id="t-live" style="margin:0"></h2><span id="ltag"></span></div>
+    <p class="note" id="t-livenote" style="margin:0 0 10px"></p>
+    <div class="grid2">
+      <div class="cbox" style="height:260px"><canvas id="cLive" role="img"></canvas></div>
+      <div class="tbl" style="margin:0;max-height:260px;overflow:auto"><table id="livet"></table></div>
+    </div>
+    <p class="note" id="t-livedisc"></p>
+  </div>
+
+  <div class="panel">
     <h2 id="t-range"></h2>
     <div class="ctl">
       <label><span id="t-from"></span><input type="date" id="from"></label>
@@ -151,7 +161,7 @@ en:{title:"Daily Price Forecast",
  w_noshift:"No realistic flat change in {what} (within {lim} GW) would have fixed this day: the miss was in the shape across hours, not the level.",what_nl:"net load",what_gas:"gas generation",
  w_overfit:"An exact hit in all 24 hours would need 24 free numbers tuned to this day after the fact. That is an overfit: it explains yesterday perfectly and forecasts tomorrow badly, so the model is not built that way.",
  hours:"Hour by hour",
- h:["Hour","Forecast","Actual","Miss","Yesterday"],
+ h:["Hour","Forecast","Actual","Miss"],
  h_why:"Why the miss",wl:"load plan",ww:"wind forecast",wu:"not explained",w_wait:"realised inputs pending",w_small:"within noise",
  h_yk:"YEKDEM curtailment risk",yk_risk:"flagged",yk_hit:"flagged · happened",yk_miss:"not flagged · happened",yk_none:"—",
  whycol:"'Why the miss' splits each hour's miss into the part caused by the load plan being off, the part caused by the wind forecast being off, and what the inputs cannot explain (solar, gas availability, bidding, outages, the price floor or cap). The largest part is in bold. Signs follow the miss: + means the part pushed the forecast above the actual price.",
@@ -178,6 +188,11 @@ en:{title:"Daily Price Forecast",
  m_mo:"The bid-offer curve was also tested as a price: last week's curve shifted by the change in the net load plan (a potential merit-order price). On its own it missed by {mo} TL/MWh against {d7} TL/MWh for simply copying last week, because the hourly curve excludes block and flexible offers and a shift of several GW leaves its usable range. It is therefore not in the model; only its steepness is shown, as a volatility warning.",
  coef:{p_d1:"yesterday's price ×{v}",p_d7:"last week's price ×{v}",netload:"{v} TL/MWh per GW of net load",weekend:"weekend {v} TL/MWh",p_mo:"bid-offer price ×{v}"},
  late_tag:"inputs archived after 12:30",
+ live:"Tomorrow (D+1) price forecast · {d}",live_none:"No forecast for tomorrow today",
+ livenote:"Made {at} from the EPİAŞ load plan and wind forecast archived at {cap}. Tomorrow's actual price is published by EPİAŞ at about 14:00 today; this row then moves into the record below and is scored.",
+ livenone:"Today's inputs were not archived before the 12:30 market close, so no forecast is published for tomorrow. The forecast is normally here by about 11:00. The last scored day is {d}.",
+ livedisc:"Personal work on public data; my own view, not my employer's. For information only: not investment, trading or hedging advice, and not a buy or sell signal.",
+ lh:["Hour","Forecast","YEKDEM curtailment risk"],
  fxnote:"Converted at that day's TCMB rate, {k} TRY per {u} (the rate EPİAŞ applies to the day-ahead price).",fxmissing:"No exchange rate for this day yet; shown in TL/MWh.",
  tlonly:"Accuracy is measured and shown in TL/MWh, the currency the price is formed in; the TL / USD / EUR selector converts the day view only.",
  stag:"Steep bid-offer curve · {n} hours",stag_off:"No steep-curve hours",stag_na:"No bid-offer curve for this day yet",
@@ -208,7 +223,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  w_noshift:"{what} tek başına makul bir düz kaymayla ({lim} GW içinde) bu günü düzeltemezdi: sapma seviyede değil, saatler arasındaki biçimdeydi.",what_nl:"Net yük",what_gas:"Gaz üretimi",
  w_overfit:"24 saatin hepsini tam tutturmak, o güne sonradan ayarlanmış 24 serbest sayı ister. Buna aşırı uyum (overfit) denir: dünü kusursuz açıklar, yarını kötü tahmin eder. Model bu yüzden böyle kurulmadı.",
  hours:"Saat saat",
- h:["Saat","Tahmin","Gerçekleşen","Sapma","Dün"],
+ h:["Saat","Tahmin","Gerçekleşen","Sapma"],
  h_why:"Fark neden çıktı",wl:"yük planı",ww:"rüzgâr tahmini",wu:"açıklanamayan",w_wait:"gerçekleşen girdiler bekleniyor",w_small:"gürültü sınırında",
  h_yk:"YEKDEM kesinti riski",yk_risk:"işaretli",yk_hit:"işaretli · gerçekleşti",yk_miss:"işaretsiz · gerçekleşti",yk_none:"—",
  whycol:"'Fark neden çıktı' her saatin sapmasını yük planının şaşmasından gelen kısım, rüzgâr tahmininin şaşmasından gelen kısım ve girdilerin açıklayamadığı kısım (güneş, gaz kullanılabilirliği, teklif davranışı, arızalar, taban ya da tavan fiyat) olarak böler. En büyük kısım kalın. İşaretler sapmayla aynı: + o kısmın tahmini gerçekleşenin üstüne ittiği anlamına gelir.",
@@ -235,6 +250,11 @@ tr:{title:"Günlük Fiyat Tahmini",
  m_mo:"Alış-satış eğrisi fiyat olarak da denendi: geçen haftanın eğrisi net yük planı farkı kadar kaydırıldı (potansiyel merit order fiyatı). Tek başına {mo} TL/MWh saptı; geçen haftayı aynen yazmak {d7} TL/MWh sapardı. Sebep: saatlik eğri blok ve esnek teklifleri içermiyor, birkaç GW'lık kayma eğrinin kullanılabilir aralığının dışına çıkıyor. Bu yüzden modelde yok; yalnız dikliği volatilite uyarısı olarak gösteriliyor.",
  coef:{p_d1:"dünün fiyatı ×{v}",p_d7:"geçen haftanın fiyatı ×{v}",netload:"net yükün her GW'ı için {v} TL/MWh",weekend:"hafta sonu {v} TL/MWh",p_mo:"alış-satış eğrisi fiyatı ×{v}"},
  late_tag:"girdiler 12:30'dan sonra arşivlendi",
+ live:"Yarın (D+1) fiyat tahmini · {d}",live_none:"Bugün yarın için tahmin yok",
+ livenote:"{at} yapıldı; EPİAŞ yük planı ve rüzgâr tahmini {cap} arşivlendi. Yarının gerçekleşen fiyatını EPİAŞ bugün 14:00 civarı yayımlar; bu satır sonra aşağıdaki sicile geçer ve puanlanır.",
+ livenone:"Bugünün girdileri 12:30 kapanışından önce arşivlenemedi, bu yüzden yarın için tahmin yayımlanmıyor. Tahmin normalde 11:00 civarı burada olur. Son puanlanan gün: {d}.",
+ livedisc:"Kamuya açık veriyle yapılmış kişisel çalışma; kendi görüşüm, işverenimin görüşü değil. Yalnız bilgi amaçlıdır: yatırım, alım-satım ya da hedge tavsiyesi değildir, al-sat sinyali değildir.",
+ lh:["Saat","Tahmin","YEKDEM kesinti riski"],
  fxnote:"O günün TCMB kuruyla çevrildi: {k} TRY / {u} (EPİAŞ'ın gün öncesi fiyata uyguladığı kur).",fxmissing:"Bu gün için kur henüz yok; TL/MWh gösteriliyor.",
  tlonly:"İsabet, fiyatın oluştuğu para birimi olan TL/MWh ile ölçülür ve gösterilir; TL / USD / EUR seçici yalnız gün görünümünü çevirir.",
  stag:"Dik alış-satış eğrisi · {n} saat",stag_off:"Dik eğrili saat yok",stag_na:"Bu gün için alış-satış eğrisi henüz yok",
@@ -333,9 +353,9 @@ function drawDay(){
   const yk=r.yekdem||{},rh=yk.risk_hours||[],ah0=yk.actual_hours||[];let nsteep=0;
   for(let i=0;i<24;i++){const e=r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
-    h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td>'+nP(r.naive_d1[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="why" style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+whyTxt(i)+'</td></tr>'}
+    h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="why" style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+whyTxt(i)+'</td></tr>'}
   const wavg=W?[[x.wl,avg(W.c_load)],[x.ww,avg(W.c_wind)],[x.wu,avg(W.unexplained)]].map(([n,v])=>n+' '+sg(v)).join(' · '):'<span class="dim">'+x.w_wait+'</span>';
-  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td>'+nP(avg(r.naive_d1),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+wavg+'</td></tr>';
+  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
   $("hours").innerHTML=h+'</tbody>';
   const ah=yk.actual_hours||[],el=$("ytag");
@@ -414,7 +434,30 @@ function texts(){
   if(cur)$("day").value=cur;
 }
 
-function render(){const rows=inRange();kpis(rows);drawDaily(rows);score();drawDay();method()}
+let cL=null;
+function liveView(){
+  const x=t();let L=D.live;const P=$("livep");
+  const tom=new Date(Date.now()+3*3600e3+86400e3).toISOString().slice(0,10);   // tomorrow in Europe/Istanbul (UTC+3)
+  if(L&&L.date!==tom)L=null;
+  if(!L||!L.fc){$("t-live").textContent=x.live_none;$("ltag").className="";$("ltag").textContent="";
+    $("t-livenote").textContent=fill(x.livenone,{d:DAYS.length?dlab(DAYS[DAYS.length-1].date):"—"});$("cLive").parentElement.hidden=true;$("livet").parentElement.hidden=true;$("t-livedisc").textContent="";return}
+  $("cLive").parentElement.hidden=false;$("livet").parentElement.hidden=false;
+  const hrs=[...Array(24).keys()].map(h=>String(h).padStart(2,"0")+":00");
+  const k=rate(L)||1,Ul=rate(L)?U():"TL/MWh";
+  $("t-live").textContent=fill(x.live,{d:dlab(L.date)});
+  const at=new Date(L.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}),cap=new Date(L.captured_at).toLocaleString(loc(),{hour:"2-digit",minute:"2-digit"});
+  $("t-livenote").textContent=fill(x.livenote,{at:at,cap:cap})+(CUR!=="try"&&L.fx?" "+fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(L.fx[CUR])}):"");
+  $("t-livedisc").textContent=x.livedisc;
+  const rh=(L.yekdem||{}).risk_hours||[],el=$("ltag");
+  if(rh.length){el.className="tag";el.textContent=fill(x.ytag_risk,{n:rh.length})}else{el.className="tag off";el.textContent=x.ytag_off}
+  if(cL)cL.destroy();
+  cL=new Chart($("cLive"),{type:"line",data:{labels:hrs,datasets:[{label:x.s_fc,data:L.fc.map(v=>v/k),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2}]},options:base(Ul)});
+  let h='<thead><tr><th>'+x.lh[0]+'</th><th>'+x.lh[1]+' ('+Ul+')</th><th>'+x.lh[2]+'</th></tr></thead><tbody>';
+  for(let i=0;i<24;i++){const fl=rh.includes(i);h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(L.fc[i],L)+'</td><td style="font-family:var(--font)">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>'}
+  h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(L.fc),L)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
+  $("livet").innerHTML=h+'</tbody>';
+}
+function render(){liveView();const rows=inRange();kpis(rows);drawDaily(rows);score();drawDay();method()}
 
 function init(dpf){
   D=dpf;DAYS=(dpf.days||[]).filter(r=>r.actual&&r.mae!=null);
