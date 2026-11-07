@@ -1,18 +1,4 @@
 {
-  "2026-10-29#gb_post1": {
-    "analysis_date": "2026-10-29",
-    "at": "2026-10-30T20:38:28.993398Z",
-    "kind": "gb_post1",
-    "post_id": "urn:li:share:7522034208240955393",
-    "source": "manual"
-  },
-  "2026-10-29#post1": {
-    "analysis_date": "2026-10-29",
-    "at": "2026-10-30T12:24:24.796018Z",
-    "kind": "post1",
-    "post_id": "urn:li:share:7521909873199034369",
-    "source": "manual"
-  },
   "2026-10-30#gb_post1": {
     "analysis_date": "2026-10-30",
     "at": "2026-10-31T11:14:01.823263Z",
@@ -34,25 +20,11 @@
     "post_id": "urn:li:share:7522616988871909376",
     "source": "manual"
   },
-  "2026-10-31#gb_post2": {
-    "analysis_date": "2026-10-31",
-    "at": "2026-10-30T07:27:53.958930Z",
-    "kind": "gb_post2",
-    "post_id": "urn:li:share:7521835251216642048",
-    "source": "manual"
-  },
   "2026-10-31#post1": {
     "analysis_date": "2026-10-31",
     "at": "2026-11-01T12:18:58.400872Z",
     "kind": "post1",
     "post_id": "urn:li:share:7522633278810460160",
-    "source": "manual"
-  },
-  "2026-10-31#post2": {
-    "analysis_date": "2026-10-31",
-    "at": "2026-10-30T09:14:16.433066Z",
-    "kind": "post2",
-    "post_id": "urn:li:share:7521862021966036992",
     "source": "manual"
   },
   "2026-11-01#gb_post1": {
@@ -249,6 +221,13 @@
     "at": "2026-11-06T07:28:54.390139Z",
     "kind": "gb_post2",
     "post_id": "urn:li:share:7524372221453287424",
+    "source": "manual"
+  },
+  "2026-11-07#news": {
+    "analysis_date": "2026-11-07",
+    "at": "2026-11-07T06:26:36.776996Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7524718932537229312",
     "source": "manual"
   },
   "2026-11-07#post2": {
