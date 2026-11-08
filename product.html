@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Özel ürün</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--line:#2b3340;--text:#e6edf3;--muted:#8b98a9;--accent:#38bdf8;--bad:#f87171;--ok:#34d399;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+a{color:var(--accent)}
+h1{font-size:28px;margin:0 0 6px}h2{font-size:18px;margin:0}
+.muted{color:var(--muted);font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input{flex:1 1 260px;max-width:520px;font:500 15px/1 var(--mono);letter-spacing:.03em;text-transform:uppercase;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#0b0f14;color:var(--text)}
+button{font:600 14px/1 inherit;background:var(--accent);color:#06121c;border:0;border-radius:8px;padding:11px 18px;cursor:pointer}
+button.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.banner{border-radius:10px;padding:12px 14px;font-weight:600;margin:14px 0}
+.banner.ok{background:rgba(52,211,153,.12);border:1px solid var(--ok)}
+.banner.bad{background:rgba(248,113,113,.14);border:1px solid var(--bad);color:#fecaca}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td.v{font-family:var(--mono);white-space:nowrap}
+pre{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font:13px/1.5 var(--mono);white-space:pre}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+#msg{min-height:1.3em;margin:10px 0 0}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<main>
+  <p class="muted"><a href="./">← Power Analytics</a></p>
+  <div id="gate">
+    <h1>Özel ürün</h1>
+    <p class="muted">Bu sayfa yalnız sana verilen ürün koduyla açılır.</p>
+    <div class="panel">
+      <form id="f" class="row" novalidate>
+        <input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PA-…" aria-label="Ürün kodu">
+        <button type="submit">Aç</button>
+      </form>
+      <p id="msg" class="muted" role="status"></p>
+    </div>
+  </div>
+  <div id="out" hidden></div>
+</main>
+<script>
+const PID=new URLSearchParams(location.search).get("p")||"";
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const msg=document.getElementById("msg");
+async function openBundle(code){
+  if(!/^p[0-9a-f]{8}$/.test(PID))throw new Error("link");
+  const r=await fetch("x/"+PID+".bundle.json",{cache:"no-store"});if(!r.ok)throw new Error("link");
+  const B=await r.json(),sub=crypto.subtle,te=new TextEncoder();
+  const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
+  const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+  for(const k of B.keys){
+    let raw;try{raw=await sub.decrypt({name:"AES-GCM",iv:b64(k.iv)},wk,b64(k.ct))}catch(e){continue}
+    const ck=await sub.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
+    return JSON.parse(new TextDecoder().decode(await sub.decrypt({name:"AES-GCM",iv:b64(B.iv)},ck,b64(B.ct))));
+  }
+  throw new Error("code");
+}
+const fmt=iso=>new Date(iso).toLocaleString("tr-TR",{timeZone:"Europe/Istanbul",day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"})+" TSİ";
+function render(p){
+  const d=p.data,now=Date.now(),from=Date.parse(d.valid_from),until=Date.parse(d.valid_until),valid=now>=from&&now<until;
+  const out=document.getElementById("out");
+  out.innerHTML=`<h1>${esc(d.title)}</h1>
+  <p class="muted">Seviye: ${esc(d.level)} · Üretildi: ${fmt(d.generated_at)} · Geçerli: ${fmt(d.valid_from)} – ${fmt(d.valid_until)}</p>
+  <div class="banner ${valid?"ok":"bad"}">${valid?"Geçerli. Değerleri SmartBot'a aşağıdaki gibi gir.":"GEÇERLİLİK DOLDU — KULLANMA. Ali'den güncel sürümü iste."}</div>
+  <div class="panel"><h2>Ayarlar</h2><table><tr><th>Ayar</th><th>Değer</th></tr>${d.settings.map(s=>`<tr><td>${esc(s.label)}</td><td class="v">${esc(({both:"İki yön",buy:"Yalnız AL",sell:"Yalnız SAT",yok:"Yok"})[s.value]||String(s.value).replace(".",","))}${s.unit?" "+esc(s.unit):""}</td></tr>`).join("")}</table></div>
+  ${d.formulas.map(f=>`<div class="panel"><div class="bar"><h2>${esc(f.title)}</h2><button type="button" data-c="${esc(f.id)}" ${valid?"":"disabled"}>Kopyala</button></div>
+    <p class="muted">${esc(f.note)}</p><p class="muted" style="margin-bottom:4px">Okunuş (ağaç)</p><pre>${esc(f.tree.join("\n"))}</pre>
+    <details><summary class="muted">Kopyalanacak tek satır</summary><pre>${esc(f.one)}</pre></details><p class="muted" data-m="${esc(f.id)}" aria-live="polite"></p></div>`).join("")}
+  <div class="panel"><h2>Notlar</h2><ul>${d.notes.map(n=>`<li class="muted">${esc(n)}</li>`).join("")}</ul></div>
+  <p><button type="button" class="ghost" id="lock">Kilitle</button></p>`;
+  out.hidden=false;document.getElementById("gate").hidden=true;
+  out.onclick=async e=>{const b=e.target.closest("button[data-c]");if(b){const f=d.formulas.find(x=>x.id===b.dataset.c),m=out.querySelector(`[data-m="${f.id}"]`);try{await navigator.clipboard.writeText(f.one);m.textContent="Tek satır olarak kopyalandı."}catch(_){m.textContent="Panoya erişilemedi; 'Kopyalanacak tek satır'ı aç ve elle kopyala."}}
+    if(e.target.id==="lock"){out.innerHTML="";out.hidden=true;document.getElementById("gate").hidden=false;document.getElementById("code").value=""}};
+}
+document.getElementById("f").onsubmit=async e=>{e.preventDefault();const c=document.getElementById("code").value.trim().toUpperCase();
+  if(!c){msg.textContent="Kodu gir.";msg.className="err";return}
+  msg.className="muted";msg.textContent="Açılıyor…";
+  try{render(await openBundle(c));msg.textContent=""}catch(err){msg.className="err";msg.textContent=err.message==="link"?"Bağlantı eksik ya da ürün yayından kalktı.":"Kod bu ürünü açmıyor."}};
+</script>
+</body>
+</html>
