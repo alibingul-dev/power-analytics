@@ -470,7 +470,7 @@ a.btn{display:inline-block;text-decoration:none}
 <!-- ===== /POWER ANALYTICS INTRO ===== -->
 
 
-<a class="acct" id="acct" href="#plans" data-view="plans" aria-label="Your plan"><span class="acct-l">Plan</span> <b id="acct-t">Free</b></a>
+<a class="acct" id="acct" href="#plans" data-view="plans" aria-label="Your plan"><span class="acct-l">Access</span> <b id="acct-t">Free</b></a>
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
   <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Home</em></div>
@@ -486,7 +486,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="nav">
-    <div class="items home-link"><a href="#home" data-view="home" style="--c:var(--text)"><span class="bar"></span>Home</a><a href="#plans" data-view="plans" style="--c:var(--b3)"><span class="bar"></span>Plans and early access</a></div>
+    <div class="items home-link"><a href="#home" data-view="home" style="--c:var(--text)"><span class="bar"></span>Home</a><a href="#plans" data-view="plans" style="--c:var(--b3)"><span class="bar"></span>Access code</a></div>
     <button class="grp" aria-expanded="true">TÜRKİYE<span class="chev"></span></button>
     <div class="items">
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
@@ -555,7 +555,7 @@ a.btn{display:inline-block;text-decoration:none}
     </a>
   </div>
   <p class="note-p">New pages and markets are added over time. Use the menu on the left to move between them.</p>
-  <p class="note-p"><a class="post" href="#plans" data-view="plans">Plans and early access →</a></p>
+  <p class="note-p"><a class="post" href="#plans" data-view="plans">Access code →</a></p>
 </section>
 
 <section class="view" id="tr-netload">
@@ -671,7 +671,7 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="trk-cap">Filter for everything in this box</div>
     <div class="sc-head"><span>Window <b id="k-sclbl">—</b></span>
       <div class="sc-presets"><button data-n="7">7D</button><button data-n="14">14D</button><button data-n="30">30D</button><button data-n="0" class="on">All</button></div></div>
-      <p class="pro-note note" style="margin:6px 0 0">Free shows the last seven days. Older days are part of <a class="post" href="#plans" data-view="plans">Pro</a>.</p>
+      <p class="pro-note note" style="margin:6px 0 0">The last seven days are shown. <a class="post" href="#plans" data-view="plans">Older days open with an access code</a>.</p>
     <div class="sc-track"><svg id="k-scmini" viewBox="0 0 900 46" preserveAspectRatio="none"></svg><div class="sc-win" id="k-scwin"></div>
       <input type="range" id="k-sca" min="0" max="0" value="0" aria-label="Window start">
       <input type="range" id="k-scb" min="0" max="0" value="0" aria-label="Window end"></div>
@@ -743,7 +743,7 @@ a.btn{display:inline-block;text-decoration:none}
   <h1>Published analysis</h1>
   <p class="lede">Every post, indexed by the day it analyses.</p>
   <p class="note-p">The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date. The day-end scorecard covers a closed day.</p>
-  <div class="pro-note panel"><p class="note" style="margin:0">Free shows the last seven days. The full archive is part of <a class="post" href="#plans" data-view="plans">Pro</a>.</p></div>
+  <div class="pro-note panel"><p class="note" style="margin:0">The last seven days are shown. <a class="post" href="#plans" data-view="plans">The full archive opens with an access code</a>.</p></div>
   <div id="a-rows"><p class="note-p">Loading…</p></div>
 </section>
 
@@ -806,13 +806,13 @@ a.btn{display:inline-block;text-decoration:none}
       <tbody>
         <tr><td class="mono">09:20</td><td>—</td><td>EPEX hourly day-ahead closes</td></tr>
         <tr><td class="mono">09:50</td><td>—</td><td>N2EX hourly day-ahead closes</td></tr>
-        <tr><td class="mono">12:30</td><td>GÖP bidding closes</td><td>—</td></tr>
-        <tr><td class="mono">14:00</td><td>Final MCP published</td><td>—</td></tr>
-        <tr><td class="mono">14:00–15:30</td><td>KGÜP generation schedules notified</td><td>—</td></tr>
+        <tr><td class="mono">12:30</td><td>Day-ahead (GÖP) bidding closes</td><td>—</td></tr>
+        <tr><td class="mono">14:00</td><td>Final day-ahead price (PTF) published</td><td>—</td></tr>
+        <tr><td class="mono">14:00–15:30</td><td>Final generation schedules (KGÜP) notified</td><td>—</td></tr>
         <tr><td class="mono">15:30</td><td>—</td><td>EPEX half-hourly day-ahead</td></tr>
         <tr><td class="mono">17:30</td><td>—</td><td>Intraday auction 1, 48 contracts</td></tr>
         <tr><td class="mono">08:00 (D)</td><td>—</td><td>Intraday auction 2, 30 contracts</td></tr>
-        <tr><td class="mono">Delivery −60 min</td><td>GİP closes</td><td>Balancing mechanism gate closure</td></tr>
+        <tr><td class="mono">Delivery −60 min</td><td>Intraday (GİP) closes</td><td>Balancing mechanism gate closure</td></tr>
       </tbody>
     </table>
   </div>
@@ -824,7 +824,7 @@ a.btn{display:inline-block;text-decoration:none}
       <tbody>
         <tr><td>Settlement period</td><td>1 hour, 24 per day</td><td>30 minutes, 48 per day</td></tr>
         <tr><td>Day-ahead venues</td><td>One exchange, one price</td><td>Two exchanges, two prices</td></tr>
-        <tr><td>Imbalance pricing</td><td>Dual price: min and max of MCP and SMP</td><td>Single price, so direction decides gain or loss</td></tr>
+        <tr><td>Imbalance pricing</td><td>Dual price: the worse of day-ahead price (PTF) and system marginal price (SMF)</td><td>Single price, so direction decides gain or loss</td></tr>
         <tr><td>Price cap</td><td>4,500 TL/MWh ceiling</td><td>No equivalent ceiling; negative prices occur</td></tr>
       </tbody>
     </table>
@@ -845,7 +845,7 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <!-- ===== PLANS AND EARLY ACCESS ===== -->
-<section class="view" id="plans">
+<section class="view plans-paused" id="plans">
 <style>
 .pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:8px 0 34px}
 .pl-card{display:flex;flex-direction:column;gap:12px;padding:22px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
@@ -878,6 +878,9 @@ html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]
 .pl-plus{font-size:14.5px;font-weight:600;color:var(--text);margin-top:2px}
 .pl-soon{color:var(--muted);font-size:13px}
 .ea{max-width:none}
+/* plans-paused (Ali, 2026-11-08): paid plans are not on sale; hide plan cards, prices and survey, keep the code box. Remove the class to restore. */
+.plans-paused .pl-grid,.plans-paused #ea,.plans-paused .pl-hide{display:none!important}
+.pl-show{display:none}.plans-paused .pl-show{display:block}
 .ea fieldset{border:0;padding:0;margin:0 0 22px}
 .ea legend{font-weight:600;font-size:16px;margin-bottom:10px;padding:0}
 .ea-opts{display:flex;flex-wrap:wrap;gap:8px}
@@ -895,9 +898,11 @@ html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]
 .ea.sent form{display:none}.ea.sent .ea-done{display:block}
 @media (max-width:640px){.ea-opts label{flex:1 1 calc(50% - 8px);justify-content:flex-start}}
 </style>
-  <h1>Plans and early access</h1>
-  <p class="lede">The free plan stays free. Paid plans are not open yet: tell us which one you would use, and that one gets built first.</p>
-  <p class="note-p">Prices are indicative and may change before launch. Nothing on this site is investment or trading advice.</p>
+  <h1 class="pl-show">Access code</h1>
+  <p class="lede pl-show">Enter the code you were given to open the pages shared with you.</p>
+  <h1 class="pl-hide">Plans and early access</h1>
+  <p class="lede pl-hide">The free plan stays free. Paid plans are not open yet: tell us which one you would use, and that one gets built first.</p>
+  <p class="note-p pl-hide">Prices are indicative and may change before launch. Nothing on this site is investment or trading advice.</p>
 
   <div class="pl-grid">
     <div class="pl-card">
@@ -941,7 +946,7 @@ html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]
       <div class="pl-plus">Everything in Max, plus:</div>
       <ul>
         <li>All markets</li>
-        <li>MCP and API access for your AI assistant and models</li>
+        <li>Data API and AI-assistant connector</li>
         <li>Price alerts (e.g. German price above €150)</li>
         <li>Earlier outlooks</li>
         <li>Monthly deep-dive report</li>
