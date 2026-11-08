@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="tr" data-noi18n>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>GİP Prop Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* GİP Prop Bot (custom product pefb3f7bd), shown inside the main site's shell as a full-page view (index.html#gip-prop).
+   Ported from Ali's claude.ai artifact "GİP Prop Bot" (2026-11-09): same simulation engine and formula generator,
+   site palette, full width. Data arrives encrypted (x/pefb3f7bd.bundle.json + x/pefb3f7bd.bt.bundle.json); the stored
+   access code decrypts it in the browser. Turkish only. */
+:root{color-scheme:dark;
+  --bg:#0E1520;--surface:#16202E;--surface-2:#1D2A3B;--line:#26364B;--fg:#E6EDF5;--muted:#8A9BB0;
+  --accent:#38BDF8;--accent-soft:rgba(56,189,248,.12);--warn:#FBBF24;--warn-soft:rgba(251,191,36,.10);
+  --gain:#34D399;--gain-soft:rgba(52,211,153,.14);--loss:#F43F5E;--loss-soft:rgba(244,63,94,.14);--base:#8A9BB0;
+  --display:Archivo,system-ui,sans-serif;--sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:clip}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+.wrap{padding:22px clamp(14px,3vw,44px) 64px;display:flex;flex-direction:column;gap:22px;min-width:0}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,3.2vw,34px);line-height:1.1;letter-spacing:-.02em;margin:6px 0 0}
+h2{font-family:var(--display);font-weight:600;font-size:18px;margin:0}
+.muted{color:var(--muted)}
+.sim{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 16px;font-size:14px}
+.sim b{color:var(--warn)}
+.ok{border-color:var(--gain);background:var(--gain-soft)}.ok b{color:var(--gain)}
+.bad{border-color:var(--loss);background:var(--loss-soft)}.bad b{color:var(--loss)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{font:inherit;font-size:14px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:7px 16px;border-radius:999px;cursor:pointer;font-variant-numeric:tabular-nums}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+#slip button{font-size:13px;font-weight:500;padding:6px 12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:21px;font-weight:500;font-variant-numeric:tabular-nums;margin-top:2px;overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pos{color:var(--gain)} .neg{color:var(--loss)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.chartbox{position:relative;height:320px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface-2);position:sticky;top:0}
+td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-family:var(--mono)}
+th:first-child,td:first-child{text-align:left}
+td.t{font-family:var(--sans)}
+tr.ev td{background:var(--accent-soft)}
+tr.gate td{background:var(--surface-2);font-weight:600}
+tr.sel td{background:var(--accent-soft)}
+.pill{display:inline-block;font-family:var(--sans);font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px}
+.pill.al{background:var(--gain-soft);color:var(--gain)} .pill.sat{background:var(--loss-soft);color:var(--loss)}
+.grid24{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.cbtn{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:8px;padding:6px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-variant-numeric:tabular-nums}
+.cbtn .p{font-family:var(--mono);font-size:12px}
+.cbtn[aria-pressed="true"]{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.cbtn.none{color:var(--muted)}
+select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface-2);color:var(--fg);max-width:100%}
+option:disabled{color:#55657a}
+.method{font-size:14px;color:var(--muted);display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 28px}
+.method p{margin:0;max-width:70ch}
+.method b{color:var(--fg);font-weight:600}
+.gatecard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:560px}
+.fxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.fxgrid label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+.fxgrid select{width:100%}
+.code.tree{white-space:pre;word-break:normal;overflow:auto;max-height:560px}
+.code{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0;max-height:340px;overflow:auto}
+.copy{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--accent);background:var(--accent);color:#06121c;border-radius:999px;padding:7px 16px;cursor:pointer}
+.copy:disabled{opacity:.4;cursor:not-allowed}
+.ghost{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:7px 16px;cursor:pointer}
+.rules{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.tabpane{display:flex;flex-direction:column;gap:22px;min-width:0}
+@media (max-width:600px){.wrap{padding:16px 12px 56px;gap:18px}.panel{padding:14px}.chartbox{height:260px}.fxgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi .v{font-size:17px}.seg button{padding:7px 13px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <div class="kicker">Özel ürün · GİP</div>
+      <h1>GİP Prop Bot</h1>
+    </div>
+    <div class="seg" id="tabs" role="tablist" aria-label="Sekmeler" hidden>
+      <button type="button" role="tab" data-t="fx" aria-pressed="true">Bot formülü</button>
+      <button type="button" role="tab" data-t="bt" aria-pressed="false">Backtest</button>
+    </div>
+  </div>
+  <div class="muted" id="wait" role="status">Açılıyor…</div>
+
+  <section class="gatecard" id="gate" hidden>
+    <p style="margin:0 0 12px" id="gatemsg">Bu sayfa yalnız GİP Prop Bot kodu olanlara açılır.</p>
+    <a href="./#plans" target="_top">Erişim kodu sayfasına git</a>
+  </section>
+
+  <main id="app" hidden style="display:flex;flex-direction:column;gap:22px;min-width:0">
+    <!-- ===== Bot formülü ===== -->
+    <div id="tab_fx" class="tabpane">
+      <div class="sim" id="fxvalid" role="note"></div>
+      <div class="sim" role="note"><span><b>Canlı paraya dokunur.</b> Formül Smartpulse SmartBot "Target Net Position With Shooter" botunun hedef net pozisyon (MWh) alanına yazılır. İlk kullanımda tek kontrat, 1 MWh ile başla.</span></div>
+      <section class="panel">
+        <div class="bar"><h2>Parametreler</h2><button type="button" class="ghost" id="fxlive">Canlı ayarlara dön</button></div>
+        <div class="muted" style="font-size:13px">Listeler yalnız geçerli birleşimleri sunar: zorla kapanış her zaman yeni girişin durduğu andan sonra gelir. Varsayılan değerler canlı botun ayarlarıdır.</div>
+        <div class="fxgrid" id="fxp"></div>
+      </section>
+      <div id="fxforms" style="display:flex;flex-direction:column;gap:20px"></div>
+      <section class="panel">
+        <h2>Terimler sözlüğü</h2>
+        <div class="tw"><table id="fxlegend"></table></div>
+      </section>
+      <section class="panel">
+        <h2>Bu ayarlarla bot ne yapar</h2>
+        <ul class="rules" id="fxrules"></ul>
+      </section>
+      <section class="panel">
+        <h2>Bilinen sınırlar</h2>
+        <div class="method">
+          <p><b>Giriş fiyatı şirket geneli.</b> Kâr al ve SL, şirketin bu kontrattaki son pozisyon büyüklüğü kadar (lot) alış/satış ortalamasına (W_BUYTRADEPC / W_SELLTRADEPC) göre ölçülür. Bot çalışırken aynı kontratta başka işlem yapılırsa seviye kayar; botu ayrı bir şirket/portföy hesabında çalıştırmak en temizi.</p>
+          <p><b>Günlük zarar limiti formülde yok.</b> Her bot yalnız kendi kontratını görür; günlük limit trader tarafından elle uygulanır.</p>
+          <p><b>Backtest ile birebir değil.</b> Backtest işlem akışı üzerinde, bu formül tahtadaki en iyi alış/satış fiyatıyla çalışır; ilk hafta kayma ve dolum loglanmalı.</p>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Notlar</h2>
+        <ul class="rules" id="fxnotes"></ul>
+      </section>
+    </div>
+
+    <!-- ===== Backtest ===== -->
+    <div id="tab_bt" class="tabpane" hidden>
+      <div class="muted" id="btwait" role="status">Backtest verisi yükleniyor…</div>
+      <div id="btbody" class="tabpane" hidden>
+      <div class="sim" role="note"><span><b>Backtest (simülasyon), gerçek işlem değil.</b> EPİAŞ GİP kamuya açık işlem akışı üzerinde canlı SmartBot formülünün kuralı; her ayar değişiminde tarayıcıda yeniden hesaplanır. Varsayılan ayarlar canlı botun ayarlarıdır. <span id="scope"></span></span></div>
+
+      <section class="panel">
+        <div class="bar"><h2>Parametreler</h2><div class="muted" style="font-size:13px" id="fresh"></div></div>
+        <div class="fxgrid" id="btp"></div>
+        <div>
+          <div class="muted" style="font-size:12px;margin-bottom:4px">Kayma senaryosu (giriş ve çıkış başına, TL/MWh)</div>
+          <div class="seg" id="slip" role="group" aria-label="Kayma senaryosu"></div>
+        </div>
+        <div class="muted" style="font-size:13px" id="exitdesc"></div>
+        <div class="sim" role="note" id="btwarn" hidden></div>
+      </section>
+
+      <div class="kpis" id="kpis"></div>
+
+      <section class="panel">
+        <h2>Kümülatif PnL</h2>
+        <div class="muted" style="font-size:14px">Her gün kapanan kontratlarla biriken kâr/zarar (TL): seçilen kayma senaryosu, kaymasız senaryo ile yan yana; çubuklar günlük PnL (TL).</div>
+        <div class="chartbox"><canvas id="cum" aria-label="Kümülatif PnL grafiği"></canvas></div>
+      </section>
+
+      <section class="panel">
+        <h2>Kâr al × SL matrisi</h2>
+        <div class="muted" style="font-size:14px" id="exnote"></div>
+        <div class="tw"><table id="exits"></table></div>
+      </section>
+
+      <section class="panel">
+        <h2>Kontrat (teslim saati) kırılımı</h2>
+        <div class="muted" style="font-size:14px">Seçili ayarlarla her kontrat saatinin katkısı. Bir kontratı açıp kapatmaya karar verirken buraya bak; "son 7 gün" sütunu en yeni dönemi ayrı gösterir.</div>
+        <div class="tw"><table id="hours"></table></div>
+      </section>
+
+      <section class="panel">
+        <h2>Kayma senaryoları yan yana</h2>
+        <div class="tw"><table id="scen"></table></div>
+      </section>
+
+      <section class="panel">
+        <div class="bar">
+          <h2>Kontrat defteri</h2>
+          <label class="muted" style="font-size:13px">Gün <select id="day"></select></label>
+        </div>
+        <div class="muted" style="font-size:13px">Kontrat seç (altında o kontratın PnL'i, TL):</div>
+        <div class="grid24" id="cgrid"></div>
+        <div id="csum" class="muted" style="font-size:14px"></div>
+        <div class="tw" style="max-height:560px;overflow:auto"><table id="book"></table></div>
+      </section>
+
+      <section class="panel">
+        <h2>Yöntem</h2>
+        <div class="method">
+          <p><b>Kurgu (canlı botla aynı).</b> Referans = son N lotun ağırlıklı ortalaması, işlem anı dahil (SmartBot WTRADEP(N,0)). Fiyat referansın giriş sapması kadar altına inince piyasa emriyle AL, üstüne çıkınca SAT. Çıkış: kâr al (girişten lehe) ya da felaket SL; arada ters hareket olursa çıkılmaz. Kontrat başına en fazla seçilen sayıda tur.</p>
+          <p><b>Saat filtreleri.</b> "İşlem saati" botun açık olduğu saat aralığıdır (TSİ, başlangıç dahil, bitiş hariç; bitiş başlangıçtan küçükse gece yarısını geçer, eşitse 24 saat). Pencere dışına çıkınca açık pozisyon kapatılır. "Önceki gün işlemleri: hayır" botun yalnız teslim günü çalıştığı canlı durumdur. "Teslim saati" hangi kontratların (PH saatleri) dahil olduğunu seçer.</p>
+          <p><b>Zaman kuralları.</b> Kapıya 45 dk kala yeni giriş yok, 30 dk kala açık pozisyon piyasadan kapatılır. Kapıda açık kalan miktar "cezalı kapatılan" olarak gösterilir; dengesizlik maliyeti PnL'e katılmaz.</p>
+          <p><b>Dolum ve hacim.</b> Tahta derinliği verisi yok. En iyi alış/satış işlem yönünden (tik kuralı) tahmin edilir; dolum, tetikleyen işlemin miktarıyla sınırlıdır. Pozisyonu büyütmek sonucu doğrusal katlamaz: büyük pozisyon çoğu zaman kısmen dolar. Botun kendi emrinin fiyata etkisi modellenmez; büyük hacimde sonuç iyimserdir.</p>
+          <p><b>Örneklem ve aşırı uyum.</b> Her sonucun yanında tur ve gün sayısı yazar; 30 turun altındaki sonuçlar "yetersiz örneklem" uyarısı alır. Ayarları geçmişin en iyisine çekmek canlıda tutmayabilir; "son 7 gün" sütunları en yeni dönemi ayrıca gösterir.</p>
+          <p><b>İleriye bakış yok.</b> Her karar yalnız o ana kadarki işlemlerle verilir; aynı saniyedeki işlemler EPİAŞ işlem numarası sırasıyla işlenir. Denenip elenenler: iz süren stop (21 varyant) ve ayna giriş (11 varyant), 30 TL/MWh kaymada hepsi zararda.</p>
+          <p><b>Kaynak ve güncelleme.</b> EPİAŞ Şeffaflık GİP işlem akışı (idm-log), yalnız kamuya açık veri. Her gece bir önceki günün verisi eklenir; geçmiş günler değişmez. Son veri ve güncelleme zamanı Parametreler panelinde yazar.</p>
+        </div>
+      </section>
+      </div>
+    </div>
+    <p style="margin:0"><button type="button" class="ghost" id="lock" hidden>Kilitle (bu tarayıcıdan kodu sil)</button></p>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* Opened on its own (not inside the site's shell): go to the shell view, the single entry point. */
+if(window.top===window){location.replace("./#gip-prop")}
+const PID="pefb3f7bd";
+const SLIPS=[0,10,30,50,80];
+const fmt=(v,d=0)=>v==null||v===''||isNaN(v)?'—':Number(v).toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sgn=v=>(v>0?'+':'')+fmt(v);
+const cls=v=>v>0?'pos':v<0?'neg':'';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function fmtDay(s){const [y,m,d]=s.split('-');return `${d}.${m}.${y}`}
+const pad=h=>String(h).padStart(2,'0');
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+
+/* ---- decryption: same scheme as product.html (PBKDF2-SHA256 wrapping key -> AES-GCM content key) ---- */
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const SUB=crypto.subtle;
+let CK=null,WK=null,SRC=null,PAY=null,TAPE=null;
+async function getJSON(u){const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error("net");return r.json()}
+async function derive(code,kdf){const base=await SUB.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
+  return SUB.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64(kdf.salt),iterations:kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"])}
+async function unwrap(B,wk){for(const k of B.keys){let raw;try{raw=await SUB.decrypt({name:"AES-GCM",iv:b64(k.iv)},wk,b64(k.ct))}catch(e){continue}
+  return SUB.importKey("raw",raw,"AES-GCM",false,["decrypt"])}return null}
+async function openMain(){
+  const B=await getJSON("x/"+PID+".bundle.json");
+  /* the site's tier code (pa-pro) or a product-only code stored by the code box (pa-pcode) */
+  const cands=[["pa-pro",ls("pa-pro")],["pa-pcode",ls("pa-pcode")]].filter(x=>x[1]);
+  if(!cands.length)throw new Error("nocode");
+  for(const [src,code] of cands){const wk=await derive(code,B.kdf),ck=await unwrap(B,wk);
+    if(ck){CK=ck;WK=wk;SRC=src;return JSON.parse(new TextDecoder().decode(await SUB.decrypt({name:"AES-GCM",iv:b64(B.iv)},ck,b64(B.ct))))}}
+  throw new Error("badcode")}
+async function openTape(){
+  const B=await getJSON("x/"+PID+".bt.bundle.json");
+  let pt;try{pt=await SUB.decrypt({name:"AES-GCM",iv:b64(B.iv)},CK,b64(B.ct))}
+  catch(e){const ck=await unwrap(B,WK);if(!ck)throw new Error("badcode");pt=await SUB.decrypt({name:"AES-GCM",iv:b64(B.iv)},ck,b64(B.ct))} /* bundles from different builds */
+  if(B.z==="gzip"){if(typeof DecompressionStream==="undefined")throw new Error("nozip");
+    pt=await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()}
+  return JSON.parse(new TextDecoder().decode(pt))}
+
+// GİP Prop Bot simülasyon motoru (artifact'tan birebir). Referans: işlem i dahil son N lot (WTRADEP gibi).
+const ENG={};
+ENG.prep=function(day){ // day: {d, c:[{h,g,t0,dt,p,q}]}
+  for(const c of day.c){const n=c.dt.length;const t=new Float64Array(n),p=new Float64Array(n),q=new Float64Array(n),tk=new Int8Array(n);
+    let tt=c.t0,prev=null,last=0;
+    for(let i=0;i<n;i++){tt+=c.dt[i];t[i]=tt;p[i]=c.p[i]/10;q[i]=c.q[i];let d;
+      if(prev===null)d=0;else if(p[i]>prev)d=1;else if(p[i]<prev)d=-1;else d=last;tk[i]=d;if(d)last=d;prev=p[i]}
+    c.T=t;c.P=p;c.Q=q;c.TK=tk;c.REF={};}
+  const [y,m,d]=day.d.split('-').map(Number);day.D0=Date.UTC(y,m-1,d)/1000-3*3600;return day};
+ENG.ref=function(c,N){if(c.REF[N])return c.REF[N];const n=c.P.length,r=new Float64Array(n);let j=0,sq=0,spq=0;
+  for(let i=0;i<n;i++){sq+=c.Q[i];spq+=c.P[i]*c.Q[i];
+    while(j<i&&sq-c.Q[j]>=N){sq-=c.Q[j];spq-=c.P[j]*c.Q[j];j++}
+    if(sq>N){const ex=sq-N;r[i]=(spq-c.P[j]*ex)/N}else r[i]=spq/sq}
+  return c.REF[N]=r};
+ENG.inWin=function(sec,D0,S){
+  if(!S.prev&&sec<D0)return false;const hh=((sec+3*3600)%86400)/3600;
+  if(S.h0===S.h1)return true;return S.h0<S.h1?(hh>=S.h0&&hh<S.h1):(hh>=S.h0||hh<S.h1)};
+ENG.run=function(day,c,S,log){const n=c.P.length,R=ENG.ref(c,S.N),T=c.T,P=c.P,Q=c.Q,TK=c.TK;
+  let pos=0,e=0,pnl=0,nt=0,nw=0,nsl=0,ncl=0,vol=0,cap=S.cap==null?1e9:S.cap,open=0;
+  for(let i=0;i<n;i++){const t=T[i];const rt=(c.g-t)/60;const win=ENG.inWin(t,day.D0,S);
+    if(pos){const sg=pos>0?1:-1,d=TK[i],p=P[i];const ok=sg>0?d<=0:d>=0;if(!ok)continue;let why=null;
+      if(rt<S.close||!win)why='kapanış';else if(S.sl!=null&&(p-e)*sg<=-S.sl)why='SL';else if(S.m!=null&&(p-e)*sg>=S.m)why='kâr al';
+      if(why){const px=p-sg*S.slip,g=(px-e)*pos/10;pnl+=g;nt++;if(g>0)nw++;if(why==='SL')nsl++;if(why==='kapanış')ncl++;vol+=Math.abs(pos)/10;
+        if(log)log.push([t,rt,p,sg>0?'SAT':'AL',why,px,-pos/10,g,pnl]);pos=0}continue}
+    if(nt>=cap||rt<S.stop||!win)continue;const r=R[i],p=P[i],d=TK[i];let side=0;
+    if(d>=0&&p<=r-S.k)side=1;else if(d<=0&&p>=r+S.k)side=-1;else continue;
+    pos=side*Math.min(S.lot,Q[i]);e=p+side*S.slip;vol+=Math.abs(pos)/10;if(log)log.push([t,rt,p,side>0?'AL':'SAT','giriş',e,pos/10,null,pnl])}
+  if(pos){open=pos/10;if(log)log.push([c.g,0,null,'','kapı kapanışı (dengesizlik)',null,0,null,pnl])}
+  return {pnl,nt,nw,nsl,ncl,vol,open}};
+
+/* ---- Backtest sekmesi ---- */
+const HRS=[...Array(24).keys()].map(String);
+const TPS=['50','75','100','125','150','175','200','250','300','yok'], SLS=['200','300','500','800','yok'];
+const BTP=[
+ ['tp','Kâr al (TL/MWh)',TPS,'75'],
+ ['sl','Felaket SL (TL/MWh)',SLS,'yok'],
+ ['cap','Kontrat başına tur tavanı (adet)',['1','2','3','4','5','10','yok'],'10'],
+ ['pos','Pozisyon (MWh)',['0.5','1','2','3','4','5','6','7','8','9','10'],'1'],
+ ['k','Giriş sapması (TL/MWh)',['100','150','200','250','300'],'150'],
+ ['N','Referans hacmi (lot)',['100','200','300','500'],'200'],
+ ['h0','İşlem saati başlangıç (TSİ, dahil)',HRS,'10'],
+ ['h1','İşlem saati bitiş (TSİ, hariç)',HRS,'0'],
+ ['prev','Önceki gün işlemleri',['hayir','evet'],'hayir'],
+ ['c0','Teslim saati başlangıç (kontrat)',HRS,'0'],
+ ['c1','Teslim saati bitiş (kontrat, dahil)',HRS,'23'],
+ ['range','Dönem',['7','14','30','tum'],'tum']];
+const BLAB={yok:'Yok',hayir:'Hayır (canlı)',evet:'Evet',tum:'Tümü'};
+const LIVE_BT={tp:'75',sl:'yok',cap:'10',pos:'1',k:'150',N:'200',h0:'10',h1:'0',prev:'hayir',c0:'0',c1:'23',range:'tum'};
+let BT={...LIVE_BT},slip=30,DAYS=[],META={},DATA={},day=null,con=null,chart=null,CACHE={},matTok=0;
+try{const v=JSON.parse(ls('paPropBT')||'null');if(v)BTP.forEach(([k,,o])=>{if(v[k]&&o.includes(v[k]))BT[k]=v[k]});const s=ls('paPropSlip');if(s!==null&&SLIPS.includes(+s))slip=+s}catch(e){}
+const optLab=(k,v)=>k==='h0'||k==='h1'||k==='c0'||k==='c1'?(k[0]==='h'?(k==='h1'&&v==='0'?'24:00 (gece yarısı)':pad(v)+':00'):'PH'+pad(v)):(BLAB[v]||(k==='range'?'Son '+v+' gün':v.replace('.',',')));
+function S_of(o,s){return {m:o.tp==='yok'?null:+o.tp,sl:o.sl==='yok'?null:+o.sl,cap:o.cap==='yok'?null:+o.cap,lot:Math.round(+o.pos*10),k:+o.k,N:+o.N,h0:+o.h0,h1:+o.h1,prev:o.prev==='evet',slip:s,stop:45,close:30}}
+function useDays(){return BT.range==='tum'?DAYS:DAYS.slice(-(+BT.range))}
+async function ensure(days){for(const d of days)if(!DATA[d]&&TAPE.tape[d])DATA[d]=ENG.prep(TAPE.tape[d])}
+const inC=(h,o)=>{const a=+o.c0,b=+o.c1;return a<=b?(h>=a&&h<=b):(h>=a||h<=b)};
+function sim(o,s){const key=JSON.stringify([o,s,useDays().length]);if(CACHE[key])return CACHE[key];const S=S_of(o,s);const rows=[];
+  for(const d of useDays()){const dy=DATA[d];if(!dy)continue;for(const c of dy.c){if(!inC(c.h,o))continue;const r=ENG.run(dy,c,S);rows.push({d,h:c.h,...r})}}
+  return CACHE[key]=rows}
+function agg(rows){const days=useDays(),last7=new Set(days.slice(-7));const byD={};days.forEach(d=>byD[d]=0);let pnl=0,nt=0,nw=0,nsl=0,vol=0,cez=0,p7=0,nt7=0;
+  for(const r of rows){byD[r.d]+=r.pnl;pnl+=r.pnl;nt+=r.nt;nw+=r.nw;nsl+=r.nsl;vol+=r.vol;cez+=Math.abs(r.open);if(last7.has(r.d)){p7+=r.pnl;nt7+=r.nt}}
+  const dv=days.map(d=>byD[d]);let cum=0;const cumv=dv.map(x=>cum+=x);
+  return {pnl,nt,nw,nsl,vol,cez,p7,nt7,n:days.length,pd:dv.filter(x=>x>0).length,worst:dv.length?Math.min(...dv):0,daily:dv,cum:cumv,avg:nt?pnl/nt:0,bsr:nt?nw/nt*100:0}}
+function renderParams(){const box=document.getElementById('btp');
+  if(!box.childElementCount){box.innerHTML=BTP.map(([k,l,o])=>`<label>${l}<select data-k="${k}">${o.map(v=>`<option value="${v}">${optLab(k,v)}</option>`).join('')}</select></label>`).join('')+`<label>&nbsp;<button type="button" class="ghost" id="btlive" style="align-self:flex-start">Canlı ayarlara dön</button></label>`;
+    box.onchange=e=>{const s=e.target.closest('select');if(!s)return;BT[s.dataset.k]=s.value;save();go()};
+    document.getElementById('btlive').onclick=()=>{BT={...LIVE_BT};save();go()}}
+  box.querySelectorAll('select').forEach(s=>s.value=BT[s.dataset.k]);
+  const seg=document.getElementById('slip');seg.innerHTML=SLIPS.map(s=>`<button type="button" data-s="${s}" aria-pressed="${s===slip}">${s===0?'Kaymasız':s+' TL/MWh'}</button>`).join('');
+  seg.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;slip=+b.dataset.s;save();go()}}
+function save(){try{localStorage.setItem('paPropBT',JSON.stringify(BT));localStorage.setItem('paPropSlip',slip)}catch(e){}}
+const period=()=>{const d=useDays();return d.length?`${fmtDay(d[0])} – ${fmtDay(d.at(-1))}`:'—'};
+async function go(){renderParams();const days=useDays();await ensure(days);
+  const live=JSON.stringify(BT)===JSON.stringify(LIVE_BT);
+  document.getElementById('scope').textContent=`Dönem ${period()}, ${days.length} gün.`;
+  const win=BT.h0===BT.h1?'24 saat':`${pad(BT.h0)}:00–${BT.h1==='0'?'24':pad(BT.h1)}:00`;
+  document.getElementById('exitdesc').innerHTML=`Seçili kural: <b style="color:var(--fg)">${BT.pos.replace('.',',')} MWh, giriş ±${BT.k} TL/MWh (son ${BT.N} lot), kâr al ${BT.tp==='yok'?'yok':'+'+BT.tp+' TL/MWh'}, SL ${BT.sl==='yok'?'yok':BT.sl+' TL/MWh'}, ${BT.cap==='yok'?'sınırsız':'en fazla '+BT.cap} tur, işlem saati ${win}${BT.prev==='evet'?' (önceki gün dahil)':' (yalnız teslim günü)'}, kontratlar PH${pad(BT.c0)}–PH${pad(BT.c1)}</b>${live?' — canlı botun ayarı.':''}`;
+  const W=[];if(+BT.pos>1)W.push(`<b>Hacim uyarısı.</b> Backtest tahta derinliğini bilmiyor; ${BT.pos.replace('.',',')} MWh'lik dolumlar tetikleyen işlemin miktarıyla sınırlandı (kısmi dolum), kayma büyüklükten bağımsız alındı. Gerçekte büyük hacimde kayma artar.`);
+  const A=agg(sim(BT,slip));if(A.nt<30)W.push(`<b>Yetersiz örneklem.</b> Bu ayarlarla ${A.nt} tur var (30'un altı); sonuç gürültü olabilir.`);
+  const wb=document.getElementById('btwarn');wb.hidden=!W.length;wb.innerHTML=W.join('<br>');
+  drawKpis(A);try{drawChart(A,agg(sim(BT,0)))}catch(e){document.querySelector('.chartbox').innerHTML='<p class="muted">Grafik kütüphanesi yüklenemedi; tablolar aşağıda.</p>'}
+  drawHours();drawScen();fillDays();renderBook();drawMatrix()}
+function drawKpis(A){const dim=A.nt<30?' style="opacity:.55"':'';
+  document.getElementById('kpis').innerHTML=[
+    ['Toplam PnL',`<span class="${cls(A.pnl)}">${sgn(A.pnl)} TL</span>`,`${period()} · ${A.n} gün · ${fmt(A.nt)} tur · kayma ${slip} TL/MWh`],
+    ['Son 7 gün',`<span class="${cls(A.p7)}">${sgn(A.p7)} TL</span>`,`En yeni 7 gün · ${fmt(A.nt7)} tur`],
+    ['Kârlı gün',`${A.pd} / ${A.n} gün`,`En kötü gün <span class="${cls(A.worst)}">${sgn(A.worst)} TL</span>`],
+    ['Tur sayısı',`${fmt(A.nt)} adet`,`Bot işlem hacmi ${fmt(A.vol,1)} MWh · ${A.n} gün`],
+    ['BSR',`%${fmt(A.bsr,2)}`,`Tur başı ort. <span class="${cls(A.avg)}">${sgn(A.avg)} TL</span>, ${fmt(A.nsl)} SL · ${fmt(A.nt)} tur`],
+    ['Cezalı kapatılan',`${fmt(A.cez,1)} MWh`,'Kapıda açık kalıp dengesizliğe giden']
+  ].map(([l,v,s])=>`<div class="kpi"${dim}><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('')}
+function drawChart(A,B){const lab=useDays().map(d=>fmtDay(d).slice(0,5));
+  const ds=[{type:'bar',label:`Günlük PnL, kayma ${slip} TL/MWh (TL)`,data:A.daily,backgroundColor:A.daily.map(v=>v>=0?css('--gain-soft'):css('--loss-soft')),borderColor:A.daily.map(v=>v>=0?css('--gain'):css('--loss')),borderWidth:1,order:3},
+    {type:'line',label:`Kümülatif, kayma ${slip} TL/MWh (TL)`,data:A.cum,borderColor:css('--accent'),backgroundColor:css('--accent'),borderWidth:2.5,pointRadius:0,pointHoverRadius:4,tension:.25,order:1}];
+  if(slip!==0)ds.push({type:'line',label:'Kümülatif, kaymasız (TL)',data:B.cum,borderColor:css('--base'),borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.25,order:2});
+  const tc=css('--muted'),gc=css('--line');if(chart)chart.destroy();
+  chart=new Chart(document.getElementById('cum'),{data:{labels:lab,datasets:ds},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{color:tc,boxWidth:12,font:{family:'Source Sans 3'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${sgn(c.parsed.y)} TL`}}},
+    scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc,callback:v=>fmt(v)+' TL'},grid:{color:gc},title:{display:true,text:'TL',color:tc}}}}})}
+function drawMatrix(){const tok=++matTok;const t=document.getElementById('exits'),note=document.getElementById('exnote');
+  const h='<tr><th>Kâr al ↓ · SL →</th>'+SLS.map(b=>`<th>${b==='yok'?'SL yok':'SL '+b+' TL/MWh'}</th>`).join('')+'</tr>';
+  const M={};let i=0;const cells=[];TPS.forEach(a=>SLS.forEach(b=>cells.push([a,b])));
+  const paint=()=>{let top=null;for(const k in M){const S=M[k];if(S.nt>=30&&S.p7>0&&S.pnl>0&&(!top||S.pnl>M[top].pnl))top=k}
+    t.innerHTML=h+TPS.map(a=>`<tr><td class="t"><b>${a==='yok'?'Kâr al yok':'+'+a+' TL/MWh'}</b></td>`+SLS.map(b=>{const k=a+'|'+b,S=M[k];if(!S)return '<td class="muted">…</td>';
+      const sel=a===BT.tp&&b===BT.sl?'outline:2px solid var(--fg);outline-offset:-2px;':'';const bg=k===top?'background:var(--gain-soft);':'';const dim=S.nt<30?'opacity:.5;':'';
+      return `<td data-a="${a}" data-b="${b}" style="cursor:pointer;${bg}${sel}${dim}"><div class="${cls(S.pnl)}" style="font-weight:500">${sgn(S.pnl)} TL</div><div class="muted" style="font-size:11px">BSR %${fmt(S.bsr,2)} · ${S.nt} tur</div></td>`}).join('')+'</tr>').join('');
+    note.innerHTML=`Kayma ${slip} TL/MWh ve diğer parametreler seçili haliyle, ${period()} (${useDays().length} gün) toplam PnL (TL); altında BSR (başarılı tur / tüm tur, %) ve tur sayısı. Soluk hücre: 30 turdan az. Yeşil: 30+ tur, toplamı ve son 7 günü kârlı olanların en iyisi. Geçmiş veri, gelecek için garanti değil. Hücreye tıklayınca o kural seçilir.${i<cells.length?` Hesaplanıyor… ${i}/${cells.length}`:''}`};
+  paint();t.onclick=ev=>{const c=ev.target.closest('td[data-a]');if(!c)return;BT.tp=c.dataset.a;BT.sl=c.dataset.b;save();go()};
+  const step=()=>{if(tok!==matTok)return;const e=Math.min(cells.length,i+5);for(;i<e;i++){const [a,b]=cells[i];M[a+'|'+b]=agg(sim({...BT,tp:a,sl:b},slip))}paint();if(i<cells.length)setTimeout(step,0)};setTimeout(step,0)}
+function drawHours(){const rows=sim(BT,slip),last7=new Set(useDays().slice(-7)),H={};
+  for(const r of rows){const a=H[r.h]||(H[r.h]={pnl:0,nt:0,nw:0,p7:0,D:{}});a.pnl+=r.pnl;a.nt+=r.nt;a.nw+=r.nw;if(last7.has(r.d))a.p7+=r.pnl;a.D[r.d]=(a.D[r.d]||0)+r.pnl}
+  const ks=Object.keys(H).map(Number).sort((a,b)=>a-b);
+  document.getElementById('hours').innerHTML='<tr><th>Kontrat</th><th>PnL (TL)</th><th>Son 7 gün (TL)</th><th>Tur (adet)</th><th>BSR (%)</th><th>Kârlı gün</th><th>En kötü gün (TL)</th></tr>'+ks.map(h=>{const a=H[h],dv=Object.values(a.D);const pd=dv.filter(x=>x>0).length,act=dv.filter(x=>x!==0).length;
+    return `<tr${a.nt<10?' style="opacity:.55"':''}><td>PH${pad(h)}</td><td class="${cls(a.pnl)}">${sgn(a.pnl)}</td><td class="${cls(a.p7)}">${sgn(a.p7)}</td><td>${a.nt}</td><td>${a.nt?fmt(a.nw/a.nt*100,2):'—'}</td><td>${pd} / ${act} işlem günü</td><td class="${cls(Math.min(...dv))}">${sgn(Math.min(...dv))}</td></tr>`}).join('')}
+function drawScen(){const h='<tr><th>Kayma (TL/MWh)</th><th>Toplam PnL (TL)</th><th>Son 7 gün (TL)</th><th>Kârlı gün</th><th>En kötü gün (TL)</th><th>Tur (adet)</th><th>BSR (%)</th><th>Tur başı ort. (TL)</th><th>SL (adet)</th></tr>';
+  document.getElementById('scen').innerHTML=h+SLIPS.map(s=>{const S=agg(sim(BT,s));return `<tr class="${s===slip?'sel':''}"><td>${s===0?'0 (kaymasız)':s}</td><td class="${cls(S.pnl)}">${sgn(S.pnl)}</td><td class="${cls(S.p7)}">${sgn(S.p7)}</td><td>${S.pd} / ${S.n} gün</td><td class="${cls(S.worst)}">${sgn(S.worst)}</td><td>${fmt(S.nt)}</td><td>${fmt(S.bsr,2)}</td><td class="${cls(S.avg)}">${sgn(S.avg)}</td><td>${fmt(S.nsl)}</td></tr>`}).join('')}
+function fillDays(){const sel=document.getElementById('day'),days=useDays();if(!day||!days.includes(day)){day=days.at(-1);con=null}
+  sel.innerHTML=days.slice().reverse().map(x=>`<option value="${x}">${fmtDay(x)}</option>`).join('');sel.value=day;sel.onchange=()=>{day=sel.value;con=null;renderBook()}}
+const tsl=sec=>{const d=new Date((sec+3*3600)*1000);return `${pad(d.getUTCDate())}.${pad(d.getUTCMonth()+1)} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`};
+const tss=sec=>{const d=new Date((sec+3*3600)*1000);return tsl(sec)+':'+pad(d.getUTCSeconds())};
+function renderBook(){const dy=DATA[day];if(!dy)return;const S=S_of(BT,slip);
+  const cs=dy.c.filter(c=>inC(c.h,BT)).map(c=>({c,r:ENG.run(dy,c,S)}));
+  if(!cs.length){document.getElementById('cgrid').innerHTML='';document.getElementById('csum').textContent='Bu gün için seçili kontrat yok.';document.getElementById('book').innerHTML='';return}
+  if(con==null||!cs.find(x=>x.c.h===con)){const act=cs.filter(x=>x.r.nt>0);con=(act.length?act.reduce((a,b)=>Math.abs(b.r.pnl)>Math.abs(a.r.pnl)?b:a):cs[0]).c.h}
+  const g=document.getElementById('cgrid');
+  g.innerHTML=cs.map(({c,r})=>`<button type="button" class="cbtn ${r.nt?'':'none'}" data-h="${c.h}" aria-pressed="${c.h===con}"><span>${pad(c.h)}:00</span><span class="p ${cls(r.pnl)}">${r.nt?sgn(r.pnl)+' TL':'—'}</span></button>`).join('');
+  g.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;con=+b.dataset.h;renderBook()};
+  const sel=cs.find(x=>x.c.h===con);if(!sel){document.getElementById('book').innerHTML='';return}
+  const dp=cs.reduce((a,x)=>a+x.r.pnl,0),dv=cs.reduce((a,x)=>a+x.r.vol,0),c=sel.c,r=sel.r;
+  const mv=c.Q.reduce((a,b)=>a+b,0)/10;
+  document.getElementById('csum').innerHTML=`PH${day.slice(2).replaceAll('-','')}${pad(con)}: piyasa hacmi ${fmt(mv,1)} MWh, bot işlem hacmi (al + sat) ${fmt(r.vol,1)} MWh, ${r.nt} tur, PnL <span class="${cls(r.pnl)}">${sgn(r.pnl)} TL</span>, cezalı ${fmt(Math.abs(r.open),1)} MWh · Gün toplamı <span class="${cls(dp)}">${sgn(dp)} TL</span>, bot işlem hacmi ${fmt(dv,1)} MWh`;
+  const log=[];ENG.run(dy,c,S,log);
+  const HB={};for(let i=0;i<c.T.length;i++){const k=Math.floor((c.T[i]+3*3600)/3600);const a=HB[k]||(HB[k]={t:k*3600-3*3600,q:0,pq:0,mn:1e9,mx:-1e9});a.q+=c.Q[i];a.pq+=c.P[i]*c.Q[i];a.mn=Math.min(a.mn,c.P[i]);a.mx=Math.max(a.mx,c.P[i])}
+  const rows=[...Object.values(HB).map(a=>({t:a.t,k:'m',a})),...log.map(e=>({t:e[0],k:'e',e}))].sort((x,y)=>x.t-y.t||(x.k==='m'?-1:1));
+  let pos=0,cum=0;const head='<tr><th>Saat (TSİ)</th><th>Hacim (MWh)</th><th>AOF (TL/MWh)</th><th>Min–Maks (TL/MWh)</th><th>Yapılan işlem</th><th>Fiyat (TL/MWh)</th><th>Miktar (MWh)</th><th>Açık pozisyon (MWh)</th><th>Kümülatif PnL (TL)</th><th>Cezalı kapatılan (MWh)</th></tr>';
+  const body=rows.map(x=>{if(x.k==='m'){const a=x.a;return `<tr><td class="t">${tsl(a.t)}</td><td>${fmt(a.q/10,1)}</td><td>${fmt(a.pq/a.q)}</td><td>${fmt(a.mn,1)}–${fmt(a.mx,1)}</td><td>—</td><td></td><td></td><td>${fmt(pos,1)}</td><td>${sgn(cum)}</td><td></td></tr>`}
+    const [t,rt,p,act,why,px,q,gg,pn]=x.e;
+    if(act===''){return `<tr class="gate"><td class="t">${tss(t)}</td><td colspan="6" class="t" style="text-align:left">Kapı kapanışı: açık pozisyon dengesizliğe kaldı</td><td>${fmt(pos,1)}</td><td>${sgn(cum)}</td><td>${fmt(-pos,1)}</td></tr>`}
+    const signed=act==='AL'?-Math.abs(q):Math.abs(q);pos=Math.round((pos+signed)*100)/100;if(gg!=null)cum=pn;
+    const w=why==='giriş'?'':` <span class="muted" style="font-size:12px">(${why})</span>`;
+    return `<tr class="ev"><td class="t">${tss(t)}</td><td></td><td></td><td></td><td class="t"><span class="pill ${act==='AL'?'al':'sat'}">${act}</span>${w}</td><td>${fmt(px,1)}</td><td>${(signed>0?'+':'')+fmt(signed,1)}</td><td>${fmt(pos,1)}</td><td class="${cls(cum)}">${sgn(cum)}</td><td></td></tr>`}).join('');
+  const g2=log.length&&log.at(-1)[3]===''?'':`<tr class="gate"><td class="t">Kapı kapanışı ${tsl(c.g)}</td><td colspan="6"></td><td>${fmt(pos,1)}</td><td class="${cls(cum)}">${sgn(cum)}</td><td>${fmt(-pos,1)}</td></tr>`;
+  document.getElementById('book').innerHTML=head+body+g2}
+let BTLOAD=null;
+function loadBt(){if(BTLOAD)return BTLOAD;
+  BTLOAD=openTape().then(async T=>{TAPE=T;DAYS=T.days;META=T.meta||{};
+    const m=META;document.getElementById('fresh').textContent=`Son veri: ${fmtDay(DAYS.at(-1))} · güncelleme: ${m.guncel?m.guncel+' TSİ':'—'}${m.eksik&&m.eksik.length?' · eksik gün: '+m.eksik.map(fmtDay).join(', '):''}`;
+    document.getElementById('btwait').hidden=true;document.getElementById('btbody').hidden=false;await go()})
+  .catch(e=>{BTLOAD=null;document.getElementById('btwait').textContent=e.message==='nozip'?'Bu tarayıcı sıkıştırılmış veriyi açamıyor; güncel Chrome, Edge, Safari ya da Firefox kullan.':e.message==='net'?'Backtest verisi yüklenemedi (ağ). Sekmeye tekrar tıkla.':'Backtest verisi bu kodla açılmadı.'});
+  return BTLOAD}
+
+/* ---- Bot formülü sekmesi (artifact'tan birebir; varsayılanlar ürünün canlı ayarlarından) ---- */
+const FXP=[
+ ['pos','Pozisyon (MWh)',['0.5','1','2','3','4','5','6','7','8','9','10'],'1'],
+ ['k','Giriş sapması (TL/MWh)',['100','150','200','250','300'],'150'],
+ ['ref','Referans hacmi (lot)',['100','200','300','500'],'200'],
+ ['tp','Kâr al (TL/MWh)',['50','75','100','125','150','200'],'75'],
+ ['sl','Felaket SL (TL/MWh)',['300','500','800','1000','yok'],'800'],
+ ['tol','Kayma toleransı (TL/MWh)',['10','20','30','50','80'],'30'],
+ ['cap','Kontrat başına tur tavanı (adet)',['1','2','3','4','5','10','15','20','yok'],'10'],
+ ['stop','Yeni giriş durur: kapıya kalan (dk)',['45','60','90'],'45'],
+ ['close','Zorla kapanış: kapıya kalan (dk)',['30','35','40'],'30'],
+ ['floor','Kapanış fiyat tabanı: REF ∓ (TL/MWh)',['50','100','150','yok'],'50'],
+ ['dir','Yön',['both','buy','sell'],'both']];
+let FXLIVE={};FXP.forEach(([k,,,d])=>FXLIVE[k]=d);
+let FX={},VALID=true;
+const IF=(c,t,e)=>({c,t,e});
+function flat(n){return typeof n==='string'?n:`(${n.c}) ? ${typeof n.t==='string'?n.t:'('+flat(n.t)+')'} : ${flat(n.e)}`}
+const ALIAS=[
+ ['(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC)','BOT_POZ','Botun açık pozisyonu (lot) = BOTTOTALTRADEBUYQC − BOTTOTALTRADESELLQC; 10 lot = 1 MWh'],
+ ['(BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC)','BOT_HACİM','Botun bu kontrattaki toplam işlem hacmi (lot) = BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC'],
+ [null,'GİRİŞ_AL','Son P lotluk alışların ağırlıklı ortalaması (TL/MWh) = long giriş fiyatı; P = pozisyon (lot)'],
+ [null,'GİRİŞ_SAT','Son P lotluk satışların ağırlıklı ortalaması (TL/MWh) = short giriş fiyatı; P = pozisyon (lot)'],
+ [null,'REF','Piyasada son N lot işlemin ağırlıklı ortalaması (TL/MWh) = WTRADEP(N,0)'],
+ ['MAXDAMP()','AZAMİ_FİYAT','EPİAŞ azami fiyatı (TL/MWh); kapanışta emrin mutlaka dolması için'],
+ [' && ',' VE ',''],[' || ',' VEYA ','']];
+function alias(t,c){let x=t;for(const [f,to] of ALIAS){if(f)x=x.split(f).join(to)}x=x.split(`WTRADEP(${c.ref},0)`).join('REF');x=x.replace(/W_BUYTRADEPC\(\d+,0,1\)/g,'GİRİŞ_AL').replace(/W_SELLTRADEPC\(\d+,0,1\)/g,'GİRİŞ_SAT');x=x.replace(/Math\.abs\(([^()]*)\)/g,'|$1|');return x}
+function pretty(n,c,pre=''){
+  if(typeof n==='string')return [pre+alias(n,c)];
+  const out=[pre+'EĞER '+alias(n.c,c)];
+  const sub=(lab,node,last)=>{const br=last?'└─ ':'├─ ',cont=last?'   ':'│  ';
+    if(typeof node==='string')out.push(pre+br+lab+': '+alias(node,c));
+    else{out.push(pre+br+lab+':');out.push(...pretty(node,c,pre+cont))}};
+  sub('evet',n.t,false);sub('hayır',n.e,true);return out}
+function buildFx(c){
+  const P='(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC)',V='(BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC)';
+  const L=Math.round(+c.pos*10),M=+c.pos,R=`WTRADEP(${c.ref},0)`;
+  const sl=c.sl==='yok'?null:+c.sl,tol=+c.tol;
+  const capT=c.cap==='yok'?'':` && ${V} < ${+c.cap*2*L}`;
+  const EB=`W_BUYTRADEPC(${L},0,1)`,ES=`W_SELLTRADEPC(${L},0,1)`;
+  const exL=`${EB} > 0 && BESTBUYP > 0 && (BESTBUYP >= ${EB} + ${c.tp}${sl?` || BESTBUYP <= ${EB} - ${sl}`:''})`;
+  const exS=`${ES} > 0 && BESTSELLP > 0 && (BESTSELLP <= ${ES} - ${c.tp}${sl?` || BESTSELLP >= ${ES} + ${sl}`:''})`;
+  let entry='0';
+  if(c.dir!=='buy')entry=IF(`RTIME >= ${c.stop}${capT} && ${R} > 0 && BESTBUYP > 0 && BESTBUYP >= ${R} + ${c.k}`,`-${M}`,entry);
+  if(c.dir!=='sell')entry=IF(`RTIME >= ${c.stop}${capT} && ${R} > 0 && BESTSELLP > 0 && BESTSELLP <= ${R} - ${c.k}`,`${M}`,entry);
+  const tgt=IF(`RTIME < ${c.close} || Math.abs(${P}) > ${L}`,'0',IF(`${P} > 0`,IF(exL,'0',`${P}/10`),IF(`${P} < 0`,IF(exS,'0',`${P}/10`),entry)));
+  const forceBuy=`RTIME < ${c.close} || Math.abs(${P}) > ${L}${sl?` || (${ES} > 0 && BESTSELLP >= ${ES} + ${sl})`:''}`;
+  const forceSell=`RTIME < ${c.close} || Math.abs(${P}) > ${L}${sl?` || (${EB} > 0 && BESTBUYP > 0 && BESTBUYP <= ${EB} - ${sl})`:''}`;
+  // Closing floor: from close..10 min to gate, close at REF -/+ floor (do not hit an empty book); at 10 min, and on SL / cap breach, at any price
+  const fl=c.floor==='yok'?null:+c.floor;
+  const hardBuy=`RTIME < 10 || Math.abs(${P}) > ${L}${sl?` || (${ES} > 0 && BESTSELLP >= ${ES} + ${sl})`:''}`;
+  const hardSell=`RTIME < 10 || Math.abs(${P}) > ${L}${sl?` || (${EB} > 0 && BESTBUYP > 0 && BESTBUYP <= ${EB} - ${sl})`:''}`;
+  const shortX=fl==null?IF(forceBuy,'MAXDAMP()',`BESTSELLP + ${tol}`):IF(hardBuy,'MAXDAMP()',IF(`RTIME < ${c.close}`,`${R} + ${fl}`,`BESTSELLP + ${tol}`));
+  const longX=fl==null?IF(forceSell,'0',`BESTBUYP - ${tol}`):IF(hardSell,'0',IF(`RTIME < ${c.close}`,`${R} - ${fl}`,`BESTBUYP - ${tol}`));
+  const maxBuy=IF(`${P} < 0`,shortX,IF(`${R} > 0`,`${R} - ${c.k} + ${tol}`,'0'));
+  const minSell=IF(`${P} > 0`,longX,IF(`${R} > 0`,`${R} + ${c.k} - ${tol}`,'MAXDAMP()'));
+  return [
+   {id:'tgt',ad:'Hedef net pozisyon (MWh)',not:`Sonuç MWh: +${String(M).replace('.',',')} = long, −${String(M).replace('.',',')} = short, 0 = düz. NETPC ile şirketin diğer pozisyonu korunur.`,
+    one:`NETPC - ${P}/10 + Math.max(-${M}, Math.min(${M}, ${flat(tgt)}))`,
+    tree:['NETPC − BOT_POZ/10 + SINIRLA(−'+String(M).replace('.',',')+' MWh … +'+String(M).replace('.',',')+' MWh,',...pretty(tgt,c,'  '),')']},
+   {id:'max',ad:'Maksimum alış fiyatı (TL/MWh)',not:`Alış emri bu fiyatın üstünden dolmaz. Girişte tetik seviyesi + ${tol} TL/MWh; short kapatırken en iyi satış + ${tol} TL/MWh; ${c.floor==='yok'?'zorla kapanış/SL\'de azami fiyat (emir mutlaka dolsun).':`zorla kapanışta önce REF + ${c.floor} TL/MWh tavanıyla, kapıya 10 dk kala ve SL'de azami fiyatla (emir mutlaka dolsun).`}`,
+    one:flat(maxBuy),tree:pretty(maxBuy,c)},
+   {id:'min',ad:'Minimum satış fiyatı (TL/MWh)',not:`Satış emri bu fiyatın altından dolmaz. Girişte tetik seviyesi − ${tol} TL/MWh; long kapatırken en iyi alış − ${tol} TL/MWh; ${c.floor==='yok'?'zorla kapanış/SL\'de 0 TL/MWh (emir mutlaka dolsun).':`zorla kapanışta önce REF − ${c.floor} TL/MWh tabanıyla, kapıya 10 dk kala ve SL'de 0 TL/MWh (emir mutlaka dolsun).`}`,
+    one:flat(minSell),tree:pretty(minSell,c)}];
+}
+/* valid combinations only: forced close must come after new entries stop (close < stop) */
+function fixFx(){if(+FX.close>=+FX.stop){const ok=FXP.find(x=>x[0]==='close')[2].filter(v=>+v<+FX.stop);FX.close=ok.length?ok[0]:FX.close}}
+let FXOUT=[];
+function renderFx(){
+  const box=document.getElementById('fxp');
+  if(!box.childElementCount){box.innerHTML=FXP.map(([k,l,o])=>`<label>${l}<select data-k="${k}">${o.map(v=>`<option value="${v}">${({both:'İki yön',buy:'Yalnız AL',sell:'Yalnız SAT',yok:'Yok'})[v]||v.replace('.',',')}</option>`).join('')}</select></label>`).join('');
+    box.onchange=e=>{const s=e.target.closest('select');if(!s)return;FX[s.dataset.k]=s.value;fixFx();try{localStorage.setItem('paPropFx',JSON.stringify(FX))}catch(_){}renderFx()}}
+  box.querySelectorAll('select').forEach(s=>{const k=s.dataset.k;s.value=FX[k];
+    [...s.options].forEach(o=>{o.disabled=(k==='close'&&+o.value>=+FX.stop)||(k==='stop'&&+o.value<=+FX.close)})});
+  FXOUT=buildFx(FX);
+  document.getElementById('fxforms').innerHTML=FXOUT.map(f=>`<section class="panel">
+    <div class="bar"><h2>${f.ad}</h2><button type="button" class="copy" data-c="${f.id}"${VALID?'':' disabled title="Geçerlilik doldu"'}>Kopyala</button></div>
+    <div class="muted" style="font-size:13px">${f.not}</div>
+    <div class="muted" style="font-size:12px;font-weight:600;margin-bottom:-6px">Okunuş (ağaç)</div>
+    <pre class="code tree">${esc(f.tree.join('\n'))}</pre>
+    <details><summary class="muted" style="font-size:13px;cursor:pointer">Kopyalanacak tek satır</summary><pre class="code" style="margin-top:8px">${esc(f.one)}</pre></details>
+    <div class="muted" style="font-size:13px" data-m="${f.id}" aria-live="polite"></div></section>`).join('');
+  const G=[
+   ['Ağaçtaki kısaltmalar',''],
+   ...ALIAS.filter(a=>a[2]).map(a=>[a[1],a[2].replace('N lot',FX.ref+' lot').replace('WTRADEP(N,0)',`WTRADEP(${FX.ref},0)`)]),
+   ['SINIRLA(a … b, x)','Math.max(a, Math.min(b, x)): sonucu pozisyon tavanı içinde tutar'],
+   ['VE / VEYA, |x|','&& / ||, Math.abs(x) (mutlak değer)'],
+   ['SmartBot anahtar kelimeleri',''],
+   ['Hedef net pozisyon alanı','MWh: formülün sonucu doğrudan MWh (5 = 5 MWh)'],
+   ['NETPC','Şirketin bu kontrattaki net pozisyonu (MWh); + alış fazlası, − satış fazlası'],
+   ['BOTTOTALTRADEBUYQC','Bu botun bu kontratta yaptığı alışların toplamı (lot)'],
+   ['BOTTOTALTRADESELLQC','Bu botun bu kontratta yaptığı satışların toplamı (lot)'],
+   ['RTIME','Kontratın kapı kapanışına kalan süre (dk)'],
+   ['BESTBUYP','Tahtadaki en iyi alış teklifinin fiyatı (TL/MWh); satarken bu fiyata satılır'],
+   ['BESTSELLP','Tahtadaki en iyi satış teklifinin fiyatı (TL/MWh); alırken bu fiyattan alınır'],
+   [`WTRADEP(${FX.ref},0)`,`Bu kontratta piyasada gerçekleşen son ${FX.ref} lot işlemin ağırlıklı ortalama fiyatı (TL/MWh); işlem yoksa 0`],
+   [`W_BUYTRADEPC(${Math.round(+FX.pos*10)},0,1)`,`Şirketin bu kontratta son ${Math.round(+FX.pos*10)} lotluk alışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
+   [`W_SELLTRADEPC(${Math.round(+FX.pos*10)},0,1)`,`Şirketin bu kontratta son ${Math.round(+FX.pos*10)} lotluk satışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
+   ['MAXDAMP()','EPİAŞ azami piyasa fiyatı (TL/MWh)'],
+   ['Lot / MWh','1 lot = 0,1 MWh; 10 lot = 1 MWh'],
+   ['Açılır listedeki parametreler',''],
+   ['Pozisyon (MWh)','Bir girişte açılan ve aynı anda tutulabilen en büyük pozisyon'],
+   ['Giriş sapması (TL/MWh)','Fiyatın referanstan ne kadar uzaklaşınca girileceği'],
+   ['Referans hacmi (lot)','Referans fiyatın hesaplandığı son işlem hacmi'],
+   ['Kâr al (TL/MWh)','Giriş fiyatından bu kadar lehe gidince pozisyon kapanır'],
+   ['Felaket SL (TL/MWh)','Giriş fiyatından bu kadar aleyhe gidince fiyat sınırı olmadan kapanır'],
+   ['Kayma toleransı (TL/MWh)','Emrin tetik fiyatından en fazla ne kadar kötü dolabileceği; maks. alış / min. satış fiyatına yazılır'],
+   ['Tur tavanı (adet)','Bir kontratta en fazla kaç kez girip çıkılacağı; 1 tur = 1 giriş + 1 çıkış'],
+   ['Yeni giriş durur (dk)','Kapıya bu kadar dakika kala yeni pozisyon açılmaz'],
+   ['Zorla kapanış (dk)','Kapıya bu kadar dakika kala açık pozisyon fiyat sınırı olmadan kapatılır'],
+   ['Yön','İki yön, yalnız AL ya da yalnız SAT girişleri']];
+  document.getElementById('fxlegend').innerHTML='<tr><th>Terim</th><th style="text-align:left">Anlamı</th></tr>'+G.map(([k,v])=>v===''?`<tr><td colspan="2" class="t" style="background:var(--surface-2);font-weight:600;font-family:var(--sans)">${k}</td></tr>`:`<tr><td>${k}</td><td class="t" style="text-align:left;white-space:normal">${v.replace(/&(?!amp;)/g,'&amp;').replace(/</g,'&lt;')}</td></tr>`).join('');
+  const L=Math.round(+FX.pos*10),pm=FX.pos.replace('.',',');
+  const Rr=[];
+  if(FX.dir!=='sell')Rr.push(`En iyi satış fiyatı, piyasada son ${FX.ref} lotun ağırlıklı ortalamasının ${FX.k} TL/MWh altına inince ${pm} MWh AL; en fazla ${FX.tol} TL/MWh kayma kabul edilir.`);
+  if(FX.dir!=='buy')Rr.push(`En iyi alış fiyatı bu ortalamanın ${FX.k} TL/MWh üstüne çıkınca ${pm} MWh SAT; en fazla ${FX.tol} TL/MWh kayma kabul edilir.`);
+  Rr.push(`Kâr al: giriş fiyatından ${FX.tp} TL/MWh lehe gidince kapat.`);
+  Rr.push(FX.sl==='yok'?'SL yok: aleyhe giden pozisyon yalnız zorla kapanışta kapanır.':`Felaket SL: giriş fiyatından ${FX.sl} TL/MWh aleyhe gidince fiyat sınırı olmadan kapat.`);
+  Rr.push(`Bot pozisyonu ${pm} MWh'yi aşarsa fiyat sınırı olmadan 0'a çekilir (tavan koruması).`);
+  Rr.push(FX.cap==='yok'?'Tur tavanı yok.':`Kontrat başına en fazla ${FX.cap} tur (${+FX.cap*2*L} lot = ${+FX.cap*2*+FX.pos} MWh bot hacmi).`);
+  Rr.push(`Kapıya ${FX.stop} dk kala yeni giriş yok; ${FX.close} dk kala açık pozisyon fiyat sınırı olmadan kapatılır.`);
+  if(+FX.pos>1)Rr.push(`Uyarı: backtest yalnız 1 MWh ile yapıldı. ${pm} MWh'de kayma ve kısmi dolum artar; kısmi dolan pozisyon tamamlanmaz, dolan miktar tutulur.`);
+  document.getElementById('fxrules').innerHTML=Rr.map(x=>`<li>${x}</li>`).join('');
+}
+document.getElementById('fxforms').onclick=async e=>{const b=e.target.closest('button[data-c]');if(!b||b.disabled)return;const f=FXOUT.find(x=>x.id===b.dataset.c),m=document.querySelector(`[data-m="${f.id}"]`);
+  try{await navigator.clipboard.writeText(f.one);m.textContent='Tek satır olarak kopyalandı.'}catch(err){const d=b.closest('section').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('pre'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);m.textContent='Panoya erişilemedi; tek satır seçildi, Ctrl+C ile kopyala.'}};
+document.getElementById('fxlive').onclick=()=>{FX={...FXLIVE};try{localStorage.removeItem('paPropFx')}catch(_){}renderFx()};
+
+function initFx(p){
+  const d=p.data||{},S=d.settings||[];
+  for(const s of S){const def=FXP.find(x=>x[0]===s.key);if(def&&def[2].includes(String(s.value)))FXLIVE[s.key]=String(s.value)}
+  /* the closing floor is not in the settings list: take the option that reproduces the published live formulas */
+  const pf=d.formulas||[];
+  if(pf.length&&!S.some(s=>s.key==='floor'))for(const fl of FXP.find(x=>x[0]==='floor')[2]){const o=buildFx({...FXLIVE,floor:fl});
+    if(pf.every(f=>{const g=o.find(x=>x.id===f.id);return g&&g.one===f.one})){FXLIVE.floor=fl;break}}
+  FX={...FXLIVE};
+  try{const v=JSON.parse(ls('paPropFx')||'null');if(v)FXP.forEach(([k,,o])=>{if(v[k]&&o.includes(v[k]))FX[k]=v[k]})}catch(e){}
+  fixFx();
+  const f=n=>new Date(n).toLocaleString('tr-TR',{timeZone:'Europe/Istanbul',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})+' TSİ';
+  const now=Date.now(),from=Date.parse(d.valid_from),until=Date.parse(d.valid_until);
+  VALID=!(from&&until)||(now>=from&&now<until);
+  const vb=document.getElementById('fxvalid');vb.className='sim '+(VALID?'ok':'bad');
+  vb.innerHTML=`<span><b>${VALID?'Geçerli.':'GEÇERLİLİK DOLDU — KULLANMA.'}</b> ${esc(d.level||'')}${d.valid_from?` · Geçerli: ${f(d.valid_from)} – ${f(d.valid_until)}`:''}${VALID?'':' Ali\'den güncel sürümü iste; kopyalama kapalı.'}</span>`;
+  document.getElementById('fxnotes').innerHTML=(d.notes||[]).map(n=>`<li class="muted">${esc(n)}</li>`).join('');
+  renderFx()}
+
+/* ---- tabs ---- */
+function tab(t){document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===t));
+  document.getElementById('tab_fx').hidden=t!=='fx';document.getElementById('tab_bt').hidden=t!=='bt';
+  if(t==='bt')loadBt();try{localStorage.setItem('paPropTab',t)}catch(_){}}
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b)tab(b.dataset.t)};
+document.getElementById('lock').onclick=()=>{try{localStorage.removeItem('pa-pcode');localStorage.removeItem('pa-prop')}catch(_){}
+  try{top.location.hash='home';top.location.reload()}catch(_){location.href='./'}};
+
+(async function(){
+  try{PAY=await openMain()}catch(e){
+    document.getElementById('wait').hidden=true;
+    document.getElementById('gatemsg').textContent=e.message==='net'?'Ürün verisi yüklenemedi (ağ). Sayfayı yenile.':e.message==='nocode'?'Bu sayfa GİP Prop Bot kodu ile açılır. Kodunu Erişim kodu sayfasına gir.':'Bu tarayıcıdaki kod GİP Prop Bot\'u açmıyor.';
+    document.getElementById('gate').hidden=false;return}
+  document.getElementById('wait').hidden=true;document.getElementById('app').hidden=false;document.getElementById('tabs').hidden=false;
+  document.getElementById('lock').hidden=SRC!=='pa-pcode';
+  initFx(PAY);
+  tab(ls('paPropTab')==='bt'?'bt':'fx');
+})();
+</script>
+</body>
+</html>

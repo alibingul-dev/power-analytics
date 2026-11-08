@@ -512,11 +512,12 @@ a.btn{display:inline-block;text-decoration:none}
 
     <button class="grp custom-only" aria-expanded="true">CUSTOM PRODUCTS<span class="chev"></span></button>
     <div class="items custom-only">
-      <button class="sub" aria-expanded="true">Türkiye<span class="chev"></span></button>
-      <div class="leaves">
+      <button class="sub tier-custom" aria-expanded="true">Türkiye<span class="chev"></span></button>
+      <div class="leaves tier-custom">
         <a href="#tr-outlook" data-view="tr-outlook" title="Monthly PTF outlook 24 months ahead with your own inputs, backtest and sensitivity; untested scenarios to 2031" style="--c:var(--muted)"><span class="bar"></span>Price Outlook Lab</a>
         <a href="#tr-dpf" data-view="tr-dpf" title="Next-day hourly PTF forecast and its track record" style="--c:var(--muted)"><span class="bar"></span>Daily Price Forecast</a>
       </div>
+      <a href="#gip-prop" data-view="gip-prop" class="prop-only" title="Intraday (GİP) SmartBot formula and its backtest" style="--c:var(--muted)"><span class="bar"></span>GİP Prop Bot</a>
     </div>
 
     <button class="grp" aria-expanded="true">GREAT BRITAIN<span class="chev"></span></button>
@@ -793,6 +794,7 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view frame" id="tr-bess"><iframe data-src="bess.html" title="BESS Investment Simulator"></iframe></section>
 <section class="view frame" id="tr-outlook"><iframe data-src="outlook-lab.html" title="Price Outlook Lab"></iframe></section>
 <section class="view frame" id="tr-dpf"><iframe data-src="price-forecast.html" title="Daily Price Forecast"></iframe></section>
+<section class="view frame" id="gip-prop"><iframe data-src="prop.html" title="GİP Prop Bot"></iframe></section>
 
 <section class="view" id="gb-structure">
   <div class="eyebrow">Great Britain, market structure</div>
@@ -865,7 +867,7 @@ a.btn{display:inline-block;text-decoration:none}
 .pro-row input:focus-visible{outline:2px solid var(--b1);outline-offset:1px}
 .linkbtn{background:none;border:0;padding:0;color:var(--b1);font:inherit;cursor:pointer;text-decoration:underline}
 .pro-on{display:none;color:var(--text)}
-html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]) .custom-only{display:none!important}
+html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]):not(.has-prop) .custom-only{display:none!important}html:not([data-tier="custom"]) .tier-custom{display:none!important}html:not(.has-prop) .prop-only{display:none!important}
 .is-pro .pro-on{display:block}.is-pro #pro-form,.is-pro #pro-msg,.is-pro .pro-note,.is-pro .pro-lock{display:none}
 .pro-lock{color:var(--muted)}
 .pl-card{position:relative}
@@ -1025,8 +1027,13 @@ const PRO={code:null,data:null};
 try{PRO.code=localStorage.getItem("pa-pro")}catch(e){}
 document.documentElement.classList.toggle("is-pro",!!PRO.code);
 try{const t=PRO.code&&localStorage.getItem("pa-tier");if(t)document.documentElement.dataset.tier=t}catch(e){}
+/* GİP Prop Bot (custom product, 2026-11-09): menu item + full-page view (prop.html) for codes that open its bundle.
+   UX only; the real gate is decryption inside prop.html. "pa-pcode" holds a product-only code from the code box,
+   "pa-prop" is a hint set after a successful check so the item shows without waiting; propCheck() re-verifies. */
+const PROP_ID="pefb3f7bd";
+try{if(localStorage.getItem("pa-prop")==="1"&&(PRO.code||localStorage.getItem("pa-pcode")))document.documentElement.classList.add("has-prop")}catch(e){}
 document.addEventListener("DOMContentLoaded",()=>acctPaint());
-function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier")}catch(e){}delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
+function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier");localStorage.removeItem("pa-prop")}catch(e){}document.documentElement.classList.remove("has-prop");delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
 function pubJSON(f){return fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject())}
 const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const PRO_TIERS=["custom","ultra","max","pro"];
@@ -1064,6 +1071,27 @@ function proCheck(code){return proOpen(code).then(()=>true).catch(e=>e&&e.messag
    bundle (plus decoys; tier keys unlabelled in "tk"). Derive the wrapping key once, see what the code opens: any tier →
    unlock here (a code that also opens products keeps them on product.html); only a product → hand the code to
    product.html in sessionStorage. No server. null = no/old index (old behaviour), "down" = network. */
+/* Does a stored code (tier code or product-only code) open the GİP Prop Bot bundle? true / false / "down" */
+async function propOpens(){
+  let pc=null;try{pc=localStorage.getItem("pa-pcode")}catch(e){}
+  const codes=[...new Set([PRO.code,pc].filter(Boolean))];if(!codes.length)return false;
+  let I;try{const r=await fetch("x/index.json",{cache:"no-store"});if(!r.ok)return "down";I=await r.json()}catch(e){return "down"}
+  const it=(I.items||[]).find(x=>x.p===PROP_ID);if(!it)return false;
+  const sub=crypto.subtle,te=new TextEncoder();
+  for(const c of codes){
+    const base=await sub.importKey("raw",te.encode(c),"PBKDF2",false,["deriveKey"]);
+    const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(I.kdf.salt),iterations:I.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+    for(const k of it.keys){try{await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct));return true}catch(e){}}
+  }
+  return false;
+}
+async function propCheck(){
+  const r=await propOpens();if(r==="down")return;
+  const html=document.documentElement,had=html.classList.contains("has-prop");
+  try{if(r)localStorage.setItem("pa-prop","1");else{localStorage.removeItem("pa-prop");localStorage.removeItem("pa-pcode")}}catch(e){}
+  html.classList.toggle("has-prop",r);
+  if(had!==r&&location.hash.slice(1)==="gip-prop"&&typeof go==="function")go("gip-prop");
+}
 async function codeLookup(code){
   let I;try{const r=await fetch("x/index.json",{cache:"no-store"});if(r.status===404)return null;if(!r.ok)return "down";I=await r.json()}catch(e){return "down"}
   if(!Array.isArray(I.tk))return null;
@@ -1156,10 +1184,12 @@ function go(id){
   if(!views.some(v=>v.id===id))id="home";
   if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   if((id==="tr-outlook"||id==="tr-dpf")&&document.documentElement.dataset.tier!=="custom")id="home";
+  if(id==="gip-prop"&&!document.documentElement.classList.contains("has-prop"))id="home";
+  const frame=id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"||id==="gip-prop";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
-  document.body.classList.toggle("full",id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf");
+  document.body.classList.toggle("full",frame);
   document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily");
-  if(id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
+  if(frame){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`);
   if(owner){
@@ -1177,6 +1207,7 @@ function go(id){
 links.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();history.replaceState(null,"","#"+a.dataset.view);go(a.dataset.view);setMenu(false)}));
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 go(location.hash.slice(1)||"home");
+propCheck();
 stamp(null);
 
 function pct(v){return v===null||v===undefined?"—":(v>0?"+":"")+v+"%"}
@@ -1813,6 +1844,9 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
       if(L===null)return proCheck(c);
       if(L==="down")return "down";
       if(L.tier)return proCheck(c);
+      if(L.p===PROP_ID){try{localStorage.setItem("pa-pcode",c);localStorage.setItem("pa-prop","1")}catch(e){}
+        /* GİP Prop Bot lives in this shell: show its view instead of the bare product page */
+        document.documentElement.classList.add("has-prop");inp.value="";msg.textContent="";history.replaceState(null,"","#gip-prop");go("gip-prop");return "go"}
       if(L.p){msg.textContent=tr()?"Açılıyor…":"Opening…";try{sessionStorage.setItem("pa-prod",JSON.stringify({p:L.p,c:c}))}catch(e){}location.href="product.html?p="+L.p;return "go"}
       return false;
     }).then(function(ok){

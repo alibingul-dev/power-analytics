@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Özel ürün</title>
+<script>
+/* GİP Prop Bot (pefb3f7bd) moved into the site's shell on 2026-11-09 (index.html#gip-prop, prop.html): one UI, old links
+   keep working. A code handed over by the code box is kept for the shell; without any stored code, go to the code box. */
+(function(){if(new URLSearchParams(location.search).get("p")!=="pefb3f7bd")return;
+  let known=false;
+  try{const h=JSON.parse(sessionStorage.getItem("pa-prod")||"null");sessionStorage.removeItem("pa-prod");
+    if(h&&h.p==="pefb3f7bd"&&h.c){localStorage.setItem("pa-pcode",h.c);localStorage.setItem("pa-prop","1")}
+    known=!!(localStorage.getItem("pa-pcode")||localStorage.getItem("pa-pro"))}catch(e){}
+  location.replace(known?"./#gip-prop":"./#plans")})();
+</script>
 <style>
 :root{--bg:#0d1117;--surface:#161b22;--line:#2b3340;--text:#e6edf3;--muted:#8b98a9;--accent:#38bdf8;--bad:#f87171;--ok:#34d399;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
