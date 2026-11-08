@@ -52,6 +52,13 @@ td .tag{padding:1px 8px;font-size:11.5px}
 td.dim,th.dim{color:var(--muted)}
 tr.avg td{font-weight:500;background:var(--band)}
 table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th{white-space:normal;min-width:84px}
+.sb{display:inline-block;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid}
+.sb.sa{color:var(--navy);border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.12)}
+.sb.sb_{color:var(--accent);border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.12)}
+.sb.sc{color:var(--good);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12)}
+td.wy{font-family:var(--font);text-align:left;font-size:12.5px;line-height:1.35;min-width:300px;white-space:normal}
+td.wy .l2{color:var(--muted);font-size:11.5px}
+.why .st{margin:0 0 8px;padding-left:18px;font-size:13.5px}
 caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);background:var(--surface-2);caption-side:top}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -139,9 +146,9 @@ en:{title:"Daily Price Forecast",
  daynote:"Actual is the price EPİAŞ published for that day. Inputs archived {at}{late}.",late:" — after the 12:30 market close, so the load plan and wind forecast may have been revised after clearing",
  s_fc:"Forecast",s_act:"Actual",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
  why:"Why the forecast missed",
- whynote:"Bars split the hourly miss (TL/MWh): the part caused by the load plan being off, by the wind forecast being off, and what the inputs cannot explain (solar, gas availability, bidding, outages, interconnection, price floor or cap). This is an after-the-fact analysis, not a forecast.",
+ whynote:"Bars split each hour's miss (TL/MWh) into the estimated contributions of the latest stage (see the badge); the grey part is what the data cannot explain (block and flexible bids, the gap between the hourly curve and the published price, outages, interconnection, the price floor or cap). This is an after-the-fact analysis, not a forecast.",
  c_load:"Load plan was off",c_wind:"Wind forecast was off",c_left:"Not explained by the inputs",
- nowhy:"Realised load and wind for this day are not in yet. The breakdown appears once EPİAŞ publishes them, usually within two days.",
+ nowhy:"The final breakdown with realised load and wind comes after the day closes; until then the estimate below comes from the market's own curves and plans.",
  w_miss:"The forecast missed by {mae} TL/MWh per hour on average and was {dir} by {bias} TL/MWh.",
  w_high:"too high",w_low:"too low",
  w_parts:"Per hour on average, the load plan error moved the forecast by {ld} TL/MWh and the wind forecast error by {wd} TL/MWh. With perfect load and wind inputs the same model would have missed by {perf} TL/MWh.",
@@ -152,9 +159,16 @@ en:{title:"Daily Price Forecast",
  w_overfit:"An exact hit in all 24 hours would need 24 free numbers tuned to this day after the fact. That is an overfit: it explains yesterday perfectly and forecasts tomorrow badly, so the model is not built that way.",
  hours:"Hour by hour",
  h:["Hour","Forecast","Actual","Miss"],
- h_why:"Why the miss",wl:"load plan",ww:"wind forecast",wu:"not explained",w_wait:"realised inputs pending",w_small:"within noise",
+ h_why:"Why the miss (estimated contribution)",wl:"load plan",ww:"wind forecast",wu:"not explained",w_small:"within noise",
+ st:{a:"Preliminary (after PTF)",b:"Updated (after KGÜP)",c:"Final (day closed)"},upd:"last update",
+ p_sup:"offers to sell",p_dem:"bids to buy",p_mkt:"market vs last week (sellers and buyers not split yet)",p_oth:"other offers",p_othm:"other market change",
+ src:{ruzgar:"wind plan",gunes:"solar plan",akarsu:"run-of-river plan",linyit:"lignite plan",jeotermal:"geothermal plan",biokutle:"biomass plan",dogalgaz:"gas plan",ithalKomur:"imported coal plan",barajli:"dam hydro plan",tasKomur:"hard coal plan",fuelOil:"fuel oil plan",nafta:"naphtha plan"},
+ mwh_a:"at the forecast price, vs the same hour last week: {s} MWh offered, {b} MWh bid",
+ mwh_b:"KGÜP plan vs the same hour last week: {l}",
+ prev:"before — {st}: {a} → now: {b}",nolead:"no single cause",
+ stavg:"Estimated contribution by stage, average of the day:",
  h_yk:"YEKDEM curtailment risk",yk_risk:"flagged",yk_hit:"flagged · happened",yk_miss:"not flagged · happened",yk_none:"—",
- whycol:"'Why the miss' splits each hour's miss into the part caused by the load plan being off, the part caused by the wind forecast being off, and what the inputs cannot explain (solar, gas availability, bidding, outages, the price floor or cap). The largest part is in bold. Signs follow the miss: + means the part pushed the forecast above the actual price.",
+ whycol:"'Why the miss' is built in three stages and every row says which one it shows. Preliminary (after PTF, about 14:00 the day before): that day's EPİAŞ supply and demand curves against the same hour last week; the price effect of sellers and of buyers is the average of taking each side first. Updated (after KGÜP, about 16:00 the day before): the sellers' part is split by source using the first-version generation plan (wind, solar, run-of-river, lignite...); gas, imported coal and dam hydro set the price, so their plans are shown in MWh but not counted as a cause. Final (day closed): the load plan and wind forecast against what really happened. 'Not explained' is always shown: block and flexible bids, the gap between the hourly curve and the published price, and the model's own call against last week's market. All parts are estimated contributions in TL/MWh, not certainties; a part is in bold only when it carries at least half of the miss and more than 'not explained'. Signs follow the miss: + means the part pushed the forecast above the actual price. The forecast and its score never change; only this column is updated.",
  yknote:"YEKDEM column: an hour is flagged at forecast time when the price could fall under 100 TL/MWh, the level below which a YEKDEM plant's output is not worth selling; 'happened' means the realised price did fall under 100 TL/MWh.",
  avg:"Average of the day",dl:"Download for Excel (CSV)",
  dlnote:"The CSV holds every scored day, one row per hour, with the unit in each column name (TL/MWh, GW). Prices are always in TL/MWh; the day's TCMB rates are in the usdtry and eurtry columns. It opens in Excel as UTF-8.",
@@ -202,9 +216,9 @@ tr:{title:"Günlük Fiyat Tahmini",
  daynote:"Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat. Girdiler {at}{late} arşivlendi.",late:" — yani 12:30 kapanışından sonra; yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir",
  s_fc:"Tahmin",s_act:"Gerçekleşen",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
  why:"Tahmin neden saptı",
- whynote:"Çubuklar saatlik sapmayı (TL/MWh) böler: yük planının ve rüzgâr tahmininin şaşmasından gelen kısımlar ile girdilerin açıklayamadığı kısım (güneş, gaz kullanılabilirliği, teklif davranışı, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Bu bir gün sonu analizidir, tahmin değildir.",
+ whynote:"Çubuklar her saatin sapmasını (TL/MWh) en son aşamanın tahmini katkılarına böler (etikete bak); gri kısım verinin açıklayamadığı kısımdır (blok ve esnek teklifler, saatlik eğri ile yayımlanan fiyat arasındaki fark, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Bu bir gün sonu analizidir, tahmin değildir.",
  c_load:"Yük planı şaştı",c_wind:"Rüzgâr tahmini şaştı",c_left:"Girdilerle açıklanamayan",
- nowhy:"Bu gün için gerçekleşen tüketim ve rüzgâr henüz gelmedi. EPİAŞ yayımlayınca, genelde iki gün içinde, ayrıştırma burada görünür.",
+ nowhy:"Gerçekleşen tüketim ve rüzgârla nihai ayrıştırma gün kapanınca gelir; o zamana kadar aşağıdaki tahmin piyasanın kendi eğrilerinden ve planlarından gelir.",
  w_miss:"Tahmin saat başına ortalama {mae} TL/MWh saptı ve ortalamada {bias} TL/MWh {dir} kaldı.",
  w_high:"yüksek",w_low:"düşük",
  w_parts:"Saat başına ortalamada yük planı hatası tahmini {ld} TL/MWh, rüzgâr tahmini hatası {wd} TL/MWh oynattı. Yük ve rüzgâr girdileri kusursuz olsaydı aynı model {perf} TL/MWh sapardı.",
@@ -215,9 +229,16 @@ tr:{title:"Günlük Fiyat Tahmini",
  w_overfit:"24 saatin hepsini tam tutturmak, o güne sonradan ayarlanmış 24 serbest sayı ister. Buna aşırı uyum (overfit) denir: dünü kusursuz açıklar, yarını kötü tahmin eder. Model bu yüzden böyle kurulmadı.",
  hours:"Saat saat",
  h:["Saat","Tahmin","Gerçekleşen","Sapma"],
- h_why:"Fark neden çıktı",wl:"yük planı",ww:"rüzgâr tahmini",wu:"açıklanamayan",w_wait:"gerçekleşen girdiler bekleniyor",w_small:"gürültü sınırında",
+ h_why:"Fark neden çıktı (tahmini katkı)",wl:"yük planı",ww:"rüzgâr tahmini",wu:"açıklanamayan",w_small:"gürültü sınırında",
+ st:{a:"Ön (PTF sonrası)",b:"Güncellendi (KÜP sonrası)",c:"Nihai (gün kapanışı)"},upd:"son güncelleme",
+ p_sup:"satış teklifleri",p_dem:"alış teklifleri",p_mkt:"piyasa geçen haftaya göre (satıcı ve alıcı henüz ayrılmadı)",p_oth:"diğer satış teklifleri",p_othm:"diğer piyasa değişimi",
+ src:{ruzgar:"rüzgâr planı",gunes:"güneş planı",akarsu:"akarsu planı",linyit:"linyit planı",jeotermal:"jeotermal planı",biokutle:"biyokütle planı",dogalgaz:"doğalgaz planı",ithalKomur:"ithal kömür planı",barajli:"barajlı hidro planı",tasKomur:"taş kömürü planı",fuelOil:"fuel oil planı",nafta:"nafta planı"},
+ mwh_a:"tahmin fiyatında, geçen haftanın aynı saatine göre: {s} MWh satış, {b} MWh alış teklifi",
+ mwh_b:"KÜP planı geçen haftanın aynı saatine göre: {l}",
+ prev:"önce — {st}: {a} → şimdi: {b}",nolead:"tek bir sebep yok",
+ stavg:"Aşamaya göre tahmini katkı, günün ortalaması:",
  h_yk:"YEKDEM kesinti riski",yk_risk:"işaretli",yk_hit:"işaretli · gerçekleşti",yk_miss:"işaretsiz · gerçekleşti",yk_none:"—",
- whycol:"'Fark neden çıktı' her saatin sapmasını yük planının şaşmasından gelen kısım, rüzgâr tahmininin şaşmasından gelen kısım ve girdilerin açıklayamadığı kısım (güneş, gaz kullanılabilirliği, teklif davranışı, arızalar, taban ya da tavan fiyat) olarak böler. En büyük kısım kalın. İşaretler sapmayla aynı: + o kısmın tahmini gerçekleşenin üstüne ittiği anlamına gelir.",
+ whycol:"'Fark neden çıktı' üç aşamada kurulur, her satır hangisini gösterdiğini yazar. Ön (PTF sonrası, bir gün önce ~14:00): o günün EPİAŞ arz ve talep eğrileri geçen haftanın aynı saatiyle karşılaştırılır; satıcıların ve alıcıların fiyat etkisi, iki tarafı sırayla önce alan iki hesabın ortalamasıdır. Güncellendi (KÜP sonrası, bir gün önce ~16:00): satış tarafı ilk versiyon üretim planıyla kaynaklara bölünür (rüzgâr, güneş, akarsu, linyit...); doğalgaz, ithal kömür ve barajlı hidro fiyatı belirler, bu yüzden planları MWh olarak gösterilir ama sebep sayılmaz. Nihai (gün kapanışı): yük planı ve rüzgâr tahmini gerçekleşenle karşılaştırılır. 'Açıklanamayan' her zaman ayrı gösterilir: blok ve esnek teklifler, saatlik eğri ile yayımlanan fiyat arasındaki fark ve modelin kendi tahmininin geçen haftanın piyasasından farkı. Tüm kısımlar TL/MWh cinsinden tahmini katkıdır, kesin değildir; bir kısım ancak sapmanın en az yarısını taşıyor ve 'açıklanamayan'dan büyükse kalın yazılır. İşaretler sapmayla aynı: + o kısmın tahmini gerçekleşenin üstüne ittiği anlamına gelir. Tahmin ve puanı hiç değişmez; yalnız bu sütun güncellenir.",
  yknote:"YEKDEM sütunu: fiyatın 100 TL/MWh altına inebileceği saatler tahmin anında işaretlenir; 100 TL/MWh, bir YEKDEM santralinin üretimini satmaya değmediği seviye. 'Gerçekleşti', gerçekleşen fiyatın 100 TL/MWh altına indiği anlamına gelir.",
  avg:"Günün ortalaması",dl:"Excel için indir (CSV)",
  dlnote:"CSV puanlanmış her günü, saat başına bir satır olarak taşır; birim her sütunun adında (TL/MWh, GW). Fiyatlar her zaman TL/MWh; günün TCMB kurları usdtry ve eurtry sütunlarında. Excel'de UTF-8 olarak açılır.",
@@ -323,6 +344,29 @@ function drawDaily(rows){
   $("cDaily").setAttribute("aria-label",uu(x.dailynote));$("t-dailynote").textContent=uu(x.dailynote);
 }
 
+/* ---------- staged "why the miss" ---------- */
+const SBC={a:"sa",b:"sb_",c:"sc"};
+const fT=v=>{if(!v)return "";const z=/([+-]\d\d:\d\d|Z)$/.test(v)?v:v+":00+03:00";const q=new Date(z);if(isNaN(q))return v;
+  return q.toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Europe/Istanbul"})};
+const atH=(S,i)=>Array.isArray(S)?S[i]:S;
+const pick=(a,i)=>a?a[i]:null;
+function parts(r,k,i,full){
+  const x=t(),S=(r.why_stages||{})[k];if(!S)return null;const P=[],m=atH(S.method,i);
+  if(k==="a"){if(m==="curve")P.push([x.p_sup,pick(S.c_supply,i)],[x.p_dem,pick(S.c_demand,i)]);else P.push([x.p_mkt,pick(S.c_market,i)])}
+  else if(k==="b"){const cs=S.c_src||{};let q=Object.keys(cs).map(z=>[x.src[z]||z,cs[z][i]]).filter(p=>p[1]!=null);
+    q.sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));if(!full)q=q.slice(0,2);P.push(...q);
+    P.push([m==="curve"?x.p_oth:x.p_othm,pick(S.c_other,i)]);if(m==="curve")P.push([x.p_dem,pick(S.c_demand,i)])}
+  else P.push([x.wl,pick(S.c_load,i)],[x.ww,pick(S.c_wind,i)]);
+  P.push([x.wu,pick(S.residual,i),1]);
+  return P.filter(p=>p[1]!=null)}
+function lead(P,err){if(!P)return null;const N=P.filter(p=>!p[2]),R=P.find(p=>p[2]);if(!N.length)return null;
+  const b=N.reduce((a,c)=>Math.abs(c[1])>Math.abs(a[1])?c:a);
+  return Math.abs(b[1])>=0.5*Math.abs(err)&&Math.abs(b[1])>(R?Math.abs(R[1]):0)&&Math.sign(b[1])===Math.sign(err)?b:null}
+function prevStage(r,k){const s=r.why_stages||{};return k==="c"?(s.b?"b":s.a?"a":null):k==="b"?(s.a?"a":null):null}
+function badge(r,k){const x=t(),S=r.why_stages[k];return '<span class="sb '+SBC[k]+'">'+x.st[k]+'</span> <span class="l2">'+x.upd+' '+(S.at_est?"≈":"")+fT(S.at)+'</span>'}
+function avgParts(r,k){const acc={},ord=[];for(let i=0;i<24;i++){(parts(r,k,i,true)||[]).forEach(([n,v,res])=>{if(!acc[n]){acc[n]=[0,0,res];ord.push(n)}acc[n][0]+=v;acc[n][1]++})}
+  return ord.map(n=>[n,acc[n][0]/acc[n][1],acc[n][2]])}
+
 function drawDay(){
   const x=t(),r=findDay($("day").value);if(!r)return;const isLive=!r.actual;
   const hrs=[...Array(24).keys()].map(h=>String(h).padStart(2,"0")+":00");
@@ -339,20 +383,26 @@ function drawDay(){
   $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at}):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
   const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
-  const W=r.why,sg=v=>(v>0?"+":"")+nP(v,r);
-  const whyTxt=i=>{if(!W)return '<span class="dim">'+x.w_wait+'</span>';
-    const parts=[[x.wl,W.c_load[i]],[x.ww,W.c_wind[i]],[x.wu,W.unexplained[i]]];const tot=Math.abs(r.fc[i]-r.actual[i]);
-    if(tot<r.mae*0.25)return '<span class="dim">'+x.w_small+'</span>';
-    const big=parts.reduce((a,b)=>Math.abs(b[1])>Math.abs(a[1])?b:a);
-    return parts.map(([n,v])=>(n===big[0]?'<b>':'')+n+' '+sg(v)+(n===big[0]?'</b>':'')).join(' · ')};
+  const K=r.why_stage,sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r),sm=v=>(v>0?"+":v<0?"−":"")+n0(Math.abs(v));
+  const ptxt=(P,b)=>P.map(([n,v])=>(b&&n===b[0]?'<b>':'')+n+' '+sg(v)+(b&&n===b[0]?'</b>':'')).join(' · ')+' '+Ud;
+  const whyTxt=i=>{if(!K)return '<span class="dim">—</span>';
+    const err=r.fc[i]-r.actual[i],P=parts(r,K,i),S=r.why_stages[K];let o=badge(r,K)+'<br>';
+    if(Math.abs(err)<r.mae*0.25)return o+'<span class="dim">'+x.w_small+'</span>';
+    const b=lead(P,err);o+=ptxt(P,b);
+    if(K==="a"&&atH(S.method,i)==="curve"&&S.mwh_offer)o+='<br><span class="l2">'+fill(x.mwh_a,{s:sm(S.mwh_offer[i]),b:sm(S.mwh_bid[i])})+'</span>';
+    if(K==="b"&&S.dq_mwh){const q=Object.keys(S.dq_mwh).map(z=>[z,S.dq_mwh[z][i]]).filter(p=>p[1]).sort((a,c)=>Math.abs(c[1])-Math.abs(a[1])).slice(0,3);
+      if(q.length)o+='<br><span class="l2">'+fill(x.mwh_b,{l:q.map(([z,v])=>(x.src[z]||z)+' '+sm(v)+' MWh').join(', ')})+'</span>'}
+    const pk=prevStage(r,K);if(pk){const a0=lead(parts(r,pk,i),err);if((a0&&a0[0])!==(b&&b[0])){const f=p=>p?p[0]+' '+sg(p[1])+' '+Ud:x.nolead;
+      o+='<br><span class="l2">'+fill(x.prev,{st:x.st[pk],a:f(a0),b:f(b)})+'</span>'}}
+    return o};
   const yk=r.yekdem||{},rh=yk.risk_hours||[],ah0=yk.actual_hours||[];let nsteep=0;
   for(let i=0;i<24;i++){const e=isLive?0:r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
     if(isLive){h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>';continue}
-    h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="why" style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+whyTxt(i)+'</td></tr>'}
-  const wavg=W?[[x.wl,avg(W.c_load)],[x.ww,avg(W.c_wind)],[x.wu,avg(W.unexplained)]].map(([n,v])=>n+' '+sg(v)).join(' · '):'<span class="dim">'+x.w_wait+'</span>';
+    h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="wy">'+whyTxt(i)+'</td></tr>'}
+  const wavg=K?badge(r,K)+'<br>'+ptxt(avgParts(r,K),null):'<span class="dim">—</span>';
   if(isLive)h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
-  else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td style="font-family:var(--font);text-align:left;white-space:nowrap;font-size:12.5px">'+wavg+'</td></tr>';
+  else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td class="wy">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
   $("hours").innerHTML=h+'</tbody>';
   const ah=yk.actual_hours||[],el=$("ytag");
@@ -391,26 +441,27 @@ function csv(){
 }
 
 function why(r,hrs){
-  const x=t(),w=r.why;if(cW){cW.destroy();cW=null}
-  const Uw=rate(r)?U():"TL/MWh",cu=str=>rate(r)?uu(str):str,f=v=>nP(v,r);
+  const x=t(),w=r.why,K=r.why_stage;if(cW){cW.destroy();cW=null}
+  const Uw=rate(r)?U():"TL/MWh",cu=str=>rate(r)?uu(str):str,f=v=>nP(v,r),sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r);
   let s='<p>'+cu(fill(x.w_miss,{mae:f(r.mae),bias:f(Math.abs(r.bias)),dir:r.bias>0?x.w_high:x.w_low}))+'</p>';
-  if(!w){$("why").innerHTML=s+'<p class="note">'+x.nowhy+'</p>';$("cWhy").parentElement.hidden=true;return}
-  $("cWhy").parentElement.hidden=false;
-  const ma=a=>avg(a.map(Math.abs));
-  s+='<p>'+cu(fill(x.w_parts,{ld:f(ma(w.c_load)),wd:f(ma(w.c_wind)),perf:f(w.mae_perfect_inputs)}))+'</p>';
-  s+='<p><b>'+x.w_hit+'</b></p><ul>';
-  const fs=w.flat_shift||{};
-  const LIM=3;
-  [["netload",x.w_shift_nl,x.what_nl]].forEach(([k,tx,what])=>{const g=fs[k];if(!g)return;
-    if(Math.abs(g.delta_gw)<=LIM&&g.mae_after<r.mae*0.9)s+='<li>'+cu(fill(tx,{gw:n2(Math.abs(g.delta_gw)),dir:g.delta_gw>0?x.up:x.down,after:f(g.mae_after)}))+'</li>';
-    else s+='<li>'+fill(x.w_noshift,{what:what,lim:n0(LIM)})+'</li>';});
-  s+='<li>'+x.w_overfit+'</li></ul>';
+  const ks=["a","b","c"].filter(k=>(r.why_stages||{})[k]);
+  if(ks.length){s+='<p>'+x.stavg+'</p><ul class="st">'+ks.map(k=>'<li>'+badge(r,k)+'<br>'+avgParts(r,k).map(([n,v])=>n+' '+sg(v)).join(' · ')+' '+Uw+'</li>').join("")+'</ul>'}
+  if(!w)s+='<p class="note">'+x.nowhy+'</p>';
+  else{const ma=a=>avg(a.map(Math.abs));
+    s+='<p>'+cu(fill(x.w_parts,{ld:f(ma(w.c_load)),wd:f(ma(w.c_wind)),perf:f(w.mae_perfect_inputs)}))+'</p>';
+    s+='<p><b>'+x.w_hit+'</b></p><ul>';
+    const fs=w.flat_shift||{},LIM=3;
+    [["netload",x.w_shift_nl,x.what_nl]].forEach(([k,tx,what])=>{const g=fs[k];if(!g)return;
+      if(Math.abs(g.delta_gw)<=LIM&&g.mae_after<r.mae*0.9)s+='<li>'+cu(fill(tx,{gw:n2(Math.abs(g.delta_gw)),dir:g.delta_gw>0?x.up:x.down,after:f(g.mae_after)}))+'</li>';
+      else s+='<li>'+fill(x.w_noshift,{what:what,lim:n0(LIM)})+'</li>';});
+    s+='<li>'+x.w_overfit+'</li></ul>'}
   $("why").innerHTML=s;
-  const kk=rate(r)||1,cv=a=>a.map(v=>v/kk);
-  cW=new Chart($("cWhy"),{type:"bar",data:{labels:hrs,datasets:[
-    {label:x.c_load,data:cv(w.c_load),backgroundColor:C.nl,stack:"s"},
-    {label:x.c_wind,data:cv(w.c_wind),backgroundColor:C.fc,stack:"s"},
-    {label:x.c_left,data:cv(w.unexplained),backgroundColor:C.left,stack:"s"}]},
+  if(!K){$("cWhy").parentElement.hidden=true;return}
+  $("cWhy").parentElement.hidden=false;
+  const kk=rate(r)||1,ser={},ord=[];
+  for(let i=0;i<24;i++)(parts(r,K,i,true)||[]).forEach(([n,v,res])=>{if(!ser[n]){ser[n]={d:Array(24).fill(null),res:res};ord.push(n)}ser[n].d[i]=v/kk});
+  const PAL=[C.nl,C.fc,C.gas,"#34D399","#A78BFA","#F97316","#94A3B8","#F472B6"];let pi=0;
+  cW=new Chart($("cWhy"),{type:"bar",data:{labels:hrs,datasets:ord.map(n=>({label:n,data:ser[n].d,backgroundColor:ser[n].res?C.left:PAL[pi++%PAL.length],stack:"s"}))},
     options:Object.assign(base(Uw),{scales:Object.assign(base(Uw).scales,{x:{stacked:true,ticks:{color:C.tick,maxRotation:0,autoSkip:true},grid:{color:C.grid}},y:{stacked:true,title:{display:true,text:Uw,color:C.tick},ticks:{color:C.tick,callback:v=>Uw==="TL/MWh"?n0(v):n1(v)},grid:{color:C.grid}}})})});
 }
 
