@@ -85,6 +85,9 @@ document.getElementById("f").onsubmit=async e=>{e.preventDefault();const c=docum
   if(!c){msg.textContent="Kodu gir.";msg.className="err";return}
   msg.className="muted";msg.textContent="Açılıyor…";
   try{render(await openBundle(c));msg.textContent=""}catch(err){msg.className="err";msg.textContent=err.message==="link"?"Bağlantı eksik ya da ürün yayından kalktı.":"Kod bu ürünü açmıyor."}};
+/* Code handed over from the main site's code box (2026-11-09): read once, delete, open. Manual entry stays as before. */
+(function(){let h=null;try{h=JSON.parse(sessionStorage.getItem("pa-prod")||"null");sessionStorage.removeItem("pa-prod")}catch(e){}
+  if(h&&h.p===PID&&h.c){document.getElementById("code").value=h.c;document.getElementById("f").requestSubmit()}})();
 </script>
 </body>
 </html>

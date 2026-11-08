@@ -1058,6 +1058,16 @@ function proData(){
 }
 function proJSON(name,f){return PRO.code?proData().then(d=>d[name]).catch(()=>pubJSON(f)):pubJSON(f)}
 function proCheck(code){return proOpen(code).then(()=>true).catch(e=>e&&e.message==="bad code"?false:"down")}
+/* Product codes on the main box (2026-11-09): x/index.json lists each product's wrapped keys (plus decoys). Derive the
+   wrapping key once, find the product the code unwraps, hand the code to product.html in sessionStorage. No server. */
+async function prodFind(code){
+  let I;try{const r=await fetch("x/index.json",{cache:"no-store"});if(r.status===404)return null;if(!r.ok)return "down";I=await r.json()}catch(e){return "down"}
+  const sub=crypto.subtle,te=new TextEncoder();
+  const base=await sub.importKey("raw",te.encode(code),"PBKDF2",false,["deriveKey"]);
+  const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(I.kdf.salt),iterations:I.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+  for(const it of I.items||[])for(const k of it.keys||[]){try{await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct));return /^p[0-9a-f]{8}$/.test(it.p)?it.p:null}catch(e){}}
+  return null;
+}
 </script>
 <script>
 const FALLBACK={
@@ -1789,11 +1799,20 @@ fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(d=>{DASH.next=d;
   function tr(){try{return localStorage.getItem("pa-lang")==="tr"}catch(e){return false}}
   f.addEventListener("submit",function(ev){
     ev.preventDefault();var c=(inp.value||"").trim().toUpperCase();
-    if(!/^PA(-[A-Z0-9]{4}){2,3}$/.test(c)){msg.textContent=tr()?"Kod eksik ya da hatalı yazılmış. Kodlar PA-XXXX-XXXX biçiminde; her bloğun 4 karakter olduğunu kontrol et.":"This code is incomplete or mistyped. Codes look like PA-XXXX-XXXX; check that every block has 4 characters.";return}
+    var BAD=tr()?"Bu kod tanınmadı. Karakterleri kontrol et; doğruysa kodun süresi dolmuş ya da iptal edilmiş olabilir.":"This code was not recognised. Check each character; if it is right, the code may have expired or been cancelled.";
+    if(!/^PA(-[A-Z0-9]{4}){2,8}$/.test(c)){msg.textContent=BAD;return}
     msg.textContent=tr()?"Kontrol ediliyor…":"Checking…";
-    proCheck(c).then(function(ok){
+    var tierFirst=c.split("-").length<=4;
+    (tierFirst?proCheck(c):Promise.resolve(false)).then(function(ok){
+      if(ok!==false)return ok;
+      return prodFind(c).then(function(p){
+        if(p&&p!=="down"){msg.textContent=tr()?"Açılıyor…":"Opening…";try{sessionStorage.setItem("pa-prod",JSON.stringify({p:p,c:c}))}catch(e){}location.href="product.html?p="+p;return "go"}
+        return p==="down"?"down":false;
+      });
+    }).then(function(ok){
+      if(ok==="go")return;
       if(ok===true){try{localStorage.setItem("pa-pro",c)}catch(e){}location.reload();return}
-      msg.textContent=ok==="wait"?(tr()?"Çok fazla deneme. 10 dakika sonra tekrar dene.":"Too many attempts. Try again in 10 minutes."):ok==="down"?(tr()?"Pro verisi yüklenemedi. Biraz sonra tekrar dene.":"Could not load the Pro data. Try again shortly."):(tr()?"Bu kod tanınmadı. Karakterleri kontrol et; doğruysa kodun süresi dolmuş ya da iptal edilmiş olabilir.":"This code was not recognised. Check each character; if it is right, the code may have expired or been cancelled.");
+      msg.textContent=ok==="wait"?(tr()?"Çok fazla deneme. 10 dakika sonra tekrar dene.":"Too many attempts. Try again in 10 minutes."):ok==="down"?(tr()?"Pro verisi yüklenemedi. Biraz sonra tekrar dene.":"Could not load the Pro data. Try again shortly."):BAD;
     });
   });
   if(off)off.addEventListener("click",function(){proForget();location.reload()});
