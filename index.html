@@ -1109,8 +1109,8 @@ function renderArchive(rows){
     const tags=its.map(r=>`<span class="tag">${KIND[r.kind]||"Market analysis"}</span>`).join(" ");
     const list=its.map(r=>{
       const id=(r.post_id||"").replace("urn:li:share:","");
-      const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:"#";
-      return `<tr><td><span class="tag">${KIND[r.kind]||"Market analysis"}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num"><a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a></td></tr>`}).join("");
+      const url=id?"https://www.linkedin.com/feed/update/urn:li:share:"+id:null;
+      return `<tr><td><span class="tag">${KIND[r.kind]||"Market analysis"}</span></td><td class="mono" style="color:var(--muted)">${r.at?short(new Date(r.at)):"—"}</td><td class="num">${url?`<a class="post" href="${url}" target="_blank" rel="noopener">open ↗</a>`:"—"}</td></tr>`}).join("");
     h+=`<details class="wk"${n===0?" open":""}><summary><b>${dt.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span class="hk">${its.length} post${its.length>1?"s":""}</span><span>${tags}</span></summary><div class="wkb"><table><thead><tr><th>Type</th><th>Published</th><th class="num">Post</th></tr></thead><tbody>${list}</tbody></table></div></details>`;
   });
   box.innerHTML=h+(month?"</div>":"");
@@ -1319,7 +1319,7 @@ function postBody(e){
   if(e.data){if(e.kind==="gb_post1")h+=nativeGB1(e.data);else if(e.kind==="gb_post2")h+=nativeGB2(e.data);else if(e.kind==="news")h+=nativeNews(e.data)}
   if(e.media)h+=panel("The clip","The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(e.media.poster)}" src="${esc(e.media.src)}"></video></div>`);
   const url=e.post_id?"https://www.linkedin.com/feed/update/"+e.post_id:null;
-  h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  h+=panel("The post",url?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(e.channel==="site"?"Published on this site.":""),e.text?`<p class="posttext">${esc(e.text)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   return h;
 }
 const covers=e=>"Covers "+fmtDate(e.analysis_date,{day:"numeric",month:"long"});
@@ -1444,8 +1444,9 @@ function renderTRPage(vid,kind){
       mbox.innerHTML=mbox.dataset.def;
     }
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
+    else if(e.channel==="site")mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">Published on this site.</p>`;
   }
-  h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:"",ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   const mp=TRP&&mbox?mbox.closest(".panel"):null;
   if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp)}
   else{box.innerHTML=hc+h;if(mp)box.appendChild(mp)}
