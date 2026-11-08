@@ -81,7 +81,7 @@ function render(p){
   out.onclick=async e=>{const b=e.target.closest("button[data-c]");if(b){const f=d.formulas.find(x=>x.id===b.dataset.c),m=out.querySelector(`[data-m="${f.id}"]`);try{await navigator.clipboard.writeText(f.one);m.textContent="Tek satır olarak kopyalandı."}catch(_){m.textContent="Panoya erişilemedi; 'Kopyalanacak tek satır'ı aç ve elle kopyala."}}
     if(e.target.id==="lock"){out.innerHTML="";out.hidden=true;document.getElementById("gate").hidden=false;document.getElementById("code").value=""}};
 }
-document.getElementById("f").onsubmit=async e=>{e.preventDefault();const c=document.getElementById("code").value.trim().toUpperCase();
+document.getElementById("f").onsubmit=async e=>{e.preventDefault();const c=document.getElementById("code").value.toUpperCase().replace(/[\u2010-\u2015\u2212_\s]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
   if(!c){msg.textContent="Kodu gir.";msg.className="err";return}
   msg.className="muted";msg.textContent="Açılıyor…";
   try{render(await openBundle(c));msg.textContent=""}catch(err){msg.className="err";msg.textContent=err.message==="link"?"Bağlantı eksik ya da ürün yayından kalktı.":"Kod bu ürünü açmıyor."}};
