@@ -427,16 +427,18 @@ function pretty(n,c,pre=''){
     if(typeof node==='string')out.push(pre+br+lab+': '+alias(node,c));
     else{out.push(pre+br+lab+':');out.push(...pretty(node,c,pre+cont))}};
   sub('evet',n.t,false);sub('hayır',n.e,true);return out}
+/* SmartBot targetNetPosition alanının uzunluk sınırı var (~850 karakter): tek satırda boşluk ve fazla parantez atılır, mantık aynı */
+const tight=t=>t.split('Math.abs((BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC))').join('Math.abs(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC)').replace(/ ?(<=|>=|&&|\|\||[<>?:+\-\/]) ?/g,'$1').replace(/, /g,',').split('((BOTTOTALTRADEBUYQC-BOTTOTALTRADESELLQC)>0)').join('(BOTTOTALTRADEBUYQC-BOTTOTALTRADESELLQC)>0').split('((BOTTOTALTRADEBUYQC-BOTTOTALTRADESELLQC)<0)').join('(BOTTOTALTRADEBUYQC-BOTTOTALTRADESELLQC)<0');
 function buildFx(c){
   const P='(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC)',V='(BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC)';
   const L=Math.round(+c.pos*10),M=+c.pos,R=`WTRADEP(${c.ref},0)`;
   const sl=c.sl==='yok'?null:+c.sl,tol=+c.tol;
   const capT=c.cap==='yok'?'':` && ${V} < ${+c.cap*2*L}`;
-  const EB=`W_BUYTRADEPC(Math.abs(${P}),0,1)`,ES=`W_SELLTRADEPC(Math.abs(${P}),0,1)`; // entry price over the bot's actual position (partial fills must not mix in the previous round's lots)
-  const exL=`${EB} > 0 && BESTBUYP > 0 && (BESTBUYP >= ${EB} + ${c.tp}${sl?` || BESTBUYP <= ${EB} - ${sl}`:''})`;
-  const exS=`${ES} > 0 && BESTSELLP > 0 && (BESTSELLP <= ${ES} - ${c.tp}${sl?` || BESTSELLP >= ${ES} + ${sl}`:''})`;
+  const EB=`W_BUYTRADEPC(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC,0,1)`,ES=`W_SELLTRADEPC(BOTTOTALTRADESELLQC - BOTTOTALTRADEBUYQC,0,1)`; // v3: giriş fiyatı botun eldeki pozisyonu kadar lot (kısmi dolumda önceki tur karışmaz)
+  const exL=sl?`${EB} > 0 && BESTBUYP > 0 && (BESTBUYP >= ${EB} + ${c.tp} || BESTBUYP <= ${EB} - ${sl})`:`${EB} > 0 && BESTBUYP >= ${EB} + ${c.tp}`;
+  const exS=sl?`${ES} > 0 && BESTSELLP > 0 && (BESTSELLP <= ${ES} - ${c.tp} || BESTSELLP >= ${ES} + ${sl})`:`${ES} > 0 && BESTSELLP > 0 && BESTSELLP <= ${ES} - ${c.tp}`;
   let entry='0';
-  if(c.dir!=='buy')entry=IF(`RTIME >= ${c.stop}${capT} && ${R} > 0 && BESTBUYP > 0 && BESTBUYP >= ${R} + ${c.k}`,`-${M}`,entry);
+  if(c.dir!=='buy')entry=IF(`RTIME >= ${c.stop}${capT} && ${R} > 0 && BESTBUYP >= ${R} + ${c.k}`,`-${M}`,entry);
   if(c.dir!=='sell')entry=IF(`RTIME >= ${c.stop}${capT} && ${R} > 0 && BESTSELLP > 0 && BESTSELLP <= ${R} - ${c.k}`,`${M}`,entry);
   const tgt=IF(`RTIME < ${c.close} || Math.abs(${P}) > ${L}`,'0',IF(`${P} > 0`,IF(exL,'0',`${P}/10`),IF(`${P} < 0`,IF(exS,'0',`${P}/10`),entry)));
   const forceBuy=`RTIME < ${c.close} || Math.abs(${P}) > ${L}${sl?` || (${ES} > 0 && BESTSELLP >= ${ES} + ${sl})`:''}`;
@@ -450,8 +452,8 @@ function buildFx(c){
   const maxBuy=IF(`${P} < 0`,shortX,IF(`${R} > 0`,`${R} - ${c.k} + ${tol}`,'0'));
   const minSell=IF(`${P} > 0`,longX,IF(`${R} > 0`,`${R} + ${c.k} - ${tol}`,'MAXDAMP()'));
   return [
-   {id:'tgt',ad:'Hedef net pozisyon (MWh)',not:`Sonuç MWh: +${String(M).replace('.',',')} = long, −${String(M).replace('.',',')} = short, 0 = düz. NETPC ile şirketin diğer pozisyonu korunur.`,
-    one:`NETPC - ${P}/10 + Math.max(-${M}, Math.min(${M}, ${flat(tgt)}))`,
+   {id:'tgt',ad:'Hedef net pozisyon (MWh)',not:`Sonuç MWh: +${String(M).replace('.',',')} = long, −${String(M).replace('.',',')} = short, 0 = düz. NETPC ile şirketin diğer pozisyonu korunur. SmartBot bu alanda yaklaşık 850 karakter kabul eder; tek satır sıkıştırılmış yazılır.`,
+    one:tight(`NETPC - ${P}/10 + Math.max(-${M}, Math.min(${M}, ${flat(tgt)}))`),
     tree:['NETPC − BOT_POZ/10 + SINIRLA(−'+String(M).replace('.',',')+' MWh … +'+String(M).replace('.',',')+' MWh,',...pretty(tgt,c,'  '),')']},
    {id:'max',ad:'Maksimum alış fiyatı (TL/MWh)',not:`Alış emri bu fiyatın üstünden dolmaz. Girişte tetik seviyesi + ${tol} TL/MWh; short kapatırken en iyi satış + ${tol} TL/MWh; ${c.floor==='yok'?'zorla kapanış/SL\'de azami fiyat (emir mutlaka dolsun).':`zorla kapanışta önce REF + ${c.floor} TL/MWh tavanıyla, kapıya 10 dk kala ve SL'de azami fiyatla (emir mutlaka dolsun).`}`,
     one:flat(maxBuy),tree:pretty(maxBuy,c)},
