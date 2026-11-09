@@ -399,11 +399,11 @@ function drawDay(){
   const made=r.made_at?new Date(r.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at})+(r.late_capture?x.late+".":""):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
-  const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
+  const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')'+(r.why_stage?' <span style="font-weight:400">'+badge(r,r.why_stage)+'</span>':'')+'</th>')+'</tr></thead><tbody>';
   const K=r.why_stage,sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r),sm=v=>(v>0?"+":v<0?"−":"")+n0(Math.abs(v));
   const ptxt=(P,b)=>P.map(([n,v])=>(b&&n===b[0]?'<b>':'')+n+' '+sg(v)+(b&&n===b[0]?'</b>':'')).join(' · ')+' '+Ud;
   const whyTxt=i=>{if(!K)return '<span class="dim">—</span>';
-    const err=r.fc[i]-r.actual[i],P=parts(r,K,i),S=r.why_stages[K];let o=badge(r,K)+'<br>';
+    const err=r.fc[i]-r.actual[i],P=parts(r,K,i),S=r.why_stages[K];let o='';
     if(Math.abs(err)<r.mae*0.25)return o+'<span class="dim">'+x.w_small+'</span>';
     const b=lead(P,err);o+='<b>'+verdict(P,err,v=>sg(v)+' '+Ud)+'</b>';let e='<span class="l2">'+ptxt(P,null)+'</span>';
     if(K==="a"&&atH(S.method,i)==="curve"&&S.mwh_offer)e+='<br><span class="l2">'+fill(x.mwh_a,{s:sm(S.mwh_offer[i]),b:sm(S.mwh_bid[i])})+(S.mwh_matched&&S.mwh_matched[i]?fill(x.mwh_m,{m:sm(S.mwh_matched[i])}):"")+'</span>';
@@ -417,7 +417,7 @@ function drawDay(){
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
     if(isLive){h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>';continue}
     h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="wy">'+whyTxt(i)+'</td></tr>'}
-  const wavg=K?badge(r,K)+'<br><b>'+verdict(avgParts(r,K),r.bias,v=>sg(v)+' '+Ud)+'</b><details class="ev"><summary>'+x.detail+'</summary><span class="l2">'+ptxt(avgParts(r,K),null)+'</span></details>':'<span class="dim">—</span>';
+  const wavg=K?'<b>'+verdict(avgParts(r,K),r.bias,v=>sg(v)+' '+Ud)+'</b><details class="ev"><summary>'+x.detail+'</summary><span class="l2">'+ptxt(avgParts(r,K),null)+'</span></details>':'<span class="dim">—</span>';
   if(isLive)h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
   else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td class="wy">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
