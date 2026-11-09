@@ -57,7 +57,7 @@ table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th
 .sb.sb_{color:var(--accent);border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.12)}
 .sb.sc{color:var(--good);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12)}
 td.wy{font-family:var(--font);text-align:left;font-size:12.5px;line-height:1.35;min-width:300px;white-space:normal}
-td.wy details.ev{margin-top:2px}details.ev summary{cursor:pointer;font-size:.78em;color:var(--muted,#888);list-style:none}details.ev summary::before{content:'▸ '}details.ev[open] summary::before{content:'▾ '}
+td.wy td.wy{position:relative;padding-right:64px}details.ev summary{position:absolute;right:8px;top:6px;cursor:pointer;font-size:.78em;color:var(--muted,#888);list-style:none;white-space:nowrap}details.ev summary::-webkit-details-marker{display:none}details.ev summary::before{content:'▸ '}details.ev[open] summary::before{content:'▾ '}
 .l2{color:var(--muted);font-size:11.5px}
 .why .st{margin:0 0 8px;padding-left:18px;font-size:13.5px}
 caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);background:var(--surface-2);caption-side:top}
