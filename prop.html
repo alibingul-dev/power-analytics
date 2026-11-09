@@ -414,12 +414,12 @@ function flat(n){return typeof n==='string'?n:`(${n.c}) ? ${typeof n.t==='string
 const ALIAS=[
  ['(BOTTOTALTRADEBUYQC - BOTTOTALTRADESELLQC)','BOT_POZ','Botun açık pozisyonu (lot) = BOTTOTALTRADEBUYQC − BOTTOTALTRADESELLQC; 10 lot = 1 MWh'],
  ['(BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC)','BOT_HACİM','Botun bu kontrattaki toplam işlem hacmi (lot) = BOTTOTALTRADEBUYQC + BOTTOTALTRADESELLQC'],
- [null,'GİRİŞ_AL','Son P lotluk alışların ağırlıklı ortalaması (TL/MWh) = long giriş fiyatı; P = pozisyon (lot)'],
- [null,'GİRİŞ_SAT','Son P lotluk satışların ağırlıklı ortalaması (TL/MWh) = short giriş fiyatı; P = pozisyon (lot)'],
+ [null,'GİRİŞ_AL','Şirketin son |BOT_POZ| lotluk alışlarının ağırlıklı ortalaması (TL/MWh) = long giriş fiyatı; kısmi dolumda yalnız eldeki lotlar'],
+ [null,'GİRİŞ_SAT','Şirketin son |BOT_POZ| lotluk satışlarının ağırlıklı ortalaması (TL/MWh) = short giriş fiyatı; kısmi dolumda yalnız eldeki lotlar'],
  [null,'REF','Piyasada son N lot işlemin ağırlıklı ortalaması (TL/MWh) = WTRADEP(N,0)'],
  ['MAXDAMP()','AZAMİ_FİYAT','EPİAŞ azami fiyatı (TL/MWh); kapanışta emrin mutlaka dolması için'],
  [' && ',' VE ',''],[' || ',' VEYA ','']];
-function alias(t,c){let x=t;for(const [f,to] of ALIAS){if(f)x=x.split(f).join(to)}x=x.split(`WTRADEP(${c.ref},0)`).join('REF');x=x.replace(/W_BUYTRADEPC\(\d+,0,1\)/g,'GİRİŞ_AL').replace(/W_SELLTRADEPC\(\d+,0,1\)/g,'GİRİŞ_SAT');x=x.replace(/Math\.abs\(([^()]*)\)/g,'|$1|');return x}
+function alias(t,c){let x=t;for(const [f,to] of ALIAS){if(f)x=x.split(f).join(to)}x=x.split(`WTRADEP(${c.ref},0)`).join('REF');x=x.replace(/W_BUYTRADEPC\([^,]*,0,1\)/g,'GİRİŞ_AL').replace(/W_SELLTRADEPC\([^,]*,0,1\)/g,'GİRİŞ_SAT');x=x.replace(/Math\.abs\(([^()]*)\)/g,'|$1|');return x}
 function pretty(n,c,pre=''){
   if(typeof n==='string')return [pre+alias(n,c)];
   const out=[pre+'EĞER '+alias(n.c,c)];
@@ -432,7 +432,7 @@ function buildFx(c){
   const L=Math.round(+c.pos*10),M=+c.pos,R=`WTRADEP(${c.ref},0)`;
   const sl=c.sl==='yok'?null:+c.sl,tol=+c.tol;
   const capT=c.cap==='yok'?'':` && ${V} < ${+c.cap*2*L}`;
-  const EB=`W_BUYTRADEPC(${L},0,1)`,ES=`W_SELLTRADEPC(${L},0,1)`;
+  const EB=`W_BUYTRADEPC(Math.abs(${P}),0,1)`,ES=`W_SELLTRADEPC(Math.abs(${P}),0,1)`; // entry price over the bot's actual position (partial fills must not mix in the previous round's lots)
   const exL=`${EB} > 0 && BESTBUYP > 0 && (BESTBUYP >= ${EB} + ${c.tp}${sl?` || BESTBUYP <= ${EB} - ${sl}`:''})`;
   const exS=`${ES} > 0 && BESTSELLP > 0 && (BESTSELLP <= ${ES} - ${c.tp}${sl?` || BESTSELLP >= ${ES} + ${sl}`:''})`;
   let entry='0';
@@ -489,8 +489,8 @@ function renderFx(){
    ['BESTBUYP','Tahtadaki en iyi alış teklifinin fiyatı (TL/MWh); satarken bu fiyata satılır'],
    ['BESTSELLP','Tahtadaki en iyi satış teklifinin fiyatı (TL/MWh); alırken bu fiyattan alınır'],
    [`WTRADEP(${FX.ref},0)`,`Bu kontratta piyasada gerçekleşen son ${FX.ref} lot işlemin ağırlıklı ortalama fiyatı (TL/MWh); işlem yoksa 0`],
-   [`W_BUYTRADEPC(${Math.round(+FX.pos*10)},0,1)`,`Şirketin bu kontratta son ${Math.round(+FX.pos*10)} lotluk alışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
-   [`W_SELLTRADEPC(${Math.round(+FX.pos*10)},0,1)`,`Şirketin bu kontratta son ${Math.round(+FX.pos*10)} lotluk satışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
+   [`W_BUYTRADEPC(Math.abs(BOT_POZ),0,1)`,`Şirketin bu kontratta son |BOT_POZ| lotluk alışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
+   [`W_SELLTRADEPC(Math.abs(BOT_POZ),0,1)`,`Şirketin bu kontratta son |BOT_POZ| lotluk satışlarının ağırlıklı ortalaması (TL/MWh); ilk parametre lot; şirket geneli, bota özel değil`],
    ['MAXDAMP()','EPİAŞ azami piyasa fiyatı (TL/MWh)'],
    ['Lot / MWh','1 lot = 0,1 MWh; 10 lot = 1 MWh'],
    ['Açılır listedeki parametreler',''],
