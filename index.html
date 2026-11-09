@@ -499,10 +499,6 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
         <a href="#tr-news"    data-view="tr-news"    style="--c:var(--b1)"><span class="bar"></span>Energy news</a>
       </div>
-      <button class="sub" aria-expanded="true">Weekly<span class="chev"></span></button>
-      <div class="leaves">
-        <a href="#tr-weekly" data-view="tr-weekly" style="--c:var(--b2)"><span class="bar"></span>Last seven post days</a>
-      </div>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves pro-only">
@@ -516,6 +512,11 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="leaves tier-custom">
         <a href="#tr-outlook" data-view="tr-outlook" title="Monthly PTF outlook 24 months ahead with your own inputs, backtest and sensitivity; untested scenarios to 2031" style="--c:var(--muted)"><span class="bar"></span>Price Outlook Lab</a>
         <a href="#tr-dpf" data-view="tr-dpf" title="Next-day hourly PTF forecast and its track record" style="--c:var(--muted)"><span class="bar"></span>Daily Price Forecast</a>
+        <a href="#tr-weekly" data-view="tr-weekly" class="admin-only" style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
+      </div>
+      <button class="sub admin-only" aria-expanded="true">Great Britain<span class="chev"></span></button>
+      <div class="leaves admin-only">
+        <a href="#gb-weekly" data-view="gb-weekly" style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
       </div>
       <a href="#gip-prop" data-view="gip-prop" class="prop-only" title="Intraday (GİP) SmartBot formula and its backtest" style="--c:var(--muted)"><span class="bar"></span>GİP Prop Bot</a>
     </div>
@@ -526,10 +527,6 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="leaves">
         <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
         <a href="#gb-outlook"  data-view="gb-outlook"  style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
-      </div>
-      <button class="sub" aria-expanded="true">Weekly<span class="chev"></span></button>
-      <div class="leaves">
-        <a href="#gb-weekly" data-view="gb-weekly" style="--c:var(--b2)"><span class="bar"></span>Last seven post days</a>
       </div>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
@@ -548,7 +545,7 @@ a.btn{display:inline-block;text-decoration:none}
   <div class="hcards">
     <a class="hcard" href="#tr-netload" data-view="tr-netload">
       <span class="hk-t">Türkiye</span>
-      <span class="hk-d">Tomorrow's net load outlook, yesterday's day-end scorecard, energy news and a weekly view, built on EPİAŞ open data.</span>
+      <span class="hk-d">Tomorrow's net load outlook, yesterday's day-end scorecard and energy news, built on EPİAŞ open data.</span>
       <span class="hk-go">Open Türkiye →</span>
     </a>
     <a class="hcard" href="#gb-analysis" data-view="gb-analysis">
@@ -867,7 +864,7 @@ a.btn{display:inline-block;text-decoration:none}
 .pro-row input:focus-visible{outline:2px solid var(--b1);outline-offset:1px}
 .linkbtn{background:none;border:0;padding:0;color:var(--b1);font:inherit;cursor:pointer;text-decoration:underline}
 .pro-on{display:none;color:var(--text)}
-html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]):not(.has-prop) .custom-only{display:none!important}html:not([data-tier="custom"]) .tier-custom{display:none!important}html:not(.has-prop) .prop-only{display:none!important}
+html:not(.is-pro) .pro-only{display:none!important}html:not([data-tier="custom"]):not(.has-prop) .custom-only{display:none!important}html:not([data-tier="custom"]) .tier-custom{display:none!important}html:not(.has-prop) .prop-only{display:none!important}html:not(.is-admin) .admin-only{display:none!important}
 .is-pro .pro-on{display:block}.is-pro #pro-form,.is-pro #pro-msg,.is-pro .pro-note,.is-pro .pro-lock{display:none}
 .pro-lock{color:var(--muted)}
 .pl-card{position:relative}
@@ -1033,7 +1030,7 @@ try{const t=PRO.code&&localStorage.getItem("pa-tier");if(t)document.documentElem
 const PROP_ID="pefb3f7bd";
 try{if(localStorage.getItem("pa-prop")==="1"&&(PRO.code||localStorage.getItem("pa-pcode")))document.documentElement.classList.add("has-prop")}catch(e){}
 document.addEventListener("DOMContentLoaded",()=>acctPaint());
-function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier");localStorage.removeItem("pa-prop")}catch(e){}document.documentElement.classList.remove("has-prop");delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
+function proForget(){try{localStorage.removeItem("pa-pro");localStorage.removeItem("pa-tier");localStorage.removeItem("pa-prop");localStorage.removeItem("pa-admin")}catch(e){}document.documentElement.classList.remove("has-prop","is-admin");delete document.documentElement.dataset.tier;PRO.code=null;PRO.data=null;document.documentElement.classList.remove("is-pro")}
 function pubJSON(f){return fetch(f,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject())}
 const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const PRO_TIERS=["custom","ultra","max","pro"];
@@ -1084,6 +1081,22 @@ async function propOpens(){
     for(const k of it.keys){try{await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct));return true}catch(e){}}
   }
   return false;
+}
+/* Admin-only pages (Weekly TR/GB, 2026-11-10): admin.bundle.json is sealed only for the owner's admin code (custom, not viewer).
+   "pa-admin" is a hint so the items show at once; adminCheck() re-verifies by decrypting. */
+try{if(localStorage.getItem("pa-admin")==="1"&&PRO.code)document.documentElement.classList.add("is-admin")}catch(e){}
+async function adminCheck(){
+  const html=document.documentElement,had=html.classList.contains("is-admin");let r=false;
+  if(PRO.code){
+    let B;try{const x=await fetch("admin.bundle.json",{cache:"no-store"});if(x.status!==404&&!x.ok)return;if(x.ok)B=await x.json()}catch(e){return}
+    if(B){const sub=crypto.subtle,te=new TextEncoder();
+      const base=await sub.importKey("raw",te.encode(PRO.code),"PBKDF2",false,["deriveKey"]);
+      const wk=await sub.deriveKey({name:"PBKDF2",hash:"SHA-256",salt:b64u8(B.kdf.salt),iterations:B.kdf.iter},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+      for(const k of B.keys){try{await sub.decrypt({name:"AES-GCM",iv:b64u8(k.iv)},wk,b64u8(k.ct));r=true;break}catch(e){}}}
+  }
+  try{if(r)localStorage.setItem("pa-admin","1");else localStorage.removeItem("pa-admin")}catch(e){}
+  html.classList.toggle("is-admin",r);
+  const h=location.hash.slice(1);if(had!==r&&(h==="tr-weekly"||h==="gb-weekly")&&typeof go==="function")go(h);
 }
 async function propCheck(){
   const r=await propOpens();if(r==="down")return;
@@ -1185,6 +1198,7 @@ function go(id){
   if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   if((id==="tr-outlook"||id==="tr-dpf")&&document.documentElement.dataset.tier!=="custom")id="home";
   if(id==="gip-prop"&&!document.documentElement.classList.contains("has-prop"))id="home";
+  if((id==="tr-weekly"||id==="gb-weekly")&&!document.documentElement.classList.contains("is-admin"))id="home";
   const frame=id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"||id==="gip-prop";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",frame);
@@ -1207,7 +1221,7 @@ function go(id){
 links.forEach(a=>a.addEventListener("click",e=>{e.preventDefault();history.replaceState(null,"","#"+a.dataset.view);go(a.dataset.view);setMenu(false)}));
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 go(location.hash.slice(1)||"home");
-propCheck();
+propCheck();adminCheck();
 stamp(null);
 
 function pct(v){return v===null||v===undefined?"—":(v>0?"+":"")+v+"%"}
@@ -1376,7 +1390,7 @@ function renderDailyPost(vid,kind,weekly){
   const box=document.getElementById(vid+"-body");if(!box)return;
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
-  if(!e){box.innerHTML=head+`<div class="panel"><h2>Not out yet</h2><p class="note" style="margin:0">Today's post has not been published yet. Earlier posts are under <a class="post" href="#${weekly}">Weekly</a>.</p></div>`;return}
+  if(!e){box.innerHTML=head+`<div class="panel"><h2>Not out yet</h2><p class="note" style="margin:0">Today's post has not been published yet. <span class="admin-only">Earlier posts are under <a class="post" href="#${weekly}">Weekly</a>.</span></p></div>`;return}
   box.innerHTML=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`+postBody(e);
 }
 
@@ -1462,7 +1476,7 @@ function renderTRPage(vid,kind){
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
   sec.classList.toggle("stale",!e);
-  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
+  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
   const TRP=vid==="tr-netload"||vid==="tr-daily";
   gate.innerHTML=TRP?"":meta;
