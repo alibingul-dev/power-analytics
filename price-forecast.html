@@ -166,9 +166,10 @@ en:{title:"Daily Price Forecast",
  mwh_a:"at the forecast price, vs the same hour last week: {s} MWh offered, {b} MWh bid",mwh_m:"; {m} MWh added on both sides at any price, netted out (moves no price)",
  mwh_b:"KGÜP plan vs the same hour last week: {l}",
  prev:"before — {st}: {a} → now: {b}",nolead:"no single cause",
+ vd:{mod:["Model called the price too high","Model called the price too low"],sup:["Sellers offered cheaper than last week","Sellers offered dearer than last week"],dem:["Buyers bid less than last week","Buyers bid more than last week"],mkt:["Market got cheaper than last week","Market got dearer than last week"],oth:["Other plants offered cheaper","Other plants offered dearer"],src:["{s} came in above last week","{s} came in below last week"],load:["Load plan ran above actual","Load plan ran below actual"],wind:["Wind blew more than forecast","Wind blew less than forecast"],res:["Block and flexible bids pushed the price down","Block and flexible bids pushed the price up"],resc:["A cause outside load and wind","A cause outside load and wind"],cancel:"supply and demand cancelled out",and:" and "},
  stavg:"Estimated contribution by stage, average of the day:",
  h_yk:"YEKDEM curtailment risk",yk_risk:"flagged",yk_hit:"flagged · happened",yk_miss:"not flagged · happened",yk_none:"—",
- whycol:"'Why the miss' is built in three stages and every row says which one it shows. Preliminary (after PTF, about 14:00 the day before): that day's EPİAŞ supply and demand curves against the same hour last week; the price effect of sellers and of buyers is the average of taking each side first. Updated (after KGÜP, about 16:00 the day before): the sellers' part is split by source using the first-version generation plan (wind, solar, run-of-river, lignite...); gas, imported coal and dam hydro set the price, so their plans are shown in MWh but not counted as a cause. Volume added on both sides at any price (portfolio and bilateral rebalancing) moves no price and is netted out before the split. In both early stages the miss is the model's own call against last week's market, minus how far sellers and buyers moved the market since then. Final (day closed): the load plan and wind forecast against what really happened. 'Not explained' is always shown: in the early stages it is the gap between the hourly curves and the published price (block and flexible bids); in the final stage everything the load and wind inputs do not cover. All parts are estimated contributions in TL/MWh, not certainties; a part is in bold only when it carries between half and one and a half times the miss, in the same direction, and more than 'not explained'. Signs follow the miss: + means the part pushed the forecast above the actual price. The forecast and its score never change; only this column is updated.",
+ whycol:"The bold line in each cell is a one-sentence verdict: the part that carries the miss (both, when two do); the small numbers under it are its evidence. 'Why the miss' is built in three stages and every row says which one it shows. Preliminary (after PTF, about 14:00 the day before): that day's EPİAŞ supply and demand curves against the same hour last week; the price effect of sellers and of buyers is the average of taking each side first. Updated (after KGÜP, about 16:00 the day before): the sellers' part is split by source using the first-version generation plan (wind, solar, run-of-river, lignite...); gas, imported coal and dam hydro set the price, so their plans are shown in MWh but not counted as a cause. Volume added on both sides at any price (portfolio and bilateral rebalancing) moves no price and is netted out before the split. In both early stages the miss is the model's own call against last week's market, minus how far sellers and buyers moved the market since then. Final (day closed): the load plan and wind forecast against what really happened. 'Not explained' is always shown: in the early stages it is the gap between the hourly curves and the published price (block and flexible bids); in the final stage everything the load and wind inputs do not cover. All parts are estimated contributions in TL/MWh, not certainties; a part is in bold only when it carries between half and one and a half times the miss, in the same direction, and more than 'not explained'. Signs follow the miss: + means the part pushed the forecast above the actual price. The forecast and its score never change; only this column is updated.",
  yknote:"YEKDEM column: an hour is flagged at forecast time when the price could fall under 100 TL/MWh, the level below which a YEKDEM plant's output is not worth selling; 'happened' means the realised price did fall under 100 TL/MWh.",
  avg:"Average of the day",dl:"Download for Excel (CSV)",
  dlnote:"The CSV holds every scored day, one row per hour, with the unit in each column name (TL/MWh, GW). Prices are always in TL/MWh; the day's TCMB rates are in the usdtry and eurtry columns. It opens in Excel as UTF-8.",
@@ -236,9 +237,10 @@ tr:{title:"Günlük Fiyat Tahmini",
  mwh_a:"tahmin fiyatında, geçen haftanın aynı saatine göre: {s} MWh satış, {b} MWh alış teklifi",mwh_m:"; iki tarafa her fiyattan eklenen {m} MWh ayrıca düşüldü (fiyatı oynatmaz)",
  mwh_b:"KÜP planı geçen haftanın aynı saatine göre: {l}",
  prev:"önce — {st}: {a} → şimdi: {b}",nolead:"tek bir sebep yok",
+ vd:{mod:["Model fiyatı fazla yüksek bekledi","Model fiyatı fazla düşük bekledi"],sup:["Satıcılar geçen haftadan ucuza teklif verdi","Satıcılar geçen haftadan pahalıya teklif verdi"],dem:["Alıcılar geçen haftadan az aldı","Alıcılar geçen haftadan çok aldı"],mkt:["Piyasa geçen haftadan ucuzlaştı","Piyasa geçen haftadan pahalılaştı"],oth:["Diğer santraller ucuza teklif verdi","Diğer santraller pahalıya teklif verdi"],src:["{s} geçen haftadan yüksek geldi","{s} geçen haftadan düşük geldi"],load:["Yük planı gerçekleşenin üstünde kaldı","Yük planı gerçekleşenin altında kaldı"],wind:["Rüzgâr beklenenden çok esti","Rüzgâr beklenenden az esti"],res:["Blok ve esnek teklifler fiyatı düşürdü","Blok ve esnek teklifler fiyatı yükseltti"],resc:["Yük ve rüzgâr dışı bir sebep","Yük ve rüzgâr dışı bir sebep"],cancel:"arz ve talep birbirini götürdü",and:" ve "},
  stavg:"Aşamaya göre tahmini katkı, günün ortalaması:",
  h_yk:"YEKDEM kesinti riski",yk_risk:"işaretli",yk_hit:"işaretli · gerçekleşti",yk_miss:"işaretsiz · gerçekleşti",yk_none:"—",
- whycol:"'Fark neden çıktı' üç aşamada kurulur, her satır hangisini gösterdiğini yazar. Ön (PTF sonrası, bir gün önce ~14:00): o günün EPİAŞ arz ve talep eğrileri geçen haftanın aynı saatiyle karşılaştırılır; satıcıların ve alıcıların fiyat etkisi, iki tarafı sırayla önce alan iki hesabın ortalamasıdır. Güncellendi (KÜP sonrası, bir gün önce ~16:00): satış tarafı ilk versiyon üretim planıyla kaynaklara bölünür (rüzgâr, güneş, akarsu, linyit...); doğalgaz, ithal kömür ve barajlı hidro fiyatı belirler, bu yüzden planları MWh olarak gösterilir ama sebep sayılmaz. Her fiyattan iki tarafa birden eklenen hacim (portföy ve ikili anlaşma dengelemesi) fiyatı oynatmaz, bölmeden önce düşülür. İlk iki aşamada sapma, modelin geçen haftanın piyasasına göre kendi beklentisi eksi satıcıların ve alıcıların o zamandan beri piyasayı ne kadar oynattığıdır. Nihai (gün kapanışı): yük planı ve rüzgâr tahmini gerçekleşenle karşılaştırılır. 'Açıklanamayan' her zaman ayrı gösterilir: ilk aşamalarda saatlik eğriler ile yayımlanan fiyat arasındaki fark (blok ve esnek teklifler); nihai aşamada yük ve rüzgâr girdilerinin kapsamadığı her şey. Tüm kısımlar TL/MWh cinsinden tahmini katkıdır, kesin değildir; bir kısım ancak sapmayla aynı yönde, sapmanın yarısı ile bir buçuk katı arasında ve 'açıklanamayan'dan büyükse kalın yazılır. İşaretler sapmayla aynı: + o kısmın tahmini gerçekleşenin üstüne ittiği anlamına gelir. Tahmin ve puanı hiç değişmez; yalnız bu sütun güncellenir.",
+ whycol:"Her hücrenin kalın satırı tek cümlelik hükümdür: sapmayı taşıyan parça (ikisi birlikte taşıyorsa ikisi); altındaki küçük sayılar o hükmün dayanağıdır. 'Fark neden çıktı' üç aşamada kurulur, her satır hangisini gösterdiğini yazar. Ön (PTF sonrası, bir gün önce ~14:00): o günün EPİAŞ arz ve talep eğrileri geçen haftanın aynı saatiyle karşılaştırılır; satıcıların ve alıcıların fiyat etkisi, iki tarafı sırayla önce alan iki hesabın ortalamasıdır. Güncellendi (KÜP sonrası, bir gün önce ~16:00): satış tarafı ilk versiyon üretim planıyla kaynaklara bölünür (rüzgâr, güneş, akarsu, linyit...); doğalgaz, ithal kömür ve barajlı hidro fiyatı belirler, bu yüzden planları MWh olarak gösterilir ama sebep sayılmaz. Her fiyattan iki tarafa birden eklenen hacim (portföy ve ikili anlaşma dengelemesi) fiyatı oynatmaz, bölmeden önce düşülür. İlk iki aşamada sapma, modelin geçen haftanın piyasasına göre kendi beklentisi eksi satıcıların ve alıcıların o zamandan beri piyasayı ne kadar oynattığıdır. Nihai (gün kapanışı): yük planı ve rüzgâr tahmini gerçekleşenle karşılaştırılır. 'Açıklanamayan' her zaman ayrı gösterilir: ilk aşamalarda saatlik eğriler ile yayımlanan fiyat arasındaki fark (blok ve esnek teklifler); nihai aşamada yük ve rüzgâr girdilerinin kapsamadığı her şey. Tüm kısımlar TL/MWh cinsinden tahmini katkıdır, kesin değildir; bir kısım ancak sapmayla aynı yönde, sapmanın yarısı ile bir buçuk katı arasında ve 'açıklanamayan'dan büyükse kalın yazılır. İşaretler sapmayla aynı: + o kısmın tahmini gerçekleşenin üstüne ittiği anlamına gelir. Tahmin ve puanı hiç değişmez; yalnız bu sütun güncellenir.",
  yknote:"YEKDEM sütunu: fiyatın 100 TL/MWh altına inebileceği saatler tahmin anında işaretlenir; 100 TL/MWh, bir YEKDEM santralinin üretimini satmaya değmediği seviye. 'Gerçekleşti', gerçekleşen fiyatın 100 TL/MWh altına indiği anlamına gelir.",
  avg:"Günün ortalaması",dl:"Excel için indir (CSV)",
  dlnote:"CSV puanlanmış her günü, saat başına bir satır olarak taşır; birim her sütunun adında (TL/MWh, GW). Fiyatlar her zaman TL/MWh; günün TCMB kurları usdtry ve eurtry sütunlarında. Excel'de UTF-8 olarak açılır.",
@@ -352,20 +354,33 @@ const atH=(S,i)=>Array.isArray(S)?S[i]:S;
 const pick=(a,i)=>a?a[i]:null;
 function parts(r,k,i,full){
   const x=t(),S=(r.why_stages||{})[k];if(!S)return null;const P=[],m=atH(S.method,i);
-  if(k==="a"){if(m==="curve")P.push([x.p_sup,pick(S.c_supply,i)],[x.p_dem,pick(S.c_demand,i)]);else P.push([x.p_mkt,pick(S.c_market,i)]);P.push([x.p_mod,pick(S.c_model,i)])}
-  else if(k==="b"){const cs=S.c_src||{};let q=Object.keys(cs).map(z=>[x.src[z]||z,cs[z][i]]).filter(p=>p[1]!=null);
+  if(k==="a"){if(m==="curve")P.push([x.p_sup,pick(S.c_supply,i),0,"sup"],[x.p_dem,pick(S.c_demand,i),0,"dem"]);else P.push([x.p_mkt,pick(S.c_market,i),0,"mkt"]);P.push([x.p_mod,pick(S.c_model,i),0,"mod"])}
+  else if(k==="b"){const cs=S.c_src||{};let q=Object.keys(cs).map(z=>[x.src[z]||z,cs[z][i],0,"src"]).filter(p=>p[1]!=null);
     q.sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));if(!full)q=q.slice(0,2);P.push(...q);
-    P.push([m==="curve"?x.p_oth:x.p_othm,pick(S.c_other,i)]);if(m==="curve")P.push([x.p_dem,pick(S.c_demand,i)]);P.push([x.p_mod,pick(S.c_model,i)])}
-  else P.push([x.wl,pick(S.c_load,i)],[x.ww,pick(S.c_wind,i)]);
-  P.push([x.wu,pick(S.residual,i),1]);
+    P.push([m==="curve"?x.p_oth:x.p_othm,pick(S.c_other,i),0,m==="curve"?"oth":"mkt"]);if(m==="curve")P.push([x.p_dem,pick(S.c_demand,i),0,"dem"]);P.push([x.p_mod,pick(S.c_model,i),0,"mod"])}
+  else P.push([x.wl,pick(S.c_load,i),0,"load"],[x.ww,pick(S.c_wind,i),0,"wind"]);
+  P.push([x.wu,pick(S.residual,i),1,k==="c"?"resc":"res"]);
   return P.filter(p=>p[1]!=null)}
+/* one plain sentence per hour: the part(s) that carry the miss, in words. Sign convention as the parts: + pushed the forecast above the actual. */
+function verdict(P,err){const x=t(),V=x.vd;if(!P||!P.length)return x.nolead;
+  const say=p=>{const s=V[p[3]]||V.mkt;const w=s[p[1]>0?0:1];return p[3]==="src"?fill(w,{s:p[0].charAt(0).toUpperCase()+p[0].slice(1)}):w};
+  const N=P.filter(p=>!p[2]).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])),R=P.find(p=>p[2]);
+  if(!N.length)return R?say(R):x.nolead;
+  if(R&&Math.abs(R[1])>Math.abs(N[0][1]))return say(R);
+  const same=N.filter(p=>Math.sign(p[1])===Math.sign(err));
+  if(!same.length)return R?say(R):x.nolead;
+  let o=say(same[0]);
+  if(same[1]&&Math.abs(same[1][1])>=0.5*Math.abs(same[0][1]))o+=V.and+say(same[1]).charAt(0).toLowerCase()+say(same[1]).slice(1);
+  const s=P.find(p=>p[3]==="sup"),d=P.find(p=>p[3]==="dem");
+  if(s&&d&&same[0][3]!=="sup"&&same[0][3]!=="dem"&&Math.abs(s[1]+d[1])<0.3*Math.max(Math.abs(s[1]),Math.abs(d[1]))&&Math.max(Math.abs(s[1]),Math.abs(d[1]))>0.2*Math.abs(err))o+="; "+V.cancel;
+  return o}
 function lead(P,err){if(!P)return null;const N=P.filter(p=>!p[2]),R=P.find(p=>p[2]);if(!N.length)return null;
   const b=N.reduce((a,c)=>Math.abs(c[1])>Math.abs(a[1])?c:a);
   return Math.abs(b[1])>=0.5*Math.abs(err)&&Math.abs(b[1])<=1.5*Math.abs(err)&&Math.abs(b[1])>(R?Math.abs(R[1]):0)&&Math.sign(b[1])===Math.sign(err)?b:null}
 function prevStage(r,k){const s=r.why_stages||{};return k==="c"?(s.b?"b":s.a?"a":null):k==="b"?(s.a?"a":null):null}
 function badge(r,k){const x=t(),S=r.why_stages[k];return '<span class="sb '+SBC[k]+'">'+x.st[k]+'</span> <span class="l2">'+x.upd+' '+(S.at_est?"≈":"")+fT(S.at)+'</span>'}
-function avgParts(r,k){const acc={},ord=[];for(let i=0;i<24;i++){(parts(r,k,i,true)||[]).forEach(([n,v,res])=>{if(!acc[n]){acc[n]=[0,0,res];ord.push(n)}acc[n][0]+=v;acc[n][1]++})}
-  return ord.map(n=>[n,acc[n][0]/acc[n][1],acc[n][2]])}
+function avgParts(r,k){const acc={},ord=[];for(let i=0;i<24;i++){(parts(r,k,i,true)||[]).forEach(([n,v,res,key])=>{if(!acc[n]){acc[n]=[0,0,res,key];ord.push(n)}acc[n][0]+=v;acc[n][1]++})}
+  return ord.map(n=>[n,acc[n][0]/acc[n][1],acc[n][2],acc[n][3]])}
 
 function drawDay(){
   const x=t(),r=findDay($("day").value);if(!r)return;const isLive=!r.actual;
@@ -388,7 +403,7 @@ function drawDay(){
   const whyTxt=i=>{if(!K)return '<span class="dim">—</span>';
     const err=r.fc[i]-r.actual[i],P=parts(r,K,i),S=r.why_stages[K];let o=badge(r,K)+'<br>';
     if(Math.abs(err)<r.mae*0.25)return o+'<span class="dim">'+x.w_small+'</span>';
-    const b=lead(P,err);o+=ptxt(P,b);
+    const b=lead(P,err);o+='<b>'+verdict(P,err)+'</b><br><span class="l2">'+ptxt(P,null)+'</span>';
     if(K==="a"&&atH(S.method,i)==="curve"&&S.mwh_offer)o+='<br><span class="l2">'+fill(x.mwh_a,{s:sm(S.mwh_offer[i]),b:sm(S.mwh_bid[i])})+(S.mwh_matched&&S.mwh_matched[i]?fill(x.mwh_m,{m:sm(S.mwh_matched[i])}):"")+'</span>';
     if(K==="b"&&S.dq_mwh){const q=Object.keys(S.dq_mwh).map(z=>[z,S.dq_mwh[z][i]]).filter(p=>p[1]).sort((a,c)=>Math.abs(c[1])-Math.abs(a[1])).slice(0,3);
       if(q.length)o+='<br><span class="l2">'+fill(x.mwh_b,{l:q.map(([z,v])=>(x.src[z]||z)+' '+sm(v)+' MWh').join(', ')})+'</span>'}
@@ -400,7 +415,7 @@ function drawDay(){
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
     if(isLive){h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>';continue}
     h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="wy">'+whyTxt(i)+'</td></tr>'}
-  const wavg=K?badge(r,K)+'<br>'+ptxt(avgParts(r,K),null):'<span class="dim">—</span>';
+  const wavg=K?badge(r,K)+'<br><b>'+verdict(avgParts(r,K),r.bias)+'</b><br><span class="l2">'+ptxt(avgParts(r,K),null)+'</span>':'<span class="dim">—</span>';
   if(isLive)h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
   else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td class="wy">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
@@ -445,7 +460,7 @@ function why(r,hrs){
   const Uw=rate(r)?U():"TL/MWh",cu=str=>rate(r)?uu(str):str,f=v=>nP(v,r),sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r);
   let s='<p>'+cu(fill(x.w_miss,{mae:f(r.mae),bias:f(Math.abs(r.bias)),dir:r.bias>0?x.w_high:x.w_low}))+'</p>';
   const ks=["a","b","c"].filter(k=>(r.why_stages||{})[k]);
-  if(ks.length){s+='<p>'+x.stavg+'</p><ul class="st">'+ks.map(k=>'<li>'+badge(r,k)+'<br>'+avgParts(r,k).map(([n,v])=>n+' '+sg(v)).join(' · ')+' '+Uw+'</li>').join("")+'</ul>'}
+  if(ks.length){s+='<p>'+x.stavg+'</p><ul class="st">'+ks.map(k=>'<li>'+badge(r,k)+'<br><b>'+verdict(avgParts(r,k),r.bias)+'</b><br><span class="l2">'+avgParts(r,k).map(([n,v])=>n+' '+sg(v)).join(' · ')+' '+Uw+'</span></li>').join("")+'</ul>'}
   if(!w)s+='<p class="note">'+x.nowhy+'</p>';
   else{const ma=a=>avg(a.map(Math.abs));
     s+='<p>'+cu(fill(x.w_parts,{ld:f(ma(w.c_load)),wd:f(ma(w.c_wind)),perf:f(w.mae_perfect_inputs)}))+'</p>';
