@@ -380,7 +380,7 @@ function drawDay(){
   const at=new Date(r.captured_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   $("t-whynote").textContent=isLive?"":(rate(r)?uu(x.whynote):x.whynote);
   const made=r.made_at?new Date(r.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
-  $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at}):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
+  $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at})+(r.late_capture?x.late+".":""):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
   const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
   const K=r.why_stage,sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r),sm=v=>(v>0?"+":v<0?"−":"")+n0(Math.abs(v));
