@@ -57,7 +57,8 @@ table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th
 .sb.sb_{color:var(--accent);border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.12)}
 .sb.sc{color:var(--good);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12)}
 td.wy{font-family:var(--font);text-align:left;font-size:12.5px;line-height:1.35;min-width:300px;white-space:normal}
-td.wy .l2{color:var(--muted);font-size:11.5px}
+td.wy details.ev{margin-top:2px}details.ev summary{cursor:pointer;font-size:.78em;color:var(--muted,#888);list-style:none}details.ev summary::before{content:'▸ '}details.ev[open] summary::before{content:'▾ '}
+.l2{color:var(--muted);font-size:11.5px}
 .why .st{margin:0 0 8px;padding-left:18px;font-size:13.5px}
 caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);background:var(--surface-2);caption-side:top}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -165,7 +166,7 @@ en:{title:"Daily Price Forecast",
  src:{ruzgar:"wind plan",gunes:"solar plan",akarsu:"run-of-river plan",linyit:"lignite plan",jeotermal:"geothermal plan",biokutle:"biomass plan",dogalgaz:"gas plan",ithalKomur:"imported coal plan",barajli:"dam hydro plan",tasKomur:"hard coal plan",fuelOil:"fuel oil plan",nafta:"naphtha plan"},
  mwh_a:"at the forecast price, vs the same hour last week: {s} MWh offered, {b} MWh bid",mwh_m:"; {m} MWh added on both sides at any price, netted out (moves no price)",
  mwh_b:"KGÜP plan vs the same hour last week: {l}",
- prev:"before — {st}: {a} → now: {b}",nolead:"no single cause",
+ prev:"before — {st}: {a} → now: {b}",nolead:"no single cause",detail:"details",
  vd:{mod:["Model called the price too high","Model called the price too low"],modq:"Model expected {a} vs last week, the market moved {b}",modf:"Model expected {a} vs last week, the market stayed put",sup:["Sellers offered cheaper than last week","Sellers offered dearer than last week"],dem:["Buyers bid less than last week","Buyers bid more than last week"],mkt:["Market got cheaper than last week","Market got dearer than last week"],oth:["Other plants offered cheaper","Other plants offered dearer"],src:["{s} came in above last week","{s} came in below last week"],load:["Load plan ran above actual","Load plan ran below actual"],wind:["Wind blew more than forecast","Wind blew less than forecast"],res:["Block and flexible bids pushed the price down","Block and flexible bids pushed the price up"],resc:["A cause outside load and wind","A cause outside load and wind"],cancel:"supply and demand cancelled out",and:" and "},
  stavg:"Estimated contribution by stage, average of the day:",
  h_yk:"YEKDEM curtailment risk",yk_risk:"flagged",yk_hit:"flagged · happened",yk_miss:"not flagged · happened",yk_none:"—",
@@ -236,7 +237,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  src:{ruzgar:"rüzgâr planı",gunes:"güneş planı",akarsu:"akarsu planı",linyit:"linyit planı",jeotermal:"jeotermal planı",biokutle:"biyokütle planı",dogalgaz:"doğalgaz planı",ithalKomur:"ithal kömür planı",barajli:"barajlı hidro planı",tasKomur:"taş kömürü planı",fuelOil:"fuel oil planı",nafta:"nafta planı"},
  mwh_a:"tahmin fiyatında, geçen haftanın aynı saatine göre: {s} MWh satış, {b} MWh alış teklifi",mwh_m:"; iki tarafa her fiyattan eklenen {m} MWh ayrıca düşüldü (fiyatı oynatmaz)",
  mwh_b:"KÜP planı geçen haftanın aynı saatine göre: {l}",
- prev:"önce — {st}: {a} → şimdi: {b}",nolead:"tek bir sebep yok",
+ prev:"önce — {st}: {a} → şimdi: {b}",nolead:"tek bir sebep yok",detail:"ayrıntı",
  vd:{mod:["Model fiyatı fazla yüksek bekledi","Model fiyatı fazla düşük bekledi"],modq:"Model geçen haftaya göre {a} bekledi, piyasa {b} oynadı",modf:"Model geçen haftaya göre {a} bekledi, piyasa yerinde kaldı",sup:["Satıcılar geçen haftadan ucuza teklif verdi","Satıcılar geçen haftadan pahalıya teklif verdi"],dem:["Alıcılar geçen haftadan az aldı","Alıcılar geçen haftadan çok aldı"],mkt:["Piyasa geçen haftadan ucuzlaştı","Piyasa geçen haftadan pahalılaştı"],oth:["Diğer santraller ucuza teklif verdi","Diğer santraller pahalıya teklif verdi"],src:["{s} geçen haftadan yüksek geldi","{s} geçen haftadan düşük geldi"],load:["Yük planı gerçekleşenin üstünde kaldı","Yük planı gerçekleşenin altında kaldı"],wind:["Rüzgâr beklenenden çok esti","Rüzgâr beklenenden az esti"],res:["Blok ve esnek teklifler fiyatı düşürdü","Blok ve esnek teklifler fiyatı yükseltti"],resc:["Yük ve rüzgâr dışı bir sebep","Yük ve rüzgâr dışı bir sebep"],cancel:"arz ve talep birbirini götürdü",and:" ve "},
  stavg:"Aşamaya göre tahmini katkı, günün ortalaması:",
  h_yk:"YEKDEM kesinti riski",yk_risk:"işaretli",yk_hit:"işaretli · gerçekleşti",yk_miss:"işaretsiz · gerçekleşti",yk_none:"—",
@@ -404,19 +405,19 @@ function drawDay(){
   const whyTxt=i=>{if(!K)return '<span class="dim">—</span>';
     const err=r.fc[i]-r.actual[i],P=parts(r,K,i),S=r.why_stages[K];let o=badge(r,K)+'<br>';
     if(Math.abs(err)<r.mae*0.25)return o+'<span class="dim">'+x.w_small+'</span>';
-    const b=lead(P,err);o+='<b>'+verdict(P,err,v=>sg(v)+' '+Ud)+'</b><br><span class="l2">'+ptxt(P,null)+'</span>';
-    if(K==="a"&&atH(S.method,i)==="curve"&&S.mwh_offer)o+='<br><span class="l2">'+fill(x.mwh_a,{s:sm(S.mwh_offer[i]),b:sm(S.mwh_bid[i])})+(S.mwh_matched&&S.mwh_matched[i]?fill(x.mwh_m,{m:sm(S.mwh_matched[i])}):"")+'</span>';
+    const b=lead(P,err);o+='<b>'+verdict(P,err,v=>sg(v)+' '+Ud)+'</b>';let e='<span class="l2">'+ptxt(P,null)+'</span>';
+    if(K==="a"&&atH(S.method,i)==="curve"&&S.mwh_offer)e+='<br><span class="l2">'+fill(x.mwh_a,{s:sm(S.mwh_offer[i]),b:sm(S.mwh_bid[i])})+(S.mwh_matched&&S.mwh_matched[i]?fill(x.mwh_m,{m:sm(S.mwh_matched[i])}):"")+'</span>';
     if(K==="b"&&S.dq_mwh){const q=Object.keys(S.dq_mwh).map(z=>[z,S.dq_mwh[z][i]]).filter(p=>p[1]).sort((a,c)=>Math.abs(c[1])-Math.abs(a[1])).slice(0,3);
-      if(q.length)o+='<br><span class="l2">'+fill(x.mwh_b,{l:q.map(([z,v])=>(x.src[z]||z)+' '+sm(v)+' MWh').join(', ')})+'</span>'}
+      if(q.length)e+='<br><span class="l2">'+fill(x.mwh_b,{l:q.map(([z,v])=>(x.src[z]||z)+' '+sm(v)+' MWh').join(', ')})+'</span>'}
     const pk=prevStage(r,K);if(pk){const a0=lead(parts(r,pk,i),err);if((a0&&a0[0])!==(b&&b[0])){const f=p=>p?p[0]+' '+sg(p[1])+' '+Ud:x.nolead;
-      o+='<br><span class="l2">'+fill(x.prev,{st:x.st[pk],a:f(a0),b:f(b)})+'</span>'}}
-    return o};
+      e+='<br><span class="l2">'+fill(x.prev,{st:x.st[pk],a:f(a0),b:f(b)})+'</span>'}}
+    return o+'<details class="ev"><summary>'+x.detail+'</summary>'+e+'</details>'};
   const yk=r.yekdem||{},rh=yk.risk_hours||[],ah0=yk.actual_hours||[];let nsteep=0;
   for(let i=0;i<24;i++){const e=isLive?0:r.fc[i]-r.actual[i];const sv=sl?sl[i]:null;const steep=sv!=null&&thr!=null&&sv>=thr;if(steep)nsteep++;
     const fl=rh.includes(i),oc=ah0.includes(i);const ykc=fl&&oc?'<span class="tag hit">'+x.yk_hit+'</span>':fl?'<span class="tag">'+x.yk_risk+'</span>':oc?'<span class="tag hit">'+x.yk_miss+'</span>':'<span class="dim">'+x.yk_none+'</span>';
     if(isLive){h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+(fl?'<span class="tag">'+x.yk_risk+'</span>':'<span class="dim">—</span>')+'</td></tr>';continue}
     h+='<tr'+(fl?' style="box-shadow:inset 3px 0 var(--accent)"':'')+'><td>'+hrs[i]+'</td><td>'+nP(r.fc[i],r)+'</td><td>'+nP(r.actual[i],r)+'</td><td class="'+(Math.abs(e)>r.mae*1.5?"bad":"")+'">'+(e>0?"+":"")+nP(e,r)+'</td><td style="font-family:var(--font);white-space:nowrap">'+ykc+'</td><td class="wy">'+whyTxt(i)+'</td></tr>'}
-  const wavg=K?badge(r,K)+'<br><b>'+verdict(avgParts(r,K),r.bias,v=>sg(v)+' '+Ud)+'</b><br><span class="l2">'+ptxt(avgParts(r,K),null)+'</span>':'<span class="dim">—</span>';
+  const wavg=K?badge(r,K)+'<br><b>'+verdict(avgParts(r,K),r.bias,v=>sg(v)+' '+Ud)+'</b><details class="ev"><summary>'+x.detail+'</summary><span class="l2">'+ptxt(avgParts(r,K),null)+'</span></details>':'<span class="dim">—</span>';
   if(isLive)h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+'</td></tr>';
   else h+='<tr class="avg"><td>'+x.avg+'</td><td>'+nP(avg(r.fc),r)+'</td><td>'+nP(avg(r.actual),r)+'</td><td>'+(r.bias>0?"+":"")+nP(r.bias,r)+'</td><td style="font-family:var(--font)">'+n0(rh.length)+' / '+n0(ah0.length)+'</td><td class="wy">'+wavg+'</td></tr>';
   const st=$("stag");if(!sl){st.className="tag off";st.textContent=x.stag_na}else if(nsteep){st.className="tag hit";st.textContent=fill(x.stag,{n:nsteep})}else{st.className="tag off";st.textContent=x.stag_off}
