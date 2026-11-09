@@ -57,7 +57,7 @@ table.lbl td:first-child{font-family:var(--font);white-space:nowrap}table.lbl th
 .sb.sb_{color:var(--accent);border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.12)}
 .sb.sc{color:var(--good);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12)}
 td.wy{font-family:var(--font);text-align:left;font-size:12.5px;line-height:1.35;min-width:300px;white-space:normal}
-td.wy td.wy{position:relative;padding-right:64px}details.ev summary{position:absolute;right:8px;top:6px;cursor:pointer;font-size:.78em;color:var(--muted,#888);list-style:none;white-space:nowrap}details.ev summary::-webkit-details-marker{display:none}details.ev summary::before{content:'▸ '}details.ev[open] summary::before{content:'▾ '}
+td.wy td.wy{position:relative;padding-right:64px}#hours caption{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}#hours caption .capr{font-size:.85em}details.ev summary{position:absolute;right:8px;top:6px;cursor:pointer;font-size:.78em;color:var(--muted,#888);list-style:none;white-space:nowrap}details.ev summary::-webkit-details-marker{display:none}details.ev summary::before{content:'▸ '}details.ev[open] summary::before{content:'▾ '}
 .l2{color:var(--muted);font-size:11.5px}
 .why .st{margin:0 0 8px;padding-left:18px;font-size:13.5px}
 caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);background:var(--surface-2);caption-side:top}
@@ -399,7 +399,7 @@ function drawDay(){
   const made=r.made_at?new Date(r.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at})+(r.late_capture?x.late+".":""):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
-  const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')'+(r.why_stage?' <span style="font-weight:400">'+badge(r,r.why_stage)+'</span>':'')+'</th>')+'</tr></thead><tbody>';
+  const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption><span>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</span>'+(!isLive&&r.why_stage?'<span class="capr">'+badge(r,r.why_stage)+'</span>':'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
   const K=r.why_stage,sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r),sm=v=>(v>0?"+":v<0?"−":"")+n0(Math.abs(v));
   const ptxt=(P,b)=>P.map(([n,v])=>(b&&n===b[0]?'<b>':'')+n+' '+sg(v)+(b&&n===b[0]?'</b>':'')).join(' · ')+' '+Ud;
   const whyTxt=i=>{if(!K)return '<span class="dim">—</span>';
