@@ -1,36 +1,5 @@
 {
   "days": {
-    "2026-11-01": {
-      "checked_at": "2026-11-03T09:20:35Z",
-      "checks": [
-        {
-          "claim": "Price low lands in the low block",
-          "detail": "12:00, 325 TL/MWh",
-          "held": true
-        },
-        {
-          "claim": "Cheapest four consecutive hours start in the low block",
-          "detail": "09:00-12:59, 830 TL/MWh average",
-          "held": true
-        },
-        {
-          "claim": "Price high lands in the top block",
-          "detail": "18:00, 4,225 TL/MWh",
-          "held": true
-        },
-        {
-          "claim": "Most expensive four consecutive hours start in the top block",
-          "detail": "16:00-19:59, 3,805 TL/MWh average",
-          "held": false
-        }
-      ],
-      "date": "2026-11-01",
-      "held": 3,
-      "low_block": "08:00-14:59",
-      "of": 4,
-      "spread_tl_mwh": 2975,
-      "top_block": "18:00-19:59"
-    },
     "2026-11-02": {
       "checked_at": "2026-11-04T09:19:30Z",
       "checks": [
@@ -186,12 +155,43 @@
       "of": 4,
       "spread_tl_mwh": 2167,
       "top_block": "17:00-19:59"
+    },
+    "2026-11-08": {
+      "checked_at": "2026-11-09T09:20:11Z",
+      "checks": [
+        {
+          "claim": "Price low lands in the low block",
+          "detail": "12:00, 170 TL/MWh",
+          "held": true
+        },
+        {
+          "claim": "Cheapest four consecutive hours start in the low block",
+          "detail": "10:00-13:59, 172 TL/MWh average",
+          "held": true
+        },
+        {
+          "claim": "Price high lands in the top block",
+          "detail": "18:00, 4,139 TL/MWh",
+          "held": true
+        },
+        {
+          "claim": "Most expensive four consecutive hours start in the top block",
+          "detail": "18:00-21:59, 4,013 TL/MWh average",
+          "held": true
+        }
+      ],
+      "date": "2026-11-08",
+      "held": 4,
+      "low_block": "03:00-14:59",
+      "of": 4,
+      "spread_tl_mwh": 3842,
+      "top_block": "18:00-20:59"
     }
   },
   "summary": {
-    "claims_held": 149,
-    "claims_total": 206,
-    "days_checked": 59,
-    "updated": "2026-11-08T09:19:09Z"
+    "claims_held": 153,
+    "claims_total": 210,
+    "days_checked": 60,
+    "updated": "2026-11-09T09:20:11Z"
   }
 }
