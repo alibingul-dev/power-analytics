@@ -463,9 +463,10 @@ function score(){
 function csv(){
   const cols=["date","hour","forecast_tl_mwh","actual_tl_mwh","miss_tl_mwh","naive_d1_tl_mwh","naive_d7_tl_mwh","netload_fc_gw","netload_act_gw","late_capture","usdtry","eurtry","yekdem_risk","yekdem_actual","model_version"];
   const out=[cols.join(",")];
-  DAYS.forEach(r=>{const rh=(r.yekdem||{}).risk_hours||[],ah=(r.yekdem||{}).actual_hours||[];
-    for(let h=0;h<24;h++)out.push([r.date,h,r.fc[h],r.actual[h],(r.fc[h]-r.actual[h]).toFixed(1),r.naive_d1[h],r.naive_d7[h],r.netload_fc[h],r.netload_act?r.netload_act[h]:"",r.late_capture?1:0,r.fx?r.fx.usd:"",r.fx?r.fx.eur:"",rh.includes(h)?1:0,ah.includes(h)?1:0,D.version].join(","))});
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+out.join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="daily-price-forecast-"+DAYS[DAYS.length-1].date+".csv";document.body.appendChild(a);a.click();a.remove();
+  const LVr=liveRow(),all=LVr?DAYS.concat([LVr]):DAYS;
+  all.forEach(r=>{const rh=(r.yekdem||{}).risk_hours||[],ah=(r.yekdem||{}).actual_hours||[],live=!r.actual;
+    for(let h=0;h<24;h++)out.push([r.date,h,r.fc[h],live?"":r.actual[h],live?"":(r.fc[h]-r.actual[h]).toFixed(1),r.naive_d1[h],r.naive_d7[h],r.netload_fc[h],r.netload_act?r.netload_act[h]:"",r.late_capture?1:0,r.fx?r.fx.usd:"",r.fx?r.fx.eur:"",rh.includes(h)?1:0,live?"":(ah.includes(h)?1:0),D.version].join(","))});
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+out.join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="daily-price-forecast-"+all[all.length-1].date+".csv";document.body.appendChild(a);a.click();a.remove();
 }
 
 function why(r,hrs){
