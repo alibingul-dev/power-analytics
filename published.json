@@ -1,30 +1,9 @@
 {
-  "2026-11-01#gb_post1": {
-    "analysis_date": "2026-11-01",
-    "at": "2026-11-02T11:22:34.609734Z",
-    "kind": "gb_post1",
-    "post_id": "urn:li:share:7522981475240202240",
-    "source": "manual"
-  },
-  "2026-11-01#post1": {
-    "analysis_date": "2026-11-01",
-    "at": "2026-11-02T12:29:26.942682Z",
-    "kind": "post1",
-    "post_id": "urn:li:share:7522998303479808000",
-    "source": "manual"
-  },
   "2026-11-02#gb_post1": {
     "analysis_date": "2026-11-02",
     "at": "2026-11-03T11:14:34.578494Z",
     "kind": "gb_post1",
     "post_id": "urn:li:share:7523341849827311616",
-    "source": "manual"
-  },
-  "2026-11-02#news": {
-    "analysis_date": "2026-11-02",
-    "at": "2026-11-02T06:26:50.117533Z",
-    "kind": "news",
-    "post_id": "urn:li:share:7522907048921960448",
     "source": "manual"
   },
   "2026-11-02#post1": {
@@ -41,13 +20,6 @@
     "post_id": "urn:li:share:7523704215634976768",
     "source": "manual"
   },
-  "2026-11-03#gb_post2": {
-    "analysis_date": "2026-11-03",
-    "at": "2026-11-02T07:34:30.897345Z",
-    "kind": "gb_post2",
-    "post_id": "urn:li:share:7522924081093169152",
-    "source": "manual"
-  },
   "2026-11-03#news": {
     "analysis_date": "2026-11-03",
     "at": "2026-11-03T06:26:01.634826Z",
@@ -60,13 +32,6 @@
     "at": "2026-11-04T12:20:16.922244Z",
     "kind": "post1",
     "post_id": "urn:li:share:7523720772620566530",
-    "source": "manual"
-  },
-  "2026-11-03#post2": {
-    "analysis_date": "2026-11-03",
-    "at": "2026-11-02T09:17:02.422909Z",
-    "kind": "post2",
-    "post_id": "urn:li:share:7522949882412728321",
     "source": "manual"
   },
   "2026-11-04#gb_post1": {
@@ -270,6 +235,13 @@
     "at": "2026-11-09T09:15:06.401767Z",
     "kind": "post2",
     "post_id": "urn:li:share:7525486109938855936",
+    "source": "manual"
+  },
+  "2026-11-11#gb_post2": {
+    "analysis_date": "2026-11-11",
+    "at": "2026-11-10T07:30:35.549299Z",
+    "kind": "gb_post2",
+    "post_id": "urn:li:share:7525822196909338624",
     "source": "manual"
   }
 }
