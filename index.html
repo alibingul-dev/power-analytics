@@ -502,7 +502,7 @@ a.btn{display:inline-block;text-decoration:none}
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves pro-only">
-        <a href="#tr-bess" data-view="tr-bess" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Simulator<span class="pro-lock"> · Pro</span></a>
+        <a class="pro-only" href="#tr-bess" data-view="tr-bess" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Simulator</a>
       </div>
     </div>
 
@@ -728,7 +728,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <details class="panel tview">
-    <summary><span>Checked days as a table <i class="wbadge"></i></span><button type="button" id="k-csv" class="btn">Download CSV<span class="pro-lock"> · Pro</span></button></summary>
+    <summary><span>Checked days as a table <i class="wbadge"></i></span><button type="button" id="k-csv" class="btn pro-only">Download CSV</button></summary>
     <div class="tscroll"><table>
       <thead><tr><th>Day</th><th>Low block</th><th>Top block</th><th class="num">Held</th><th class="num">4 h spread</th></tr></thead>
       <tbody id="k-rows"></tbody>
