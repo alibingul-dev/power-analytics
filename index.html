@@ -90,14 +90,14 @@ body.wide main{max-width:none}
 .hk-d{color:var(--muted);font-size:15px;line-height:1.55}
 .hk-go{margin-top:auto;color:var(--b1);font-size:14.5px}
 .home-link{margin-bottom:6px}
-.trgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:relative;align-self:stretch}
 .trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;margin:0}
 .trgrid>.trL .clip{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
-.trgrid>.trL .clip video{width:auto;max-width:100%;height:100%;object-fit:contain}
+.trgrid>.trL .clip video{width:100%;height:auto;max-height:100%;object-fit:contain}
 .trgrid .panel{margin-top:0}
 .trgrid>.trR>.panel+.panel{margin-top:18px}
-@media (max-width:1180px){.trgrid{grid-template-columns:1fr}.trgrid>.trL{position:static}.trgrid>.trL>.panel{position:static}.trgrid>.trL .clip video{width:100%;height:auto}}
+@media (max-width:1180px){.trgrid{grid-template-columns:1fr}.trgrid>.trL{position:static;width:auto!important}.trgrid>.trL>.panel{position:static}.trgrid>.trL .clip video{width:100%;height:auto}}
 body.full #ab-home{display:none!important}
 .view.frame iframe{display:block;width:100%;height:100vh;border:0}
 /* full-page tools: keep the fixed Access / language pills above the frame, not on top of its controls (2026-11-09) */
@@ -1474,6 +1474,13 @@ function renderWeekly(vid,country){
   if(!days.length){box.innerHTML='<p class="note-p">No earlier posts yet.</p>';return}
   box.innerHTML=weeklyAnim(vid,country,days)+days.map(d=>`<div class="wkday"><h2>${fmtDate(d,{weekday:"long",day:"numeric",month:"long"})}</h2>${its.filter(x=>x.day===d).sort((a,b)=>PORDER[a.kind]-PORDER[b.kind]).map(e=>`<details class="wk"><summary><span class="tag">${PK[e.kind]}</span><span class="hk">${esc(hookOf(e.text)||covers(e))}</span><span class="mono" style="color:var(--muted);font-size:12.5px">${covers(e)}</span></summary><div class="wkb">${postBody(e)}</div></details>`).join("")}</div>`).join("");
 }
+// GIF column width follows the text column height x the clip's aspect ratio (Ali, 11 Nov 2026)
+function fitTR(box){const L=box.querySelector(".trL"),R=box.querySelector(".trR"),v=L&&L.querySelector("video");if(!L||!R)return;
+  const f=()=>{if(innerWidth<=1180||!R.offsetHeight){L.style.width="";return}const ar=v&&v.videoWidth&&v.videoHeight?v.videoWidth/v.videoHeight:0.8;
+    if(f.busy)return;f.busy=1;const t=w=>{L.style.width=w+"px";return (R.offsetHeight-46)*ar+46-w};
+    let lo=220,hi=Math.max(240,box.clientWidth*0.4);if(t(hi)>0)lo=hi;else for(let i=0;i<12;i++){const m=(lo+hi)/2;if(t(m)>0)lo=m;else hi=m}
+    L.style.width=Math.round(lo)+"px";requestAnimationFrame(()=>{f.busy=0})};
+  if(window.ResizeObserver)new ResizeObserver(f).observe(R);if(v)v.addEventListener("loadedmetadata",f);addEventListener("resize",f);f()}
 function renderTRPage(vid,kind){
   const sec=document.getElementById(vid),gate=document.getElementById(vid+"-gate"),box=document.getElementById(vid+"-post");if(!sec)return;
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
@@ -1513,7 +1520,7 @@ function renderTRPage(vid,kind){
   }
   h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   const mp=TRP&&mbox?mbox.closest(".panel"):null;
-  if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp)}
+  if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp);fitTR(box)}
   else{box.innerHTML=hc+h;if(mp)box.appendChild(mp)}
 }
 function renderPosts(){
