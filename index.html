@@ -1507,7 +1507,9 @@ function fitTR(box){const L=box.querySelector(".trL"),R=box.querySelector(".trR"
   if(window.ResizeObserver)new ResizeObserver(f).observe(R);if(v)v.addEventListener("loadedmetadata",f);addEventListener("resize",f);f()}
 function renderTRPage(vid,kind){
   const sec=document.getElementById(vid),gate=document.getElementById(vid+"-gate"),box=document.getElementById(vid+"-post");if(!sec)return;
-  const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
+  const today=utcToday();let e=FEED.items.find(x=>x.kind===kind&&x.day===today),late=false;
+  /* "site boş olamaz" (Ali, 11 Nov 2026): Energy news falls back to the latest post when today's is not out */
+  if(!e&&vid==="tr-news"){e=FEED.items.filter(x=>x.kind===kind).sort((a,b)=>b.at.localeCompare(a.at))[0];late=!!e}
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
   sec.classList.toggle("stale",!e);
   if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#${kind.startsWith("gb")?"gb":"tr"}-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
@@ -1515,7 +1517,7 @@ function renderTRPage(vid,kind){
   const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis"||vid==="tr-news";
   if(vid==="gb-analysis")locTitle("g-title",e.analysis_date);
   if(vid==="tr-news")locTitle("n-title",e.analysis_date);
-  gate.innerHTML=TRP?"":meta;
+  gate.innerHTML=TRP?(late?`<p class="pday" style="margin:0 0 10px">${window.paLang&&paLang.get()==="tr"?"Bugünün haber postu henüz çıkmadı; son yayın gösteriliyor.":"Today's news post is not out yet; showing the latest one."}</p>`:""):meta;
   let h="",hc="";
   const LG=!!(TRP&&window.paLang&&paLang.get()==="tr"),med=(LG&&e.media_tr)||e.media;
   if(med)hc=panel(TRP?"":"The clip",TRP?"":"The animation that went out with the post. It plays on its own; tap for controls.",`<div class="clip"><video data-auto controls muted loop playsinline preload="none" poster="${esc(med.poster)}" src="${esc(med.src)}"></video></div>`);
