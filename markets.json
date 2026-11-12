@@ -1,0 +1,474 @@
+{
+ "updated": "2026-11-13",
+ "rows": [
+  {
+   "key": "operator",
+   "en": "Market operator",
+   "tr": "Piyasa işletmecisi"
+  },
+  {
+   "key": "tso",
+   "en": "System operator",
+   "tr": "Sistem işletmecisi"
+  },
+  {
+   "key": "currency",
+   "en": "Currency",
+   "tr": "Para birimi"
+  },
+  {
+   "key": "dam",
+   "en": "Day-ahead market",
+   "tr": "Gün öncesi piyasası"
+  },
+  {
+   "key": "dam_close",
+   "en": "Day-ahead gate closure",
+   "tr": "Gün öncesi kapanış"
+  },
+  {
+   "key": "dam_price",
+   "en": "Day-ahead price published",
+   "tr": "Gün öncesi fiyat ilanı"
+  },
+  {
+   "key": "mtu",
+   "en": "Market time unit",
+   "tr": "Piyasa zaman birimi"
+  },
+  {
+   "key": "intraday",
+   "en": "Intraday market",
+   "tr": "Gün içi piyasası"
+  },
+  {
+   "key": "id_close",
+   "en": "Intraday closes",
+   "tr": "Gün içi kapanış"
+  },
+  {
+   "key": "balancing",
+   "en": "Balancing",
+   "tr": "Dengeleme"
+  },
+  {
+   "key": "imbalance",
+   "en": "Imbalance pricing",
+   "tr": "Dengesizlik fiyatlaması"
+  },
+  {
+   "key": "isp",
+   "en": "Imbalance settlement period",
+   "tr": "Dengesizlik uzlaştırma dönemi"
+  },
+  {
+   "key": "cap",
+   "en": "Price limits",
+   "tr": "Fiyat limitleri"
+  },
+  {
+   "key": "schedules",
+   "en": "Generation schedules",
+   "tr": "Üretim planları"
+  },
+  {
+   "key": "data",
+   "en": "Data source",
+   "tr": "Veri kaynağı"
+  }
+ ],
+ "countries": [
+  {
+   "code": "TR",
+   "en": "Türkiye",
+   "tr": "Türkiye",
+   "status": "ready",
+   "source": "EPİAŞ",
+   "values": {
+    "operator": {
+     "en": "EPİAŞ",
+     "tr": "EPİAŞ"
+    },
+    "tso": {
+     "en": "TEİAŞ",
+     "tr": "TEİAŞ"
+    },
+    "currency": {
+     "en": "TL/MWh",
+     "tr": "TL/MWh"
+    },
+    "dam": {
+     "en": "GÖP: one exchange, one price",
+     "tr": "GÖP: tek borsa, tek fiyat"
+    },
+    "dam_close": {
+     "en": "12:30 Türkiye time, day before delivery",
+     "tr": "Teslimattan önceki gün 12:30 (TSİ)"
+    },
+    "dam_price": {
+     "en": "14:00, final day-ahead price (PTF)",
+     "tr": "14:00, nihai gün öncesi fiyatı (PTF)"
+    },
+    "mtu": {
+     "en": "1 hour, 24 per day",
+     "tr": "1 saat, günde 24"
+    },
+    "intraday": {
+     "en": "GİP, continuous trading",
+     "tr": "GİP, sürekli ticaret"
+    },
+    "id_close": {
+     "en": "Delivery −60 min",
+     "tr": "Teslimata −60 dk"
+    },
+    "balancing": {
+     "en": "Balancing power market (DGP), instructions by TEİAŞ",
+     "tr": "Dengeleme güç piyasası (DGP), TEİAŞ talimatları"
+    },
+    "imbalance": {
+     "en": "Dual price: the worse of day-ahead price (PTF) and system marginal price (SMF)",
+     "tr": "Çift fiyat: PTF ile SMF'den aleyhte olanı"
+    },
+    "isp": {
+     "en": "1 hour",
+     "tr": "1 saat"
+    },
+    "cap": {
+     "en": "4,500 TL/MWh ceiling",
+     "tr": "4.500 TL/MWh tavan"
+    },
+    "schedules": {
+     "en": "KGÜP notified 14:00–15:30",
+     "tr": "KGÜP 14:00–15:30 arası bildirilir"
+    },
+    "data": {
+     "en": "EPİAŞ Transparency Platform",
+     "tr": "EPİAŞ Şeffaflık Platformu"
+    }
+   }
+  },
+  {
+   "code": "GB",
+   "en": "Great Britain",
+   "tr": "Birleşik Krallık",
+   "status": "ready",
+   "source": "Elexon, NESO",
+   "values": {
+    "operator": {
+     "en": "EPEX SPOT and N2EX (Nord Pool)",
+     "tr": "EPEX SPOT ve N2EX (Nord Pool)"
+    },
+    "tso": {
+     "en": "NESO",
+     "tr": "NESO"
+    },
+    "currency": {
+     "en": "£/MWh",
+     "tr": "£/MWh"
+    },
+    "dam": {
+     "en": "Two exchanges, two prices",
+     "tr": "İki borsa, iki fiyat"
+    },
+    "dam_close": {
+     "en": "09:20 EPEX hourly, 09:50 N2EX hourly, 15:30 EPEX half-hourly (UK time, day before)",
+     "tr": "09:20 EPEX saatlik, 09:50 N2EX saatlik, 15:30 EPEX yarım saatlik (İngiltere saati, önceki gün)"
+    },
+    "dam_price": {
+     "en": "After each auction",
+     "tr": "Her ihaleden sonra"
+    },
+    "mtu": {
+     "en": "30 minutes, 48 per day",
+     "tr": "30 dakika, günde 48"
+    },
+    "intraday": {
+     "en": "Auctions at 17:30 (48 contracts) and 08:00 on the day (30 contracts), plus continuous trading",
+     "tr": "17:30 (48 kontrat) ve gün içinde 08:00 (30 kontrat) ihaleleri, ayrıca sürekli ticaret"
+    },
+    "id_close": {
+     "en": "Delivery −60 min (balancing mechanism gate closure)",
+     "tr": "Teslimata −60 dk (dengeleme mekanizması kapanışı)"
+    },
+    "balancing": {
+     "en": "Balancing mechanism, run by NESO",
+     "tr": "NESO'nun işlettiği dengeleme mekanizması"
+    },
+    "imbalance": {
+     "en": "Single price: direction decides gain or loss",
+     "tr": "Tek fiyat: yön kazanç ya da kaybı belirler"
+    },
+    "isp": {
+     "en": "30 minutes",
+     "tr": "30 dakika"
+    },
+    "cap": {
+     "en": "No equivalent ceiling; negative prices occur",
+     "tr": "Karşılığı bir tavan yok; negatif fiyat oluşabilir"
+    },
+    "schedules": {
+     "en": "Physical notifications to NESO before gate closure",
+     "tr": "Kapanıştan önce NESO'ya fiziksel bildirim"
+    },
+    "data": {
+     "en": "Elexon Insights (BMRS), NESO",
+     "tr": "Elexon Insights (BMRS), NESO"
+    }
+   }
+  },
+  {
+   "code": "AT",
+   "en": "Austria",
+   "tr": "Avusturya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "BE",
+   "en": "Belgium",
+   "tr": "Belçika",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "BG",
+   "en": "Bulgaria",
+   "tr": "Bulgaristan",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "HR",
+   "en": "Croatia",
+   "tr": "Hırvatistan",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "CZ",
+   "en": "Czechia",
+   "tr": "Çekya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "DK",
+   "en": "Denmark",
+   "tr": "Danimarka",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "EE",
+   "en": "Estonia",
+   "tr": "Estonya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "FI",
+   "en": "Finland",
+   "tr": "Finlandiya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "FR",
+   "en": "France",
+   "tr": "Fransa",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "DE",
+   "en": "Germany–Luxembourg",
+   "tr": "Almanya–Lüksemburg",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "GR",
+   "en": "Greece",
+   "tr": "Yunanistan",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "HU",
+   "en": "Hungary",
+   "tr": "Macaristan",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "IE",
+   "en": "Ireland (SEM)",
+   "tr": "İrlanda (SEM)",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "IT",
+   "en": "Italy",
+   "tr": "İtalya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "LV",
+   "en": "Latvia",
+   "tr": "Letonya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "LT",
+   "en": "Lithuania",
+   "tr": "Litvanya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "NL",
+   "en": "Netherlands",
+   "tr": "Hollanda",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "NO",
+   "en": "Norway",
+   "tr": "Norveç",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "PL",
+   "en": "Poland",
+   "tr": "Polonya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "PT",
+   "en": "Portugal",
+   "tr": "Portekiz",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "RO",
+   "en": "Romania",
+   "tr": "Romanya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "RS",
+   "en": "Serbia",
+   "tr": "Sırbistan",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "SK",
+   "en": "Slovakia",
+   "tr": "Slovakya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "SI",
+   "en": "Slovenia",
+   "tr": "Slovenya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "ES",
+   "en": "Spain",
+   "tr": "İspanya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "SE",
+   "en": "Sweden",
+   "tr": "İsveç",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "CH",
+   "en": "Switzerland",
+   "tr": "İsviçre",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "ME",
+   "en": "Montenegro",
+   "tr": "Karadağ",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "MK",
+   "en": "North Macedonia",
+   "tr": "Kuzey Makedonya",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  },
+  {
+   "code": "BA",
+   "en": "Bosnia and Herzegovina",
+   "tr": "Bosna-Hersek",
+   "status": "planned",
+   "source": "ENTSO-E Transparency",
+   "values": {}
+  }
+ ],
+ "pairs": {
+  "GB|TR": {
+   "en": [
+    "Under dual pricing (Türkiye) every deviation is a loss, so the goal is simply to be accurate. Under a single price (GB), being wrong in the direction the system needs is paid, so a portfolio can be deliberately short into a short system and earn from it. The same forecast error is a penalty in one market and a payment in the other.",
+    "A ceiling means scarcity stops being priced past a point: Türkiye's day-ahead market can clear at the cap for hours while real time settles far lower. Without a ceiling, GB lets the price go where the last accepted offer sits, and below zero when there is too much power.",
+    "GB did not move to 15-minute market time units in October 2025; that change covered eleven coupled markets and excluded Great Britain and Switzerland, so the half-hourly settlement period stays."
+   ],
+   "tr": [
+    "Çift fiyatta (Türkiye) her sapma kayıptır; hedef yalnızca isabetli olmaktır. Tek fiyatta (BK) sistemin ihtiyacı yönünde yanılmak ödüllendirilir; bir portföy açık sistemde bilerek açık kalıp kazanabilir. Aynı tahmin hatası bir piyasada ceza, diğerinde ödemedir.",
+    "Tavan, kıtlığın bir noktadan sonra fiyatlanmaması demektir: Türkiye'de gün öncesi saatlerce tavanda kapanırken gerçek zaman çok daha aşağıda uzlaşabilir. Tavan olmayan BK'de fiyat son kabul edilen teklife kadar gider, fazla elektrik varsa sıfırın altına iner.",
+    "BK, Ekim 2025'te 15 dakikalık piyasa zaman birimine geçmedi; bu değişiklik birbirine bağlı on bir piyasayı kapsadı, Birleşik Krallık ve İsviçre dışarıda kaldı. Bu yüzden yarım saatlik uzlaştırma dönemi sürüyor."
+   ]
+  }
+ }
+}

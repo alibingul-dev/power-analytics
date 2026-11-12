@@ -90,6 +90,7 @@ body.wide main{max-width:none}
 .hk-d{color:var(--muted);font-size:15px;line-height:1.55}
 .hk-go{margin-top:auto;color:var(--b1);font-size:14.5px}
 .home-link{margin-bottom:6px}
+.mk-pick{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end}.mk-pick label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}.mk-pick select{min-width:240px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:15px}.mk-vs{color:var(--muted);padding-bottom:10px}.mk-table td,.mk-table th{vertical-align:top}.mk-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:20px}.mk-table td.mk-na{color:var(--muted);font-style:italic}
 .trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:relative;align-self:stretch}
 .trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;margin:0}
@@ -492,7 +493,7 @@ a.btn{display:inline-block;text-decoration:none}
   </div>
 
   <div class="nav">
-    <div class="items home-link"><a href="#home" data-view="home" style="--c:var(--text)"><span class="bar"></span>Home</a><a href="#plans" data-view="plans" style="--c:var(--b3)"><span class="bar"></span>Access code</a></div>
+    <div class="items home-link"><a href="#home" data-view="home" style="--c:var(--text)"><span class="bar"></span>Home</a><a href="#markets" data-view="markets" style="--c:var(--muted)"><span class="bar"></span>Market structure</a><a href="#plans" data-view="plans" style="--c:var(--b3)"><span class="bar"></span>Access code</a></div>
     <button class="grp" aria-expanded="true">TÜRKİYE<span class="chev"></span></button>
     <div class="items">
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
@@ -532,7 +533,6 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#gb-outlook"  data-view="gb-outlook"  style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
         <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
       </div>
-      <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
   </div>
 
@@ -799,56 +799,17 @@ a.btn{display:inline-block;text-decoration:none}
 <section class="view frame" id="tr-dpf"><iframe data-src="price-forecast.html" title="Daily Price Forecast"></iframe></section>
 <section class="view frame" id="gip-prop"><iframe data-src="prop.html" title="GİP Prop Bot"></iframe></section>
 
-<section class="view" id="gb-structure">
-  <div class="eyebrow">Great Britain, market structure</div>
-  <h1>Two markets, four differences</h1>
-  <p class="lede">GB and Türkiye run the same sequence — day-ahead, intraday, balancing — but the mechanics diverge in ways that change what an imbalance actually costs.</p>
-  <p class="note-p">Written for people who know one of these markets well and need the other quickly. Times are from the exchanges' own published schedules.</p>
-
-  <div class="panel">
-    <h2>Where the day is decided</h2>
-    <p class="note">GB closes its day-ahead auctions almost three hours earlier than Türkiye, which means a British generator commits to a position while its weather forecast is that much less mature.</p>
-    <table>
-      <thead><tr><th>Time</th><th>Türkiye</th><th>Great Britain</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">09:20</td><td>—</td><td>EPEX hourly day-ahead closes</td></tr>
-        <tr><td class="mono">09:50</td><td>—</td><td>N2EX hourly day-ahead closes</td></tr>
-        <tr><td class="mono">12:30</td><td>Day-ahead (GÖP) bidding closes</td><td>—</td></tr>
-        <tr><td class="mono">14:00</td><td>Final day-ahead price (PTF) published</td><td>—</td></tr>
-        <tr><td class="mono">14:00–15:30</td><td>Final generation schedules (KGÜP) notified</td><td>—</td></tr>
-        <tr><td class="mono">15:30</td><td>—</td><td>EPEX half-hourly day-ahead</td></tr>
-        <tr><td class="mono">17:30</td><td>—</td><td>Intraday auction 1, 48 contracts</td></tr>
-        <tr><td class="mono">08:00 (D)</td><td>—</td><td>Intraday auction 2, 30 contracts</td></tr>
-        <tr><td class="mono">Delivery −60 min</td><td>Intraday (GİP) closes</td><td>Balancing mechanism gate closure</td></tr>
-      </tbody>
-    </table>
+<section class="view" id="markets">
+  <div class="eyebrow" id="mk-eyebrow">Market structure</div>
+  <h1 id="mk-title">Compare two power markets</h1>
+  <p class="lede" id="mk-lede">Pick any two countries. Every market runs the same sequence, day-ahead, intraday, balancing, but the rules differ in ways that change what an imbalance costs.</p>
+  <div class="panel mk-pick" data-noi18n>
+    <label><span id="mk-la">Country 1</span><select id="mk-a"></select></label>
+    <span class="mk-vs">vs</span>
+    <label><span id="mk-lb">Country 2</span><select id="mk-b"></select></label>
   </div>
-
-  <div class="panel">
-    <h2>Four structural differences</h2>
-    <table>
-      <thead><tr><th></th><th>Türkiye</th><th>Great Britain</th></tr></thead>
-      <tbody>
-        <tr><td>Settlement period</td><td>1 hour, 24 per day</td><td>30 minutes, 48 per day</td></tr>
-        <tr><td>Day-ahead venues</td><td>One exchange, one price</td><td>Two exchanges, two prices</td></tr>
-        <tr><td>Imbalance pricing</td><td>Dual price: the worse of day-ahead price (PTF) and system marginal price (SMF)</td><td>Single price, so direction decides gain or loss</td></tr>
-        <tr><td>Price cap</td><td>4,500 TL/MWh ceiling</td><td>No equivalent ceiling; negative prices occur</td></tr>
-      </tbody>
-    </table>
-    <p class="body" style="margin:18px 0 0">GB did not move to 15-minute market time units in October 2025. That change covered eleven coupled markets and excluded Great Britain and Switzerland, so the half-hourly settlement period stays.</p>
-  </div>
-
-  <div class="panel">
-    <h2>Why the last two rows matter most</h2>
-    <p class="body">Under dual pricing every deviation is a loss, so the objective is simply to be accurate. Under a single price, being wrong in the direction the system needs is paid, so the objective changes: a portfolio can be deliberately short into a short system and earn from it. The same forecast error produces a penalty in one market and a payment in the other.</p>
-    <p class="body">The price cap works the same way in reverse. A ceiling means scarcity stops being priced past a point, so the day-ahead market can clear at the cap for hours while real time settles far lower, which is exactly what happened in Türkiye on 26 August. Without a ceiling, GB lets the price go where the last accepted offer sits, and lets it go negative when there is too much.</p>
-  </div>
-  <div class="panel">
-    <h2>Why direction matters more than accuracy</h2>
-    <p class="body">GB settles imbalance at a single price. A generator that comes in short when the system is short pays that price; a generator that comes in short when the system is long is paid. The same 2% deviation can therefore cost several times more for one unit than another, and the ranking by deviation size is not the ranking by cost.</p>
-    <p class="body">Türkiye settles at a dual price, where a deviation is valued at whichever of the day-ahead and balancing prices is worse for the generator. Direction carries no reward there, only the size of the error matters. That is the single largest difference between managing a portfolio on each side, and it is why the GB scorecard reports a column that has no Turkish equivalent.</p>
-  </div>
-
+  <div class="panel" data-noi18n><div class="tablewrap"><table class="mk-table"><thead><tr><th id="mk-th"></th><th id="mk-ha"></th><th id="mk-hb"></th></tr></thead><tbody id="mk-body"></tbody></table></div><p class="note" id="mk-note" style="margin:14px 0 0"></p></div>
+  <div class="panel" id="mk-pair" data-noi18n hidden><h2 id="mk-pair-t"></h2><div id="mk-pair-b"></div></div>
 </section>
 
 <!-- ===== PLANS AND EARLY ACCESS ===== -->
@@ -1200,6 +1161,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
 /* routing */
 const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
 function go(id){
+  if(id==="gb-structure")id="markets";
   if(!views.some(v=>v.id===id))id="home";
   if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   if((id==="tr-outlook"||id==="tr-dpf")&&document.documentElement.dataset.tier!=="custom")id="home";
@@ -1208,7 +1170,7 @@ function go(id){
   const frame=id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"||id==="gip-prop";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",frame);
-  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily");
+  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis");
   if(frame){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`);
@@ -1536,6 +1498,32 @@ function renderPosts(){
   renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
 }
 window.addEventListener("pa-lang",()=>{if(FEED.items.length)renderPosts()});
+// Market structure: any two countries side by side (Ali, 13 Nov 2026). Data: markets.json; countries are
+// added step by step, "planned" ones are listed with their data source and show "to be added".
+const MK={d:null,a:"TR",b:"GB"};
+function mkT(o){return o?(window.paLang&&paLang.get()==="tr"?o.tr:o.en)||o.en||"":""}
+function renderMarkets(){
+  const d=MK.d;if(!d)return;const TRL=window.paLang&&paLang.get()==="tr";
+  const L=TRL?{eb:"Piyasa yapısı",t:"İki elektrik piyasasını karşılaştır",le:"İstediğin iki ülkeyi seç. Her piyasa aynı sırayı izler: gün öncesi, gün içi, dengeleme. Ama kurallar, bir dengesizliğin neye mal olacağını değiştirecek kadar farklı.",c1:"Ülke 1",c2:"Ülke 2",th:"",na:"Eklenecek",ready:"Hazır",plan:"Eklenecek (kaynak: ",note:"Hazır ülkeler: ",note2:". Diğerleri sırayla eklenecek; her biri için veri kaynağı listede yazıyor. Son güncelleme ",pair:"Bu iki piyasada fark neden önemli",same:"Aynı ülkeyi iki kez seçtin."}
+    :{eb:"Market structure",t:"Compare two power markets",le:"Pick any two countries. Every market runs the same sequence, day-ahead, intraday, balancing, but the rules differ in ways that change what an imbalance costs.",c1:"Country 1",c2:"Country 2",th:"",na:"To be added",ready:"Ready",plan:"To be added (source: ",note:"Ready: ",note2:". The rest are added step by step; each one's data source is shown in the list. Last updated ",pair:"Why the difference matters for these two",same:"You picked the same country twice."};
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  set("mk-eyebrow",L.eb);set("mk-title",L.t);set("mk-lede",L.le);set("mk-la",L.c1);set("mk-lb",L.c2);
+  const opts=sel=>{const r=d.countries.filter(c=>c.status==="ready"),p=d.countries.filter(c=>c.status!=="ready");
+    return `<optgroup label="${esc(L.ready)}">`+r.map(c=>`<option value="${c.code}"${c.code===sel?" selected":""}>${esc(mkT(c))}</option>`).join("")+`</optgroup><optgroup label="${esc(TRL?"Eklenecek":"To be added")}">`+p.map(c=>`<option value="${c.code}"${c.code===sel?" selected":""}>${esc(mkT(c))}</option>`).join("")+`</optgroup>`};
+  const A=document.getElementById("mk-a"),B=document.getElementById("mk-b");A.innerHTML=opts(MK.a);B.innerHTML=opts(MK.b);
+  const ca=d.countries.find(c=>c.code===MK.a),cb=d.countries.find(c=>c.code===MK.b);
+  set("mk-ha",mkT(ca));set("mk-hb",mkT(cb));
+  const cell=(c,k)=>{const v=c.values&&c.values[k];return v?`<td>${esc(mkT(v))}</td>`:`<td class="mk-na">${esc(c.status==="ready"?"—":L.na)}</td>`};
+  document.getElementById("mk-body").innerHTML=d.rows.map(r=>`<tr><td>${esc(mkT(r))}</td>${cell(ca,r.key)}${cell(cb,r.key)}</tr>`).join("");
+  const ready=d.countries.filter(c=>c.status==="ready").map(mkT).join(", ");
+  set("mk-note",(MK.a===MK.b?L.same+" ":"")+L.note+ready+L.note2+d.updated+".");
+  const pk=[MK.a,MK.b].sort().join("|"),pr=d.pairs&&d.pairs[pk],box=document.getElementById("mk-pair");
+  if(pr&&MK.a!==MK.b){box.hidden=false;set("mk-pair-t",L.pair);document.getElementById("mk-pair-b").innerHTML=(TRL?pr.tr:pr.en).map(t=>`<p class="body">${esc(t)}</p>`).join("")}else box.hidden=true;
+}
+fetch("markets.json",{cache:"no-cache"}).then(r=>r.json()).then(j=>{MK.d=j;renderMarkets()}).catch(()=>{});
+document.addEventListener("change",ev=>{if(ev.target.id==="mk-a"){MK.a=ev.target.value;renderMarkets()}else if(ev.target.id==="mk-b"){MK.b=ev.target.value;renderMarkets()}});
+window.addEventListener("pa-lang",renderMarkets);
+
 function armTurnover(){const n=new Date(),ms=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime()+2000;setTimeout(()=>{renderPosts();armTurnover()},ms)}
 fetch("feed.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{FEED.items=j.items||[];renderPosts();armTurnover()})
  .catch(()=>["tr-news","gb-analysis","gb-outlook","tr-weekly","gb-weekly"].forEach(v=>{const b=document.getElementById(v+"-body");if(b)b.innerHTML='<p class="note-p">Could not load the posts.</p>'}));
