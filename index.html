@@ -94,11 +94,11 @@ body.wide main{max-width:none}
 .mk-pick{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end}.mk-pick label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}.mk-pick select{min-width:240px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:15px}.mk-vs{color:var(--muted);padding-bottom:10px}.mk-table td,.mk-table th{vertical-align:top}.mk-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:20px}.mk-table td.mk-na{color:var(--muted);font-style:italic}
 .arc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.arc-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}.arc-tabs button.on{color:var(--text);border-color:var(--b2)}.arc-post{margin-top:12px}.arc-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:18px;align-items:start}.arc-grid.one{grid-template-columns:1fr}.arc-grid .panel{margin:0}.arc-l video{width:100%;border-radius:10px;display:block}.arc-hook{margin:0 0 12px}@media (max-width:880px){.arc-grid{grid-template-columns:1fr}}
 .nb-ccb{font-weight:600;letter-spacing:.04em}.nb-sep{width:1px;background:var(--line);margin:0 4px}.nb-cc{font-weight:600}.nb-list{list-style:none;margin:0;padding:0}.nb-i{padding:12px 0;border-top:1px solid var(--line)}.nb-i:first-child{border-top:0;padding-top:0}.nb-i p{margin:6px 0}.nb-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.nb-per{font-size:12.5px;color:var(--muted)}.nb-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px}
-.trgrid>.trL>.panel{justify-content:flex-start}.trgrid>.trL .clip{flex:0 0 auto;position:sticky;top:24px}
+.trgrid>.trL>.panel{justify-content:flex-start;padding:0;background:none;border:0;box-shadow:none}.trgrid>.trL .clip{flex:0 0 auto;position:sticky;top:24px}
 .trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:relative;align-self:stretch}
-.trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;margin:0}
-.trgrid>.trL .clip{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;margin:0}
+.trgrid>.trL .clip{flex:0 0 auto;display:block}
 .trgrid>.trL .clip video{width:100%;height:auto;max-height:100%;object-fit:contain}
 .trgrid .panel{margin-top:0}
 .trgrid>.trR>.panel+.panel{margin-top:18px}
