@@ -768,11 +768,13 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <section class="view" id="gb-analysis">
-  <div class="eyebrow">Great Britain, daily, today's post</div>
-  <h1>Market analysis</h1>
-  <p class="lede">What happened in the British power market on the closed day: the price, and which sources kept the lights on.</p>
-  <p class="note-p">The system price is what a generator or supplier pays or receives for every MWh it is out of balance. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
-  <div id="gb-analysis-body"><p class="note-p">Loading…</p></div>
+  <div class="gatebox" id="gb-analysis-gate"></div>
+  <h1 id="g-title">Loading…</h1>
+  <p class="note-p" id="g-hook"></p>
+  <div id="gb-analysis-post"></div>
+  <div class="panel">
+    <div id="gb-analysis-method"><p class="body">Published after settlement data lands, from Elexon open data. The system price is what a generator or supplier pays or receives for every MWh it is out of balance.</p></div>
+  </div>
 </section>
 
 <section class="view" id="gb-outlook">
@@ -1147,7 +1149,7 @@ function stamp(iso){
 }
 
 function locTitle(id,dt){const el=document.getElementById(id);if(!el||!dt)return;el.dataset.date=dt;el.setAttribute("data-noi18n","");el.textContent=new Date(dt+"T00:00:00").toLocaleDateString(window.paLang&&paLang.get()==="tr"?"tr-TR":"en-GB",{day:"numeric",month:"long",year:"numeric"})}
-window.addEventListener("pa-lang",()=>{["d-title","m-title"].forEach(id=>{const el=document.getElementById(id);if(el&&el.dataset.date)locTitle(id,el.dataset.date)})});
+window.addEventListener("pa-lang",()=>{["d-title","m-title","g-title"].forEach(id=>{const el=document.getElementById(id);if(el&&el.dataset.date)locTitle(id,el.dataset.date)})});
 function renderDaily(d){
   stamp(d.updated||d.retrieved||null);
   locTitle("d-title",d.date);
@@ -1479,7 +1481,7 @@ function renderWeekly(vid,country){
 function fitTR(box){const L=box.querySelector(".trL"),R=box.querySelector(".trR"),v=L&&L.querySelector("video");if(!L||!R)return;
   const f=()=>{if(innerWidth<=1180||!R.offsetHeight){L.style.width="";return}const ar=v&&v.videoWidth&&v.videoHeight?v.videoWidth/v.videoHeight:0.8;
     if(f.busy)return;f.busy=1;const t=w=>{L.style.width=w+"px";return (R.offsetHeight-46)*ar+46-w};
-    let lo=220,hi=Math.max(240,box.clientWidth*0.4);if(t(hi)>0)lo=hi;else for(let i=0;i<12;i++){const m=(lo+hi)/2;if(t(m)>0)lo=m;else hi=m}
+    let lo=220,hi=Math.max(240,box.clientWidth*0.5);if(t(hi)>0)lo=hi;else for(let i=0;i<12;i++){const m=(lo+hi)/2;if(t(m)>0)lo=m;else hi=m}
     L.style.width=Math.round(lo)+"px";requestAnimationFrame(()=>{f.busy=0})};
   if(window.ResizeObserver)new ResizeObserver(f).observe(R);if(v)v.addEventListener("loadedmetadata",f);addEventListener("resize",f);f()}
 function renderTRPage(vid,kind){
@@ -1487,9 +1489,10 @@ function renderTRPage(vid,kind){
   const today=utcToday(),e=FEED.items.find(x=>x.kind===kind&&x.day===today);
   const head=`<p class="pday">Today is <b>${fmtDate(today)}</b> (UTC). The page turns over at 00:00 UTC, ${nextTurn()} your time.</p>`;
   sec.classList.toggle("stale",!e);
-  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#tr-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
+  if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#${kind.startsWith("gb")?"gb":"tr"}-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
-  const TRP=vid==="tr-netload"||vid==="tr-daily";
+  const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis";
+  if(vid==="gb-analysis")locTitle("g-title",e.analysis_date);
   gate.innerHTML=TRP?"":meta;
   let h="",hc="";
   const LG=!!(TRP&&window.paLang&&paLang.get()==="tr"),med=(LG&&e.media_tr)||e.media;
@@ -1498,17 +1501,17 @@ function renderTRPage(vid,kind){
   let ptext=(LG&&e.text_tr)||e.text||"";
   if(TRP){
     const ls=ptext.split("\n");
-    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById(vid==="tr-netload"?"d-hook":"m-hook");if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
+    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById({"tr-netload":"d-hook","tr-daily":"m-hook","gb-analysis":"g-hook"}[vid]);if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
     const di=ptext.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)ptext=ptext.slice(0,di);
     ptext=ptext.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
   }
   const mbox=document.getElementById(vid+"-method");
   if(TRP&&mbox){
     if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
-    const mi=ptext.search(/(^|\n)(METHOD|YÖNTEM)\s*\n/);let si=mi<0?-1:ptext.slice(mi).search(/(^|\n)(Source|Kaynak):/);if(si>=0)si+=mi;
+    const mi=ptext.search(/(^|\n)(METHOD|YÖNTEM|SOURCES|KAYNAKLAR)\s*\n/);let si=mi<0?-1:ptext.slice(mi).search(/(^|\n)(Source|Kaynak):/);if(si>=0)si+=mi;
     if(mi>=0){
       let end=si<0?ptext.indexOf("\n\n",ptext.indexOf("\n",mi+1)):ptext.indexOf("\n\n",si);if(end<0)end=ptext.length;
-      const m=ptext.slice(mi,end).replace(/^\n?(METHOD|YÖNTEM)\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:|Kaynak:)/.test(l)).join("\n").trim();
+      const m=ptext.slice(mi,end).replace(/^\n?(METHOD|YÖNTEM|SOURCES|KAYNAKLAR)\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:|Kaynak:)/.test(l)).join("\n").trim();
       ptext=(ptext.slice(0,mi)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim();
       mbox.innerHTML=`<p class="posttext">${esc(m)}</p>`;
     }else{
@@ -1528,7 +1531,7 @@ function renderPosts(){
   FEED.day=utcToday();
   renderTRPage("tr-netload","post2");renderTRPage("tr-daily","post1");
   renderDailyPost("tr-news","news","tr-weekly");
-  renderDailyPost("gb-analysis","gb_post1","gb-weekly");
+  renderTRPage("gb-analysis","gb_post1");
   renderDailyPost("gb-outlook","gb_post2","gb-weekly");
   renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
 }
