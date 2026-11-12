@@ -1610,7 +1610,7 @@ function renderTimeline(){
     else{const e=(FEED.items||[]).find(x=>x.kind===k&&x.at&&ist(x.at).slice(0,10)===today);if(e)at=ist(e.at).slice(11,16)}
     const late=!at&&hm>t&&((+hm.slice(0,2))*60+(+hm.slice(3)))-((+t.slice(0,2))*60+(+t.slice(3)))>90;
     const st=at?`<span class="dir down">✓ ${TRL?"Yayında":"Out"} ${at}</span>`:late?`<span class="dir up">${TRL?"Gecikti":"Late"}</span>`:`<span class="dir flat">${TRL?"Bekleniyor":"Due"}</span>`;
-    return `<tr><td class="mono" style="width:70px">${t}</td><td style="width:44px"><span class="tag">${cc}</span></td><td>${at?`<a class="post" href="#${v}">${esc(n[TRL?1:0])}</a>`:esc(n[TRL?1:0])}</td><td class="num">${st}</td></tr>`}).join("");
+    return `<tr><td class="mono" style="width:70px">${t}</td><td style="width:150px"><span class="tag">${esc({TR:["Türkiye","Türkiye"],GB:["Great Britain","Birleşik Krallık"]}[cc][TRL?1:0])}</span></td><td>${at?`<a class="post" href="#${v}">${esc(n[TRL?1:0])}</a>`:esc(n[TRL?1:0])}</td><td class="num">${st}</td></tr>`}).join("");
 }
 window.addEventListener("pa-lang",renderTimeline);setInterval(renderTimeline,60000);
 
