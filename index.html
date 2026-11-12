@@ -497,7 +497,7 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="items">
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
       <div class="leaves">
-        <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Net load outlook</a>
+        <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
         <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
@@ -529,8 +529,8 @@ a.btn{display:inline-block;text-decoration:none}
     <div class="items">
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
       <div class="leaves">
-        <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Market analysis</a>
         <a href="#gb-outlook"  data-view="gb-outlook"  style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
+        <a href="#gb-analysis" data-view="gb-analysis" style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
       </div>
       <a href="#gb-structure" data-view="gb-structure" style="--c:var(--muted)"><span class="bar"></span>Market structure</a>
     </div>
@@ -1159,7 +1159,7 @@ function renderArchive(rows){
   const box=document.getElementById("a-rows");
   if(!rows.length){box.innerHTML='<p class="note-p">Nothing published yet.</p>';return}
   const short=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-  const KIND={post1:"Day-end scorecard",post2:"Net load outlook",gb_post1:"GB market analysis",gb_post2:"GB outlook",news:"Energy news"};
+  const KIND={post1:"Day-end scorecard",post2:"Day-ahead outlook",gb_post1:"GB day-end scorecard",gb_post2:"GB day-ahead outlook",news:"Energy news"};
   const ORD={post1:0,post2:1,news:2,gb_post1:3,gb_post2:4};
   /* one folder per day analysed, newest first; folders grouped under month headings */
   const byDay={};rows.forEach(r=>{(byDay[r.analysis_date]=byDay[r.analysis_date]||[]).push(r)});
@@ -1287,7 +1287,7 @@ function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 
 /* ---------- post pages: Daily (today, UTC) and Weekly (last 7 post days before today), fed by feed.json ---------- */
 const FEED={items:[]};
-const PK={post1:"Day-end scorecard",post2:"Net load outlook",news:"Energy news",gb_post1:"Market analysis",gb_post2:"Day-ahead wind outlook"};
+const PK={post1:"Day-end scorecard",post2:"Day-ahead outlook",news:"Energy news",gb_post1:"Day-end scorecard",gb_post2:"Day-ahead outlook"};
 const PORDER={post1:0,post2:1,news:2,gb_post1:0,gb_post2:1};
 const utcToday=()=>new Date().toISOString().slice(0,10);
 const gbp=v=>"£"+(Math.round(v*100)/100).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
