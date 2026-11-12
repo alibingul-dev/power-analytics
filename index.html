@@ -792,11 +792,13 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <section class="view" id="gb-outlook">
-  <div class="eyebrow">Great Britain, daily, today's post</div>
-  <h1>Day-ahead outlook</h1>
-  <p class="lede">How much wind Great Britain expects tomorrow, hour by hour, before the day starts.</p>
-  <p class="note-p">Wind is the source that swings most in Great Britain: a windy hour usually means cheaper power, a still hour dearer. This is the system operator's own forecast, not a promise. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
-  <div id="gb-outlook-body"><p class="note-p">Loading…</p></div>
+  <div class="gatebox" id="gb-outlook-gate"></div>
+  <h1 id="go-title">Loading…</h1>
+  <p class="note-p" id="go-hook"></p>
+  <div id="gb-outlook-post"></div>
+  <div class="panel">
+    <div id="gb-outlook-method"><p class="body">The system operator's own day-ahead wind forecast (Elexon Insights), published before the day starts. Wind is the source that swings most in Great Britain: a windy hour usually means cheaper power, a still hour dearer.</p></div>
+  </div>
 </section>
 
 <section class="view" id="gb-weekly">
@@ -1124,7 +1126,7 @@ function stamp(iso){
 }
 
 function locTitle(id,dt){const el=document.getElementById(id);if(!el||!dt)return;el.dataset.date=dt;el.setAttribute("data-noi18n","");el.textContent=new Date(dt+"T00:00:00").toLocaleDateString(window.paLang&&paLang.get()==="tr"?"tr-TR":"en-GB",{day:"numeric",month:"long",year:"numeric"})}
-window.addEventListener("pa-lang",()=>{["d-title","m-title","g-title"].forEach(id=>{const el=document.getElementById(id);if(el&&el.dataset.date)locTitle(id,el.dataset.date)})});
+window.addEventListener("pa-lang",()=>{["d-title","m-title","g-title","n-title","go-title"].forEach(id=>{const el=document.getElementById(id);if(el&&el.dataset.date)locTitle(id,el.dataset.date)})});
 function renderDaily(d){
   stamp(d.updated||d.retrieved||null);
   locTitle("d-title",d.date);
@@ -1188,7 +1190,7 @@ function go(id){
   const frame=id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"||id==="gip-prop";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",frame);
-  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis"||id==="tr-news");
+  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis"||id==="tr-news"||id==="gb-outlook");
   if(frame){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",(a.dataset.view===id||a.dataset.view===req)?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`)||document.querySelector(`a[data-view="${req}"]`);
@@ -1519,7 +1521,8 @@ function renderTRPage(vid,kind){
   sec.classList.toggle("stale",!e);
   if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#${kind.startsWith("gb")?"gb":"tr"}-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
-  const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis"||vid==="tr-news";
+  const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis"||vid==="tr-news"||vid==="gb-outlook";
+  if(vid==="gb-outlook")locTitle("go-title",e.analysis_date);
   if(vid==="gb-analysis")locTitle("g-title",e.analysis_date);
   if(vid==="tr-news")locTitle("n-title",e.analysis_date);
   gate.innerHTML=TRP?(late?`<p class="pday" style="margin:0 0 10px">${window.paLang&&paLang.get()==="tr"?"Bugünün haber postu henüz çıkmadı; son yayın gösteriliyor.":"Today's news post is not out yet; showing the latest one."}</p>`:""):meta;
@@ -1530,7 +1533,7 @@ function renderTRPage(vid,kind){
   let ptext=(LG&&e.text_tr)||e.text||"";
   if(TRP){
     const ls=ptext.split("\n");
-    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById({"tr-netload":"d-hook","tr-daily":"m-hook","gb-analysis":"g-hook","tr-news":"n-hook"}[vid]);if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
+    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById({"tr-netload":"d-hook","tr-daily":"m-hook","gb-analysis":"g-hook","tr-news":"n-hook","gb-outlook":"go-hook"}[vid]);if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
     const di=ptext.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)ptext=ptext.slice(0,di);
     ptext=ptext.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
   }
@@ -1543,7 +1546,9 @@ function renderTRPage(vid,kind){
       let end=si<0?ptext.indexOf("\n\n",ptext.indexOf("\n",mi+1)):ptext.indexOf("\n\n",si);if(end<0)end=ptext.length;
       const m=ptext.slice(mi,end).replace(/^\n?(METHOD|YÖNTEM|SOURCES|KAYNAKLAR)\s*\n/,"").split("\n").filter(l=>!/^\s*(🕐|Source:|Kaynak:)/.test(l)).join("\n").trim();
       ptext=(ptext.slice(0,mi)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim();
-      mbox.innerHTML=`<p class="posttext">${esc(m)}</p>`;
+      let m2="";const sj=ptext.search(/(^|\n)(SOURCES|KAYNAKLAR)\s*\n/);  /* a second block (sources after method) goes to the panel too */
+      if(sj>=0){let e2=ptext.indexOf("\n\n",ptext.indexOf("\n",sj+1));if(e2<0)e2=ptext.length;m2=ptext.slice(sj,e2).replace(/^\n?(SOURCES|KAYNAKLAR)\s*\n/,"").split("\n").filter(l=>!/^\s*🕐/.test(l)).join("\n").trim();ptext=(ptext.slice(0,sj)+ptext.slice(e2)).replace(/\n{3,}/g,"\n\n").trim()}
+      mbox.innerHTML=`<p class="posttext">${esc(m+(m2?"\n\n"+m2:""))}</p>`;
     }else{
       const si2=ptext.search(/(^|\n)(Source|Kaynak):/);let src="";
       if(si2>=0){let end=ptext.indexOf("\n\n",si2+1);if(end<0)end=ptext.length;src=ptext.slice(si2,end).trim();ptext=(ptext.slice(0,si2)+ptext.slice(end)).replace(/\n{3,}/g,"\n\n").trim()}
@@ -1563,7 +1568,7 @@ function renderPosts(){
   renderTRPage("tr-netload","post2");renderTRPage("tr-daily","post1");
   renderTRPage("tr-news","news");
   renderTRPage("gb-analysis","gb_post1");
-  renderDailyPost("gb-outlook","gb_post2","gb-weekly");
+  renderTRPage("gb-outlook","gb_post2");
   renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
 }
 window.addEventListener("pa-lang",()=>{if(FEED.items.length)renderPosts()});
