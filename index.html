@@ -1510,9 +1510,9 @@ function fitTR(box){  /* one GIF frame size on every post page except news (Ali,
   const L=box.querySelector(".trL"),R=box.querySelector(".trR");if(!L||!R)return;
   const f=()=>{if(innerWidth<=1180){L.style.width="";return}if(!box.clientWidth)return;
     if(box.closest("#tr-news")){const v=L.querySelector("video"),ar=v&&v.videoWidth&&v.videoHeight?v.videoWidth/v.videoHeight:0.8;L.style.width=Math.round(Math.min(box.clientWidth*0.5,Math.max(240,(innerHeight-126)*ar+46)))+"px";return}
-    L.style.width=GIFW+"px"};
+    L.style.width=Math.round(box.clientWidth*GIFW)+"px"};
   const v=L.querySelector("video");if(v)v.addEventListener("loadedmetadata",f);if(window.ResizeObserver)new ResizeObserver(f).observe(box);addEventListener("resize",f);f()}
-const GIFW=460;
+const GIFW=0.5;  /* share of the content width: the old day-end scorecard GIF size (Ali, 13 Nov 2026) */
 function renderTRPage(vid,kind){
   const sec=document.getElementById(vid),gate=document.getElementById(vid+"-gate"),box=document.getElementById(vid+"-post");if(!sec)return;
   const today=utcToday();let e=FEED.items.find(x=>x.kind===kind&&x.day===today),late=false;
