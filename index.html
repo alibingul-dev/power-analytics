@@ -91,6 +91,7 @@ body.wide main{max-width:none}
 .hk-go{margin-top:auto;color:var(--b1);font-size:14.5px}
 .home-link{margin-bottom:6px}
 .mk-pick{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end}.mk-pick label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}.mk-pick select{min-width:240px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:15px}.mk-vs{color:var(--muted);padding-bottom:10px}.mk-table td,.mk-table th{vertical-align:top}.mk-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:20px}.mk-table td.mk-na{color:var(--muted);font-style:italic}
+.arc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.arc-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}.arc-tabs button.on{color:var(--text);border-color:var(--b2)}.arc-post{margin-top:12px}.arc-post video{max-width:420px;width:100%;border-radius:10px;display:block;margin-bottom:12px}
 .trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:relative;align-self:stretch}
 .trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;margin:0}
@@ -512,7 +513,12 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="leaves tier-custom">
         <a href="#tr-outlook" data-view="tr-outlook" title="Monthly PTF outlook 24 months ahead with your own inputs, backtest and sensitivity; untested scenarios to 2031" style="--c:var(--muted)"><span class="bar"></span>Forecast vs actual</a>
       </div>
-      <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
+      <button class="sub" aria-expanded="false">Published archive<span class="chev"></span></button>
+      <div class="leaves">
+        <a href="#archive-daily"   data-view="archive-daily"   style="--c:var(--b5)"><span class="bar"></span>Daily</a>
+        <a href="#archive-weekly"  data-view="archive-weekly"  style="--c:var(--b5)"><span class="bar"></span>Weekly</a>
+        <a href="#archive-monthly" data-view="archive-monthly" style="--c:var(--b5)"><span class="bar"></span>Monthly</a>
+      </div>
       <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves pro-only">
         <a class="pro-only" href="#tr-bess" data-view="tr-bess" title="BESS: Battery Energy Storage System" style="--c:var(--muted)"><span class="bar"></span>BESS Simulator</a>
@@ -745,12 +751,14 @@ a.btn{display:inline-block;text-decoration:none}
 
 <!-- ===== ARCHIVE ===== -->
 <section class="view" id="tr-archive">
-  <div class="eyebrow">Archive</div>
-  <h1>Published analysis</h1>
-  <p class="lede">Every post, indexed by the day it analyses.</p>
-  <p class="note-p">The net load outlook covers the day ahead, so its analysis date runs ahead of its publication date. The day-end scorecard covers a closed day.</p>
-  <div class="pro-note panel"><p class="note" style="margin:0">The last seven days are shown. <a class="post" href="#plans" data-view="plans">The full archive opens with an access code</a>.</p></div>
-  <div id="a-rows"><p class="note-p">Loading…</p></div>
+  <div class="eyebrow" id="arc-eb">Archive</div>
+  <h1 id="arc-t">Published analysis</h1>
+  <p class="lede" id="arc-le"></p>
+  <div data-noi18n>
+    <div class="arc-tabs" id="arc-cats"></div>
+    <div class="pro-note panel" id="arc-pro"><p class="note" style="margin:0" id="arc-pro-t"></p></div>
+    <div id="a-rows"><p class="note-p">Loading…</p></div>
+  </div>
 </section>
 
 <section class="view" id="tr-news">
@@ -1164,6 +1172,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
 const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
 function go(id){
   if(id==="gb-structure")id="markets";
+  const req=id,am=/^archive-(daily|weekly|monthly)$/.exec(id);if(id==="tr-archive")id="archive-daily";
+  if(am||id==="archive-daily"){window.ARC_CAD=(am||[0,"daily"])[1];id="tr-archive";if(window.ARC){ARC.cad=window.ARC_CAD;renderArc()}}
   if(!views.some(v=>v.id===id))id="home";
   if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   if((id==="tr-outlook"||id==="tr-dpf")&&document.documentElement.dataset.tier!=="custom")id="home";
@@ -1174,8 +1184,8 @@ function go(id){
   document.body.classList.toggle("full",frame);
   document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis");
   if(frame){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
-  links.forEach(a=>a.setAttribute("aria-current",a.dataset.view===id?"page":"false"));
-  const owner=document.querySelector(`a[data-view="${id}"]`);
+  links.forEach(a=>a.setAttribute("aria-current",(a.dataset.view===id||a.dataset.view===req)?"page":"false"));
+  const owner=document.querySelector(`a[data-view="${id}"]`)||document.querySelector(`a[data-view="${req}"]`);
   if(owner){
     let box=owner.parentElement;
     while(box&&box!==rail){
@@ -1232,15 +1242,7 @@ fetch("daily.json").then(r=>r.ok?r.json():Promise.reject()).then(renderMarket).c
   const t=document.getElementById("m-title"); if(t) t.textContent="No analysis published yet";
 });
 fetch("data.json").then(r=>r.ok?r.json():Promise.reject()).then(renderDaily).catch(()=>renderDaily(FALLBACK));
-proJSON("published","published.json")
- .then(j=>renderArchive(Object.entries(j).map(([d,v])=>({...v,analysis_date:v.analysis_date||d.split("#")[0]})).sort((a,b)=>(b.at||"").localeCompare(a.at||""))))
- .catch(()=>renderArchive([
-   {analysis_date:"2026-08-28",kind:"post2",post_id:"urn:li:share:7498679216868179968",at:"2026-08-27T09:54:04Z"},
-   {analysis_date:"2026-08-26",kind:"post1",post_id:"urn:li:share:7498722107460120576",at:"2026-08-27T12:44:30Z"},
-   {analysis_date:"2026-08-25",kind:"post1",post_id:"urn:li:share:7498286459423227904",at:"2026-08-26T07:53:24Z"},
-   {analysis_date:"2026-08-24",kind:"post1",post_id:"urn:li:share:7497980526339796993",at:"2026-08-25T11:37:43Z"},
-   {analysis_date:"2026-08-23",kind:"post1",post_id:"urn:li:share:7497561523238916096",at:"2026-08-24T07:52:45Z"}
- ]));
+/* archive: archive/index.json (build_site_feed.write_archive) */
 
 /* ---------- dashboard ---------- */
 const DASH={daily:null,actual:null,next:null,days:[]};
@@ -1525,6 +1527,51 @@ function renderMarkets(){
 fetch("markets.json",{cache:"no-cache"}).then(r=>r.json()).then(j=>{MK.d=j;renderMarkets()}).catch(()=>{});
 document.addEventListener("change",ev=>{if(ev.target.id==="mk-a"){MK.a=ev.target.value;renderMarkets()}else if(ev.target.id==="mk-b"){MK.b=ev.target.value;renderMarkets()}});
 window.addEventListener("pa-lang",renderMarkets);
+// Published archive (Ali, 13 Nov 2026): everything on the site, no LinkedIn links; Daily / Weekly / Monthly,
+// each with the same categories as the menu. Türkiye only (Ali: "bu TR olduğu için TR de kalsın"); what a tier sees is set in arcLimit(). Data: archive/index.json + archive/<YYYY-MM>.json (lazy).
+window.ARC={cad:window.ARC_CAD||"daily",cat:"outlook",idx:null,months:{}};
+const ARC_CATS={daily:[["outlook","Day-ahead outlook","Gün öncesi görünüm",["post2"]],["actual","Actual vs outlook","Gerçekleşen ve görünüm",null,"tr-actual"],["scorecard","Day-end scorecard","Gün sonu karnesi",["post1"]],["news","Energy news","Enerji haberleri",["news"]],["fcard","Forecast scorecard","Tahmin karnesi",null,"tr-dash"]],
+  weekly:[["weekly","Weekly","Haftalık",[]]],monthly:[["monthly","Forecast vs actual","Tahmin ve Gerçekleşen",[]]]};
+function arcLimit(){/* days of archive per subscription tier; Free = last 7 days, Pro and above = all */return document.documentElement.classList.contains("is-pro")?Infinity:7}
+function renderArc(){
+  const box=document.getElementById("a-rows");if(!box)return;const TRL=window.paLang&&paLang.get()==="tr";
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  const CN={daily:["Daily","Günlük"],weekly:["Weekly","Haftalık"],monthly:["Monthly","Aylık"]}[ARC.cad];
+  set("arc-eb",(TRL?"Yayın arşivi · ":"Published archive · ")+CN[TRL?1:0]);set("arc-t",TRL?"Yayımlanan analizler":"Published analysis");
+  set("arc-le",TRL?"Her yayın sitede, analiz ettiği güne göre dizinli. Bir güne tıkla, metni ve grafiği burada oku.":"Every post lives on this site, indexed by the day it analyses. Open a day to read the text and see the chart here.");
+  const cats=ARC_CATS[ARC.cad];if(!cats.some(c=>c[0]===ARC.cat))ARC.cat=cats[0][0];
+  document.getElementById("arc-cats").innerHTML=cats.map(c=>`<button data-c="${c[0]}" class="${c[0]===ARC.cat?"on":""}">${esc(c[TRL?2:1])}</button>`).join("");
+  const pro=arcLimit()===Infinity;
+  document.getElementById("arc-pro").hidden=pro;set("arc-pro-t",TRL?"Son yedi gün gösteriliyor. Tam arşiv erişim koduyla açılır.":"The last seven days are shown. The full archive opens with an access code.");
+  const cat=cats.find(c=>c[0]===ARC.cat);
+  if(cat[4]){box.innerHTML=`<div class="panel"><p class="note" style="margin:0">${TRL?"Bu bölümün kaydı kendi sayfasında tutuluyor: ":"This section keeps its record on its own page: "}<a class="post" href="#${cat[4]}">${esc(cat[TRL?2:1])} →</a></p></div>`;return}
+  if(!ARC.idx){box.innerHTML='<p class="note-p">Loading…</p>';return}
+  let rows=ARC.idx.filter(r=>cat[3].includes(r.kind));
+  if(!rows.length){box.innerHTML=`<div class="panel"><p class="note" style="margin:0">${TRL?"Bu klasörde henüz yayın yok.":"Nothing published in this folder yet."}</p></div>`;return}
+  const days=[...new Set(rows.map(r=>r.analysis_date))].sort().reverse(),keep=days.slice(0,arcLimit());
+  rows=rows.filter(r=>keep.includes(r.analysis_date));
+  const LBL={post1:["Türkiye","Türkiye"],post2:["Türkiye","Türkiye"],news:["Türkiye","Türkiye"],gb_post1:["Great Britain","Birleşik Krallık"],gb_post2:["Great Britain","Birleşik Krallık"]};
+  let h="",month="";
+  keep.forEach((d,n)=>{const dt=new Date(d+"T00:00:00"),m=dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{month:"long",year:"numeric"});
+    if(m!==month){if(month)h+="</div>";h+=`<div class="wkday"><h2>${m}</h2>`;month=m}
+    const its=rows.filter(r=>r.analysis_date===d);
+    h+=`<details class="wk" data-d="${d}"${n===0?" open":""}><summary><b>${dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span>${""}</span></summary><div class="wkb">${its.map(r=>`<div class="arc-post" data-k="${esc(r.key)}" data-m="${r.month}"><p class="note-p">Loading…</p></div>`).join("")}</div></details>`});
+  box.innerHTML=h+(month?"</div>":"");
+  box.querySelectorAll("details.wk").forEach(dl=>{const f=()=>{if(dl.open)arcFill(dl)};dl.addEventListener("toggle",f);f()});
+}
+function arcFill(dl){
+  const TRL=window.paLang&&paLang.get()==="tr";
+  dl.querySelectorAll(".arc-post").forEach(el=>{const m=el.dataset.m;
+    const go=list=>{const e=list.find(x=>x.key===el.dataset.k);if(!e){el.innerHTML="";return}
+      const med=(TRL&&e.media_tr)||e.media,txt=(TRL&&e.text_tr)||e.text;
+      el.innerHTML=(med?`<video controls muted loop playsinline preload="none" poster="${esc(med.poster)}" src="${esc(med.src)}"></video>`:"")+(txt?`<p class="posttext">${esc(txt)}</p>`:`<p class="note" style="margin:0">${TRL?"Bu yayının metni kayıtlı değil.":"The text of this post is not on file."}</p>`)};
+    if(ARC.months[m])go(ARC.months[m]);else fetch("archive/"+m+".json",{cache:"no-cache"}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(l=>{ARC.months[m]=l;go(l)});
+  });
+}
+document.addEventListener("click",ev=>{const b=ev.target.closest("#arc-cats button");if(b){ARC.cat=b.dataset.c;renderArc()}});
+fetch("archive/index.json",{cache:"no-cache"}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(j=>{ARC.idx=j;renderArc()});
+window.addEventListener("pa-lang",renderArc);
+
 // Tahmin karnesi (Ali, 13 Nov 2026): forecast-card.json from the forecast-card workflow.
 const FCT={demand_peak:["Demand peak hour","Tüketim zirve saati"],cons_dir:["Consumption vs today","Tüketim, bugüne göre"],wind_dir:["Wind vs today","Rüzgâr, bugüne göre"],wind_peak:["Windiest hour","En rüzgârlı saat"],wind_band:["Daily wind within ±15%","Günlük rüzgâr ±%15 bandında"],net_low:["Lowest consumption minus wind","En düşük tüketim eksi rüzgâr"]};
 const trNum=t=>String(t).replace(/(\d),(\d{3})/g,"$1\u2063$2").replace(/(\d)\.(\d)/g,"$1,$2").replace(/\u2063/g,".").replace(/([+-])(\d[\d.,]*)%/g,"$1%$2");
