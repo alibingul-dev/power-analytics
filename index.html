@@ -503,7 +503,7 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
         <a href="#tr-news"    data-view="tr-news"    style="--c:var(--b1)"><span class="bar"></span>Energy news</a>
       </div>
-      <a href="#tr-dash" data-view="tr-dash" style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
+      <a href="#tr-dash" data-view="tr-dash" style="--c:var(--b1)"><span class="bar"></span>Forecast scorecard</a>
       <button class="sub prop-only" aria-expanded="true">Parameters<span class="chev"></span></button>
       <div class="leaves prop-only">
         <a href="#gip-prop" data-view="gip-prop" class="prop-only" title="Intraday (GİP) SmartBot formula and its backtest" style="--c:var(--muted)"><span class="bar"></span>GİP Prop Bot</a>
@@ -611,7 +611,17 @@ a.btn{display:inline-block;text-decoration:none}
 
 <!-- ===== MARKET DASHBOARD ===== -->
 <section class="view" id="tr-dash">
-  <div class="eyebrow">Türkiye, market dashboard</div>
+  <div class="eyebrow" id="fc-eyebrow">Türkiye, forecast scorecard</div>
+  <h1 id="fc-title">Forecast scorecard</h1>
+  <p class="lede" id="fc-lede">Every day between 12:30 and 12:59, after the day-ahead market has closed and before its price is out, the system makes six checkable claims about tomorrow: demand, consumption, wind and net load. No prices. The next morning each claim is marked right or wrong, and every record stays on file.</p>
+  <div data-noi18n>
+    <div class="figs" id="fc-figs"></div>
+    <div class="panel"><h2 id="fc-cur-t"></h2><p class="note" id="fc-cur-n" style="margin:0 0 12px"></p><div class="tablewrap"><table><tbody id="fc-cur"></tbody></table></div></div>
+    <div class="panel"><h2 id="fc-last-t"></h2><p class="note" id="fc-last-n" style="margin:0 0 12px"></p><div class="tablewrap"><table><thead><tr><th id="fc-h1"></th><th id="fc-h2"></th><th id="fc-h3"></th></tr></thead><tbody id="fc-last"></tbody></table></div></div>
+    <div class="panel"><h2 id="fc-rec-t"></h2><div class="tablewrap"><table><thead><tr><th id="fc-r1"></th><th id="fc-r2" class="num"></th><th id="fc-r3" class="num"></th></tr></thead><tbody id="fc-rec"></tbody></table></div><p class="note" id="fc-rec-n" style="margin:14px 0 0"></p></div>
+  </div>
+  <div hidden id="k-legacy">
+  <div class="eyebrow">Türkiye, market dashboard (retired)</div>
   <h1 id="k-title">Loading…</h1>
   <p class="note-p">Türkiye's electricity market on one page: what happened yesterday, what we expect tomorrow, and how often our expectations turned out right. Point at any chart (or tap it on a phone) to see the numbers behind it.</p>
   <div class="fresh" id="k-fresh"></div>
@@ -726,6 +736,7 @@ a.btn{display:inline-block;text-decoration:none}
       <tbody id="k-rows"></tbody>
     </table></div>
   </details>
+  </div>
   </div>
 </section>
 
@@ -1511,6 +1522,33 @@ function renderMarkets(){
 fetch("markets.json",{cache:"no-cache"}).then(r=>r.json()).then(j=>{MK.d=j;renderMarkets()}).catch(()=>{});
 document.addEventListener("change",ev=>{if(ev.target.id==="mk-a"){MK.a=ev.target.value;renderMarkets()}else if(ev.target.id==="mk-b"){MK.b=ev.target.value;renderMarkets()}});
 window.addEventListener("pa-lang",renderMarkets);
+// Tahmin karnesi (Ali, 13 Nov 2026): forecast-card.json from the forecast-card workflow.
+const FCT={demand_peak:["Demand peak hour","Tüketim zirve saati"],cons_dir:["Consumption vs today","Tüketim, bugüne göre"],wind_dir:["Wind vs today","Rüzgâr, bugüne göre"],wind_peak:["Windiest hour","En rüzgârlı saat"],wind_band:["Daily wind within ±15%","Günlük rüzgâr ±%15 bandında"],net_low:["Lowest consumption minus wind","En düşük tüketim eksi rüzgâr"]};
+const trNum=t=>String(t).replace(/(\d),(\d{3})/g,"$1\u2063$2").replace(/(\d)\.(\d)/g,"$1,$2").replace(/\u2063/g,".").replace(/([+-])(\d[\d.,]*)%/g,"$1%$2");
+function renderFC(j){
+  if(!j||!document.getElementById("fc-cur"))return;const TRL=window.paLang&&paLang.get()==="tr";
+  const L=TRL?{eb:"Türkiye, tahmin karnesi",t:"Tahmin karnesi",le:"Her gün 12:30 ile 12:59 arasında, gün öncesi piyasası kapandıktan sonra ve fiyat açıklanmadan önce sistem yarın için kontrol edilebilir altı iddia ortaya koyar: talep, tüketim, rüzgâr ve net yük. Fiyat yok. Ertesi sabah her iddia doğru ya da yanlış işaretlenir ve tüm kayıtlar saklanır.",cur:"Yarın için iddialar",made:"Yapıldı: ",none:"Bugünün tahmini 12:30–12:59 arasında yayınlanır.",last:"Son kontrol edilen gün",nolast:"Henüz kontrol edilen gün yok; ilk sonuç tahminden sonraki sabah gelir.",c1:"İddia",c2:"Gerçekleşen",c3:"Sonuç",rec:"Kayıt",r1:"İddia türü",r2:"Tuttu",r3:"Oran",ok:"Tuttu",bad:"Tutmadı",pend:"Bekliyor",days:" kontrol edilen gün",all:"Tüm iddialar",f1:"Kayıtlı tahmin",f2:"Kontrol edilen gün",f3:"Tutan iddia",f4:"Son tahmin",gday:"gün",note:"Tahmin dosyası yapıldığı anda kayda geçer ve sonradan değiştirilmez."}
+   :{eb:"Türkiye, forecast scorecard",t:"Forecast scorecard",le:"Every day between 12:30 and 12:59, after the day-ahead market has closed and before its price is out, the system makes six checkable claims about tomorrow: demand, consumption, wind and net load. No prices. The next morning each claim is marked right or wrong, and every record stays on file.",cur:"Claims for tomorrow",made:"Made: ",none:"Today's forecast is published between 12:30 and 12:59.",last:"Last checked day",nolast:"No day checked yet; the first result arrives the morning after the first forecast.",c1:"Claim",c2:"Actual",c3:"Result",rec:"Record",r1:"Claim type",r2:"Held",r3:"Rate",ok:"Held",bad:"Missed",pend:"Pending",days:" days checked",all:"All claims",f1:"Forecasts on record",f2:"Days checked",f3:"Claims held",f4:"Latest forecast",gday:"days",note:"A forecast file is recorded the moment it is made and never changed afterwards."};
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  ["eb","t","le"].forEach((k,i)=>set(["fc-eyebrow","fc-title","fc-lede"][i],L[k]));
+  const days=j.days||[],tx=c=>TRL?c.tr:c.en,dt=s=>new Date(s+"T00:00:00").toLocaleDateString(TRL?"tr-TR":"en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const tm=s=>new Date(s).toLocaleString(TRL?"tr-TR":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Europe/Istanbul"})+" TSİ";
+  const scored=days.filter(d=>d.claims.some(c=>"held" in c)),cur=days.filter(d=>!d.claims.some(c=>"held" in c)).pop();
+  set("fc-cur-t",L.cur+(cur?" · "+dt(cur.target_date):""));set("fc-cur-n",cur?L.made+tm(cur.made_at)+". "+L.note:L.none);
+  document.getElementById("fc-cur").innerHTML=cur?cur.claims.map((c,i)=>`<tr><td class="mono" style="color:var(--muted);width:28px">${i+1}</td><td>${esc(tx(c))}</td></tr>`).join(""):"";
+  const last=scored[scored.length-1];set("fc-last-t",L.last+(last?" · "+dt(last.target_date):""));set("fc-last-n",last?L.made+tm(last.made_at):L.nolast);
+  set("fc-h1",L.c1);set("fc-h2",L.c2);set("fc-h3",L.c3);
+  document.getElementById("fc-last").innerHTML=last?last.claims.map(c=>`<tr><td>${esc(tx(c))}</td><td class="mono">${esc(c.actual?(TRL?trNum(c.actual):c.actual):"—")}</td><td><span class="${c.held?"ok":"bad"}">${"held" in c?(c.held?"✓ "+L.ok:"✗ "+L.bad):L.pend}</span></td></tr>`).join(""):"";
+  const by={};let n=0,k=0;scored.forEach(d=>d.claims.forEach(c=>{if(!("held" in c))return;const b=by[c.id]=by[c.id]||{t:(FCT[c.id]||[tx(c),tx(c)])[TRL?1:0],n:0,k:0};b.n++;n++;if(c.held){b.k++;k++}}));
+  set("fc-rec-t",L.rec);set("fc-r1",L.r1);set("fc-r2",L.r2);set("fc-r3",L.r3);
+  const pct=(a,b)=>b?Math.round(100*a/b)+"%":"—";
+  document.getElementById("fc-rec").innerHTML=Object.values(by).map(b=>`<tr><td>${esc(b.t)}</td><td class="num mono">${b.k} / ${b.n}</td><td class="num mono">${pct(b.k,b.n)}</td></tr>`).join("")+(n?`<tr><td><b>${L.all}</b></td><td class="num mono"><b>${k} / ${n}</b></td><td class="num mono"><b>${pct(k,n)}</b></td></tr>`:"");
+  set("fc-rec-n",scored.length+L.days+" · "+L.note);
+  document.getElementById("fc-figs").innerHTML=[[L.f1,String(days.length),L.gday],[L.f2,String(scored.length),L.gday],[L.f3,pct(k,n),k+" / "+n],[L.f4,days.length?tm(days[days.length-1].made_at):"—",""]].map(([a,b,c])=>`<div class="fig"><div class="k">${esc(a)}</div><div class="v">${esc(b)}</div><div class="n">${esc(c)}</div></div>`).join("");
+}
+const FC={j:null};fetch("forecast-card.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{days:[]}).catch(()=>({days:[]})).then(j=>{FC.j=j;renderFC(j)});
+window.addEventListener("pa-lang",()=>renderFC(FC.j));
+
 
 function armTurnover(){const n=new Date(),ms=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime()+2000;setTimeout(()=>{renderPosts();armTurnover()},ms)}
 fetch("feed.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{FEED.items=j.items||[];renderPosts();armTurnover()})
