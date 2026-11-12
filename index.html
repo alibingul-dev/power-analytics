@@ -501,8 +501,12 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
         <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
-        <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
         <a href="#tr-news"    data-view="tr-news"    style="--c:var(--b1)"><span class="bar"></span>Energy news</a>
+      </div>
+      <a href="#tr-dash" data-view="tr-dash" style="--c:var(--b1)"><span class="bar"></span>Market dashboard</a>
+      <button class="sub prop-only" aria-expanded="true">Parameters<span class="chev"></span></button>
+      <div class="leaves prop-only">
+        <a href="#gip-prop" data-view="gip-prop" class="prop-only" title="Intraday (GİP) SmartBot formula and its backtest" style="--c:var(--muted)"><span class="bar"></span>GİP Prop Bot</a>
       </div>
       <a href="#tr-archive" data-view="tr-archive" style="--c:var(--b5)"><span class="bar"></span>Published archive</a>
       <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
@@ -523,7 +527,6 @@ a.btn{display:inline-block;text-decoration:none}
       <div class="leaves admin-only">
         <a href="#gb-weekly" data-view="gb-weekly" style="--c:var(--b2)"><span class="bar"></span>Weekly</a>
       </div>
-      <a href="#gip-prop" data-view="gip-prop" class="prop-only" title="Intraday (GİP) SmartBot formula and its backtest" style="--c:var(--muted)"><span class="bar"></span>GİP Prop Bot</a>
     </div>
 
     <button class="grp" aria-expanded="true">GREAT BRITAIN<span class="chev"></span></button>
@@ -608,7 +611,7 @@ a.btn{display:inline-block;text-decoration:none}
 
 <!-- ===== MARKET DASHBOARD ===== -->
 <section class="view" id="tr-dash">
-  <div class="eyebrow">Türkiye, daily, dashboard</div>
+  <div class="eyebrow">Türkiye, market dashboard</div>
   <h1 id="k-title">Loading…</h1>
   <p class="note-p">Türkiye's electricity market on one page: what happened yesterday, what we expect tomorrow, and how often our expectations turned out right. Point at any chart (or tap it on a phone) to see the numbers behind it.</p>
   <div class="fresh" id="k-fresh"></div>
@@ -650,21 +653,6 @@ a.btn{display:inline-block;text-decoration:none}
       <span><i style="background:var(--b1)"></i>Blue band: hours we expect to be cheapest</span>
       <span><i style="background:var(--b5)"></i>Red band: hours we expect to be dearest</span>
       <span><i style="background:var(--text)"></i>Net load, MWh</span>
-    </div>
-  </div>
-
-  <div class="grp-h"><span>Animated daily charts</span><span class="tagv" id="k-vlbl"></span></div>
-  <div class="panel vid">
-    <div class="vtabs" role="tablist" id="k-vtabs"></div>
-    <div class="vbody">
-      <div class="vframe"><video id="k-video" controls muted playsinline loop preload="none"></video></div>
-      <div class="vside">
-        <div class="vstrip-h">Recent</div>
-        <div class="vstrip" id="k-vdates"></div>
-        <div class="vlinks" id="k-vlinks"></div>
-        <div class="vhead"><div class="t" id="k-vkind"></div><div class="d" id="k-vdate"></div><p class="note" id="k-vnote"></p></div>
-        <div class="vcard" id="k-vcheck"></div>
-      </div>
     </div>
   </div>
 
@@ -1803,7 +1791,7 @@ $("k-csv").addEventListener("click",e=>{
   }
   proJSON("published","published.json").then(j=>{PUB=j||{};if(kind)pick(kind,day)}).catch(()=>{});
   window._vRepick=()=>{if(kind)pick(kind,day)};
-  fetch("media/index.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+  fetch("media/index.json").then(r=>r.ok?r.json():Promise.reject()).then(j=>{if(!document.getElementById("k-vtabs"))return;
     (j.items||[]).forEach(i=>{(M[i.kind]=M[i.kind]||[]).push(i)});
     Object.values(M).forEach(a=>a.sort((x,y)=>x.date.localeCompare(y.date)));
     const ks=ORDER.filter(k=>M[k]&&M[k].length);
