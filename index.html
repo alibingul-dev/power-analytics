@@ -560,6 +560,7 @@ a.btn{display:inline-block;text-decoration:none}
   <h1>Welcome</h1>
   <p class="lede">Power markets, read plainly. Every day this site turns open market data into a short, checkable reading of what happened and what the next day looks like.</p>
   <p class="note-p">Pick a market to start. Each page shows the day's chart first, then the written reading and how it was worked out. Nothing here is advice or a price forecast.</p>
+  <div class="panel" id="tl-box" data-noi18n><h2 id="tl-t"></h2><p class="note" id="tl-n" style="margin:0 0 12px"></p><div class="tablewrap"><table class="tl"><tbody id="tl-rows"></tbody></table></div></div>
   <div class="hcards">
     <a class="hcard" href="#tr-netload" data-view="tr-netload">
       <span class="hk-t">Türkiye</span>
@@ -1560,7 +1561,7 @@ function renderTRPage(vid,kind){
   else{box.innerHTML=hc+h;if(mp)box.appendChild(mp)}
 }
 function renderPosts(){
-  FEED.day=utcToday();
+  FEED.day=utcToday();if(typeof renderTimeline==="function")setTimeout(renderTimeline,0);
   renderTRPage("tr-netload","post2");renderTRPage("tr-daily","post1");
   renderTRPage("tr-news","news");
   renderTRPage("gb-analysis","gb_post1");
@@ -1593,6 +1594,26 @@ function renderMarkets(){
 fetch("markets.json",{cache:"no-cache"}).then(r=>r.json()).then(j=>{MK.d=j;renderMarkets()}).catch(()=>{});
 document.addEventListener("change",ev=>{if(ev.target.id==="mk-a"){MK.a=ev.target.value;renderMarkets()}else if(ev.target.id==="mk-b"){MK.b=ev.target.value;renderMarkets()}});
 window.addEventListener("pa-lang",renderMarkets);
+// Home timeline (Ali, 13 Nov 2026): today's publication slots, posts only (the Work Status idea, for readers).
+// Times are Istanbul; a slot is "published" when its post is in the feed with today's Istanbul date.
+const TL=[["09:25","news","tr-news",["Energy news","Enerji haberleri"],"TR"],["10:27","gb_post2","gb-outlook",["Day-ahead outlook","Gün öncesi görünüm"],"GB"],
+  ["11:35","post2","tr-netload",["Day-ahead outlook","Gün öncesi görünüm"],"TR"],["12:30","fcard","tr-dash",["Forecast scorecard","Tahmin karnesi"],"TR"],
+  ["14:12","gb_post1","gb-analysis",["Day-end scorecard","Gün sonu karnesi"],"GB"],["15:15","post1","tr-daily",["Day-end scorecard","Gün sonu karnesi"],"TR"]];
+function renderTimeline(){
+  const box=document.getElementById("tl-rows");if(!box)return;const TRL=window.paLang&&paLang.get()==="tr";
+  const ist=d=>new Date(d).toLocaleString("sv-SE",{timeZone:"Europe/Istanbul"}),now=ist(Date.now()),today=now.slice(0,10),hm=now.slice(11,16);
+  document.getElementById("tl-t").textContent=TRL?"Bugünün yayın akışı":"Today's publishing schedule";
+  document.getElementById("tl-n").textContent=TRL?"Saatler İstanbul saati (TSİ). Yayınlanan her içerik kendi sayfasında açılır.":"Times are Istanbul time (UTC+3). Each item opens on its own page once it is out.";
+  box.innerHTML=TL.map(([t,k,v,n,cc])=>{
+    let at=null;
+    if(k==="fcard"){const d=((FC.j||{}).days||[]).find(x=>(x.made_at||"").slice(0,10)===today);if(d)at=ist(d.made_at).slice(11,16)}
+    else{const e=(FEED.items||[]).find(x=>x.kind===k&&x.at&&ist(x.at).slice(0,10)===today);if(e)at=ist(e.at).slice(11,16)}
+    const late=!at&&hm>t&&((+hm.slice(0,2))*60+(+hm.slice(3)))-((+t.slice(0,2))*60+(+t.slice(3)))>90;
+    const st=at?`<span class="dir down">✓ ${TRL?"Yayında":"Out"} ${at}</span>`:late?`<span class="dir up">${TRL?"Gecikti":"Late"}</span>`:`<span class="dir flat">${TRL?"Bekleniyor":"Due"}</span>`;
+    return `<tr><td class="mono" style="width:70px">${t}</td><td style="width:44px"><span class="tag">${cc}</span></td><td>${at?`<a class="post" href="#${v}">${esc(n[TRL?1:0])}</a>`:esc(n[TRL?1:0])}</td><td class="num">${st}</td></tr>`}).join("");
+}
+window.addEventListener("pa-lang",renderTimeline);setInterval(renderTimeline,60000);
+
 // Published archive (Ali, 13 Nov 2026): everything on the site, no LinkedIn links; Daily / Weekly / Monthly,
 // each with the same categories as the menu. Türkiye only (Ali: "bu TR olduğu için TR de kalsın"); what a tier sees is set in arcLimit(). Data: archive/index.json + archive/<YYYY-MM>.json (lazy).
 window.ARC={cad:window.ARC_CAD||"daily",cat:"outlook",idx:null,months:{},open:window.ARC_OPEN||null};
@@ -1663,7 +1684,7 @@ function renderFC(j){
   set("fc-rec-n",scored.length+L.days+" · "+L.note);
   document.getElementById("fc-figs").innerHTML=[[L.f1,String(days.length),L.gday],[L.f2,String(scored.length),L.gday],[L.f3,pct(k,n),k+" / "+n],[L.f4,days.length?tm(days[days.length-1].made_at):"—",""]].map(([a,b,c])=>`<div class="fig"><div class="k">${esc(a)}</div><div class="v">${esc(b)}</div><div class="n">${esc(c)}</div></div>`).join("");
 }
-const FC={j:null};fetch("forecast-card.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{days:[]}).catch(()=>({days:[]})).then(j=>{FC.j=j;renderFC(j)});
+const FC={j:null};fetch("forecast-card.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{days:[]}).catch(()=>({days:[]})).then(j=>{FC.j=j;renderFC(j);if(typeof renderTimeline==="function")renderTimeline()});
 window.addEventListener("pa-lang",()=>renderFC(FC.j));
 
 
