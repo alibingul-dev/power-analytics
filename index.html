@@ -181,7 +181,7 @@ a.post:hover{text-decoration:underline}
 .ncard p{margin:4px 0 0;font-size:14.5px;max-width:70ch}
 .ncard .why{color:var(--muted)}
 .dir{font-size:12px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--line);white-space:nowrap}
-.dir.up{color:var(--b5);border-color:var(--b5)}.dir.down{color:var(--b2);border-color:var(--b2)}.dir.flat{color:var(--muted)}
+.dir.up{color:var(--b5);border-color:var(--b5)}.dir.down{color:var(--b2);border-color:var(--b2)}.dir.flat{color:var(--muted);border-color:var(--muted)}
 .wkday{margin:0 0 26px}
 .wkday h2{font-size:18px;margin:0 0 10px}
 details.wk{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:10px}
@@ -1392,9 +1392,9 @@ function newsBook(){
     for(const k of ["near","mid","long"]){const [a,b]=R[k],v=Math.min(en,b)-Math.max(st,a)+1;if(v>bv){bv=v;best=k}}return best};
   const TG={};(j.tags||[]).forEach(t=>TG[t.id]=TRL?t.tr:t.en);
   const its=(j.items||[]).filter(it=>!NB.tag||(it.tags||[]).includes(NB.tag));
-  const chip=it=>{const dr=it.direction||"flat",l=(TRL?it.dir_tr:it.dir_en),ty=TRL?it.type_tr:it.type_en;return `<span class="dir ${dr}">${esc(l&&l!=="-"?l:(dr==="up"?(TRL?"Yükseliş":"Up"):dr==="down"?(TRL?"Düşüş":"Down"):(TRL?"Etkisiz":"No effect")))}${ty&&ty!=="-"?" · "+esc(ty):""}</span>`};
+  const chip=it=>{const ne=/no effect|etkisiz/i.test(it.dir_en||"")||/etkisiz/i.test(it.dir_tr||""),dr=ne?"flat":(it.direction||"flat"),l=(TRL?it.dir_tr:it.dir_en),ty=TRL?it.type_tr:it.type_en;return `<span class="dir ${dr}">${esc(l&&l!=="-"?l:(dr==="up"?(TRL?"Yükseliş":"Up"):dr==="down"?(TRL?"Düşüş":"Down"):(TRL?"Etkisiz":"No effect")))}${ty&&ty!=="-"?" · "+esc(ty):""}</span>`};
   const per=it=>{const p=TRL?it.period_tr:it.period_en;return p&&p!=="-"?p:((it.start||"")+(it.end&&it.end!==it.start?" – "+it.end:""))};
-  const row=it=>`<li class="nb-i"><div class="nb-top">${chip(it)}<span class="nb-per">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %"+Math.round(it.p*100):"chance "+Math.round(it.p*100)+"%"):""}</span></div><p>${esc((TRL&&it.tr)||it.en)}</p><div class="nb-meta">${(it.tags||[]).map(t=>`<span class="tag">${esc(TG[t]||t)}</span>`).join(" ")}${it.url?` <a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||(TRL?"Kaynak":"Source"))} ↗</a>`:""}</div></li>`;
+  const row=it=>`<li class="nb-i"><div class="nb-top"><span class="nb-per">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %"+Math.round(it.p*100):"chance "+Math.round(it.p*100)+"%"):""}</span>${chip(it)}</div><p>${esc((TRL&&it.tr)||it.en)}</p><div class="nb-meta">${(it.tags||[]).map(t=>`<span class="tag">${esc(TG[t]||t)}</span>`).join(" ")}${it.url?` <a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||(TRL?"Kaynak":"Source"))} ↗</a>`:""}</div></li>`;
   const tags=`<div class="nb-tags arc-tabs">${(j.tags||[]).filter(t=>(j.items||[]).some(it=>(it.tags||[]).includes(t.id))).map(t=>`<button data-t="${t.id}" class="${NB.tag===t.id?"on":""}">${esc(TRL?t.tr:t.en)}</button>`).join("")}</div>`;
   const F=[["near",TRL?"Yakın dönem · yarın – 3 ay":"Near term · tomorrow – 3 months"],["mid",TRL?"Orta dönem · 3 ay – 2 yıl":"Mid term · 3 months – 2 years"],["long",TRL?"Uzun dönem · 2 yıl +":"Long term · 2 years +"]];
   let h=tags+F.map(([k,t])=>{const x=its.filter(it=>where(it)===k);return panel(t,"",x.length?`<ul class="nb-list">${x.map(row).join("")}</ul>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayıt yok.":"Nothing on record for this period."}</p>`)}).join("");
