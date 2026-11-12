@@ -519,6 +519,7 @@ a.btn{display:inline-block;text-decoration:none}
         <a href="#archive-daily"   data-view="archive-daily"   style="--c:var(--b5)"><span class="bar"></span>Daily</a>
         <a href="#archive-weekly"  data-view="archive-weekly"  style="--c:var(--b5)"><span class="bar"></span>Weekly</a>
         <a href="#archive-monthly" data-view="archive-monthly" style="--c:var(--b5)"><span class="bar"></span>Monthly</a>
+        <a href="#archive-news"    data-view="archive-news"    style="--c:var(--b5)"><span class="bar"></span>News</a>
       </div>
       <button class="sub pro-only" aria-expanded="true">Simulations<span class="chev"></span></button>
       <div class="leaves pro-only">
@@ -766,6 +767,7 @@ a.btn{display:inline-block;text-decoration:none}
   <div class="gatebox" id="tr-news-gate"></div>
   <h1 id="n-title">Loading…</h1>
   <p class="note-p" id="n-hook"></p>
+  <div id="nb-tagbar" data-noi18n></div>
   <div id="tr-news-post"></div>
   <div class="panel">
     <div id="tr-news-method"><p class="body">Only news that has a path to the electricity price makes the cut. Each item says which way it pushes the price and why, and every source is checked before it is used.</p></div>
@@ -1176,8 +1178,9 @@ const views=[...document.querySelectorAll(".view")],links=[...document.querySele
 function go(id){
   if(id==="gb-structure")id="markets";
   if(id==="tr-actual")id="tr-dash";  /* Actual vs outlook retired (Ali, 13 Nov 2026) */
-  const req=id,am=/^archive-(daily|weekly|monthly)$/.exec(id);if(id==="tr-archive")id="archive-daily";
-  if(am||id==="archive-daily"){window.ARC_CAD=(am||[0,"daily"])[1];id="tr-archive";if(window.ARC){ARC.cad=window.ARC_CAD;renderArc()}}
+  const am0=/^(archive-news)@(\d{4}-\d{2}-\d{2})$/.exec(id);if(am0){window.ARC_OPEN=am0[2];id=am0[1]}
+  const req=id,am=/^archive-(daily|weekly|monthly|news)$/.exec(id);if(id==="tr-archive")id="archive-daily";
+  if(am||id==="archive-daily"){window.ARC_CAD=(am||[0,"daily"])[1];id="tr-archive";if(window.ARC){ARC.cad=window.ARC_CAD;ARC.open=window.ARC_OPEN||null;window.ARC_OPEN=null;renderArc()}}
   if(!views.some(v=>v.id===id))id="home";
   if(id==="tr-bess"&&!document.documentElement.classList.contains("is-pro"))id="home";
   if((id==="tr-outlook"||id==="tr-dpf")&&document.documentElement.dataset.tier!=="custom")id="home";
@@ -1381,7 +1384,7 @@ function newsHorizons(d,ad){
 // grouped by the month they were published. One tag filter for the whole column. Data: news-book.json.
 const NB={j:null,tag:""};
 fetch("news-book.json",{cache:"no-cache"}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{NB.j=j;const b=document.getElementById("nb-box");if(b)b.innerHTML=newsBook()});
-document.addEventListener("click",ev=>{const b=ev.target.closest("#nb-box .nb-tags button");if(b){NB.tag=NB.tag===b.dataset.t?"":b.dataset.t;document.getElementById("nb-box").innerHTML=newsBook()}});
+document.addEventListener("click",ev=>{const b=ev.target.closest("#nb-tagbar .nb-tags button");if(b){NB.tag=NB.tag===b.dataset.t?"":b.dataset.t;document.getElementById("nb-box").innerHTML=newsBook()}});
 function newsBook(){
   const j=NB.j,TRL=window.paLang&&paLang.get()==="tr";
   if(!j)return `<div class="panel"><p class="note" style="margin:0">${TRL?"Haber defteri yükleniyor…":"Loading the news book…"}</p></div>`;
@@ -1394,10 +1397,11 @@ function newsBook(){
   const its=(j.items||[]).filter(it=>!NB.tag||(it.tags||[]).includes(NB.tag));
   const chip=it=>{const ne=/no effect|etkisiz/i.test(it.dir_en||"")||/etkisiz/i.test(it.dir_tr||""),dr=ne?"flat":(it.direction||"flat"),l=(TRL?it.dir_tr:it.dir_en),ty=TRL?it.type_tr:it.type_en;return `<span class="dir ${dr}">${esc(l&&l!=="-"?l:(dr==="up"?(TRL?"Yükseliş":"Up"):dr==="down"?(TRL?"Düşüş":"Down"):(TRL?"Etkisiz":"No effect")))}${ty&&ty!=="-"?" · "+esc(ty):""}</span>`};
   const per=it=>{const p=TRL?it.period_tr:it.period_en;return p&&p!=="-"?p:((it.start||"")+(it.end&&it.end!==it.start?" – "+it.end:""))};
-  const row=it=>`<li class="nb-i"><div class="nb-top"><span class="nb-per">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %"+Math.round(it.p*100):"chance "+Math.round(it.p*100)+"%"):""}</span>${chip(it)}</div><p>${esc((TRL&&it.tr)||it.en)}</p><div class="nb-meta">${(it.tags||[]).map(t=>`<span class="tag">${esc(TG[t]||t)}</span>`).join(" ")}${it.url?` <a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||(TRL?"Kaynak":"Source"))} ↗</a>`:""}</div></li>`;
+  const row=it=>`<li class="nb-i"><div class="nb-top"><span class="nb-per">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %"+Math.round(it.p*100):"chance "+Math.round(it.p*100)+"%"):""}</span>${chip(it)}</div><p>${esc((TRL&&it.tr)||it.en)}</p><div class="nb-meta">${(it.tags||[]).map(t=>`<span class="tag">${esc(TG[t]||t)}</span>`).join(" ")}${it.src?` <span class="nb-per">${esc(it.src)}</span>`:""}${it.post?` <a class="post" href="#archive-news@${it.post}">${TRL?"Arşivdeki post →":"Archived post →"}</a>`:""}</div></li>`;
   const tags=`<div class="nb-tags arc-tabs">${(j.tags||[]).filter(t=>(j.items||[]).some(it=>(it.tags||[]).includes(t.id))).map(t=>`<button data-t="${t.id}" class="${NB.tag===t.id?"on":""}">${esc(TRL?t.tr:t.en)}</button>`).join("")}</div>`;
   const F=[["near",TRL?"Yakın dönem · yarın – 3 ay":"Near term · tomorrow – 3 months"],["mid",TRL?"Orta dönem · 3 ay – 2 yıl":"Mid term · 3 months – 2 years"],["long",TRL?"Uzun dönem · 2 yıl +":"Long term · 2 years +"]];
-  let h=tags+F.map(([k,t])=>{const x=its.filter(it=>where(it)===k);return panel(t,"",x.length?`<ul class="nb-list">${x.map(row).join("")}</ul>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayıt yok.":"Nothing on record for this period."}</p>`)}).join("");
+  const tb=document.getElementById("nb-tagbar");if(tb)tb.innerHTML=tags;
+  let h=F.map(([k,t])=>{const x=its.filter(it=>where(it)===k);return panel(t,"",x.length?`<ul class="nb-list">${x.map(row).join("")}</ul>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayıt yok.":"Nothing on record for this period."}</p>`)}).join("");
   const past=its.filter(it=>where(it)==="past"),bym={};past.forEach(it=>{const m=(it.first_seen||"").slice(0,7);(bym[m]=bym[m]||[]).push(it)});
   const ms=Object.keys(bym).sort().reverse();
   h+=panel(TRL?"Geçmiş · etkisi bitmiş haberler":"Past · news whose period has ended",TRL?"Yayınlandığı aya göre klasörlü. Üstteki etiketlerle filtrelenir.":"Filed by the month it was published. Filter with the tags above.",
@@ -1590,35 +1594,36 @@ document.addEventListener("change",ev=>{if(ev.target.id==="mk-a"){MK.a=ev.target
 window.addEventListener("pa-lang",renderMarkets);
 // Published archive (Ali, 13 Nov 2026): everything on the site, no LinkedIn links; Daily / Weekly / Monthly,
 // each with the same categories as the menu. Türkiye only (Ali: "bu TR olduğu için TR de kalsın"); what a tier sees is set in arcLimit(). Data: archive/index.json + archive/<YYYY-MM>.json (lazy).
-window.ARC={cad:window.ARC_CAD||"daily",cat:"outlook",idx:null,months:{}};
-const ARC_CATS={daily:[["outlook","Day-ahead outlook","Gün öncesi görünüm",["post2"]],["scorecard","Day-end scorecard","Gün sonu karnesi",["post1"]],["news","Energy news","Enerji haberleri",["news"]],["fcard","Forecast scorecard","Tahmin karnesi",null,"tr-dash"]],
-  weekly:[["weekly","Weekly","Haftalık",[]]],monthly:[["monthly","Forecast vs actual","Tahmin ve Gerçekleşen",[]]]};
+window.ARC={cad:window.ARC_CAD||"daily",cat:"outlook",idx:null,months:{},open:window.ARC_OPEN||null};
+const ARC_CATS={daily:[["outlook","Day-ahead outlook","Gün öncesi görünüm",["post2"]],["scorecard","Day-end scorecard","Gün sonu karnesi",["post1"]],["fcard","Forecast scorecard","Tahmin karnesi",null,"tr-dash"]],
+  weekly:[["weekly","Weekly","Haftalık",[]]],news:[["news","Energy news","Enerji haberleri",["news"]]],monthly:[["monthly","Forecast vs actual","Tahmin ve Gerçekleşen",[]]]};
 function arcLimit(){/* days of archive per subscription tier; Free = last 7 days, Pro and above = all */return document.documentElement.classList.contains("is-pro")?Infinity:7}
 function renderArc(){
   const box=document.getElementById("a-rows");if(!box)return;const TRL=window.paLang&&paLang.get()==="tr";
   const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
-  const CN={daily:["Daily","Günlük"],weekly:["Weekly","Haftalık"],monthly:["Monthly","Aylık"]}[ARC.cad];
+  const CN={daily:["Daily","Günlük"],weekly:["Weekly","Haftalık"],monthly:["Monthly","Aylık"],news:["News","Haberler"]}[ARC.cad];
   set("arc-eb",(TRL?"Yayın arşivi · ":"Published archive · ")+CN[TRL?1:0]);set("arc-t",TRL?"Yayımlanan analizler":"Published analysis");
   set("arc-le",TRL?"Her yayın sitede, analiz ettiği güne göre dizinli. Bir güne tıkla, metni ve grafiği burada oku.":"Every post lives on this site, indexed by the day it analyses. Open a day to read the text and see the chart here.");
   const cats=ARC_CATS[ARC.cad];if(!cats.some(c=>c[0]===ARC.cat))ARC.cat=cats[0][0];
   document.getElementById("arc-cats").innerHTML=cats.map(c=>`<button data-c="${c[0]}" class="${c[0]===ARC.cat?"on":""}">${esc(c[TRL?2:1])}</button>`).join("");
-  const pro=arcLimit()===Infinity;
+  const lim=ARC.cad==="news"?Infinity:arcLimit(),pro=lim===Infinity;
   document.getElementById("arc-pro").hidden=pro;set("arc-pro-t",TRL?"Son yedi gün gösteriliyor. Tam arşiv erişim koduyla açılır.":"The last seven days are shown. The full archive opens with an access code.");
   const cat=cats.find(c=>c[0]===ARC.cat);
   if(cat[4]){box.innerHTML=`<div class="panel"><p class="note" style="margin:0">${TRL?"Bu bölümün kaydı kendi sayfasında tutuluyor: ":"This section keeps its record on its own page: "}<a class="post" href="#${cat[4]}">${esc(cat[TRL?2:1])} →</a></p></div>`;return}
   if(!ARC.idx){box.innerHTML='<p class="note-p">Loading…</p>';return}
   let rows=ARC.idx.filter(r=>cat[3].includes(r.kind));
   if(!rows.length){box.innerHTML=`<div class="panel"><p class="note" style="margin:0">${TRL?"Bu klasörde henüz yayın yok.":"Nothing published in this folder yet."}</p></div>`;return}
-  const days=[...new Set(rows.map(r=>r.analysis_date))].sort().reverse(),keep=days.slice(0,arcLimit());
+  const days=[...new Set(rows.map(r=>r.analysis_date))].sort().reverse(),keep=days.slice(0,lim);
   rows=rows.filter(r=>keep.includes(r.analysis_date));
   const LBL={post1:["Türkiye","Türkiye"],post2:["Türkiye","Türkiye"],news:["Türkiye","Türkiye"],gb_post1:["Great Britain","Birleşik Krallık"],gb_post2:["Great Britain","Birleşik Krallık"]};
   let h="",month="";
   keep.forEach((d,n)=>{const dt=new Date(d+"T00:00:00"),m=dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{month:"long",year:"numeric"});
     if(m!==month){if(month)h+="</div>";h+=`<div class="wkday"><h2>${m}</h2>`;month=m}
     const its=rows.filter(r=>r.analysis_date===d);
-    h+=`<details class="wk" data-d="${d}"${n===0?" open":""}><summary><b>${dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span>${""}</span></summary><div class="wkb">${its.map(r=>`<div class="arc-post" data-k="${esc(r.key)}" data-m="${r.month}"><p class="note-p">Loading…</p></div>`).join("")}</div></details>`});
+    h+=`<details class="wk" id="arc-${d}" data-d="${d}"${(ARC.open?d===ARC.open:n===0)?" open":""}><summary><b>${dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span>${""}</span></summary><div class="wkb">${its.map(r=>`<div class="arc-post" data-k="${esc(r.key)}" data-m="${r.month}"><p class="note-p">Loading…</p></div>`).join("")}</div></details>`});
   box.innerHTML=h+(month?"</div>":"");
   box.querySelectorAll("details.wk").forEach(dl=>{const f=()=>{if(dl.open)arcFill(dl)};dl.addEventListener("toggle",f);f()});
+  if(ARC.open){const t=document.getElementById("arc-"+ARC.open);if(t)setTimeout(()=>t.scrollIntoView({block:"start"}),50)}
 }
 function arcFill(dl){
   const TRL=window.paLang&&paLang.get()==="tr";
