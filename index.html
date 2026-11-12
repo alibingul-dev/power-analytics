@@ -1350,6 +1350,23 @@ function nativeNews(d){
   if(up)h+=panel("On the horizon","Things that have not happened yet but would move the price if they did. The last column is the estimated chance.",`<table><thead><tr><th>What</th><th>Direction</th><th>When</th><th class="num">Chance</th></tr></thead><tbody>${up}</tbody></table>`);
   return h;
 }
+
+// Energy news, right column (Ali, 13 Nov 2026): three frames by when an item starts to bite, counted from the
+// analysis day: near (tomorrow – 3 months), mid (3 months – 2 years), long (2 years +). News and "on the horizon"
+// items are both sorted into them.
+function newsHorizons(d,ad){
+  const TRL=window.paLang&&paLang.get()==="tr",a=(ad||"").split("-").map(Number),base=a[0]*12+a[1];
+  const lead=it=>{const s=(it.start||"").split("-").map(Number);return s[0]?s[0]*12+(s[1]||1)-base:(it.signal&&it.signal.lead_months)||0};
+  const F=[["near",TRL?"Yakın dönem · yarın – 3 ay":"Near term · tomorrow – 3 months",m=>m<=3],["mid",TRL?"Orta dönem · 3 ay – 2 yıl":"Mid term · 3 months – 2 years",m=>m>3&&m<=24],["long",TRL?"Uzun dönem · 2 yıl +":"Long term · 2 years +",m=>m>24]];
+  const L=it=>(TRL?it.tr:it.en)||it.en||{},sg=it=>it.signal||{};
+  const chip=it=>{const s=sg(it),dr=it.direction||"flat",lab=(TRL?s.dir_tr:s.dir_en);const ty=TRL?s.type_tr:s.type_en;return `<span class="dir ${dr}">${esc(lab&&lab!=="-"?lab:(dr==="up"?(TRL?"Yükseliş":"Up"):dr==="down"?(TRL?"Düşüş":"Down"):(TRL?"Etkisiz":"No effect")))}${ty&&ty!=="-"?" · "+esc(ty):""}</span>`};
+  const per=it=>{const s=sg(it),p=TRL?s.period_tr:s.period_en;return p&&p!=="-"?p:((it.start||"")+(it.end&&it.end!==it.start?" – "+it.end:""))};
+  const card=(it,up)=>{const e=L(it),b=(e.big||"").split("|");
+    return `<div class="ncard"><div class="top"><span class="tg">${esc(e.tag||(up?(TRL?"Ufukta":"On the horizon"):""))}</span>${chip(it)}</div>${b[0]?`<div class="big">${esc(b[0])}<small>${esc(b[1]||"")}</small></div>`:""}<p>${esc(e.sentence||e.summary||"")}</p>${e.impact?`<p><b>${esc(e.impact)}</b></p>`:""}<p class="why">${esc(e.why||"")}</p><p class="why">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %":"chance ")+Math.round(it.p*100)+(TRL?"":"%"):""}</p>${it.url?`<p class="why"><a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||(TRL?"Kaynak":"Source"))} ↗</a></p>`:""}</div>`};
+  const all=[...(d.news||[]).map(it=>[it,0]),...(d.upcoming||[]).map(it=>[it,1])];
+  return F.map(([k,t,f])=>{const its=all.filter(([it])=>f(lead(it)));
+    return panel(t,"",its.length?`<div class="ncards">${its.map(([it,up])=>card(it,up)).join("")}</div>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayda değer gelişme yok.":"Nothing notable for this period."}</p>`)}).join("");
+}
 function postBody(e){
   let h="";
   if(e.data){if(e.kind==="gb_post1")h+=nativeGB1(e.data);else if(e.kind==="gb_post2")h+=nativeGB2(e.data);else if(e.kind==="news")h+=nativeNews(e.data)}
@@ -1492,7 +1509,7 @@ function renderTRPage(vid,kind){
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
     else if(e.channel==="site")mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">Published on this site.</p>`;
   }
-  if(vid==="tr-news"&&e.data)h+=nativeNews(e.data);
+  if(vid==="tr-news"&&e.data)h+=newsHorizons(e.data,e.analysis_date);
   else h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   const mp=TRP&&mbox?mbox.closest(".panel"):null;
   if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp);fitTR(box)}
