@@ -1534,7 +1534,7 @@ function renderTRPage(vid,kind){
     const di=ptext.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)ptext=ptext.slice(0,di);
     ptext=ptext.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
   }
-  if(vid==="tr-news"){const ps=(e.text||"").split(/\n\s*\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#"));const hk=document.getElementById("n-hook");if(hk)hk.textContent=(window.paLang&&paLang.get()==="tr"?ps[1]:ps[0])||ps[0]||"";ptext=""}
+  if(vid==="tr-news"){const ps=(e.text||"").split(/\n\s*\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#"));const hk=document.getElementById("n-hook");if(hk)hk.textContent="";ptext=""}  /* headline not repeated: it is in the GIF and in its horizon frame (Ali, 13 Nov 2026) */
   const mbox=document.getElementById(vid+"-method");
   if(TRP&&mbox){
     if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
