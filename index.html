@@ -501,7 +501,6 @@ a.btn{display:inline-block;text-decoration:none}
       <button class="sub" aria-expanded="true">Daily<span class="chev"></span></button>
       <div class="leaves">
         <a href="#tr-netload" data-view="tr-netload" style="--c:var(--b1)"><span class="bar"></span>Day-ahead outlook</a>
-        <a href="#tr-actual"  data-view="tr-actual"  style="--c:var(--b1)"><span class="bar"></span>Actual vs outlook</a>
         <a href="#tr-daily"   data-view="tr-daily"   style="--c:var(--b1)"><span class="bar"></span>Day-end scorecard</a>
         <a href="#tr-dash"    data-view="tr-dash"    style="--c:var(--b1)"><span class="bar"></span>Forecast scorecard</a>
       </div>
@@ -1172,6 +1171,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")setMenu(false)});
 const views=[...document.querySelectorAll(".view")],links=[...document.querySelectorAll("a[data-view]")];
 function go(id){
   if(id==="gb-structure")id="markets";
+  if(id==="tr-actual")id="tr-dash";  /* Actual vs outlook retired (Ali, 13 Nov 2026) */
   const req=id,am=/^archive-(daily|weekly|monthly)$/.exec(id);if(id==="tr-archive")id="archive-daily";
   if(am||id==="archive-daily"){window.ARC_CAD=(am||[0,"daily"])[1];id="tr-archive";if(window.ARC){ARC.cad=window.ARC_CAD;renderArc()}}
   if(!views.some(v=>v.id===id))id="home";
@@ -1530,7 +1530,7 @@ window.addEventListener("pa-lang",renderMarkets);
 // Published archive (Ali, 13 Nov 2026): everything on the site, no LinkedIn links; Daily / Weekly / Monthly,
 // each with the same categories as the menu. Türkiye only (Ali: "bu TR olduğu için TR de kalsın"); what a tier sees is set in arcLimit(). Data: archive/index.json + archive/<YYYY-MM>.json (lazy).
 window.ARC={cad:window.ARC_CAD||"daily",cat:"outlook",idx:null,months:{}};
-const ARC_CATS={daily:[["outlook","Day-ahead outlook","Gün öncesi görünüm",["post2"]],["actual","Actual vs outlook","Gerçekleşen ve görünüm",null,"tr-actual"],["scorecard","Day-end scorecard","Gün sonu karnesi",["post1"]],["news","Energy news","Enerji haberleri",["news"]],["fcard","Forecast scorecard","Tahmin karnesi",null,"tr-dash"]],
+const ARC_CATS={daily:[["outlook","Day-ahead outlook","Gün öncesi görünüm",["post2"]],["scorecard","Day-end scorecard","Gün sonu karnesi",["post1"]],["news","Energy news","Enerji haberleri",["news"]],["fcard","Forecast scorecard","Tahmin karnesi",null,"tr-dash"]],
   weekly:[["weekly","Weekly","Haftalık",[]]],monthly:[["monthly","Forecast vs actual","Tahmin ve Gerçekleşen",[]]]};
 function arcLimit(){/* days of archive per subscription tier; Free = last 7 days, Pro and above = all */return document.documentElement.classList.contains("is-pro")?Infinity:7}
 function renderArc(){
