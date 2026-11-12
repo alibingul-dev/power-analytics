@@ -1671,7 +1671,10 @@ function renderFC(j){
   const tm=s=>new Date(s).toLocaleString(TRL?"tr-TR":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Europe/Istanbul"})+" TSİ";
   const scored=days.filter(d=>d.claims.some(c=>"held" in c)),cur=days.filter(d=>!d.claims.some(c=>"held" in c)).pop();
   set("fc-cur-t",L.cur+(cur?" · "+dt(cur.target_date):""));set("fc-cur-n",cur?L.made+tm(cur.made_at)+". "+L.note:L.none);
-  document.getElementById("fc-cur").innerHTML=cur?cur.claims.map((c,i)=>`<tr><td class="mono" style="color:var(--muted);width:28px">${i+1}</td><td>${esc(tx(c))}</td></tr>`).join(""):"";
+  document.getElementById("fc-cur").innerHTML=cur?cur.claims.map((c,i)=>`<tr><td class="mono" style="color:var(--muted);width:28px">${i+1}</td><td>${esc(tx(c))}</td></tr>`).join("")
+    :Object.values(FCT).map((t,i)=>`<tr><td class="mono" style="color:var(--muted);width:28px">${i+1}</td><td style="color:var(--muted)">${esc(t[TRL?1:0])}</td></tr>`).join("");  /* not empty before the first run: the six claim types */
+  if(!cur&&!days.length)set("fc-cur-t",TRL?"Her gün yapılacak altı iddia":"The six claims made every day");
+  if(!cur&&!days.length)set("fc-cur-n",TRL?"İlk tahmin 13 Kasım 2026, 12:30–12:59 TSİ arasında çıkar. Geriye dönük tahmin yazılmaz: kayıt yalnız fiyat açıklanmadan önce yapılan tahminlerden oluşur.":"The first forecast comes out on 13 November 2026 between 12:30 and 12:59 Istanbul time. No forecast is back-filled: the record only holds claims made before the price was out.");
   const last=scored[scored.length-1];set("fc-last-t",L.last+(last?" · "+dt(last.target_date):""));set("fc-last-n",last?L.made+tm(last.made_at):L.nolast);
   set("fc-h1",L.c1);set("fc-h2",L.c2);set("fc-h3",L.c3);
   document.getElementById("fc-last").innerHTML=last?last.claims.map(c=>`<tr><td>${esc(tx(c))}</td><td class="mono">${esc(c.actual?(TRL?trNum(c.actual):c.actual):"—")}</td><td><span class="${c.held?"ok":"bad"}">${"held" in c?(c.held?"✓ "+L.ok:"✗ "+L.bad):L.pend}</span></td></tr>`).join(""):"";
