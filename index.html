@@ -43,6 +43,7 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;margin:0}
 .back{display:inline-block;font-size:12.5px;color:var(--muted);text-decoration:none;margin-bottom:12px}
 .back:hover{color:var(--text)}
 .in-app .back,.in-app .back-top{display:none!important}
+.brand-site{display:flex;align-items:center;gap:10px}.brand-site img{border-radius:7px;flex:0 0 auto}.foot-name{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--text);margin-bottom:6px}
 .brand .name{font-family:var(--font-display);font-weight:800;font-size:17px;line-height:1.2}
 .brand .role{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
 .nav{padding:8px 0;flex:1}
@@ -483,7 +484,7 @@ a.btn{display:inline-block;text-decoration:none}
 <a class="acct" id="acct" href="#plans" data-view="plans" aria-label="Your plan"><span class="acct-l">Access</span> <b id="acct-t">Free</b></a>
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="rail"><span></span><span></span><span></span></button>
-  <div class="topbar-t"><strong>Ali Bingül</strong><em id="topbar-sec">Home</em></div>
+  <div class="topbar-t"><strong>Power Analytics</strong><em id="topbar-sec">Home</em></div>
   <a class="back-top" href="https://alibingul-dev.github.io/#work">← All work</a>
 </header>
 <div class="scrim" id="scrim" hidden></div>
@@ -491,8 +492,7 @@ a.btn{display:inline-block;text-decoration:none}
 <nav class="rail" id="rail" aria-label="Sections">
   <div class="brand">
     <a class="back" href="https://alibingul-dev.github.io/#work">← All work</a>
-    <div class="name">Ali Bingül</div>
-    <div class="role">Short-term power trading &amp; imbalance analytics</div>
+    <div class="name brand-site"><img src="icons/icon-192.png" alt="" width="28" height="28">Power Analytics</div>
   </div>
 
   <div class="nav">
@@ -550,7 +550,7 @@ a.btn{display:inline-block;text-decoration:none}
     </div>
   </div>
 
-  <div class="rail-foot">Built on EPİAŞ and Elexon open data by Ali Bingül, short-term power trader in Istanbul.<br><a href="https://www.linkedin.com/in/ali-bing%C3%BCl-b0666a30" target="_blank" rel="noopener">Follow on LinkedIn</a> · <a href="https://alibingul-dev.github.io/">About the author</a> · <a href="https://github.com/alibingul-dev">GitHub</a></div>
+  <div class="rail-foot"><div class="foot-name">Ali Bingül</div><a href="https://www.linkedin.com/in/ali-bing%C3%BCl-b0666a30" target="_blank" rel="noopener">Follow on LinkedIn</a> · <a href="https://alibingul-dev.github.io/">About the author</a> · <a href="https://github.com/alibingul-dev">GitHub</a></div>
 </nav>
 
 <main>
