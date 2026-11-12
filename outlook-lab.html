@@ -75,6 +75,15 @@ tr.year td{font-weight:500}
 .diff{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
 .disc{font-size:12px;color:var(--muted);margin:18px 0 0;max-width:120ch}
 .lang{display:none}
+@media (max-width:600px){ /* phone (Ali, 13 Nov 2026: "telefonda okumak zor") */
+ body{padding:16px 12px 48px;font-size:14px}h1{font-size:24px}.sub{font-size:13px}
+ .panel{padding:12px}.row{grid-template-columns:1fr 124px}
+ .kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:8px 10px}.kpi .v{font-size:18px}.kpi .l{font-size:11px}
+ .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}.tabs button,.tabs select{flex:0 0 auto}
+ table{font-size:12px}th,td{padding:6px 7px;white-space:nowrap}
+ .tbl th:first-child,.tbl td:first-child{position:sticky;left:0;z-index:1;background:var(--card);font-family:var(--font);text-align:left}
+ .tbl.tall{max-height:none}.chartbox{padding:10px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -347,6 +356,8 @@ function run(){ if(!P) return; render(compute(readInputs())); }
 function buildNews(){ $('newsList').innerHTML=''; NEWS.forEach((e,k)=>{ const l=document.createElement('div'); l.className='nrow'; l.innerHTML=`<label><input type="checkbox" id="n${k}" checked><span class="t"></span></label><span class="m"><input type="number" id="np${k}" value="${Math.round(e.p*100)}" min="0" max="100" step="5" aria-label="probability %"><em>%</em><input type="number" id="ni${k}" value="${Math.round(e.imp*100)}" min="-50" max="50" step="1" aria-label="impact %"><em>%</em></span>`; $('newsList').appendChild(l); }); }
 function getJSON(u){ return fetch(u,{cache:'no-cache'}).then(r=>{ if(!r.ok) throw new Error(u); return r.json(); }); }
 /* Owner-only: the Lab's data ships inside the encrypted custom bundle (custom.bundle.json); the code unlocks it in the browser. */
+/* phone: taller charts so lines and labels can be read */
+if(innerWidth<600)document.querySelectorAll('canvas').forEach(c=>c.setAttribute('height',c.id==='sensChart'?'420':'270'));
 let LAB=null;
 const b64u8=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
 async function labData(){

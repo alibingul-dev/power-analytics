@@ -1640,7 +1640,7 @@ function renderArc(){
   keep.forEach((d,n)=>{const dt=new Date(d+"T00:00:00"),m=dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{month:"long",year:"numeric"});
     if(m!==month){if(month)h+="</div>";h+=`<div class="wkday"><h2>${m}</h2>`;month=m}
     const its=rows.filter(r=>r.analysis_date===d);
-    h+=`<details class="wk" id="arc-${d}" data-d="${d}"${(ARC.open?d===ARC.open:n===0)?" open":""}><summary><b>${dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span>${""}</span></summary><div class="wkb">${its.map(r=>`<div class="arc-post" data-k="${esc(r.key)}" data-m="${r.month}"><p class="note-p">Loading…</p></div>`).join("")}</div></details>`});
+    h+=`<details class="wk" id="arc-${d}" data-d="${d}"${ARC.open&&d===ARC.open?" open":""}><summary><b>${dt.toLocaleDateString(TRL?"tr-TR":"en-GB",{weekday:"short",day:"numeric",month:"short"})}</b><span>${""}</span></summary><div class="wkb">${its.map(r=>`<div class="arc-post" data-k="${esc(r.key)}" data-m="${r.month}"><p class="note-p">Loading…</p></div>`).join("")}</div></details>`});
   box.innerHTML=h+(month?"</div>":"");
   box.querySelectorAll("details.wk").forEach(dl=>{const f=()=>{if(dl.open)arcFill(dl)};dl.addEventListener("toggle",f);f()});
   if(ARC.open){const t=document.getElementById("arc-"+ARC.open);if(t)setTimeout(()=>t.scrollIntoView({block:"start"}),50)}
