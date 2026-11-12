@@ -92,6 +92,7 @@ body.wide main{max-width:none}
 .home-link{margin-bottom:6px}
 .mk-pick{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end}.mk-pick label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}.mk-pick select{min-width:240px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:15px}.mk-vs{color:var(--muted);padding-bottom:10px}.mk-table td,.mk-table th{vertical-align:top}.mk-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:20px}.mk-table td.mk-na{color:var(--muted);font-style:italic}
 .arc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.arc-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}.arc-tabs button.on{color:var(--text);border-color:var(--b2)}.arc-post{margin-top:12px}.arc-post video{max-width:420px;width:100%;border-radius:10px;display:block;margin-bottom:12px}
+.nb-list{list-style:none;margin:0;padding:0}.nb-i{padding:12px 0;border-top:1px solid var(--line)}.nb-i:first-child{border-top:0;padding-top:0}.nb-i p{margin:6px 0}.nb-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.nb-per{font-size:12.5px;color:var(--muted)}.nb-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px}
 .trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
 .trgrid>.trL{position:relative;align-self:stretch}
 .trgrid>.trL>.panel{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;margin:0}
@@ -1373,6 +1374,35 @@ function newsHorizons(d,ad){
   return F.map(([k,t])=>{const its=all.filter(([it])=>home(it)===k);
     return panel(t,"",its.length?`<div class="ncards">${its.map(([it,up])=>card(it,up)).join("")}</div>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayda değer gelişme yok.":"Nothing notable for this period."}</p>`)}).join("");
 }
+
+// News book (Ali, 13 Nov 2026): every news item ever published, one sentence each, tagged; active items sit in
+// the horizon frame their period overlaps most, counted from today; finished items go to the past folder,
+// grouped by the month they were published. One tag filter for the whole column. Data: news-book.json.
+const NB={j:null,tag:""};
+fetch("news-book.json",{cache:"no-cache"}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{NB.j=j;const b=document.getElementById("nb-box");if(b)b.innerHTML=newsBook()});
+document.addEventListener("click",ev=>{const b=ev.target.closest("#nb-box .nb-tags button");if(b){NB.tag=NB.tag===b.dataset.t?"":b.dataset.t;document.getElementById("nb-box").innerHTML=newsBook()}});
+function newsBook(){
+  const j=NB.j,TRL=window.paLang&&paLang.get()==="tr";
+  if(!j)return `<div class="panel"><p class="note" style="margin:0">${TRL?"Haber defteri yükleniyor…":"Loading the news book…"}</p></div>`;
+  const now=new Date(),base=now.getFullYear()*12+now.getMonth()+1;
+  const mo=(x,d)=>{const s=(x||"").split("-").map(Number);return s[0]?s[0]*12+(s[1]||1)-base:d};
+  const R={near:[0,2],mid:[3,23],long:[24,1e4]};
+  const where=it=>{const en=mo(it.end,mo(it.start,0));if(en<0)return "past";const st=Math.max(0,mo(it.start,0));let best="near",bv=-1;
+    for(const k of ["near","mid","long"]){const [a,b]=R[k],v=Math.min(en,b)-Math.max(st,a)+1;if(v>bv){bv=v;best=k}}return best};
+  const TG={};(j.tags||[]).forEach(t=>TG[t.id]=TRL?t.tr:t.en);
+  const its=(j.items||[]).filter(it=>!NB.tag||(it.tags||[]).includes(NB.tag));
+  const chip=it=>{const dr=it.direction||"flat",l=(TRL?it.dir_tr:it.dir_en),ty=TRL?it.type_tr:it.type_en;return `<span class="dir ${dr}">${esc(l&&l!=="-"?l:(dr==="up"?(TRL?"Yükseliş":"Up"):dr==="down"?(TRL?"Düşüş":"Down"):(TRL?"Etkisiz":"No effect")))}${ty&&ty!=="-"?" · "+esc(ty):""}</span>`};
+  const per=it=>{const p=TRL?it.period_tr:it.period_en;return p&&p!=="-"?p:((it.start||"")+(it.end&&it.end!==it.start?" – "+it.end:""))};
+  const row=it=>`<li class="nb-i"><div class="nb-top">${chip(it)}<span class="nb-per">${esc(per(it))}${it.p!=null?" · "+(TRL?"olasılık %"+Math.round(it.p*100):"chance "+Math.round(it.p*100)+"%"):""}</span></div><p>${esc((TRL&&it.tr)||it.en)}</p><div class="nb-meta">${(it.tags||[]).map(t=>`<span class="tag">${esc(TG[t]||t)}</span>`).join(" ")}${it.url?` <a class="post" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.src||(TRL?"Kaynak":"Source"))} ↗</a>`:""}</div></li>`;
+  const tags=`<div class="nb-tags arc-tabs">${(j.tags||[]).filter(t=>(j.items||[]).some(it=>(it.tags||[]).includes(t.id))).map(t=>`<button data-t="${t.id}" class="${NB.tag===t.id?"on":""}">${esc(TRL?t.tr:t.en)}</button>`).join("")}</div>`;
+  const F=[["near",TRL?"Yakın dönem · yarın – 3 ay":"Near term · tomorrow – 3 months"],["mid",TRL?"Orta dönem · 3 ay – 2 yıl":"Mid term · 3 months – 2 years"],["long",TRL?"Uzun dönem · 2 yıl +":"Long term · 2 years +"]];
+  let h=tags+F.map(([k,t])=>{const x=its.filter(it=>where(it)===k);return panel(t,"",x.length?`<ul class="nb-list">${x.map(row).join("")}</ul>`:`<p class="note" style="margin:0">${TRL?"Bu dönem için kayıt yok.":"Nothing on record for this period."}</p>`)}).join("");
+  const past=its.filter(it=>where(it)==="past"),bym={};past.forEach(it=>{const m=(it.first_seen||"").slice(0,7);(bym[m]=bym[m]||[]).push(it)});
+  const ms=Object.keys(bym).sort().reverse();
+  h+=panel(TRL?"Geçmiş · etkisi bitmiş haberler":"Past · news whose period has ended",TRL?"Yayınlandığı aya göre klasörlü. Üstteki etiketlerle filtrelenir.":"Filed by the month it was published. Filter with the tags above.",
+    ms.length?ms.map((m,i)=>`<details class="wk"${i===0?" open":""}><summary><b>${new Date(m+"-01T00:00:00").toLocaleDateString(TRL?"tr-TR":"en-GB",{month:"long",year:"numeric"})}</b><span class="hk">${bym[m].length}</span></summary><div class="wkb"><ul class="nb-list">${bym[m].map(row).join("")}</ul></div></details>`).join(""):`<p class="note" style="margin:0">${TRL?"Henüz etkisi bitmiş haber yok.":"No news has run its course yet."}</p>`);
+  return h;
+}
 function postBody(e){
   let h="";
   if(e.data){if(e.kind==="gb_post1")h+=nativeGB1(e.data);else if(e.kind==="gb_post2")h+=nativeGB2(e.data);else if(e.kind==="news")h+=nativeNews(e.data)}
@@ -1515,7 +1545,7 @@ function renderTRPage(vid,kind){
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
     else if(e.channel==="site")mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">Published on this site.</p>`;
   }
-  if(vid==="tr-news"&&e.data)h+=newsHorizons(e.data,e.analysis_date);
+  if(vid==="tr-news")h+=`<div id="nb-box">${newsBook()}</div>`;
   else h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   const mp=TRP&&mbox?mbox.closest(".panel"):null;
   if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp);fitTR(box)}
