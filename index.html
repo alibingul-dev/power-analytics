@@ -92,7 +92,7 @@ body.wide main{max-width:none}
 .hk-go{margin-top:auto;color:var(--b1);font-size:14.5px}
 .home-link{margin-bottom:6px}
 .mk-pick{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end}.mk-pick label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}.mk-pick select{min-width:240px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:15px}.mk-vs{color:var(--muted);padding-bottom:10px}.mk-table td,.mk-table th{vertical-align:top}.mk-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:20px}.mk-table td.mk-na{color:var(--muted);font-style:italic}
-.arc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.arc-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}.arc-tabs button.on{color:var(--text);border-color:var(--b2)}.arc-post{margin-top:12px}.arc-post video{max-width:420px;width:100%;border-radius:10px;display:block;margin-bottom:12px}
+.arc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.arc-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}.arc-tabs button.on{color:var(--text);border-color:var(--b2)}.arc-post{margin-top:12px}.arc-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:18px;align-items:start}.arc-grid.one{grid-template-columns:1fr}.arc-grid .panel{margin:0}.arc-l video{width:100%;border-radius:10px;display:block}.arc-hook{margin:0 0 12px}@media (max-width:880px){.arc-grid{grid-template-columns:1fr}}
 .nb-ccb{font-weight:600;letter-spacing:.04em}.nb-sep{width:1px;background:var(--line);margin:0 4px}.nb-cc{font-weight:600}.nb-list{list-style:none;margin:0;padding:0}.nb-i{padding:12px 0;border-top:1px solid var(--line)}.nb-i:first-child{border-top:0;padding-top:0}.nb-i p{margin:6px 0}.nb-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.nb-per{font-size:12.5px;color:var(--muted)}.nb-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px}
 #tr-news .trgrid>.trL>.panel{justify-content:flex-start}#tr-news .trgrid>.trL .clip{flex:0 0 auto;position:sticky;top:24px}
 .trgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
@@ -1645,12 +1645,28 @@ function renderArc(){
   box.querySelectorAll("details.wk").forEach(dl=>{const f=()=>{if(dl.open)arcFill(dl)};dl.addEventListener("toggle",f);f()});
   if(ARC.open){const t=document.getElementById("arc-"+ARC.open);if(t)setTimeout(()=>t.scrollIntoView({block:"start"}),50)}
 }
+
+// Archived post in the same frame as today's page (Ali, 13 Nov 2026): hook line, GIF left, text right,
+// method/sources panel below; header line, disclaimer and hashtags stripped like the live pages.
+function arcFrame(e,TRL){
+  const med=(TRL&&e.media_tr)||e.media;let t=((TRL&&e.text_tr)||e.text||"").trim(),hook="",method="";
+  const ls=t.split("\n");
+  if(ls[0]&&ls[0].includes(" · ")){if(ls[1]&&ls[1].trim()){hook=ls[1].trim();t=ls.slice(2).join("\n")}else t=ls.slice(1).join("\n")}
+  const di=t.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)t=t.slice(0,di);
+  t=t.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
+  const mi=t.search(/(^|\n)(METHOD|YÖNTEM|SOURCES|KAYNAKLAR)\s*\n/);
+  if(mi>=0){let end=t.indexOf("\n\n",t.indexOf("\n",mi+1));if(end<0)end=t.length;method=t.slice(mi,end).replace(/^\n?(METHOD|YÖNTEM|SOURCES|KAYNAKLAR)\s*\n/,"").split("\n").filter(l=>!/^\s*🕐/.test(l)).join("\n").trim();t=(t.slice(0,mi)+t.slice(end)).replace(/\n{3,}/g,"\n\n").trim()}
+  else{const si=t.search(/(^|\n)(Source|Kaynak):/);if(si>=0){let end=t.indexOf("\n\n",si+1);if(end<0)end=t.length;method=t.slice(si,end).trim();t=(t.slice(0,si)+t.slice(end)).replace(/\n{3,}/g,"\n\n").trim()}}
+  if(e.kind==="news"){const ps=(e.text||"").split(/\n\s*\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#"));hook="";t=(TRL?ps[1]:ps[0])||ps[0]||""}
+  const vid=med?`<div class="panel arc-l"><video controls muted loop playsinline preload="none" poster="${esc(med.poster)}" src="${esc(med.src)}"></video></div>`:"";
+  const txt=`<div class="panel arc-r">${t?`<p class="posttext">${esc(t)}</p>`:`<p class="note" style="margin:0">${TRL?"Bu yayının metni kayıtlı değil.":"The text of this post is not on file."}</p>`}</div>`;
+  return (hook?`<p class="note-p arc-hook">${esc(hook)}</p>`:"")+`<div class="arc-grid${med?"":" one"}">${vid}${txt}</div>`+(method?`<div class="panel"><p class="posttext" style="margin:0">${esc(method)}</p></div>`:"");
+}
 function arcFill(dl){
   const TRL=window.paLang&&paLang.get()==="tr";
   dl.querySelectorAll(".arc-post").forEach(el=>{const m=el.dataset.m;
     const go=list=>{const e=list.find(x=>x.key===el.dataset.k);if(!e){el.innerHTML="";return}
-      const med=(TRL&&e.media_tr)||e.media,txt=(TRL&&e.text_tr)||e.text;
-      el.innerHTML=(med?`<video controls muted loop playsinline preload="none" poster="${esc(med.poster)}" src="${esc(med.src)}"></video>`:"")+(txt?`<p class="posttext">${esc(txt)}</p>`:`<p class="note" style="margin:0">${TRL?"Bu yayının metni kayıtlı değil.":"The text of this post is not on file."}</p>`)};
+      el.innerHTML=arcFrame(e,TRL)};
     if(ARC.months[m])go(ARC.months[m]);else fetch("archive/"+m+".json",{cache:"no-cache"}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(l=>{ARC.months[m]=l;go(l)});
   });
 }
