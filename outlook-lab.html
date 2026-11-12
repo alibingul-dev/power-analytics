@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Price Outlook Lab</title>
+<title>Forecast vs actual</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;
@@ -83,7 +83,7 @@ tr.year td{font-weight:500}
 </head>
 <body>
 <div class="top">
-  <div><h1>Price Outlook Lab</h1><div class="sub" id="subtitle"></div></div>
+  <div><h1>Forecast vs actual</h1><div class="sub" id="subtitle"></div></div>
   <div class="lang"><button id="langTR" aria-pressed="true">TR</button><button id="langEN">EN</button></div>
 </div>
 <div class="wrap">
@@ -338,7 +338,7 @@ function render(R0){ const R=toUnit(R0); const t=I[L]; const first=R[0]; const R
   if(tab!=='D'&&tab!=='H') drawShape(null,null); if(tab!=='X') drawSens(false);
   $('table').innerHTML=html; $('table').parentElement.classList.toggle('tall',tab==='H'); const ms=$('mSel'); ms.style.display=(tab==='D'||tab==='H')?'':'none'; if(ms.dataset.k!==P.cut+L){ const v=ms.value; ms.innerHTML=R.map((x,i)=>`<option value="${i}">${lab(x.y,x.m)}</option>`).join(''); ms.value=(v&&+v<R.length)?v:'0'; ms.dataset.k=P.cut+L; } }
 function applyLang(){ if(!P) return; const t=I[L]; document.querySelectorAll('[data-i]').forEach(el=>{ const k=el.dataset.i; if(t[k]!=null){ if(el.tagName==='LABEL'&&el.querySelector('small')){ el.childNodes[0].textContent=t[k]+' '; if(t.tips[k]){ el.dataset.tip=t.tips[k]; el.tabIndex=0; } if(t.subs[k]) el.querySelector('small').textContent=t.subs[k]; } else el.textContent=t[k]; } });
-  const ce=new Date(Date.UTC(+P.cut.slice(0,4),+P.cut.slice(5,7),0)); $('subtitle').textContent=t.sub.replace('{end}',ce.toLocaleDateString(L==='tr'?'tr-TR':'en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})); $('disc').textContent=t.disc; $('ver').textContent=t.ver.replace('{e}',P.engine_version).replace(/\{c\}/g,P.data_cutoff).replace('{t}',P.tariff_series_version); $('langTR').setAttribute('aria-pressed',L==='tr'); $('langEN').setAttribute('aria-pressed',L==='en');
+  const ce=new Date(Date.UTC(+P.cut.slice(0,4),+P.cut.slice(5,7),0)); $('subtitle').textContent=t.sub.replace('{end}',ce.toLocaleDateString(L==='tr'?'tr-TR':'en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})); $('disc').textContent=t.disc; document.querySelector('h1').textContent=L==='tr'?'Tahmin ve Gerçekleşen':'Forecast vs actual'; $('ver').textContent=t.ver.replace('{e}',P.engine_version).replace(/\{c\}/g,P.data_cutoff).replace('{t}',P.tariff_series_version); $('langTR').setAttribute('aria-pressed',L==='tr'); $('langEN').setAttribute('aria-pressed',L==='en');
   document.querySelectorAll('#newsList label span.t').forEach((s,k)=>{ s.textContent=L==='tr'?NEWS[k].tr:NEWS_EN[NEWS[k].id]; }); }
 let NOTES=null; try{fetch('scorecard-notes.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{NOTES=j; if(tab==='S') run();}).catch(()=>{});}catch(e){}
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -371,7 +371,7 @@ $('langTR').onclick=()=>{L='tr';applyLang();run();}; $('langEN').onclick=()=>{L=
 labData().then(lab=>{ LAB=lab; const idx=lab.index, rl=lab.realized, nw=lab.news||{events:[]}; IDX=idx; REAL=rl; NEWS=nw.events||[]; buildNews(); SNAPS=idx.months.slice().sort(); LATEST=SNAPS[SNAPS.length-1]; $('asof').innerHTML=SNAPS.slice().reverse().map(c=>`<option value="${c}">${c}</option>`).join(''); return loadSnap(LATEST); }).catch(()=>{ document.body.innerHTML='<div style="max-width:520px;margin:18vh auto;padding:0 16px;text-align:center;font-family:system-ui,sans-serif;color:#E6EDF5"><h2 style="margin:0 0 8px">Not available</h2><p style="color:#8A9BB0">This page is not open.</p></div>'; });
 const XL={
  tr:{file:"price-outlook-lab",sh:["Kapak","Tanımlar ve Varsayımlar","Aylık","Çeyrek ve yıl","Geriye dönük test","Karne","Kaynaklar","Günlük","Saatlik"],
-  title:"Price Outlook Lab · Türkiye PTF aylık görünümü",
+  title:"Tahmin ve Gerçekleşen · Türkiye PTF aylık görünümü",
   cover:[["Motor sürümü","{e}"],["Veri kesimi (çalıştırma ayı)","{c}"],["Tarife serisi sürümü","{t}"],["İndirme zamanı (Europe/Istanbul, UTC+3)","{now}"],["Girdiler","{inp}"],["Ufuk","24 ay (test edilen en uzun vade); 2031 sonuna kadar iki test edilmemiş senaryo ayrı sayfada"],["Birim","Seçilen para birimi aşağıda; Geriye dönük test ve Karne her zaman $/MWh"]],
   inpDef:"motor varsayılanları",inpUser:"kullanıcı senaryosu (Tanımlar ve Varsayımlar sayfasında)",
   warn:"Uyarı",
@@ -391,7 +391,7 @@ const XL={
   src:[["EPİAŞ Şeffaflık Platformu","Saatlik ve aylık PTF (TL/MWh, $/MWh); kur, PTF'nin TL ve $ değerlerinden türetilir","https://seffaflik.epias.com.tr"],["BOTAŞ toptan satış tarifeleri","Elektrik üretimi amaçlı gaz tarifesi, 2021-08..2026-11, ay ay kaynaklı","https://github.com/alibingul-dev/power-analytics/blob/main/engine/history/botas_power_tariff.json"],["Motor kodu","engine/v2t.py, engine/snapshots.py (tüm çalıştırmalar tek komutla üretilir)","https://github.com/alibingul-dev/power-analytics/tree/main/engine"]],
   yes:"evet",no:"hayır",on:"açık",off:"kapalı"},
  en:{file:"price-outlook-lab",sh:["Cover","Definitions and assumptions","Monthly","Quarters and years","Backtest","Scorecard","Sources","Daily","Hourly"],
-  title:"Price Outlook Lab · Turkey day-ahead monthly outlook",
+  title:"Forecast vs actual · Turkey day-ahead monthly outlook",
   cover:[["Engine version","{e}"],["Data cut-off (run month)","{c}"],["Tariff series version","{t}"],["Downloaded (Europe/Istanbul, UTC+3)","{now}"],["Inputs","{inp}"],["Horizon","24 months (longest tested); two untested scenarios to the end of 2031 on a separate sheet"],["Unit","Chosen currency below; Backtest and Scorecard are always $/MWh"]],
   inpDef:"engine defaults",inpUser:"user scenario (see Definitions and assumptions)",
   warn:"Notice",
