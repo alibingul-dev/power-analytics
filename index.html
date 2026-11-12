@@ -761,11 +761,13 @@ a.btn{display:inline-block;text-decoration:none}
 </section>
 
 <section class="view" id="tr-news">
-  <div class="eyebrow">Türkiye, daily, today's post</div>
-  <h1>Energy news</h1>
-  <p class="lede">The energy headlines from Türkiye that can move the power price, with what each one means.</p>
-  <p class="note-p">Only news that has a path to the electricity price makes the cut. Each item says which way it pushes the price and why. Daily shows only today's post; the page turns over at 00:00 UTC.</p>
-  <div id="tr-news-body"><p class="note-p">Loading…</p></div>
+  <div class="gatebox" id="tr-news-gate"></div>
+  <h1 id="n-title">Loading…</h1>
+  <p class="note-p" id="n-hook"></p>
+  <div id="tr-news-post"></div>
+  <div class="panel">
+    <div id="tr-news-method"><p class="body">Only news that has a path to the electricity price makes the cut. Each item says which way it pushes the price and why, and every source is checked before it is used.</p></div>
+  </div>
 </section>
 
 <section class="view" id="tr-weekly">
@@ -1182,7 +1184,7 @@ function go(id){
   const frame=id==="tr-bess"||id==="tr-outlook"||id==="tr-dpf"||id==="gip-prop";
   views.forEach(v=>v.classList.toggle("on",v.id===id));
   document.body.classList.toggle("full",frame);
-  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis");
+  document.body.classList.toggle("wide",id==="tr-netload"||id==="tr-daily"||id==="gb-analysis"||id==="tr-news");
   if(frame){const f=document.querySelector("#"+id+" iframe");if(f&&!f.getAttribute("src"))f.src=f.dataset.src;}
   links.forEach(a=>a.setAttribute("aria-current",(a.dataset.view===id||a.dataset.view===req)?"page":"false"));
   const owner=document.querySelector(`a[data-view="${id}"]`)||document.querySelector(`a[data-view="${req}"]`);
@@ -1457,8 +1459,9 @@ function renderTRPage(vid,kind){
   sec.classList.toggle("stale",!e);
   if(!e){gate.innerHTML=`<h1>Not out yet</h1>`+head+`<div class="panel"><p class="note" style="margin:0">Today's ${PK[kind].toLowerCase()} has not been published yet. <span class="admin-only">Earlier days are under <a class="post" href="#${kind.startsWith("gb")?"gb":"tr"}-weekly">Weekly</a>.</span></p></div>`;{const m0=document.getElementById(vid+"-method"),p0=m0&&m0.closest(".panel");if(p0&&box.contains(p0))sec.appendChild(p0)}box.innerHTML="";return}
   const meta=head+`<p class="pday">${covers(e)} · published ${new Date(e.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})} UTC</p>`;
-  const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis";
+  const TRP=vid==="tr-netload"||vid==="tr-daily"||vid==="gb-analysis"||vid==="tr-news";
   if(vid==="gb-analysis")locTitle("g-title",e.analysis_date);
+  if(vid==="tr-news")locTitle("n-title",e.analysis_date);
   gate.innerHTML=TRP?"":meta;
   let h="",hc="";
   const LG=!!(TRP&&window.paLang&&paLang.get()==="tr"),med=(LG&&e.media_tr)||e.media;
@@ -1467,10 +1470,11 @@ function renderTRPage(vid,kind){
   let ptext=(LG&&e.text_tr)||e.text||"";
   if(TRP){
     const ls=ptext.split("\n");
-    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById({"tr-netload":"d-hook","tr-daily":"m-hook","gb-analysis":"g-hook"}[vid]);if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
+    if(ls[0]&&ls[0].includes(" · ")){const hk=document.getElementById({"tr-netload":"d-hook","tr-daily":"m-hook","gb-analysis":"g-hook","tr-news":"n-hook"}[vid]);if(hk&&ls[1]&&ls[1].trim())hk.textContent=ls[1].trim();ptext=ls.slice(ls[1]&&ls[1].trim()?2:1).join("\n")}
     const di=ptext.search(/(^|\n)(Descriptive analysis of published data|Yayımlanmış verilerin betimleyici analizi)/);if(di>=0)ptext=ptext.slice(0,di);
     ptext=ptext.replace(/(\n\s*#\S+(\s+#\S+)*\s*)+$/,"").trim();
   }
+  if(vid==="tr-news"){const ps=(e.text||"").split(/\n\s*\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#"));const hk=document.getElementById("n-hook");if(hk)hk.textContent=(window.paLang&&paLang.get()==="tr"?ps[1]:ps[0])||ps[0]||"";ptext=""}
   const mbox=document.getElementById(vid+"-method");
   if(TRP&&mbox){
     if(!mbox.dataset.def)mbox.dataset.def=mbox.innerHTML;
@@ -1488,7 +1492,8 @@ function renderTRPage(vid,kind){
     if(url)mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a></p>`;
     else if(e.channel==="site")mbox.innerHTML+=`<p class="note" style="margin:14px 0 0">Published on this site.</p>`;
   }
-  h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
+  if(vid==="tr-news"&&e.data)h+=nativeNews(e.data);
+  else h+=panel(TRP?"":"The post",url&&!TRP?`As published on LinkedIn. <a class="post" href="${url}" target="_blank" rel="noopener">Open on LinkedIn ↗</a>`:(!TRP&&e.channel==="site"?"Published on this site.":""),ptext?`<p class="posttext">${esc(ptext)}</p>`:`<p class="note" style="margin:0">The text of this post is not on file.</p>`);
   const mp=TRP&&mbox?mbox.closest(".panel"):null;
   if(TRP&&hc){box.innerHTML=`<div class="trgrid"><div class="trL">${hc}</div><div class="trR">${h}</div></div>`;if(mp)box.querySelector(".trR").appendChild(mp);fitTR(box)}
   else{box.innerHTML=hc+h;if(mp)box.appendChild(mp)}
@@ -1496,7 +1501,7 @@ function renderTRPage(vid,kind){
 function renderPosts(){
   FEED.day=utcToday();
   renderTRPage("tr-netload","post2");renderTRPage("tr-daily","post1");
-  renderDailyPost("tr-news","news","tr-weekly");
+  renderTRPage("tr-news","news");
   renderTRPage("gb-analysis","gb_post1");
   renderDailyPost("gb-outlook","gb_post2","gb-weekly");
   renderWeekly("tr-weekly","tr");renderWeekly("gb-weekly","gb");
