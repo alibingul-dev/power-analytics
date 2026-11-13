@@ -447,17 +447,17 @@ function buildFx(c){
   const fl=c.floor==='yok'?null:+c.floor;
   const hardBuy=`RTIME < 10 || Math.abs(${P}) > ${L}${sl?` || (${ES} > 0 && BESTSELLP >= ${ES} + ${sl})`:''}`;
   const hardSell=`RTIME < 10 || Math.abs(${P}) > ${L}${sl?` || (${EB} > 0 && BESTBUYP > 0 && BESTBUYP <= ${EB} - ${sl})`:''}`;
-  const shortX=fl==null?IF(forceBuy,'MAXDAMP()',`BESTSELLP + ${tol}`):IF(hardBuy,'MAXDAMP()',IF(`RTIME < ${c.close}`,`${R} + ${fl}`,`BESTSELLP + ${tol}`));
-  const longX=fl==null?IF(forceSell,'0',`BESTBUYP - ${tol}`):IF(hardSell,'0',IF(`RTIME < ${c.close}`,`${R} - ${fl}`,`BESTBUYP - ${tol}`));
+  const shortX=fl==null?IF(forceBuy,'MAXDAMP()',IF(`BESTSELLP > 0`,`BESTSELLP + ${tol}`,'0')):IF(hardBuy,'MAXDAMP()',IF(`RTIME < ${c.close}`,`${R} + ${fl}`,IF(`BESTSELLP > 0`,`BESTSELLP + ${tol}`,'0')));
+  const longX=fl==null?IF(forceSell,'0',IF(`BESTBUYP > 0`,`BESTBUYP - ${tol}`,'MAXDAMP()')):IF(hardSell,'0',IF(`RTIME < ${c.close}`,`${R} - ${fl}`,IF(`BESTBUYP > 0`,`BESTBUYP - ${tol}`,'MAXDAMP()')));
   const maxBuy=IF(`${P} < 0`,shortX,IF(`${R} > 0`,`${R} - ${c.k} + ${tol}`,'0'));
   const minSell=IF(`${P} > 0`,longX,IF(`${R} > 0`,`${R} + ${c.k} - ${tol}`,'MAXDAMP()'));
   return [
    {id:'tgt',ad:'Hedef net pozisyon (MWh)',not:`Sonuç MWh: +${String(M).replace('.',',')} = long, −${String(M).replace('.',',')} = short, 0 = düz. NETPC ile şirketin diğer pozisyonu korunur. SmartBot bu alanda yaklaşık 850 karakter kabul eder; tek satır sıkıştırılmış yazılır.`,
     one:tight(`NETPC - ${P}/10 + Math.max(-${M}, Math.min(${M}, ${flat(tgt)}))`),
     tree:['NETPC − BOT_POZ/10 + SINIRLA(−'+String(M).replace('.',',')+' MWh … +'+String(M).replace('.',',')+' MWh,',...pretty(tgt,c,'  '),')']},
-   {id:'max',ad:'Maksimum alış fiyatı (TL/MWh)',not:`Alış emri bu fiyatın üstünden dolmaz. Girişte tetik seviyesi + ${tol} TL/MWh; short kapatırken en iyi satış + ${tol} TL/MWh; ${c.floor==='yok'?'zorla kapanış/SL\'de azami fiyat (emir mutlaka dolsun).':`zorla kapanışta önce REF + ${c.floor} TL/MWh tavanıyla, kapıya 10 dk kala ve SL'de azami fiyatla (emir mutlaka dolsun).`}`,
+   {id:'max',ad:'Maksimum alış fiyatı (TL/MWh)',not:`Alış emri bu fiyatın üstünden dolmaz. Girişte tetik seviyesi + ${tol} TL/MWh; short kapatırken en iyi satış + ${tol} TL/MWh (tahtada satıcı yoksa 0: alış yok, v3.2); ${c.floor==='yok'?'zorla kapanış/SL\'de azami fiyat (emir mutlaka dolsun).':`zorla kapanışta önce REF + ${c.floor} TL/MWh tavanıyla, kapıya 10 dk kala ve SL'de azami fiyatla (emir mutlaka dolsun).`}`,
     one:flat(maxBuy),tree:pretty(maxBuy,c)},
-   {id:'min',ad:'Minimum satış fiyatı (TL/MWh)',not:`Satış emri bu fiyatın altından dolmaz. Girişte tetik seviyesi − ${tol} TL/MWh; long kapatırken en iyi alış − ${tol} TL/MWh; ${c.floor==='yok'?'zorla kapanış/SL\'de 0 TL/MWh (emir mutlaka dolsun).':`zorla kapanışta önce REF − ${c.floor} TL/MWh tabanıyla, kapıya 10 dk kala ve SL'de 0 TL/MWh (emir mutlaka dolsun).`}`,
+   {id:'min',ad:'Minimum satış fiyatı (TL/MWh)',not:`Satış emri bu fiyatın altından dolmaz. Girişte tetik seviyesi − ${tol} TL/MWh; long kapatırken en iyi alış − ${tol} TL/MWh (tahtada alıcı yoksa azami fiyat: satış yok, v3.2); ${c.floor==='yok'?'zorla kapanış/SL\'de 0 TL/MWh (emir mutlaka dolsun).':`zorla kapanışta önce REF − ${c.floor} TL/MWh tabanıyla, kapıya 10 dk kala ve SL'de 0 TL/MWh (emir mutlaka dolsun).`}`,
     one:flat(minSell),tree:pretty(minSell,c)}];
 }
 /* valid combinations only: forced close must come after new entries stop (close < stop) */
