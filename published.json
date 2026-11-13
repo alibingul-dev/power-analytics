@@ -1,30 +1,9 @@
 {
-  "2026-11-04#gb_post1": {
-    "analysis_date": "2026-11-04",
-    "at": "2026-11-05T11:14:31.763778Z",
-    "kind": "gb_post1",
-    "post_id": "urn:li:share:7524066612430172161",
-    "source": "manual"
-  },
-  "2026-11-04#post1": {
-    "analysis_date": "2026-11-04",
-    "at": "2026-11-05T12:07:24.189257Z",
-    "kind": "post1",
-    "post_id": "urn:li:share:7524079918998155264",
-    "source": "scheduled"
-  },
   "2026-11-05#gb_post1": {
     "analysis_date": "2026-11-05",
     "at": "2026-11-06T11:15:18.886466Z",
     "kind": "gb_post1",
     "post_id": "urn:li:share:7524429198262714369",
-    "source": "manual"
-  },
-  "2026-11-05#news": {
-    "analysis_date": "2026-11-05",
-    "at": "2026-11-05T06:29:49.137397Z",
-    "kind": "news",
-    "post_id": "urn:li:share:7523994963521515520",
     "source": "manual"
   },
   "2026-11-05#post1": {
@@ -41,13 +20,6 @@
     "post_id": "urn:li:share:7524791356058247170",
     "source": "manual"
   },
-  "2026-11-06#gb_post2": {
-    "analysis_date": "2026-11-06",
-    "at": "2026-11-05T07:30:19.893572Z",
-    "kind": "gb_post2",
-    "post_id": "urn:li:share:7524010191483240448",
-    "source": "manual"
-  },
   "2026-11-06#news": {
     "analysis_date": "2026-11-06",
     "at": "2026-11-06T06:26:44.381753Z",
@@ -61,13 +33,6 @@
     "kind": "post1",
     "post_id": "urn:li:share:7524804548368973824",
     "source": "scheduled"
-  },
-  "2026-11-06#post2": {
-    "analysis_date": "2026-11-06",
-    "at": "2026-11-05T09:13:26.739943Z",
-    "kind": "post2",
-    "post_id": "urn:li:share:7524036141193461760",
-    "source": "manual"
   },
   "2026-11-07#gb_post1": {
     "analysis_date": "2026-11-07",
@@ -235,6 +200,13 @@
     "at": "2026-11-11T07:30:25.063559Z",
     "kind": "gb_post2",
     "post_id": "urn:li:share:7526184539694620672",
+    "source": "scheduled"
+  },
+  "2026-11-13#news": {
+    "analysis_date": "2026-11-13",
+    "at": "2026-11-13T06:26:52.194084Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7526893323920470016",
     "source": "scheduled"
   },
   "2026-11-13#post2": {
