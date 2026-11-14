@@ -181,6 +181,13 @@
     "post_id": "urn:li:share:7526981961551278080",
     "source": "scheduled"
   },
+  "2026-11-13#gb_post1": {
+    "analysis_date": "2026-11-13",
+    "at": "2026-11-14T11:13:37.075530Z",
+    "kind": "gb_post1",
+    "post_id": "urn:li:share:7527327873863655424",
+    "source": "scheduled"
+  },
   "2026-11-13#news": {
     "analysis_date": "2026-11-13",
     "at": "2026-11-13T06:26:52.194084Z",
