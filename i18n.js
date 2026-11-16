@@ -49,6 +49,8 @@
     obs=new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData"){orig.delete(m.target);if(lang==="tr")txt(m.target)}else if(lang==="tr")m.addedNodes.forEach(walk)});obs.takeRecords()});
     obs.observe(document.body,{childList:true,subtree:true,characterData:true});
     apply();
+    /* JS-rendered sections (markets, timeline, archive) may have drawn in EN before this script loaded; redraw them in TR (16 Nov 2026) */
+    if(lang==="tr")try{window.dispatchEvent(new CustomEvent("pa-lang",{detail:lang}))}catch(e){}
     window.addEventListener("storage",function(e){if(e.key===KEY){lang=get();apply()}});
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
