@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-17T21:48:08+03:00",
+ "updated": "2026-11-18T07:06:41+03:00",
  "window": "12:30–12:59",
  "days": [
   {
@@ -153,32 +153,44 @@
     {
      "id": "demand_peak",
      "en": "Demand peaks between 16:00 and 18:00",
-     "tr": "Tüketim zirvesi 16:00 ile 18:00 arasında"
+     "tr": "Tüketim zirvesi 16:00 ile 18:00 arasında",
+     "held": true,
+     "actual": "17:00"
     },
     {
      "id": "cons_dir",
      "en": "Daily consumption is higher than today",
-     "tr": "Günlük tüketim bugünden yüksek"
+     "tr": "Günlük tüketim bugünden yüksek",
+     "held": true,
+     "actual": "+2.0%"
     },
     {
      "id": "wind_dir",
      "en": "Wind generates more than today",
-     "tr": "Rüzgâr bugünden fazla üretir"
+     "tr": "Rüzgâr bugünden fazla üretir",
+     "held": true,
+     "actual": "+298.0%"
     },
     {
      "id": "wind_peak",
      "en": "The windiest hour falls in 21:00–23:59",
-     "tr": "En rüzgârlı saat 21:00–23:59 içinde"
+     "tr": "En rüzgârlı saat 21:00–23:59 içinde",
+     "held": true,
+     "actual": "23:00"
     },
     {
      "id": "wind_band",
      "en": "Daily wind lands within ±15% of 123,494 MWh",
-     "tr": "Günlük rüzgâr 123.494 MWh'nin ±%15 içinde kalır"
+     "tr": "Günlük rüzgâr 123.494 MWh'nin ±%15 içinde kalır",
+     "held": true,
+     "actual": "140,426 MWh"
     },
     {
      "id": "net_low",
      "en": "Consumption minus wind is lowest in 03:00–05:59",
-     "tr": "Tüketim eksi rüzgâr en düşük 03:00–05:59 içinde"
+     "tr": "Tüketim eksi rüzgâr en düşük 03:00–05:59 içinde",
+     "held": true,
+     "actual": "04:00"
     }
    ]
   },
