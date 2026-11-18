@@ -201,5 +201,12 @@
     "kind": "post2",
     "post_id": "urn:li:share:7528380479339835393",
     "source": "scheduled"
+  },
+  "2026-11-19#gb_post2": {
+    "analysis_date": "2026-11-19",
+    "at": "2026-11-18T07:27:45.997967Z",
+    "kind": "gb_post2",
+    "post_id": "urn:li:share:7528720588476145665",
+    "source": "scheduled"
   }
 }
