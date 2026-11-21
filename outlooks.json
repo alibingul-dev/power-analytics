@@ -1,20 +1,4 @@
 {
-  "2026-11-13": {
-    "low_block": [
-      2,
-      5
-    ],
-    "peak_hour": 18,
-    "peak_mwh": 37775,
-    "published_at": "2026-11-12T08:19:43Z",
-    "range_mwh": 16123,
-    "top_block": [
-      17,
-      19
-    ],
-    "trough_hour": 12,
-    "trough_mwh": 21651
-  },
   "2026-11-14": {
     "low_block": [
       2,
@@ -130,5 +114,21 @@
     ],
     "trough_hour": 12,
     "trough_mwh": 25269
+  },
+  "2026-11-22": {
+    "low_block": [
+      9,
+      13
+    ],
+    "peak_hour": 18,
+    "peak_mwh": 39792,
+    "published_at": "2026-11-21T08:18:32Z",
+    "range_mwh": 16969,
+    "top_block": [
+      17,
+      21
+    ],
+    "trough_hour": 11,
+    "trough_mwh": 22823
   }
 }
