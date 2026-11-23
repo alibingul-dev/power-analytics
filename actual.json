@@ -136,7 +136,7 @@
       "top_block": "17:00-20:59"
     },
     "2026-11-21": {
-      "checked_at": "2026-11-22T09:20:06Z",
+      "checked_at": "2026-11-23T09:17:50Z",
       "checks": [
         {
           "claim": "Price high lands in the top block",
@@ -192,6 +192,6 @@
     "claims_held": 183,
     "claims_total": 252,
     "days_checked": 74,
-    "updated": "2026-11-23T09:17:41Z"
+    "updated": "2026-11-23T09:17:50Z"
   }
 }
