@@ -142,7 +142,7 @@ en:{title:"Daily Price Forecast",
  range:"Track record",from:"From",to:"To",all:"Whole history",
  k_mae:"Model miss",k_d1:"Same hour yesterday",k_d7:"Same hour last week",k_beat:"Days the model beat yesterday",k_bias:"Average direction of miss",
  d_mae:"average absolute miss per hour",d_naive:"miss if you had just copied it",d_beat:"of {n} days",d_bias:"positive = forecast too high",
- dailynote:"Each point is one day's average absolute miss per hour (TL/MWh). Lower is better. The two grey lines are the simplest possible forecasts: copy yesterday's price, or last week's. A model that cannot beat them adds nothing.",
+ dailynote:"Each point is one day's average day-ahead price (PTF, TL/MWh): the model's forecast against the price EPİAŞ actually published. Click a day to see it hour by hour.",
  day:"One day up close",pick:"Day",
  daynote:"Actual is the price EPİAŞ published for that day. Inputs archived {at}{late}.",late:" — after the 12:30 market close, so the load plan and wind forecast may have been revised after clearing",
  s_fc:"Forecast",s_act:"Actual",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
@@ -213,7 +213,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  range:"Sicil",from:"Başlangıç",to:"Bitiş",all:"Tüm geçmiş",
  k_mae:"Modelin sapması",k_d1:"Dünün aynı saati",k_d7:"Geçen haftanın aynı saati",k_beat:"Modelin dünü geçtiği gün",k_bias:"Sapmanın ortalama yönü",
  d_mae:"saat başına ortalama mutlak sapma",d_naive:"sadece onu kopyalasaydın sapma",d_beat:"{n} günün",d_bias:"artı = tahmin yüksek kaldı",
- dailynote:"Her nokta bir günün saat başına ortalama mutlak sapması (TL/MWh). Düşük olan iyi. İki gri çizgi en basit tahminler: dünün fiyatını ya da geçen haftanınkini aynen yazmak. Bunları geçemeyen model hiçbir şey katmaz.",
+ dailynote:"Her nokta bir günün ortalama PTF'si (TL/MWh): modelin tahmini ve EPİAŞ'ın yayımladığı gerçekleşen fiyat. Saatlik görmek için bir güne tıkla.",
  day:"Bir güne yakından bak",pick:"Gün",
  daynote:"Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat. Girdiler {at}{late} arşivlendi.",late:" — yani 12:30 kapanışından sonra; yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir",
  s_fc:"Tahmin",s_act:"Gerçekleşen",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
@@ -340,9 +340,8 @@ function kpis(rows){
 function drawDaily(rows){
   const x=t();if(cD)cD.destroy();
   cD=new Chart($("cDaily"),{type:"line",data:{labels:rows.map(r=>dlab(r.date)),datasets:[
-    {label:x.s_model,data:rows.map(r=>rate(r)?r.mae/rate(r):null),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2},
-    {label:x.s_d1,data:rows.map(r=>rate(r)?r.mae_d1/rate(r):null),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.5},
-    {label:x.s_d7,data:rows.map(r=>rate(r)?r.mae_d7/rate(r):null),borderColor:C.d7,backgroundColor:C.d7,pointRadius:0,borderWidth:1.5,borderDash:[4,3]}]},
+    {label:x.s_fc,data:rows.map(r=>rate(r)?avg(r.fc)/rate(r):null),borderColor:C.fc,backgroundColor:C.fc,pointRadius:2,borderWidth:2},
+    {label:x.s_act,data:rows.map(r=>rate(r)?avg(r.actual)/rate(r):null),borderColor:C.act,backgroundColor:C.act,pointRadius:2,borderWidth:2}]},
     options:Object.assign(base(U()),{onClick:(e,els)=>{if(els.length){$("day").value=rows[els[0].index].date;drawDay()}}})});
   $("cDaily").setAttribute("aria-label",uu(x.dailynote));$("t-dailynote").textContent=uu(x.dailynote);
 }
