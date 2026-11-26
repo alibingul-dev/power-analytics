@@ -1,30 +1,9 @@
 {
-  "2026-11-17#gb_post1": {
-    "analysis_date": "2026-11-17",
-    "at": "2026-11-18T11:13:23.395249Z",
-    "kind": "gb_post1",
-    "post_id": "urn:li:share:7528777368572960770",
-    "source": "scheduled"
-  },
-  "2026-11-17#post1": {
-    "analysis_date": "2026-11-17",
-    "at": "2026-11-18T12:17:02.772566Z",
-    "kind": "post1",
-    "post_id": "urn:li:share:7528793387840397312",
-    "source": "scheduled"
-  },
   "2026-11-18#gb_post1": {
     "analysis_date": "2026-11-18",
     "at": "2026-11-19T11:13:47.227517Z",
     "kind": "gb_post1",
     "post_id": "urn:li:share:7529139854459400192",
-    "source": "scheduled"
-  },
-  "2026-11-18#news": {
-    "analysis_date": "2026-11-18",
-    "at": "2026-11-18T06:25:52.267894Z",
-    "kind": "news",
-    "post_id": "urn:li:share:7528705011221094400",
     "source": "scheduled"
   },
   "2026-11-18#post1": {
@@ -41,13 +20,6 @@
     "post_id": "urn:li:share:7529502252470996992",
     "source": "scheduled"
   },
-  "2026-11-19#gb_post2": {
-    "analysis_date": "2026-11-19",
-    "at": "2026-11-18T07:27:45.997967Z",
-    "kind": "gb_post2",
-    "post_id": "urn:li:share:7528720588476145665",
-    "source": "scheduled"
-  },
   "2026-11-19#news": {
     "analysis_date": "2026-11-19",
     "at": "2026-11-19T06:25:47.223836Z",
@@ -60,13 +32,6 @@
     "at": "2026-11-20T12:17:01.247480Z",
     "kind": "post1",
     "post_id": "urn:li:share:7529518155501559810",
-    "source": "scheduled"
-  },
-  "2026-11-19#post2": {
-    "analysis_date": "2026-11-19",
-    "at": "2026-11-18T08:36:22.126589Z",
-    "kind": "post2",
-    "post_id": "urn:li:share:7528737852449492992",
     "source": "scheduled"
   },
   "2026-11-20#gb_post1": {
@@ -235,6 +200,13 @@
     "at": "2026-11-25T07:28:40.384988Z",
     "kind": "gb_post2",
     "post_id": "urn:li:share:7531257532103745536",
+    "source": "scheduled"
+  },
+  "2026-11-26#news": {
+    "analysis_date": "2026-11-26",
+    "at": "2026-11-26T06:26:14.563124Z",
+    "kind": "news",
+    "post_id": "urn:li:share:7531604208656216064",
     "source": "scheduled"
   }
 }
