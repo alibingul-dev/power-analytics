@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25T06:28:40Z",
+ "updated": "2026-11-26T06:28:33Z",
  "items": [
   {
    "kind": "gb",
@@ -128,14 +128,6 @@
    "src": "media/gb-2026-10-29.mp4",
    "poster": "media/gb-2026-10-29.jpg",
    "duration_s": 43.7
-  },
-  {
-   "kind": "news",
-   "label": "TR energy news",
-   "date": "2026-10-26",
-   "src": "media/news-2026-10-26.mp4",
-   "poster": "media/news-2026-10-26.jpg",
-   "duration_s": 72.2
   },
   {
    "kind": "news",
@@ -279,6 +271,14 @@
    "date": "2026-11-25",
    "src": "media/news-2026-11-25.mp4",
    "poster": "media/news-2026-11-25.jpg",
+   "duration_s": 72.2
+  },
+  {
+   "kind": "news",
+   "label": "TR energy news",
+   "date": "2026-11-26",
+   "src": "media/news-2026-11-26.mp4",
+   "poster": "media/news-2026-11-26.jpg",
    "duration_s": 72.2
   },
   {
