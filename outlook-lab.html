@@ -86,7 +86,7 @@ tr.qtr td{font-weight:500;background:rgba(255,255,255,.04)}tr.year td{background
  .tbl.tall{max-height:none}.chartbox{padding:10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.cfxg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}@media (max-width:1100px){.cfxg{grid-template-columns:1fr}}
+.cfxg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cfxg>.panel{min-width:0;overflow:hidden}.cfx .tbl{overflow-x:auto;max-width:100%}.cfx canvas{max-width:100%}@media (max-width:1100px){.cfxg{grid-template-columns:1fr}}
 .cfx .kpis{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:10px}.cfx .kpi .v{font-size:18px}
 td.yes{color:var(--bad);font-weight:600}td.no{color:var(--good)}
 </style>
@@ -406,7 +406,7 @@ const XL={
   defsH:["Terim","Tanım / değer","Birim"],
   defs:[["Beklenen","Ayın ortalama Gün Öncesi Piyasası fiyatı (PTF) için motorun merkez değeri","$/MWh"],["Düşük / Yüksek","Bant: geçmişte gerçekleşenlerin yaklaşık yarısı bu aralıkta kaldı (son hataların ağırlıklı medyanı, yarı ömür 3 ay)","$/MWh"],["Motor","Varsayılan girdilerle motor değeri","$/MWh"],["Fark","Beklenen − Motor","$/MWh"],["Gaz maliyeti G","BOTAŞ santral tarifesi ÷ 10,64 MWh/1000 Sm³ ÷ 0,52 verim ÷ kur","$/MWh"],["Tarife varsayımı","BOTAŞ santral tarifesi TL olarak sabit kalır; kur aylık sabit hızla artar",""],["Saatlik / günlük","Aylık beklenenin dağıtımı, ayrı model değil. Gelecek ay: geçen ayın gün tipi × saat şekli; sonraki aylar: son 36 ayın aynı takvim ayı şekli. Test 2025-11..2026-10: saatlik 14,43 $/MWh (geçen ayın şekli 14,21 $/MWh, avantaj yok), günlük 11,05 $/MWh (karşılaştırma 11,18 $/MWh). Bant saatlere uygulanmaz.",""]],
   inH:["Girdi","Değer","Birim"],
-  inRows:[["BOTAŞ santral gaz tarifesi","tariff","TL/1000 Sm³"],["Kur (çalıştırma ayı)","fx0","USD/TRY"],["Aylık kur artışı","fxg","%/ay"],["PTF/G uzun dönem oranı","kLR","oran"],["Oranın geri dönüş hızı φ","rk","aylık, 0–1"],["Hidroloji çarpanı (Mar–Haz)","hyd","çarpan"],["Haber katmanı","newsOn","açık/kapalı"]],
+  inRows:[["BOTAŞ santral gaz tarifesi","tariff","TL/1000 Sm³"],["Kur (çalıştırma ayı)","fx0","USD/TRY"],["Aylık kur artışı","fxg","%/ay"],["PTF/G uzun dönem oranı","kLR","oran"],["Oranın geri dönüş hızı φ","rk","aylık, 0–1"],["Hidroloji çarpanı (Mar–Haz)","hyd","çarpan"],["Tavan senaryosu (aylık ort. ≤ %87,4 × tavan ÷ kur)","cap","TL/MWh"],["Haber katmanı","newsOn","açık/kapalı"]],
   monH:["Ay","Vade (ay)","Saat (h)","Kur USD/TRY","Düşük $/MWh","Beklenen $/MWh","Yüksek $/MWh","Beklenen TL/MWh","Motor $/MWh","Fark $/MWh"],
   blkH:["Blok","Saat (h)","Düşük $/MWh","Beklenen $/MWh","Yüksek $/MWh","Beklenen TL/MWh","Motor $/MWh","Fark $/MWh"],
   btH:["Ay","Vade (ay)","Motor beklentisi (dondurulmuş) $/MWh","Gerçekleşen $/MWh","Geçen ayın fiyatı $/MWh","Motor sapması $/MWh","Geçen ayın fiyatı sapması $/MWh","Bant içinde"],
@@ -426,7 +426,7 @@ const XL={
   defsH:["Term","Definition / value","Unit"],
   defs:[["Expected","The engine's central value for the month's average day-ahead price (PTF)","$/MWh"],["Low / High","Band: about half of past outcomes fell inside (decay-weighted median of recent misses, half-life 3 months)","$/MWh"],["Engine","Engine value with default inputs","$/MWh"],["Diff","Expected − Engine","$/MWh"],["Gas cost G","BOTAŞ power tariff ÷ 10.64 MWh/1000 Sm³ ÷ 0.52 efficiency ÷ FX","$/MWh"],["Tariff assumption","The BOTAŞ power tariff stays flat in TL; FX rises at a constant monthly pace",""],["Hourly / daily","The monthly expected value spread over days and hours, not a separate model. Next month: last month's day-type x hour shape; later months: the same calendar month's shape over the last 36 months. Test 2025-11..2026-10: hourly 14.43 $/MWh (last month's shape 14.21 $/MWh, no edge), daily 11.05 $/MWh (comparison 11.18 $/MWh). The band is not applied to hours.",""]],
   inH:["Input","Value","Unit"],
-  inRows:[["BOTAŞ power-plant gas tariff","tariff","TL/1000 Sm³"],["FX (run month)","fx0","USD/TRY"],["Monthly FX drift","fxg","%/month"],["PTF/G long-run ratio","kLR","ratio"],["Ratio reversion speed φ","rk","monthly, 0–1"],["Hydrology multiplier (Mar–Jun)","hyd","multiplier"],["News layer","newsOn","on/off"]],
+  inRows:[["BOTAŞ power-plant gas tariff","tariff","TL/1000 Sm³"],["FX (run month)","fx0","USD/TRY"],["Monthly FX drift","fxg","%/month"],["PTF/G long-run ratio","kLR","ratio"],["Ratio reversion speed φ","rk","monthly, 0–1"],["Hydrology multiplier (Mar–Jun)","hyd","multiplier"],["Price cap scenario (monthly avg ≤ 87.4% × cap ÷ FX)","cap","TL/MWh"],["News layer","newsOn","on/off"]],
   monH:["Month","Horizon (months)","Hours (h)","FX USD/TRY","Low $/MWh","Expected $/MWh","High $/MWh","Expected TL/MWh","Engine $/MWh","Diff $/MWh"],
   blkH:["Block","Hours (h)","Low $/MWh","Expected $/MWh","High $/MWh","Expected TL/MWh","Engine $/MWh","Diff $/MWh"],
   btH:["Month","Horizon (months)","Engine expected (frozen) $/MWh","Actual $/MWh","Last month's price $/MWh","Engine miss $/MWh","Last month's price miss $/MWh","Inside band"],
@@ -446,7 +446,7 @@ function buildWorkbook(){
   const now=new Date().toLocaleString(L==='tr'?'tr-TR':'en-GB',{timeZone:'Europe/Istanbul'});
   const sub=v=>v.replace('{e}',P.engine_version).replace('{c}',P.data_cutoff).replace('{t}',P.tariff_series_version).replace('{now}',now).replace('{inp}',isDefault(inp)?x.inpDef:x.inpUser);
   add([[x.title],[]].concat(x.cover.map(([a,b])=>[a,sub(b)])).concat([[t.cur,U()]]).concat(CUR!=='usd'?[[x.warn,fxNote()]]:[]).concat([[],[x.warn,t.disc],[x.warn,backtestAll()]]),x.sh[0],[38,110]);
-  const iv={tariff:inp.tariff,fx0:inp.fx0,fxg:Math.round(inp.fxg*10000)/100,kLR:inp.kLR,rk:inp.rk,hyd:inp.hyd,newsOn:(inp.newsOn&&isLatest())?x.on:x.off};
+  const iv={tariff:inp.tariff,fx0:inp.fx0,fxg:Math.round(inp.fxg*10000)/100,kLR:inp.kLR,rk:inp.rk,hyd:inp.hyd,cap:inp.cap==='none'?(L==='tr'?'yok (motor)':'none (engine)'):inp.cap==='4500'?(L==='tr'?'4.500 sabit':'4,500 held'):(L==='tr'?'5.500, Nis-27\'den':'5,500 from Apr-27'),newsOn:(inp.newsOn&&isLatest())?x.on:x.off};
   add([x.defsH].concat(x.defs).concat([[],x.inH]).concat(x.inRows.map(([a,k,u])=>[a,iv[k],u])),x.sh[1],[34,100,16]);
   add([x.monH.map(ux)].concat(R.map(r=>[key(r.y,r.m),r.h,r.hours,r2(r.fx),r2(r.lo),r2(r.w),r2(r.hi),Math.round(r.wUsd*r.fx),r2(r.eng),r2(r.w-r.eng)])),x.sh[2],[10,10,10,12,12,14,12,15,12,11]);
   add([x.blkH.map(ux)].concat(blocks(R).map(([nm,rows])=>{ const H=rows.reduce((s,r)=>s+r.hours,0); return [nm,H,r2(blk(rows,'lo')),r2(blk(rows,'w')),r2(blk(rows,'hi')),Math.round(rows.reduce((s,r)=>s+r.wUsd*r.fx*r.hours,0)/H),r2(blk(rows,'eng')),r2(blk(rows,'w')-blk(rows,'eng'))]; })),x.sh[3],[10,10,12,14,12,15,12,11]);
@@ -506,6 +506,7 @@ const CFT={
   fH:["Survey month","Year-end USD/TRY","12 months ahead USD/TRY","Target month","Engine path then USD/TRY","Gap USD/TRY"],
   fxN:"Engine path = run-month FX × (1 + monthly drift)^months. TL/MWh values use this path; changing FX leaves the $ curve unchanged but moves the TL curve and the cap's $ value. {n} Source: {src}.",
   fLbl:["Engine FX path","CBRT year-end expectation","CBRT 12-month expectation","Latest FX"],fY:"USD/TRY",none:"engine (no cap clip)"}};
+const tx=(o,f)=>(L==='en'&&o[f+'_en'])?o[f+'_en']:o[f];
 const addM=(k,n)=>{ let y=+k.slice(0,4), m=+k.slice(5,7)+n; while(m>12){m-=12;y++;} while(m<1){m+=12;y--;} return key(y,m); };
 const dTR=d=>d.slice(8,10)+'.'+d.slice(5,7)+'.'+d.slice(0,4);
 function kp(l,v,d){ return `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`; }
@@ -530,19 +531,19 @@ function renderCapFx(inp){
     h+=`<tr><td>${k}</td><td>${f2(r.fx)}</td><td>${f1(cA)}</td><td>${f1(cB)}</td><td>${f1(lim)}</td><td>${f1(r.hi)}</td><td class="${b?'yes':'no'}">${b?t.yes:t.no}</td></tr>`; });
   $('capT').innerHTML=h+'</tbody>';
   $('capHist').innerHTML='<thead><tr>'+t.hH.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>'+C.history.map(x=>`<tr><td>${x.month}</td><td>${f0(x.tl_mwh)}</td><td>${f2(x.fx)}</td><td>${f1(x.tl_mwh/x.fx)}</td></tr>`).join('')+'</tbody>';
-  $('capN').innerHTML=t.capN.replace(/\{u\}/g,Math.round(u*1000)/10).replace('{un}',C.util_note).replace('{src}',`<a href="${C.source_url}" target="_blank" rel="noopener">${C.decision}</a>`)+' '+C.history_note;
+  $('capN').innerHTML=t.capN.replace(/\{u\}/g,Math.round(u*1000)/10).replace('{un}',tx(C,'util_note')).replace('{src}',`<a href="${C.source_url}" target="_blank" rel="noopener">${tx(C,'decision')}</a>`)+' '+tx(C,'history_note');
   const lab=RN.map(r=>key(r.y,r.m));
   CFXC.cap=mkChart('capC',CFXC.cap,{type:'line',data:{labels:lab,datasets:[
     {label:t.cLbl[0],data:RN.map(r=>u*4500/r.fx),borderColor:'#F43F5E',borderDash:[6,4],pointRadius:0,borderWidth:2},
     {label:t.cLbl[1],data:RN.map(r=>u*capAt('5500',r.y,r.m)/r.fx),borderColor:'#FBBF24',borderDash:[6,4],pointRadius:0,borderWidth:2},
     {label:t.cLbl[2],data:RN.map(r=>r.hi),borderColor:'#8A9BB0',pointRadius:0,borderWidth:1.5},
     {label:t.cLbl[3],data:RS.map(r=>r.w),borderColor:'#38BDF8',pointRadius:0,borderWidth:2.5}]},
-   options:{responsive:true,animation:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.cY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:2.2,animation:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.cY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
   /* --- kur --- */
   const S_=F.survey, last=S_[S_.length-1], tgt=addM(last.month,12), rk=runKey();
   const hh=((+tgt.slice(0,4))*12+(+tgt.slice(5,7)))-((+rk.slice(0,4))*12+(+rk.slice(5,7)));
   const gS=Math.pow(last.m12/inp.fx0,1/hh)-1;
-  $('fxK').innerHTML=kp(t.f1,f2(F.spot.value)+' <small>USD/TRY</small>',t.f1d.replace('{d}',dTR(F.spot.date)).replace('{s}',F.spot.src))
+  $('fxK').innerHTML=kp(t.f1,f2(F.spot.value)+' <small>USD/TRY</small>',t.f1d.replace('{d}',dTR(F.spot.date)).replace('{s}',tx(F.spot,'src')))
    +kp(t.f2,f2(last.ye)+' <small>USD/TRY</small>',t.f2d.replace('{m}',last.month))
    +kp(t.f3,f2(last.m12)+' <small>USD/TRY</small>',t.f3d.replace('{t}',tgt))
    +kp(t.f4,f2(gS*100)+' <small>%/ay</small>'.replace('ay',L==='tr'?'ay':'month'),t.f4d.replace('{g}',f2(inp.fxg*100)));
@@ -550,7 +551,7 @@ function renderCapFx(inp){
   let g='<thead><tr>'+t.fH.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>';
   S_.slice().reverse().forEach(x=>{ const tg=addM(x.month,12), mp=fxPath(inp,tg); g+=`<tr><td>${x.month}</td><td>${f2(x.ye)}</td><td>${f2(x.m12)}</td><td>${tg}</td><td>${f2(mp)}</td><td>${(mp-x.m12>=0?'+':'')+f2(mp-x.m12)}</td></tr>`; });
   $('fxT').innerHTML=g+'</tbody>';
-  $('fxN').innerHTML=t.fxN.replace('{n}',F.survey_note).replace('{src}',`<a href="${F.survey_url}" target="_blank" rel="noopener">${F.survey_src}</a>`);
+  $('fxN').innerHTML=t.fxN.replace('{n}',tx(F,'survey_note')).replace('{src}',`<a href="${F.survey_url}" target="_blank" rel="noopener">${tx(F,'survey_src')}</a>`);
   const fl=[]; for(let i=0;i<=hh;i++) fl.push(addM(rk,i));
   const yeK=last.month.slice(0,4)+'-12';
   CFXC.fx=mkChart('fxC',CFXC.fx,{type:'line',data:{labels:fl,datasets:[
@@ -558,7 +559,7 @@ function renderCapFx(inp){
     {label:t.fLbl[1],data:fl.map(k=>k===yeK?last.ye:null),borderColor:'#34D399',backgroundColor:'#34D399',pointRadius:6,showLine:false},
     {label:t.fLbl[2],data:fl.map(k=>k===tgt?last.m12:null),borderColor:'#FBBF24',backgroundColor:'#FBBF24',pointRadius:6,showLine:false},
     {label:t.fLbl[3],data:fl.map(k=>k===F.spot.date.slice(0,7)?F.spot.value:null),borderColor:'#E6EDF5',backgroundColor:'#E6EDF5',pointRadius:5,pointStyle:'rectRot',showLine:false}]},
-   options:{responsive:true,animation:false,spanGaps:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.fY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:2.2,animation:false,spanGaps:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.fY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
 }
 fetch('cap-fx.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ if(j){ CFX=j; if(P) run(); } }).catch(()=>{});
 

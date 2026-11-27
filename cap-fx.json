@@ -8,33 +8,111 @@
     "util_max": 0.874,
     "util_note": "Tavan döneminde en yüksek aylık ortalama PTF / tavan oranı (Tem-2025: 2.965 / 3.400 TL/MWh)",
     "scenarios": [
-      {"id": "4500", "tl_mwh": 4500, "from": "2026-04", "tr": "4.500 TL/MWh sabit", "en": "4,500 TL/MWh held"},
-      {"id": "5500", "tl_mwh": 5500, "from": "2027-04", "tr": "5.500 TL/MWh, Nis-27'den", "en": "5,500 TL/MWh from Apr-27"}
+      {
+        "id": "4500",
+        "tl_mwh": 4500,
+        "from": "2026-04",
+        "tr": "4.500 TL/MWh sabit",
+        "en": "4,500 TL/MWh held"
+      },
+      {
+        "id": "5500",
+        "tl_mwh": 5500,
+        "from": "2027-04",
+        "tr": "5.500 TL/MWh, Nis-27'den",
+        "en": "5,500 TL/MWh from Apr-27"
+      }
     ],
     "history": [
-      {"month": "2023-07", "tl_mwh": 2700, "fx": 26.3839},
-      {"month": "2024-07", "tl_mwh": 3000, "fx": 32.8433},
-      {"month": "2025-04", "tl_mwh": 3400, "fx": 37.9813},
-      {"month": "2026-04", "tl_mwh": 4500, "fx": 44.5923}
+      {
+        "month": "2023-07",
+        "tl_mwh": 2700,
+        "fx": 26.3839
+      },
+      {
+        "month": "2024-07",
+        "tl_mwh": 3000,
+        "fx": 32.8433
+      },
+      {
+        "month": "2025-04",
+        "tl_mwh": 3400,
+        "fx": 37.9813
+      },
+      {
+        "month": "2026-04",
+        "tl_mwh": 4500,
+        "fx": 44.5923
+      }
     ],
-    "history_note": "Kur: EPİAŞ PTF TL/$ oranından aylık ortalama USD/TRY. Son iki artış BOTAŞ'ın Nisan zammıyla aynı gün geldi."
+    "history_note": "Kur: EPİAŞ PTF TL/$ oranından aylık ortalama USD/TRY. Son iki artış BOTAŞ'ın Nisan zammıyla aynı gün geldi.",
+    "decision_en": "EPDK board decision 14459 (02.04.2026), day-ahead and balancing market maximum price; minimum 0 TL/MWh",
+    "util_note_en": "Highest monthly average PTF / cap ratio under the current cap regime (Jul-2025: 2,965 / 3,400 TL/MWh)",
+    "history_note_en": "FX: monthly average USD/TRY from EPİAŞ PTF TL/$ ratio. The last two raises came on the same day as BOTAŞ's April tariff hike."
   },
   "fx": {
-    "spot": {"value": 50.91, "date": "2026-11-17", "src": "Investing.com, İstanbul kapanışı"},
+    "spot": {
+      "value": 50.91,
+      "date": "2026-11-17",
+      "src": "Investing.com, İstanbul kapanışı",
+      "src_en": "Investing.com, Istanbul close"
+    },
     "survey_src": "TCMB Piyasa Katılımcıları Anketi (aylık)",
     "survey_url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Istatistikler/Egilim+Anketleri/Piyasa+Katilimcilari+Anketi/",
     "survey_note": "Tem-2026 anketinin kur değerleri doğrulanamadı; tabloda yok.",
     "survey": [
-      {"month": "2026-01", "ye": 51.17, "m12": 51.89},
-      {"month": "2026-02", "ye": 51.09, "m12": 52.39},
-      {"month": "2026-03", "ye": 50.97, "m12": 52.70},
-      {"month": "2026-04", "ye": 51.23, "m12": 53.62},
-      {"month": "2026-05", "ye": 51.57, "m12": 54.69},
-      {"month": "2026-06", "ye": 51.47, "m12": 55.72},
-      {"month": "2026-08", "ye": 51.66, "m12": 57.43},
-      {"month": "2026-09", "ye": 51.57, "m12": 58.60},
-      {"month": "2026-10", "ye": 51.55, "m12": 59.26},
-      {"month": "2026-11", "ye": 51.61, "m12": 60.77}
-    ]
+      {
+        "month": "2026-01",
+        "ye": 51.17,
+        "m12": 51.89
+      },
+      {
+        "month": "2026-02",
+        "ye": 51.09,
+        "m12": 52.39
+      },
+      {
+        "month": "2026-03",
+        "ye": 50.97,
+        "m12": 52.7
+      },
+      {
+        "month": "2026-04",
+        "ye": 51.23,
+        "m12": 53.62
+      },
+      {
+        "month": "2026-05",
+        "ye": 51.57,
+        "m12": 54.69
+      },
+      {
+        "month": "2026-06",
+        "ye": 51.47,
+        "m12": 55.72
+      },
+      {
+        "month": "2026-08",
+        "ye": 51.66,
+        "m12": 57.43
+      },
+      {
+        "month": "2026-09",
+        "ye": 51.57,
+        "m12": 58.6
+      },
+      {
+        "month": "2026-10",
+        "ye": 51.55,
+        "m12": 59.26
+      },
+      {
+        "month": "2026-11",
+        "ye": 51.61,
+        "m12": 60.77
+      }
+    ],
+    "survey_src_en": "CBRT Survey of Market Participants (monthly)",
+    "survey_note_en": "FX values of the Jul-2026 survey could not be verified; not in the table."
   }
 }
