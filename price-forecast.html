@@ -140,7 +140,7 @@ const T={
 en:{title:"Daily Price Forecast",
  sub:"A next-day forecast of Türkiye's day-ahead price (PTF), hour by hour, scored against what the price actually did. Each forecast uses the EPİAŞ load plan and wind forecast as archived the day before; the archive time is shown for every day, and days archived after the 12:30 market close are flagged, because those inputs may have been revised after clearing. Today's forecast for tomorrow is not shown: this page is a track record, not a trading signal.",
  range:"Track record",from:"From",to:"To",all:"Whole history",
- k_mae:"Model miss",k_d1:"Same hour yesterday",k_d7:"Same hour last week",k_beat:"Days the model beat yesterday",k_bias:"Average direction of miss",
+ k_mae:"Model miss",k_d1:"Same hour yesterday",k_d7:"Same hour last week",k_beat:"Days the model beat yesterday",k_bias:"Average direction of miss",k_wape:"WAPE (DAM volume-weighted)",d_wape:"weighted by DAM matched MWh; copying yesterday: {d1}%",
  d_mae:"average absolute miss per hour",d_naive:"miss if you had just copied it",d_beat:"of {n} days",d_bias:"positive = forecast too high",
  dailynote:"Each point is one day's average day-ahead price (PTF, TL/MWh): the model's forecast against the price EPİAŞ actually published. Click a day to see it hour by hour.",
  day:"One day up close",pick:"Day",
@@ -183,7 +183,7 @@ en:{title:"Daily Price Forecast",
  rh:["Hours","Count","MAE (TL/MWh)","BSR (%)","WSR (%)","Real slope (TL/MWh per hour)","Forecast slope","Slope ratio"],
  rl:{up:"Price climbs (change ≥ +{v} TL/MWh)",down:"Price declines (change ≤ {v} TL/MWh)",flat:"Flat hours",fc_up:"Model called a climb (≥ +{v} TL/MWh)",fc_down:"Model called a decline (≤ {v} TL/MWh)"},
  rampnote:"Climbs and declines are the steepest fifth of hourly changes. Slope ratio = forecast slope ÷ real slope: 1.0 means the model moves as much as the market; 0.6 means it sees the move but draws it at 60% of its real size. The first three rows pick hours by what the market did; the last two by what the model said.",
- defs:"MAE: average absolute miss per hour, in TL/MWh. Bias: average signed miss; positive = forecast too high. BSR: share of hours where the forecast got the direction of the hour-over-hour change right (hour 00:00 is compared with the previous day's 23:00). WSR: the same share weighted by the size of the real change, so big moves count more; WSR above BSR means the model gets the large moves right more often than the small ones.",
+ defs:"WAPE: weighted absolute percent error, %: the sum over hours of |forecast − actual| × DAM matched quantity (MWh) divided by the sum of |actual| × the same quantity; hours with more cleared volume count more. MAE: average absolute miss per hour, in TL/MWh. Bias: average signed miss; positive = forecast too high. BSR: share of hours where the forecast got the direction of the hour-over-hour change right (hour 00:00 is compared with the previous day's 23:00). WSR: the same share weighted by the size of the real change, so big moves count more; WSR above BSR means the model gets the large moves right more often than the small ones.",
  ytag_risk:"PTF below 100 TL/MWh risk · {n} hours flagged",ytag_hit:"PTF below 100 TL/MWh risk · {n} flagged, {m} happened",ytag_miss:"No flag, but {m} hours were under 100 TL/MWh",ytag_off:"No PTF below 100 TL/MWh risk flagged",
  ynote:"The flag is for YEKDEM plants: an hour is flagged when the forecast minus the 80th percentile of the model's recent misses falls under 100 TL/MWh. Track record: flagged on {f} of {d} days; the price really went under 100 TL/MWh on {h} of those; {miss} days were under 100 TL/MWh without a flag.",
  method:"How the forecast is made",
@@ -211,7 +211,7 @@ en:{title:"Daily Price Forecast",
 tr:{title:"Günlük Fiyat Tahmini",
  sub:"Türkiye gün öncesi fiyatının (PTF) ertesi gün için saat saat tahmini ve fiyatın gerçekte ne yaptığıyla karşılaştırması. Her tahmin EPİAŞ yük planı ve rüzgâr tahmininin bir gün önce arşivlenen hâlini kullanır; her günün arşiv saati gösterilir, GÖP'ün 12:30 kapanışından sonra arşivlenen günler işaretlidir, çünkü o girdiler kapanıştan sonra revize edilmiş olabilir. Bugün yapılan yarın tahmini gösterilmez: bu sayfa bir sicil, al-sat sinyali değil.",
  range:"Sicil",from:"Başlangıç",to:"Bitiş",all:"Tüm geçmiş",
- k_mae:"Modelin sapması",k_d1:"Dünün aynı saati",k_d7:"Geçen haftanın aynı saati",k_beat:"Modelin dünü geçtiği gün",k_bias:"Sapmanın ortalama yönü",
+ k_mae:"Modelin sapması",k_d1:"Dünün aynı saati",k_d7:"Geçen haftanın aynı saati",k_beat:"Modelin dünü geçtiği gün",k_bias:"Sapmanın ortalama yönü",k_wape:"WAPE (GÖP hacim ağırlıklı)",d_wape:"GÖP eşleşme miktarı (MWh) ağırlıklı; dünü kopyalamak: %{d1}",
  d_mae:"saat başına ortalama mutlak sapma",d_naive:"sadece onu kopyalasaydın sapma",d_beat:"{n} günün",d_bias:"artı = tahmin yüksek kaldı",
  dailynote:"Her nokta bir günün ortalama PTF'si (TL/MWh): modelin tahmini ve EPİAŞ'ın yayımladığı gerçekleşen fiyat. Saatlik görmek için bir güne tıkla.",
  day:"Bir güne yakından bak",pick:"Gün",
@@ -254,7 +254,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  rh:["Saatler","Adet","MAE (TL/MWh)","BSR (%)","WSR (%)","Gerçek eğim (TL/MWh / saat)","Tahmin eğimi","Eğim oranı"],
  rl:{up:"Fiyat tırmanışı (değişim ≥ +{v} TL/MWh)",down:"Fiyat düşüşü (değişim ≤ {v} TL/MWh)",flat:"Düz saatler",fc_up:"Model tırmanış dedi (≥ +{v} TL/MWh)",fc_down:"Model düşüş dedi (≤ {v} TL/MWh)"},
  rampnote:"Tırmanış ve düşüş, saatlik değişimlerin en dik beşte biri. Eğim oranı = tahmin eğimi ÷ gerçek eğim: 1,0 model piyasa kadar hareket ediyor demek; 0,6 hareketi görüyor ama %60 boyunda çiziyor demek. İlk üç satır saatleri piyasanın yaptığına göre, son ikisi modelin dediğine göre seçer.",
- defs:"MAE: saat başına ortalama mutlak sapma, TL/MWh. Yanlılık: işaretli ortalama sapma; artı = tahmin yüksek. BSR: saatten saate değişimin yönünü tahminin doğru bildiği saatlerin payı (00:00, önceki günün 23:00'üyle kıyaslanır). WSR: aynı pay, gerçek değişimin büyüklüğüyle ağırlıklı; büyük hareketler daha çok sayılır. WSR'nin BSR'den yüksek olması modelin büyük hareketleri küçüklerden daha sık tutturduğu anlamına gelir.",
+ defs:"WAPE: ağırlıklı mutlak yüzde hata, %: saatler boyunca |tahmin − gerçekleşen| × GÖP eşleşme miktarı (MWh) toplamının, |gerçekleşen| × aynı miktar toplamına oranı; eşleşen hacmi büyük saatler daha çok sayılır. MAE: saat başına ortalama mutlak sapma, TL/MWh. Yanlılık: işaretli ortalama sapma; artı = tahmin yüksek. BSR: saatten saate değişimin yönünü tahminin doğru bildiği saatlerin payı (00:00, önceki günün 23:00'üyle kıyaslanır). WSR: aynı pay, gerçek değişimin büyüklüğüyle ağırlıklı; büyük hareketler daha çok sayılır. WSR'nin BSR'den yüksek olması modelin büyük hareketleri küçüklerden daha sık tutturduğu anlamına gelir.",
  ytag_risk:"PTF 100 TL/MWh altı riski · {n} saat işaretli",ytag_hit:"PTF 100 TL/MWh altı riski · {n} işaretli, {m} gerçekleşti",ytag_miss:"İşaret yok ama {m} saat 100 TL/MWh altındaydı",ytag_off:"PTF 100 TL/MWh altı riski işaretlenmedi",
  ynote:"Etiket YEKDEM santralleri için: tahmin eksi modelin son sapmalarının %80'lik eşiği 100 TL/MWh altına inen saat işaretlenir. Sicil: {d} günün {f}'inde işaret yandı; bunların {h}'inde fiyat gerçekten 100 TL/MWh altına indi; {miss} gün işaretsiz 100 TL/MWh altı gördü.",
  method:"Tahmin nasıl yapılıyor",
@@ -328,13 +328,16 @@ function kpis(rows){
   const c=(r,k)=>r[k]/rate(r);
   const m=avg(rr.map(r=>c(r,"mae"))),d1=avg(rr.map(r=>c(r,"mae_d1"))),d7=avg(rr.map(r=>c(r,"mae_d7"))),b=avg(rr.map(r=>c(r,"bias")));
   const beat=rr.filter(r=>r.mae<r.mae_d1).length,pct=100*beat/rr.length,rows_n=rr.length;
+  const wr=rr.filter(r=>r.qty&&r.qty.length===24),wp=key=>{let n=0,dn=0;wr.forEach(r=>{const kk=rate(r);for(let h=0;h<24;h++){n+=r.qty[h]*Math.abs(r[key][h]-r.actual[h])/kk;dn+=r.qty[h]*Math.abs(r.actual[h])/kk}});return dn>0?100*n/dn:null};
+  const wm=wr.length?wp("fc"):null,wd1=wr.length?wp("naive_d1"):null;
   const k=(l,v,d,cls)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v '+(cls||"")+'">'+v+'</div><div class="d">'+d+'</div></div>';
   $("kpis").innerHTML=
     k(x.k_mae,nC(m)+" "+U(),x.d_mae,m<d1?"good":"bad")+
     k(x.k_d1,nC(d1)+" "+U(),x.d_naive)+
     k(x.k_d7,nC(d7)+" "+U(),x.d_naive)+
     k(x.k_beat,n0(pct)+"%",fill(x.d_beat,{n:n0(rows_n)}),pct>=50?"good":"bad")+
-    k(x.k_bias,(b>0?"+":"")+nC(b)+" "+U(),x.d_bias);
+    k(x.k_bias,(b>0?"+":"")+nC(b)+" "+U(),x.d_bias)+
+    (wm!=null?k(x.k_wape,n1(wm)+"%",fill(x.d_wape,{d1:n1(wd1)}),wm<wd1?"good":"bad"):"");
 }
 
 function drawDaily(rows){
