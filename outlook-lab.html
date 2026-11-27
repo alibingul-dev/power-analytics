@@ -86,6 +86,9 @@ tr.qtr td{font-weight:500;background:rgba(255,255,255,.04)}tr.year td{background
  .tbl.tall{max-height:none}.chartbox{padding:10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.cfxg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}@media (max-width:1100px){.cfxg{grid-template-columns:1fr}}
+.cfx .kpis{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:10px}.cfx .kpi .v{font-size:18px}
+td.yes{color:var(--bad);font-weight:600}td.no{color:var(--good)}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -106,6 +109,7 @@ tr.qtr td{font-weight:500;background:rgba(255,255,255,.04)}tr.year td{background
    <div class="row"><label data-i="fx0">Kur (çalıştırma ayı) <small>USD/TRY</small></label><input type="number" id="fx0" step="0.1"></div>
    <div class="row"><label data-i="fxg">Aylık kur artışı <small>%/ay</small></label><input type="number" id="fxg" step="0.1"></div>
    <div class="row"><label data-i="hyd">Hidroloji senaryosu <small>Mar–Haz k çarpanı</small></label><select id="hyd"><option value="0.85" data-i="wet">Sulu (−%15)</option><option value="1" selected data-i="normal">Normal</option><option value="1.15" data-i="dry">Kurak (+%15)</option></select></div>
+   <div class="row"><label id="capL">Tavan senaryosu <small>PTF azami fiyat, TL/MWh</small></label><select id="capSc"><option value="none">Yok (motor)</option><option value="4500">4.500 sabit</option><option value="5500">5.500 Nis-27</option></select></div>
    <details class="adv"><summary data-i="adv">Gelişmiş ayarlar</summary>
    <div class="row"><label data-i="kLR">PTF/G uzun dönem oranı <small>son 24 ay ortalaması</small></label><input type="number" id="kLR" step="0.01"></div>
    <div class="row"><label data-i="rk">Oranın geri dönüş hızı φ <small>aylık, 0–1</small></label><input type="number" id="rk" step="0.01" min="0.3" max="0.95"></div>
@@ -130,6 +134,11 @@ tr.qtr td{font-weight:500;background:rgba(255,255,255,.04)}tr.year td{background
   <div class="chartbox" id="sensBox" style="display:none"><h2 id="sensTitle" style="margin:0 0 6px"></h2><div class="note" id="sensTop" style="margin:0 0 8px;color:var(--fg)"></div><canvas id="sensChart" height="110"></canvas><div class="note" id="sensBottom"></div></div>
   <div class="tbl"><table id="table"></table></div>
   <div class="note" id="tablenote"></div>
+  <section id="capfx" class="cfx"><h2 id="cfxH" style="margin:18px 0 10px;color:var(--fg)">Tavan ve kur takibi</h2>
+   <div class="cfxg">
+    <div class="panel"><h2 id="capH">Tavan (azami fiyat)</h2><div class="kpis" id="capK"></div><div class="tbl"><table id="capT"></table></div><canvas id="capC" height="150"></canvas><div class="tbl" style="margin-top:10px"><table id="capHist"></table></div><div class="note" id="capN"></div></div>
+    <div class="panel"><h2 id="fxH">Kur beklentisi (USD/TRY)</h2><div class="kpis" id="fxK"></div><div class="btns" style="margin:0 0 10px"><button id="fxApply"></button></div><canvas id="fxC" height="150"></canvas><div class="tbl" style="margin-top:10px"><table id="fxT"></table></div><div class="note" id="fxN"></div></div>
+   </div></section>
  </main>
 </div>
 <p class="disc" id="ver"></p>
@@ -189,7 +198,7 @@ window.addEventListener('storage',e=>{if(e.key==='pa-lang'){L=siteLang();applyLa
 const $=id=>document.getElementById(id);
 const S=()=>P.state;
 const isLatest=()=>P&&P.cut===LATEST;
-function defaults(){ $('tariff').value=P.tariff; $('fx0').value=P.last_fx.toFixed(2); $('fxg').value=((Math.exp(S().fx_drift_log)-1)*100).toFixed(2); $('kLR').value=Math.exp(S().mu).toFixed(4); $('rk').value=S().phi.toFixed(4); $('hyd').value="1"; $('newsOn').value="0"; NEWS.forEach((e,k)=>{ $('n'+k).checked=true; $('np'+k).value=Math.round(e.p*100); $('ni'+k).value=Math.round(e.imp*100); }); }
+function defaults(){ $('tariff').value=P.tariff; $('fx0').value=P.last_fx.toFixed(2); $('fxg').value=((Math.exp(S().fx_drift_log)-1)*100).toFixed(2); $('kLR').value=Math.exp(S().mu).toFixed(4); $('rk').value=S().phi.toFixed(4); $('hyd').value="1"; $('capSc').value="none"; $('newsOn').value="0"; NEWS.forEach((e,k)=>{ $('n'+k).checked=true; $('np'+k).value=Math.round(e.p*100); $('ni'+k).value=Math.round(e.imp*100); }); }
 function compute(inp){
   const s=S(); const mu=Math.log(Math.max(inp.kLR,1e-6)); const phi=Math.min(0.99,Math.max(0,inp.rk)); const out=[];
   const newsOn=inp.newsOn&&isLatest(); const sel=inp.news;
@@ -200,9 +209,11 @@ function compute(inp){
     const hyd=(m>=3&&m<=6)?inp.hyd:1;
     let nf=1; if(newsOn){ let sum=0; NEWS.forEach((e,k)=>{ const u=sel[k]; if(u&&u.on&&e.a<=h&&h<=e.b&&u.imp>-1) sum+=u.p*Math.log(1+u.imp); }); nf=Math.exp(sum); }
     const w=Math.exp(R+s.seasonal[m-1])*G*hyd*nf;
-    out.push({h,y:mo.y,m,hours:mo.hours,lo:w*Math.exp(-mo.half),w,hi:w*Math.exp(mo.half),fx,eng:mo.exp,engLo:mo.lo,engHi:mo.hi});
+    let lo=w*Math.exp(-mo.half), wc=w, hi=w*Math.exp(mo.half); const capTL=capAt(inp.cap,mo.y,mo.m); const lim=capTL?CAPU()*capTL/fx:null;
+    if(lim!=null){ lo=Math.min(lo,lim); wc=Math.min(wc,lim); hi=Math.min(hi,lim); }
+    out.push({h,y:mo.y,m,hours:mo.hours,lo,w:wc,hi,fx,eng:mo.exp,engLo:mo.lo,engHi:mo.hi,capTL,lim});
   }); return out; }
-function readInputs(){ return {tariff:+$('tariff').value,fx0:+$('fx0').value,fxg:+$('fxg').value/100,kLR:+$('kLR').value,rk:+$('rk').value,hyd:+$('hyd').value,newsOn:$('newsOn').value==="1",news:NEWS.map((e,k)=>({on:$('n'+k).checked,p:(+$('np'+k).value||0)/100,imp:(+$('ni'+k).value||0)/100}))}; }
+function readInputs(){ return {tariff:+$('tariff').value,fx0:+$('fx0').value,fxg:+$('fxg').value/100,kLR:+$('kLR').value,rk:+$('rk').value,hyd:+$('hyd').value,cap:$('capSc').value,newsOn:$('newsOn').value==="1",news:NEWS.map((e,k)=>({on:$('n'+k).checked,p:(+$('np'+k).value||0)/100,imp:(+$('ni'+k).value||0)/100}))}; }
 const f1=x=>L==='tr'?x.toFixed(1).replace('.',','):x.toFixed(1); const f0=x=>Math.round(x).toLocaleString(L==='tr'?'tr-TR':'en-GB'); const f2=x=>L==='tr'?x.toFixed(2).replace('.',','):x.toFixed(2); const f3=x=>L==='tr'?x.toFixed(3).replace('.',','):x.toFixed(3);
 const lab=(y,m)=>I[L].mon[m-1]+'-'+String(y).slice(2);
 const key=(y,m)=>y+'-'+String(m).padStart(2,'0');
@@ -358,7 +369,7 @@ function applyLang(){ if(!P) return; const t=I[L]; document.querySelectorAll('[d
 let NOTES=null; try{fetch('scorecard-notes.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{NOTES=j; if(tab==='S') run();}).catch(()=>{});}catch(e){}
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function whyCell(k,d){ const t=I[L]; const th=NOTES?NOTES.near_threshold_usd_mwh:3.2; const n=NOTES&&NOTES.notes[k]; if(n){ return esc(n[L])+' '+n.src.map(s=>`<a href="${esc(s[1])}" target="_blank" rel="noopener" title="${esc(s[0])}">${t.srcW}</a>`).join(' · '); } return Math.abs(d)<=th? t.near.replace('{t}',f1(th)) : t.nowhy; }
-function run(){ if(!P) return; render(compute(readInputs())); }
+function run(){ if(!P) return; const inp=readInputs(); render(compute(inp)); try{ renderCapFx(inp); }catch(e){ console.log('capfx',e); } }
 function buildNews(){ $('newsList').innerHTML=''; NEWS.forEach((e,k)=>{ const l=document.createElement('div'); l.className='nrow'; l.innerHTML=`<label><input type="checkbox" id="n${k}" checked><span class="t"></span></label><span class="m"><input type="number" id="np${k}" value="${Math.round(e.p*100)}" min="0" max="100" step="5" aria-label="probability %"><em>%</em><input type="number" id="ni${k}" value="${Math.round(e.imp*100)}" min="-50" max="50" step="1" aria-label="impact %"><em>%</em></span>`; $('newsList').appendChild(l); }); }
 function getJSON(u){ return fetch(u,{cache:'no-cache'}).then(r=>{ if(!r.ok) throw new Error(u); return r.json(); }); }
 /* Owner-only: the Lab's data ships inside the encrypted custom bundle (custom.bundle.json); the code unlocks it in the browser. */
@@ -381,7 +392,7 @@ async function labData(){
 }
 function loadSnap(c){ const j=LAB&&LAB.snapshots[c]; if(!j) return Promise.reject(new Error(c)); P=j; defaults(); applyLang(); run(); return Promise.resolve(); }
 $('newsList').addEventListener('change',run);
-['tariff','fx0','fxg','kLR','rk','hyd','newsOn'].forEach(id=>$(id).addEventListener('change',run));
+['tariff','fx0','fxg','kLR','rk','hyd','capSc','newsOn'].forEach(id=>$(id).addEventListener('change',run));
 $('asof').addEventListener('change',()=>loadSnap($('asof').value).catch(()=>{}));
 $('run').onclick=run; $('reset').onclick=()=>{defaults();run();};
 $('langTR').onclick=()=>{L='tr';applyLang();run();}; $('langEN').onclick=()=>{L='en';applyLang();run();};
@@ -428,7 +439,7 @@ const XL={
   src:[["EPİAŞ Transparency Platform","Hourly and monthly PTF (TL/MWh, $/MWh); FX derived from PTF in TL and $","https://seffaflik.epias.com.tr"],["BOTAŞ wholesale tariffs","Power-generation gas tariff, 2021-08..2026-11, sourced month by month","https://github.com/alibingul-dev/power-analytics/blob/main/engine/history/botas_power_tariff.json"],["Engine code","engine/v2t.py, engine/snapshots.py (all runs built by one command)","https://github.com/alibingul-dev/power-analytics/tree/main/engine"]],
   yes:"yes",no:"no",on:"on",off:"off"}};
 const r2=x=>Math.round(x*100)/100;
-function isDefault(inp){ const s=S(); return Math.abs(inp.tariff-P.tariff)<1e-6&&Math.abs(inp.fx0-P.last_fx)<0.006&&Math.abs(inp.fxg-(Math.exp(s.fx_drift_log)-1))<6e-5&&Math.abs(inp.kLR-Math.exp(s.mu))<6e-4&&Math.abs(inp.rk-s.phi)<6e-4&&inp.hyd===1&&!(inp.newsOn&&isLatest()); }
+function isDefault(inp){ const s=S(); return Math.abs(inp.tariff-P.tariff)<1e-6&&Math.abs(inp.fx0-P.last_fx)<0.006&&Math.abs(inp.fxg-(Math.exp(s.fx_drift_log)-1))<6e-5&&Math.abs(inp.kLR-Math.exp(s.mu))<6e-4&&Math.abs(inp.rk-s.phi)<6e-4&&inp.hyd===1&&inp.cap==='none'&&!(inp.newsOn&&isLatest()); }
 function buildWorkbook(){
   const x=XL[L], t=I[L], inp=readInputs(), R0=compute(inp), R=toUnit(R0), RM=realMap(); const ux=h=>/TL\/MWh/.test(h)?h:uu(h); const wb=XLSX.utils.book_new();
   const add=(rows,name,w)=>{ const ws=XLSX.utils.aoa_to_sheet(rows); if(w) ws['!cols']=w.map(c=>({wch:c})); XLSX.utils.book_append_sheet(wb,ws,name); };
@@ -464,5 +475,93 @@ $('sl7').addEventListener('click',()=>{ const s=slCur(); if(!s) return; s.a=1; s
 [['tabM','M'],['tabY','Y'],['tabS','S'],['tabD','D'],['tabH','H'],['tabX','X'],['tabR','R']].forEach(([id,v])=>$(id).onclick=()=>{tab=v;document.querySelectorAll('.tabs button:not(.xl)').forEach(b=>b.setAttribute('aria-selected',b.id===id));run();});
 </script>
 
+<script>
+/* Tavan ve kur takibi — Ali, 27 Kas 2026: "cap bilgisinin ve kur beklentisinin ayrı takip edilebileceği bir kısım". Veri: cap-fx.json (kamuya açık: EPDK kararı, TCMB anketi). */
+let CFX=null, CFXC={cap:null,fx:null};
+function CAPU(){ return CFX?CFX.cap.util_max:0.874; }
+function capAt(sc,y,m){ if(!sc||sc==='none') return null; const k=key(y,m);
+  if(sc==='5500') return k>='2027-04'?5500:4500; return 4500; }
+const CFT={
+ tr:{h:"Tavan ve kur takibi",capH:"Tavan (GÖP/DGP azami fiyat)",fxH:"Kur beklentisi (USD/TRY)",capL:"Tavan senaryosu",capSub:"PTF azami fiyat, TL/MWh",
+  o:["Yok (motor)","4.500 sabit","5.500 Nis-27"],
+  k1:"Bugünkü tavan",k1d:"{d}'den beri",k2:"Bugün $ karşılığı",k2d:"çalıştırma kuru {fx} USD/TRY",k3:"Nis-27 $ karşılığı",k3d:"4.500 → {a} · 5.500 → {b} $/MWh",k4:"Seçili senaryo",
+  tH:["Ay","Kur USD/TRY","4.500 TL/MWh → $/MWh","5.500 Nis-27 → $/MWh","Aylık ort. sınırı $/MWh","Tavansız Yüksek $/MWh","Bağlayıcı"],
+  hH:["Artış ayı","Tavan TL/MWh","Kur USD/TRY","$ karşılığı $/MWh"],yes:"evet",no:"hayır",
+  capN:"Aylık ortalama PTF tavanın en fazla %{u}'i olabilir ({un}). Sınır = %{u} × tavan TL/MWh ÷ kur. 'Bağlayıcı' = tavansız Yüksek bant bu sınırı aşıyor; seçili senaryoda Düşük/Beklenen/Yüksek bu sınırla kırpılır. 2031 uzun vade senaryoları kırpılmaz. Kaynak: {src}.",
+  cLbl:["4.500 TL/MWh sınırı","5.500 TL/MWh (Nis-27) sınırı","Tavansız Yüksek","Beklenen (seçili senaryo)"],cY:"$/MWh",
+  f1:"Son kur",f1d:"{d} · {s}",f2:"TCMB yıl sonu",f2d:"{m} anketi",f3:"TCMB 12 ay sonrası",f3d:"{t} için",f4:"Anketin ima ettiği hız",f4d:"modelde: {g} %/ay",
+  apply:"Anket kur yolunu uygula ({g} %/ay)",
+  fH:["Anket ayı","Yıl sonu USD/TRY","12 ay sonrası USD/TRY","Hedef ay","Model yolu o ayda USD/TRY","Fark USD/TRY"],
+  fxN:"Model yolu = çalıştırma kuru × (1 + aylık kur artışı)^ay. TL/MWh değerleri bu yolla çevrilir; kur değişince $ eğri değişmez, TL eğri ve tavanın $ karşılığı değişir. {n} Kaynak: {src}.",
+  fLbl:["Model kur yolu","TCMB yıl sonu beklentisi","TCMB 12 ay sonrası beklentisi","Son kur"],fY:"USD/TRY",none:"motor (tavan kırpması yok)"},
+ en:{h:"Price cap and FX tracker",capH:"Price cap (day-ahead / balancing maximum)",fxH:"FX expectation (USD/TRY)",capL:"Price cap scenario",capSub:"PTF maximum, TL/MWh",
+  o:["None (engine)","4,500 held","5,500 Apr-27"],
+  k1:"Cap today",k1d:"since {d}",k2:"Today in $",k2d:"run-month FX {fx} USD/TRY",k3:"Apr-27 in $",k3d:"4,500 → {a} · 5,500 → {b} $/MWh",k4:"Chosen scenario",
+  tH:["Month","FX USD/TRY","4,500 TL/MWh → $/MWh","5,500 Apr-27 → $/MWh","Monthly-average limit $/MWh","Uncapped High $/MWh","Binding"],
+  hH:["Raise month","Cap TL/MWh","FX USD/TRY","$ value $/MWh"],yes:"yes",no:"no",
+  capN:"A monthly average PTF has reached at most {u}% of the cap ({un}). Limit = {u}% × cap TL/MWh ÷ FX. 'Binding' = the uncapped High band is above the limit; under the chosen scenario Low/Expected/High are clipped to it. The 2031 long-term scenarios are not clipped. Source: {src}.",
+  cLbl:["4,500 TL/MWh limit","5,500 TL/MWh (Apr-27) limit","Uncapped High","Expected (chosen scenario)"],cY:"$/MWh",
+  f1:"Latest FX",f1d:"{d} · {s}",f2:"CBRT year-end",f2d:"{m} survey",f3:"CBRT 12 months ahead",f3d:"for {t}",f4:"Survey-implied drift",f4d:"engine: {g} %/month",
+  apply:"Apply survey FX path ({g} %/month)",
+  fH:["Survey month","Year-end USD/TRY","12 months ahead USD/TRY","Target month","Engine path then USD/TRY","Gap USD/TRY"],
+  fxN:"Engine path = run-month FX × (1 + monthly drift)^months. TL/MWh values use this path; changing FX leaves the $ curve unchanged but moves the TL curve and the cap's $ value. {n} Source: {src}.",
+  fLbl:["Engine FX path","CBRT year-end expectation","CBRT 12-month expectation","Latest FX"],fY:"USD/TRY",none:"engine (no cap clip)"}};
+const addM=(k,n)=>{ let y=+k.slice(0,4), m=+k.slice(5,7)+n; while(m>12){m-=12;y++;} while(m<1){m+=12;y--;} return key(y,m); };
+const dTR=d=>d.slice(8,10)+'.'+d.slice(5,7)+'.'+d.slice(0,4);
+function kp(l,v,d){ return `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`; }
+function runKey(){ const m0=P.months[0]; return addM(key(m0.y,m0.m),-1); }
+function fxPath(inp,k){ const rk=runKey(); const a=(+k.slice(0,4))*12+(+k.slice(5,7)), b=(+rk.slice(0,4))*12+(+rk.slice(5,7)); return inp.fx0*Math.pow(1+inp.fxg,a-b); }
+function mkChart(id,old,cfg){ if(old) old.destroy(); return new Chart(document.getElementById(id),cfg); }
+function renderCapFx(inp){
+  if(!CFX||!P) return; const t=CFT[L], C=CFX.cap, F=CFX.fx, u=CAPU();
+  const sel=$('capSc'); [...sel.options].forEach((o,i)=>o.textContent=t.o[i]);
+  const cl=$('capL'); if(cl){ cl.childNodes[0].textContent=t.capL+' '; const sm=cl.querySelector('small'); if(sm) sm.textContent=t.capSub; }
+  $('cfxH').textContent=t.h; $('capH').textContent=t.capH; $('fxH').textContent=t.fxH;
+  /* --- tavan --- */
+  const R0=compute(Object.assign({},inp,{cap:'none'})), RS=compute(inp).slice(0,18), RN=R0.slice(0,18);
+  const apr=RN.find(r=>r.y===2027&&r.m===4); const fxA=apr?apr.fx:fxPath(inp,'2027-04');
+  const scTxt=inp.cap==='none'?t.none:t.o[inp.cap==='4500'?1:2]+' TL/MWh';
+  $('capK').innerHTML=kp(t.k1,f0(C.current_tl_mwh)+' <small>TL/MWh</small>',t.k1d.replace('{d}',dTR(C.since)))
+   +kp(t.k2,f1(C.current_tl_mwh/inp.fx0)+' <small>$/MWh</small>',t.k2d.replace('{fx}',f2(inp.fx0)))
+   +kp(t.k3,f1(4500/fxA)+' <small>$/MWh</small>',t.k3d.replace('{a}',f1(4500/fxA)).replace('{b}',f1(5500/fxA)))
+   +kp(t.k4,scTxt,'');
+  let h='<thead><tr>'+t.tH.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>';
+  RN.forEach((r,i)=>{ const k=key(r.y,r.m), cA=4500/r.fx, cB=capAt('5500',r.y,r.m)/r.fx; const capS=capAt(inp.cap==='none'?'4500':inp.cap,r.y,r.m); const lim=u*capS/r.fx; const b=r.hi>lim;
+    h+=`<tr><td>${k}</td><td>${f2(r.fx)}</td><td>${f1(cA)}</td><td>${f1(cB)}</td><td>${f1(lim)}</td><td>${f1(r.hi)}</td><td class="${b?'yes':'no'}">${b?t.yes:t.no}</td></tr>`; });
+  $('capT').innerHTML=h+'</tbody>';
+  $('capHist').innerHTML='<thead><tr>'+t.hH.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>'+C.history.map(x=>`<tr><td>${x.month}</td><td>${f0(x.tl_mwh)}</td><td>${f2(x.fx)}</td><td>${f1(x.tl_mwh/x.fx)}</td></tr>`).join('')+'</tbody>';
+  $('capN').innerHTML=t.capN.replace(/\{u\}/g,Math.round(u*1000)/10).replace('{un}',C.util_note).replace('{src}',`<a href="${C.source_url}" target="_blank" rel="noopener">${C.decision}</a>`)+' '+C.history_note;
+  const lab=RN.map(r=>key(r.y,r.m));
+  CFXC.cap=mkChart('capC',CFXC.cap,{type:'line',data:{labels:lab,datasets:[
+    {label:t.cLbl[0],data:RN.map(r=>u*4500/r.fx),borderColor:'#F43F5E',borderDash:[6,4],pointRadius:0,borderWidth:2},
+    {label:t.cLbl[1],data:RN.map(r=>u*capAt('5500',r.y,r.m)/r.fx),borderColor:'#FBBF24',borderDash:[6,4],pointRadius:0,borderWidth:2},
+    {label:t.cLbl[2],data:RN.map(r=>r.hi),borderColor:'#8A9BB0',pointRadius:0,borderWidth:1.5},
+    {label:t.cLbl[3],data:RS.map(r=>r.w),borderColor:'#38BDF8',pointRadius:0,borderWidth:2.5}]},
+   options:{responsive:true,animation:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.cY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+  /* --- kur --- */
+  const S_=F.survey, last=S_[S_.length-1], tgt=addM(last.month,12), rk=runKey();
+  const hh=((+tgt.slice(0,4))*12+(+tgt.slice(5,7)))-((+rk.slice(0,4))*12+(+rk.slice(5,7)));
+  const gS=Math.pow(last.m12/inp.fx0,1/hh)-1;
+  $('fxK').innerHTML=kp(t.f1,f2(F.spot.value)+' <small>USD/TRY</small>',t.f1d.replace('{d}',dTR(F.spot.date)).replace('{s}',F.spot.src))
+   +kp(t.f2,f2(last.ye)+' <small>USD/TRY</small>',t.f2d.replace('{m}',last.month))
+   +kp(t.f3,f2(last.m12)+' <small>USD/TRY</small>',t.f3d.replace('{t}',tgt))
+   +kp(t.f4,f2(gS*100)+' <small>%/ay</small>'.replace('ay',L==='tr'?'ay':'month'),t.f4d.replace('{g}',f2(inp.fxg*100)));
+  const bt=$('fxApply'); bt.textContent=t.apply.replace('{g}',f2(gS*100)); bt.onclick=()=>{ $('fxg').value=(gS*100).toFixed(2); run(); };
+  let g='<thead><tr>'+t.fH.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>';
+  S_.slice().reverse().forEach(x=>{ const tg=addM(x.month,12), mp=fxPath(inp,tg); g+=`<tr><td>${x.month}</td><td>${f2(x.ye)}</td><td>${f2(x.m12)}</td><td>${tg}</td><td>${f2(mp)}</td><td>${(mp-x.m12>=0?'+':'')+f2(mp-x.m12)}</td></tr>`; });
+  $('fxT').innerHTML=g+'</tbody>';
+  $('fxN').innerHTML=t.fxN.replace('{n}',F.survey_note).replace('{src}',`<a href="${F.survey_url}" target="_blank" rel="noopener">${F.survey_src}</a>`);
+  const fl=[]; for(let i=0;i<=hh;i++) fl.push(addM(rk,i));
+  const yeK=last.month.slice(0,4)+'-12';
+  CFXC.fx=mkChart('fxC',CFXC.fx,{type:'line',data:{labels:fl,datasets:[
+    {label:t.fLbl[0],data:fl.map(k=>fxPath(inp,k)),borderColor:'#38BDF8',pointRadius:0,borderWidth:2.5},
+    {label:t.fLbl[1],data:fl.map(k=>k===yeK?last.ye:null),borderColor:'#34D399',backgroundColor:'#34D399',pointRadius:6,showLine:false},
+    {label:t.fLbl[2],data:fl.map(k=>k===tgt?last.m12:null),borderColor:'#FBBF24',backgroundColor:'#FBBF24',pointRadius:6,showLine:false},
+    {label:t.fLbl[3],data:fl.map(k=>k===F.spot.date.slice(0,7)?F.spot.value:null),borderColor:'#E6EDF5',backgroundColor:'#E6EDF5',pointRadius:5,pointStyle:'rectRot',showLine:false}]},
+   options:{responsive:true,animation:false,spanGaps:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.fY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+}
+fetch('cap-fx.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ if(j){ CFX=j; if(P) run(); } }).catch(()=>{});
+
+</script>
 </body>
 </html>
