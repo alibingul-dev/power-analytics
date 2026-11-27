@@ -94,6 +94,7 @@ caption{text-align:left;padding:8px 10px;font-weight:600;color:var(--fg);backgro
     <div class="panel">
       <h2 id="t-day"></h2>
       <div class="ctl"><label><span id="t-pick"></span><select id="day"></select></label><span id="ytag"></span><span id="stag"></span></div>
+      <div class="kpis" id="dcards"></div>
       <div class="cbox"><canvas id="cDay" role="img"></canvas></div>
       <p class="note" id="t-daynote"></p>
     </div>
@@ -145,7 +146,7 @@ en:{title:"Daily Price Forecast",
  dailynote:"Each point is one day's average day-ahead price (PTF, TL/MWh): the model's forecast against the price EPİAŞ actually published. Click a day to see it hour by hour.",
  day:"One day up close",pick:"Day",
  daynote:"Actual is the price EPİAŞ published for that day. Inputs archived {at}{late}.",late:" — after the 12:30 market close, so the load plan and wind forecast may have been revised after clearing",
- s_fc:"Forecast",s_act:"Actual",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
+ s_fc:"Forecast",s_act:"Actual",s_hi:"Upper band (80%)",s_lo:"Lower band (80%)",bandnote2:" Band: 80% range from past misses in the same part of the merit order (low / mid / high forecast price); over {n} past days {c}% of real hours fell inside.",dc_fa:"Forecast PTF, arithmetic",dc_fw:"Forecast PTF, weighted",dc_aa:"Actual PTF, arithmetic",dc_aw:"Actual PTF, weighted",dc_da:"Difference, arithmetic",dc_dw:"Difference, weighted",dc_d24:"plain average of 24 hours",dc_dq:"weighted by DAM matched MWh",dc_dq7:"weighted by last week's DAM matched MWh (this day not cleared yet)",dc_dd:"forecast − actual; + = forecast too high",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
  why:"Why the forecast missed",
  whynote:"Bars split each hour's miss (TL/MWh) into the estimated contributions of the latest stage (see the badge); the grey part is what the data cannot explain (block and flexible bids, the gap between the hourly curve and the published price, outages, interconnection, the price floor or cap). This is an after-the-fact analysis, not a forecast.",
  c_load:"Load plan was off",c_wind:"Wind forecast was off",c_left:"Not explained by the inputs",
@@ -216,7 +217,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  dailynote:"Her nokta bir günün ortalama PTF'si (TL/MWh): modelin tahmini ve EPİAŞ'ın yayımladığı gerçekleşen fiyat. Saatlik görmek için bir güne tıkla.",
  day:"Bir güne yakından bak",pick:"Gün",
  daynote:"Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat. Girdiler {at}{late} arşivlendi.",late:" — yani 12:30 kapanışından sonra; yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir",
- s_fc:"Tahmin",s_act:"Gerçekleşen",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
+ s_fc:"Tahmin",s_act:"Gerçekleşen",s_hi:"Üst bant (%80)",s_lo:"Alt bant (%80)",bandnote2:" Bant: merit order'ın aynı bölgesindeki (düşük / orta / yüksek tahmin fiyatı) geçmiş sapmalardan %80 aralık; geçmiş {n} günde gerçek saatlerin %{c}'i bandın içinde kaldı.",dc_fa:"Tahmini aritmetik PTF",dc_fw:"Tahmini ağırlıklı PTF",dc_aa:"Gerçekleşen aritmetik PTF",dc_aw:"Gerçekleşen ağırlıklı PTF",dc_da:"Aritmetik fark",dc_dw:"Ağırlıklı fark",dc_d24:"24 saatin düz ortalaması",dc_dq:"GÖP eşleşme miktarı (MWh) ağırlıklı",dc_dq7:"geçen haftanın GÖP eşleşme miktarı (MWh) ağırlıklı (bu gün henüz kapanmadı)",dc_dd:"tahmin − gerçekleşen; + = tahmin yüksek",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
  why:"Tahmin neden saptı",
  whynote:"Çubuklar her saatin sapmasını (TL/MWh) en son aşamanın tahmini katkılarına böler (etikete bak); gri kısım verinin açıklayamadığı kısımdır (blok ve esnek teklifler, saatlik eğri ile yayımlanan fiyat arasındaki fark, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Bu bir gün sonu analizidir, tahmin değildir.",
  c_load:"Yük planı şaştı",c_wind:"Rüzgâr tahmini şaştı",c_left:"Girdilerle açıklanamayan",
@@ -397,6 +398,18 @@ const avgMwh=(r,k)=>{const S=(r.why_stages||{})[k]||{},m=a=>a?a.filter(v=>v!=nul
 function avgParts(r,k){const acc={},ord=[];for(let i=0;i<24;i++){(parts(r,k,i,true)||[]).forEach(([n,v,res,key])=>{if(!acc[n]){acc[n]=[0,0,res,key];ord.push(n)}acc[n][0]+=v;acc[n][1]++})}
   return ord.map(n=>[n,acc[n][0]/acc[n][1],acc[n][2],acc[n][3]])}
 
+function dcards(r){
+  const x=t(),k=rate(r),el=$("dcards");if(!k){el.innerHTML="";return}
+  let q=r.qty,q7=false;
+  if(!q){const d7=new Date(Date.parse(r.date+"T00:00:00Z")-7*864e5).toISOString().slice(0,10),z=DAYS.find(y=>y.date===d7);if(z&&z.qty){q=z.qty;q7=true}}
+  const am=a=>a?avg(a)/k:null,wm=a=>{if(!a||!q)return null;let n=0,dn=0;for(let h=0;h<24;h++){n+=a[h]*q[h];dn+=q[h]}return dn>0?n/dn/k:null};
+  const fa=am(r.fc),fw=wm(r.fc),aa=r.actual?am(r.actual):null,aw=r.actual?wm(r.actual):null;
+  const da=fa!=null&&aa!=null?fa-aa:null,dw=fw!=null&&aw!=null?fw-aw:null;
+  const v=z=>z==null?"—":nC(z)+" "+U(),sv=z=>z==null?"—":(z>0?"+":"")+nC(z)+" "+U();
+  const c=(l,val,d,cls)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v '+(cls||"")+'">'+val+'</div><div class="d">'+d+'</div></div>';
+  const dq=q7?x.dc_dq7:x.dc_dq;
+  el.innerHTML=c(x.dc_fa,v(fa),x.dc_d24)+c(x.dc_fw,v(fw),dq)+c(x.dc_aa,v(aa),x.dc_d24)+c(x.dc_aw,v(aw),x.dc_dq)+c(x.dc_da,sv(da),x.dc_dd)+c(x.dc_dw,sv(dw),x.dc_dd);
+}
 function drawDay(){
   const x=t(),r=findDay($("day").value);if(!r)return;const isLive=!r.actual;
   const hrs=[...Array(24).keys()].map(h=>String(h).padStart(2,"0")+":00");
@@ -405,12 +418,15 @@ function drawDay(){
   cH=new Chart($("cDay"),{type:"line",data:{labels:hrs,datasets:[
     ...(isLive?[]:[{label:x.s_act,data:cvt(r.actual),borderColor:C.act,backgroundColor:C.act,pointRadius:0,borderWidth:2}]),
     {label:x.s_fc,data:cvt(r.fc),borderColor:C.fc,backgroundColor:C.fc,pointRadius:isLive?2:0,borderWidth:2},
-    {label:x.s_d1,data:cvt(r.naive_d1),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.2,borderDash:[4,3]}]},options:base(Ud)});
+    {label:x.s_d1,data:cvt(r.naive_d1),borderColor:C.d1,backgroundColor:C.d1,pointRadius:0,borderWidth:1.2,borderDash:[4,3]},
+    ...(r.band?[{label:x.s_hi,data:cvt(r.band.hi),borderColor:"rgba(56,189,248,.45)",backgroundColor:"rgba(56,189,248,.10)",pointRadius:0,borderWidth:1,fill:"+1"},
+      {label:x.s_lo,data:cvt(r.band.lo),borderColor:"rgba(56,189,248,.45)",backgroundColor:"rgba(56,189,248,.10)",pointRadius:0,borderWidth:1,fill:false}]:[])]},options:base(Ud)});
+  dcards(r);
   if(isLive){if(cW){cW.destroy();cW=null}$("cWhy").parentElement.hidden=true;$("why").innerHTML='<p>'+x.livewhy+'</p><p class="note">'+x.livedisc+'</p>'}else why(r,hrs);
   const at=new Date(r.captured_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   $("t-whynote").textContent=isLive?"":(rate(r)?uu(x.whynote):x.whynote);
   const made=r.made_at?new Date(r.made_at).toLocaleString(loc(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
-  $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at})+(r.late_capture?x.late+".":""):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
+  $("t-daynote").textContent=(isLive?fill(x.livenote,{at:made,cap:at})+(r.late_capture?x.late+".":""):fill(x.daynote,{at:at,late:r.late_capture?x.late:""}))+(r.band&&D.summary.band?fill(x.bandnote2,{n:n0(D.summary.band.days),c:n1(D.summary.band.cover)}):"")+(CUR!=="try"?" "+(r.fx?fill(x.fxnote,{u:CUR.toUpperCase(),k:n2(r.fx[CUR])}):x.fxmissing):"");
   const thr=(D.summary.mo||{}).steep_from,sl=r.mo_slope||null;
   const H=isLive?[x.h[0],x.h[1]]:x.h;let h='<caption><span>'+dlab(r.date)+(isLive?' · '+x.live_cap:'')+'</span>'+(!isLive&&r.why_stage?'<span class="capr">'+badge(r,r.why_stage)+'</span>':'')+'</caption><thead><tr>'+H.map((c,i)=>'<th>'+c+(i>0?" ("+Ud+")":"")+'</th>').join("")+'<th>'+x.h_yk+'</th>'+(isLive?'':'<th style="text-align:left">'+x.h_why+' ('+Ud+')</th>')+'</tr></thead><tbody>';
   const K=r.why_stage,sg=v=>(v>0?"+":v<0?"−":"")+nP(Math.abs(v),r),sm=v=>(v>0?"+":v<0?"−":"")+n0(Math.abs(v));
