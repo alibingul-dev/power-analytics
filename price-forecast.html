@@ -146,7 +146,7 @@ en:{title:"Daily Price Forecast",
  dailynote:"Each point is one day's average day-ahead price (PTF, TL/MWh): the model's forecast against the price EPİAŞ actually published. Click a day to see it hour by hour.",
  day:"One day up close",pick:"Day",
  daynote:"Actual is the price EPİAŞ published for that day. Inputs archived {at}{late}.",late:" — after the 12:30 market close, so the load plan and wind forecast may have been revised after clearing",
- s_fc:"Forecast",s_act:"Actual",s_hi:"Upper band (80%)",s_lo:"Lower band (80%)",bandnote2:" Band: 80% range from past misses in the same part of the merit order (low / mid / high forecast price); over {n} past days {c}% of real hours fell inside.",dc_fa:"Forecast PTF, arithmetic",dc_fw:"Forecast PTF, weighted",dc_aa:"Actual PTF, arithmetic",dc_aw:"Actual PTF, weighted",dc_da:"Difference, arithmetic",dc_dw:"Difference, weighted",dc_d24:"plain average of 24 hours",dc_dq:"weighted by DAM matched MWh",dc_dq7:"weighted by last week's DAM matched MWh (this day not cleared yet)",dc_dd:"forecast − actual; + = forecast too high",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
+ s_fc:"Forecast",s_act:"Actual",s_hi:"Upper band (80%)",s_lo:"Lower band (80%)",bandnote2:" Band: 80% range from past misses in the same part of the merit order (low / mid / high forecast price); over {n} past days {c}% of real hours fell inside.",dc_fa:"Forecast PTF, arithmetic",dc_fw:"Forecast PTF, weighted",dc_aa:"Actual PTF, arithmetic",dc_aw:"Actual PTF, weighted",dc_mae:"MAE",dc_wape:"WAPE",dc_dmae:"average absolute miss per hour; copying yesterday: {d1}",dc_dwape:"DAM matched MWh-weighted; copying yesterday: {d1}%",dc_da:"Difference, arithmetic",dc_dw:"Difference, weighted",dc_d24:"plain average of 24 hours",dc_dq:"weighted by DAM matched MWh",dc_dq7:"weighted by last week's DAM matched MWh (this day not cleared yet)",dc_dd:"forecast − actual; + = forecast too high",s_d1:"Yesterday",s_d7:"Last week",s_model:"Model",
  why:"Why the forecast missed",
  whynote:"Bars split each hour's miss (TL/MWh) into the estimated contributions of the latest stage (see the badge); the grey part is what the data cannot explain (block and flexible bids, the gap between the hourly curve and the published price, outages, interconnection, the price floor or cap). This is an after-the-fact analysis, not a forecast.",
  c_load:"Load plan was off",c_wind:"Wind forecast was off",c_left:"Not explained by the inputs",
@@ -217,7 +217,7 @@ tr:{title:"Günlük Fiyat Tahmini",
  dailynote:"Her nokta bir günün ortalama PTF'si (TL/MWh): modelin tahmini ve EPİAŞ'ın yayımladığı gerçekleşen fiyat. Saatlik görmek için bir güne tıkla.",
  day:"Bir güne yakından bak",pick:"Gün",
  daynote:"Gerçekleşen, EPİAŞ'ın o gün için yayımladığı fiyat. Girdiler {at}{late} arşivlendi.",late:" — yani 12:30 kapanışından sonra; yük planı ve rüzgâr tahmini kapanıştan sonra revize edilmiş olabilir",
- s_fc:"Tahmin",s_act:"Gerçekleşen",s_hi:"Üst bant (%80)",s_lo:"Alt bant (%80)",bandnote2:" Bant: merit order'ın aynı bölgesindeki (düşük / orta / yüksek tahmin fiyatı) geçmiş sapmalardan %80 aralık; geçmiş {n} günde gerçek saatlerin %{c}'i bandın içinde kaldı.",dc_fa:"Tahmini aritmetik PTF",dc_fw:"Tahmini ağırlıklı PTF",dc_aa:"Gerçekleşen aritmetik PTF",dc_aw:"Gerçekleşen ağırlıklı PTF",dc_da:"Aritmetik fark",dc_dw:"Ağırlıklı fark",dc_d24:"24 saatin düz ortalaması",dc_dq:"GÖP eşleşme miktarı (MWh) ağırlıklı",dc_dq7:"geçen haftanın GÖP eşleşme miktarı (MWh) ağırlıklı (bu gün henüz kapanmadı)",dc_dd:"tahmin − gerçekleşen; + = tahmin yüksek",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
+ s_fc:"Tahmin",s_act:"Gerçekleşen",s_hi:"Üst bant (%80)",s_lo:"Alt bant (%80)",bandnote2:" Bant: merit order'ın aynı bölgesindeki (düşük / orta / yüksek tahmin fiyatı) geçmiş sapmalardan %80 aralık; geçmiş {n} günde gerçek saatlerin %{c}'i bandın içinde kaldı.",dc_fa:"Tahmini aritmetik PTF",dc_fw:"Tahmini ağırlıklı PTF",dc_aa:"Gerçekleşen aritmetik PTF",dc_aw:"Gerçekleşen ağırlıklı PTF",dc_mae:"MAE",dc_wape:"WAPE",dc_dmae:"saat başına ortalama mutlak sapma; dünü kopyalamak: {d1}",dc_dwape:"GÖP eşleşme miktarı (MWh) ağırlıklı; dünü kopyalamak: %{d1}",dc_da:"Aritmetik fark",dc_dw:"Ağırlıklı fark",dc_d24:"24 saatin düz ortalaması",dc_dq:"GÖP eşleşme miktarı (MWh) ağırlıklı",dc_dq7:"geçen haftanın GÖP eşleşme miktarı (MWh) ağırlıklı (bu gün henüz kapanmadı)",dc_dd:"tahmin − gerçekleşen; + = tahmin yüksek",s_d1:"Dün",s_d7:"Geçen hafta",s_model:"Model",
  why:"Tahmin neden saptı",
  whynote:"Çubuklar her saatin sapmasını (TL/MWh) en son aşamanın tahmini katkılarına böler (etikete bak); gri kısım verinin açıklayamadığı kısımdır (blok ve esnek teklifler, saatlik eğri ile yayımlanan fiyat arasındaki fark, arızalar, enterkonneksiyon, taban ya da tavan fiyat). Bu bir gün sonu analizidir, tahmin değildir.",
  c_load:"Yük planı şaştı",c_wind:"Rüzgâr tahmini şaştı",c_left:"Girdilerle açıklanamayan",
@@ -407,8 +407,11 @@ function dcards(r){
   const da=fa!=null&&aa!=null?fa-aa:null,dw=fw!=null&&aw!=null?fw-aw:null;
   const v=z=>z==null?"—":nC(z)+" "+U(),sv=z=>z==null?"—":(z>0?"+":"")+nC(z)+" "+U();
   const c=(l,val,d,cls)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v '+(cls||"")+'">'+val+'</div><div class="d">'+d+'</div></div>';
-  const dq=q7?x.dc_dq7:x.dc_dq;
-  el.innerHTML=c(x.dc_fa,v(fa),x.dc_d24)+c(x.dc_fw,v(fw),dq)+c(x.dc_aa,v(aa),x.dc_d24)+c(x.dc_aw,v(aw),x.dc_dq)+c(x.dc_da,sv(da),x.dc_dd)+c(x.dc_dw,sv(dw),x.dc_dd);
+  const dq=q7?x.dc_dq7:x.dc_dq,ok=!!r.actual;
+  const mae=ok?r.mae/k:null,mae1=ok?r.mae_d1/k:null,wp=ok&&r.wape!=null?r.wape:null;
+  el.innerHTML=c(x.dc_fa,v(fa),x.dc_d24)+c(x.dc_fw,v(fw),dq)+c(x.dc_aa,v(aa),x.dc_d24)+c(x.dc_aw,v(aw),x.dc_dq)+c(x.dc_da,sv(da),x.dc_dd)+c(x.dc_dw,sv(dw),x.dc_dd)+
+    c(x.dc_mae,v(mae),fill(x.dc_dmae,{d1:v(mae1)}),mae!=null?(mae<mae1?"good":"bad"):"")+
+    c(x.dc_wape,wp==null?"—":n1(wp)+"%",wp==null?x.dc_dq:fill(x.dc_dwape,{d1:n1(r.wape_d1)}),wp!=null?(wp<r.wape_d1?"good":"bad"):"");
 }
 function drawDay(){
   const x=t(),r=findDay($("day").value);if(!r)return;const isLive=!r.actual;
