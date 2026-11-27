@@ -86,7 +86,7 @@ tr.qtr td{font-weight:500;background:rgba(255,255,255,.04)}tr.year td{background
  .tbl.tall{max-height:none}.chartbox{padding:10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.cfxg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cfxg>.panel{min-width:0;overflow:hidden}.cfx .tbl{overflow-x:auto;max-width:100%}.cfx canvas{max-width:100%}@media (max-width:1100px){.cfxg{grid-template-columns:1fr}}
+.cfxg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cfxg>.panel{min-width:0;overflow:hidden}.cfx .tbl{overflow:hidden;max-width:100%}.cfx table{width:100%;table-layout:fixed}.cfx th,.cfx td{white-space:normal;word-break:normal;overflow-wrap:break-word;padding:5px 6px;font-size:12.5px}.cfx td:first-child,.cfx td:nth-child(4){white-space:nowrap}.cfx th:first-child{width:72px}@media (max-width:600px){.cfx th:first-child{width:58px}}.cfx th{font-size:11.5px;line-height:1.25}@media (max-width:600px){.cfx th,.cfx td{font-size:10.5px;padding:4px 3px}}.cfx canvas{max-width:100%}@media (max-width:1100px){.cfxg{grid-template-columns:1fr}}
 .cfx .kpis{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:10px}.cfx .kpi .v{font-size:18px}
 td.yes{color:var(--bad);font-weight:600}td.no{color:var(--good)}
 </style>
@@ -538,7 +538,7 @@ function renderCapFx(inp){
     {label:t.cLbl[1],data:RN.map(r=>u*capAt('5500',r.y,r.m)/r.fx),borderColor:'#FBBF24',borderDash:[6,4],pointRadius:0,borderWidth:2},
     {label:t.cLbl[2],data:RN.map(r=>r.hi),borderColor:'#8A9BB0',pointRadius:0,borderWidth:1.5},
     {label:t.cLbl[3],data:RS.map(r=>r.w),borderColor:'#38BDF8',pointRadius:0,borderWidth:2.5}]},
-   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:2.2,animation:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.cY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:1.5,animation:false,interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true,filter:i=>i.parsed.y!=null,callbacks:{label:c=>c.dataset.label+': '+(L==='tr'?c.parsed.y.toFixed(1).replace('.',','):c.parsed.y.toFixed(1))+' '+'$/MWh'}},legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.cY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
   /* --- kur --- */
   const S_=F.survey, last=S_[S_.length-1], tgt=addM(last.month,12), rk=runKey();
   const hh=((+tgt.slice(0,4))*12+(+tgt.slice(5,7)))-((+rk.slice(0,4))*12+(+rk.slice(5,7)));
@@ -559,7 +559,7 @@ function renderCapFx(inp){
     {label:t.fLbl[1],data:fl.map(k=>k===yeK?last.ye:null),borderColor:'#34D399',backgroundColor:'#34D399',pointRadius:6,showLine:false},
     {label:t.fLbl[2],data:fl.map(k=>k===tgt?last.m12:null),borderColor:'#FBBF24',backgroundColor:'#FBBF24',pointRadius:6,showLine:false},
     {label:t.fLbl[3],data:fl.map(k=>k===F.spot.date.slice(0,7)?F.spot.value:null),borderColor:'#E6EDF5',backgroundColor:'#E6EDF5',pointRadius:5,pointStyle:'rectRot',showLine:false}]},
-   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:2.2,animation:false,spanGaps:false,plugins:{legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.fY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
+   options:{responsive:true,maintainAspectRatio:true,aspectRatio:innerWidth<600?1.15:1.5,animation:false,spanGaps:false,interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true,filter:i=>i.parsed.y!=null,callbacks:{label:c=>c.dataset.label+': '+(L==='tr'?c.parsed.y.toFixed(2).replace('.',','):c.parsed.y.toFixed(2))+' '+'USD/TRY'}},legend:{labels:{color:'#E6EDF5',boxWidth:14}}},scales:{x:{ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}},y:{title:{display:true,text:t.fY,color:'#8A9BB0'},ticks:{color:'#8A9BB0'},grid:{color:'#26364B'}}}}});
 }
 fetch('cap-fx.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ if(j){ CFX=j; if(P) run(); } }).catch(()=>{});
 
